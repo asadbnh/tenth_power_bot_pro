@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>غير متصل — WebTaky</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cairo', sans-serif;
+      background: #0a0f1e;
+      color: #fff;
+      text-align: center;
+      padding: 1rem;
+    }
+    .icon { font-size: 4rem; margin-bottom: 1rem; }
+    h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    p { color: rgba(255,255,255,0.6); margin-bottom: 2rem; }
+    a {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      background: #3b82f6;
+      color: #fff;
+      border-radius: 0.75rem;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    a:hover { background: #2563eb; }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="icon">📡</div>
+    <h1>لا يوجد اتصال بالإنترنت</h1>
+    <p>يرجى التحقق من اتصالك بالشبكة والمحاولة مرة أخرى</p>
+    <a href="/" onclick="location.reload()">إعادة المحاولة</a>
+  </div>
+</body>
+</html>
