@@ -1,7 +1,7 @@
 /**
- * Telegram Bot Service
- * Handles all Telegram API interactions for the admin system.
- * Uses service_role Supabase client for full admin access.
+ * Telegram Bot Service & Keyboard Registry
+ * Handles all Telegram API interactions, inline keyboards, and message formatters
+ * for comprehensive control over all 35+ database tables in WebTaky.
  */
 
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
@@ -39,7 +39,7 @@ export type InlineKeyboard = {
   inline_keyboard: InlineKeyboardButton[][];
 };
 
-// ─── Core API Calls ──────────────────────────────────────────────────
+// ─── Core API Request Engine ──────────────────────────────────────────
 
 async function telegramRequest(method: string, body: Record<string, unknown>) {
   const res = await fetch(`${TELEGRAM_API}/${method}`, {
@@ -84,6 +84,7 @@ export async function editMessage(
     text,
     parse_mode: "HTML",
     reply_markup: replyMarkup,
+    disable_web_page_preview: true,
   });
 }
 
@@ -116,31 +117,98 @@ export function getTelegramFileUrl(filePath: string) {
   return `https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${filePath}`;
 }
 
-// ─── Inline Keyboard Builders ─────────────────────────────────────────
+// ─── Inline Keyboards Directory ────────────────────────────────────────
 
 export const Keyboards = {
   mainMenu: (): InlineKeyboard => ({
     inline_keyboard: [
-      [{ text: "📊 الإحصائيات", callback_data: "stats" }, { text: "📋 الطلبات الجديدة", callback_data: "new_requests" }],
-      [{ text: "🛠️ الخدمات", callback_data: "manage_services" }, { text: "📁 المشاريع", callback_data: "manage_projects" }],
-      [{ text: "✍️ المقالات", callback_data: "manage_articles" }, { text: "🖼️ معرض الصور", callback_data: "manage_gallery" }],
-      [{ text: "⭐ التقييمات", callback_data: "manage_reviews" }, { text: "❓ الأسئلة الشائعة", callback_data: "manage_faqs" }],
-      [{ text: "📢 إشعار للعملاء", callback_data: "send_notification" }, { text: "💾 نسخ احتياطية", callback_data: "backups" }],
-      [{ text: "⚙️ الإعدادات", callback_data: "settings" }],
+      [{ text: "📊 الإحصائيات الشاملة", callback_data: "menu_stats" }, { text: "💼 المبيعات والعملاء", callback_data: "menu_crm" }],
+      [{ text: "🛠️ محتوى الموقع والمصطلحات", callback_data: "menu_content" }, { text: "🖼️ الوسائط والأنشطة", callback_data: "menu_media" }],
+      [{ text: "⭐ التقييمات والآراء", callback_data: "menu_reviews" }, { text: "📍 صفحات المدن والتسويق", callback_data: "menu_city" }],
+      [{ text: "⚙️ إعدادات المنشأة والذكاء الاصطناعي", callback_data: "menu_settings" }, { text: "🛡️ الأمان والعمليات", callback_data: "menu_system" }],
+    ],
+  }),
+
+  crmMenu: (): InlineKeyboard => ({
+    inline_keyboard: [
+      [{ text: "📋 طلبات عروض الأسعار", callback_data: "crm_quotes" }, { text: "📅 المواعيد والحجوزات", callback_data: "crm_appointments" }],
+      [{ text: "💬 الرسائل والاستفسارات", callback_data: "crm_messages" }, { text: "👥 دليل العملاء والمستفيدين", callback_data: "crm_users" }],
+      [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
+    ],
+  }),
+
+  contentMenu: (): InlineKeyboard => ({
+    inline_keyboard: [
+      [{ text: "🛠️ الخدمات والكتالوج", callback_data: "cnt_services" }, { text: "📁 المشاريع والمعارض", callback_data: "cnt_projects" }],
+      [{ text: "✍️ المقالات والأخبار", callback_data: "cnt_articles" }, { text: "📂 التصنيفات الرئيسية", callback_data: "cnt_categories" }],
+      [{ text: "❓ الأسئلة الشائعة", callback_data: "cnt_faqs" }],
+      [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
+    ],
+  }),
+
+  mediaMenu: (): InlineKeyboard => ({
+    inline_keyboard: [
+      [{ text: "🖼️ ألبومات معرض الصور", callback_data: "med_gallery" }, { text: "📁 مكتبة الملفات والوسائط", callback_data: "med_library" }],
+      [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
+    ],
+  }),
+
+  reviewsMenu: (): InlineKeyboard => ({
+    inline_keyboard: [
+      [{ text: "⭐ آراء وتقييمات العملاء", callback_data: "rev_customer" }, { text: "💬 آراء العملاء المميزة", callback_data: "rev_testimonials" }],
+      [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
+    ],
+  }),
+
+  cityMenu: (): InlineKeyboard => ({
+    inline_keyboard: [
+      [{ text: "📍 صفحات المدن (Local SEO)", callback_data: "city_pages" }, { text: "🔗 خدمات المدن المخصصة", callback_data: "city_services" }],
+      [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
+    ],
+  }),
+
+  settingsMenu: (): InlineKeyboard => ({
+    inline_keyboard: [
+      [{ text: "🏢 بيانات المنشأة", callback_data: "set_company" }, { text: "⚙️ إعدادات المفاتيح", callback_data: "set_keys" }],
+      [{ text: "⏰ ساعات العمل والدوام", callback_data: "set_hours" }, { text: "📞 جهات التواصل", callback_data: "set_contacts" }],
+      [{ text: "🤖 نماذج وموجهات الذكاء الاصطناعي", callback_data: "set_ai" }, { text: "👑 مسؤولي التلجرام", callback_data: "set_admins" }],
+      [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
+    ],
+  }),
+
+  systemMenu: (): InlineKeyboard => ({
+    inline_keyboard: [
+      [{ text: "💾 النسخ الاحتياطية", callback_data: "sys_backups" }, { text: "🛡️ سجل العمليات والأمان", callback_data: "sys_audit" }],
+      [{ text: "📢 إشعار جماعي للعملاء", callback_data: "send_notification" }, { text: "🔔 اشتراكات الإشعارات", callback_data: "sys_push" }],
+      [{ text: "👁️ أحداث التحليلات", callback_data: "sys_analytics" }],
+      [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
     ],
   }),
 
   requestActions: (requestId: string): InlineKeyboard => ({
     inline_keyboard: [
       [
-        { text: "✅ تواصل تم", callback_data: `req_contacted:${requestId}` },
+        { text: "✅ تم التواصل", callback_data: `req_contacted:${requestId}` },
         { text: "💰 تم التسعير", callback_data: `req_quoted:${requestId}` },
       ],
       [
-        { text: "🏆 فوز", callback_data: `req_won:${requestId}` },
+        { text: "🏆 تم الفوز", callback_data: `req_won:${requestId}` },
         { text: "❌ خسارة", callback_data: `req_lost:${requestId}` },
       ],
-      [{ text: "◀️ رجوع", callback_data: "new_requests" }],
+      [{ text: "◀️ قائمة الطلبات", callback_data: "crm_quotes" }],
+    ],
+  }),
+
+  appointmentActions: (appointmentId: string): InlineKeyboard => ({
+    inline_keyboard: [
+      [
+        { text: "✅ تأكيد الموعد", callback_data: `apt_confirm:${appointmentId}` },
+        { text: "🏁 مكتمل", callback_data: `apt_complete:${appointmentId}` },
+      ],
+      [
+        { text: "❌ إلغاء الموعد", callback_data: `apt_cancel:${appointmentId}` },
+      ],
+      [{ text: "◀️ المواعيد", callback_data: "crm_appointments" }],
     ],
   }),
 
@@ -148,9 +216,16 @@ export const Keyboards = {
     inline_keyboard: [
       [
         { text: "✅ موافقة ونشر", callback_data: `review_approve:${reviewId}` },
-        { text: "❌ رفض", callback_data: `review_reject:${reviewId}` },
+        { text: "❌ رفض التقييم", callback_data: `review_reject:${reviewId}` },
       ],
-      [{ text: "◀️ رجوع", callback_data: "manage_reviews" }],
+      [{ text: "◀️ التقييمات", callback_data: "rev_customer" }],
+    ],
+  }),
+
+  toggleStatus: (entity: string, id: string, currentStatus: boolean): InlineKeyboard => ({
+    inline_keyboard: [
+      [{ text: currentStatus ? "🔴 إيقاف/إخفاء" : "🟢 تفعيل/إظهار", callback_data: `toggle_${entity}:${id}:${!currentStatus}` }],
+      [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
     ],
   }),
 
@@ -158,17 +233,12 @@ export const Keyboards = {
     inline_keyboard: [[{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }]],
   }),
 
-  confirmAction: (action: string, label: string): InlineKeyboard => ({
-    inline_keyboard: [
-      [
-        { text: `✅ ${label}`, callback_data: `confirm:${action}` },
-        { text: "❌ إلغاء", callback_data: "main_menu" },
-      ],
-    ],
+  backToSubmenu: (submenu: string): InlineKeyboard => ({
+    inline_keyboard: [[{ text: "◀️ رجوع", callback_data: submenu }]],
   }),
 };
 
-// ─── Message Formatters ───────────────────────────────────────────────
+// ─── Message Formatters Directory ──────────────────────────────────────
 
 export function formatQuoteAlert(data: {
   name: string;
@@ -184,7 +254,7 @@ export function formatQuoteAlert(data: {
 
 👤 <b>الاسم:</b> ${data.name}
 📱 <b>الجوال:</b> <code>${data.phone}</code>
-🛠️ <b>الخدمة:</b> ${data.services.join(", ")}
+🛠️ <b>الخدمات:</b> ${data.services.join(", ")}
 📍 <b>المدينة:</b> ${data.city}
 💰 <b>الميزانية:</b> ${data.budget}
 ⚡ <b>الأولوية:</b> ${data.urgency}
@@ -203,7 +273,7 @@ export function formatMessageAlert(data: {
   content: string;
   id: string;
 }) {
-  return `💬 <b>رسالة جديدة!</b>
+  return `💬 <b>رسالة تواصل جديدة!</b>
 
 👤 <b>الاسم:</b> ${data.name}
 📱 <b>الجوال:</b> <code>${data.phone}</code>
@@ -214,11 +284,35 @@ ${data.content}
 🆔 <b>المعرّف:</b> <code>${data.id}</code>`;
 }
 
+export function formatAppointmentAlert(data: {
+  id: string;
+  userName: string;
+  phone: string;
+  serviceName?: string;
+  preferredDate?: string;
+  notes?: string;
+}) {
+  return `📅 <b>حجز موعد جديد!</b>
+
+👤 <b>العميل:</b> ${data.userName}
+📱 <b>الجوال:</b> <code>${data.phone}</code>
+${data.serviceName ? `🛠️ <b>الخدمة:</b> ${data.serviceName}\n` : ""}${data.preferredDate ? `📅 <b>الموعد المطلوب:</b> ${data.preferredDate}\n` : ""}${data.notes ? `📝 <b>ملاحظات:</b> ${data.notes}\n` : ""}
+🆔 <b>المعرّف:</b> <code>${data.id}</code>`;
+}
+
 export function formatStatsMessage(stats: {
   totalRequests: number;
   newRequests: number;
+  totalAppointments: number;
+  pendingAppointments: number;
   totalMessages: number;
   unreadMessages: number;
+  totalUsers: number;
+  totalServices: number;
+  totalProjects: number;
+  totalArticles: number;
+  totalReviews: number;
+  pendingReviews: number;
   totalViews: number;
   todayViews: number;
 }) {
@@ -226,20 +320,18 @@ export function formatStatsMessage(stats: {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
 
-  return `📊 <b>إحصائيات اليوم</b>
+  return `📊 <b>إحصائيات المنصة الشاملة</b>
 📅 ${now}
 
 ━━━━━━━━━━━━━━━━━━
-📋 <b>طلبات عروض الأسعار</b>
-  • الإجمالي: <b>${stats.totalRequests}</b>
-  • جديدة: <b>${stats.newRequests}</b> 🆕
-
-💬 <b>الرسائل</b>
-  • الإجمالي: <b>${stats.totalMessages}</b>
-  • غير مقروءة: <b>${stats.unreadMessages}</b> 🔴
-
-👁️ <b>الزيارات</b>
-  • إجمالي: <b>${stats.totalViews.toLocaleString("ar-SA")}</b>
-  • اليوم: <b>${stats.todayViews.toLocaleString("ar-SA")}</b>
+📋 <b>طلبات الأسعار:</b> <b>${stats.totalRequests}</b> (جديد: ${stats.newRequests} 🆕)
+📅 <b>المواعيد:</b> <b>${stats.totalAppointments}</b> (قيد الانتظار: ${stats.pendingAppointments} ⏳)
+💬 <b>الرسائل:</b> <b>${stats.totalMessages}</b> (غير مقروءة: ${stats.unreadMessages} 🔴)
+👥 <b>دليل العملاء (Leads):</b> <b>${stats.totalUsers}</b>
+🛠️ <b>الخدمات:</b> <b>${stats.totalServices}</b>
+📁 <b>المشاريع:</b> <b>${stats.totalProjects}</b>
+✍️ <b>المقالات:</b> <b>${stats.totalArticles}</b>
+⭐ <b>التقييمات:</b> <b>${stats.totalReviews}</b> (تنتظر الموافقة: ${stats.pendingReviews} ⏳)
+👁️ <b>الزيارات الكلية:</b> <b>${stats.totalViews.toLocaleString("ar-SA")}</b> (اليوم: ${stats.todayViews.toLocaleString("ar-SA")})
 ━━━━━━━━━━━━━━━━━━`;
 }

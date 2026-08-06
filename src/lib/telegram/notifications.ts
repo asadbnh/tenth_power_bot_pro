@@ -1,5 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendMessage, Keyboards, formatQuoteAlert, formatMessageAlert } from "./bot";
+import {
+  sendMessage, Keyboards, formatQuoteAlert, formatMessageAlert, formatAppointmentAlert
+} from "./bot";
 
 async function getAdminChatIds(): Promise<number[]> {
   const envAdminIds = (process.env.TELEGRAM_ADMIN_IDS || "")
@@ -22,7 +24,6 @@ async function getAdminChatIds(): Promise<number[]> {
     console.error("Error fetching db admins:", err);
   }
 
-  // Combine and deduplicate IDs
   return Array.from(new Set([...envAdminIds, ...dbAdminIds]));
 }
 
@@ -44,6 +45,12 @@ export async function notifyNewMessage(data: {
   await broadcastToAdmins(formatMessageAlert(data), { reply_markup: Keyboards.backToMenu() });
 }
 
+export async function notifyNewAppointment(data: {
+  id: string; userName: string; phone: string; serviceName?: string; preferredDate?: string; notes?: string;
+}) {
+  await broadcastToAdmins(formatAppointmentAlert(data), { reply_markup: Keyboards.appointmentActions(data.id) });
+}
+
 export async function notifyNewReview(data: {
   id: string; reviewerName: string; rating: number; content: string; serviceName?: string;
 }) {
@@ -52,21 +59,41 @@ export async function notifyNewReview(data: {
   await broadcastToAdmins(text, { reply_markup: Keyboards.reviewActions(data.id) });
 }
 
+export async function notifyNewUserLead(data: {
+  id: string; fullName: string; phone: string; email?: string; city?: string; source?: string;
+}) {
+  const text = `👥 <b>تسجيل مستفيد/عميل جديد (Lead)!</b>\n\n👤 <b>الاسم:</b> ${data.fullName}\n📱 <b>الجوال:</b> <code>${data.phone}</code>\n${data.city ? `📍 <b>المدينة:</b> ${data.city}\n` : ""}${data.source ? `🌐 <b>المصدر:</b> ${data.source}\n` : ""}🆔 <code>${data.id}</code>`;
+  await broadcastToAdmins(text, { reply_markup: Keyboards.backToMenu() });
+}
+
+export async function notifyAuditSecurityAlert(data: {
+  action: string; actorType: string; entityType: string; ipAddress?: string;
+}) {
+  const text = `🛡️ <b>تنبيه أمان وعمليات نظام!</b>\n\n⚡ <b>الإجراء:</b> ${data.action}\n👤 <b>الفاعل:</b> ${data.actorType}\n📦 <b>الكيان:</b> ${data.entityType}\n${data.ipAddress ? `🌐 <b>العنوان:</b> <code>${data.ipAddress}</code>\n` : ""}`;
+  await broadcastToAdmins(text, { reply_markup: Keyboards.backToMenu() });
+}
+
 export async function sendDailyReport() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const [{ count: todayRequests }, { count: todayMessages }, { count: todayViews }] = await Promise.all([
+  const [
+    { count: todayRequests },
+    { count: todayAppointments },
+    { count: todayMessages },
+    { count: todayViews },
+  ] = await Promise.all([
     supabase.from("quote_requests").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
+    supabase.from("appointments").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
     supabase.from("messages").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
     supabase.from("analytics_events").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
   ]);
 
   const date = today.toLocaleDateString("ar-SA", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
   await broadcastToAdmins(
-    `📅 <b>التقرير اليومي — ${date}</b>\n\n📋 طلبات: <b>${todayRequests ?? 0}</b>\n💬 رسائل: <b>${todayMessages ?? 0}</b>\n👁️ زيارات: <b>${todayViews ?? 0}</b>`,
+    `📅 <b>التقرير اليومي الشامل — ${date}</b>\n\n📋 طلبات تسعير: <b>${todayRequests ?? 0}</b>\n📅 حجوزات ومواعيد: <b>${todayAppointments ?? 0}</b>\n💬 رسائل واستفسارات: <b>${todayMessages ?? 0}</b>\n👁️ زيارات وأحداث: <b>${todayViews ?? 0}</b>`,
     { reply_markup: Keyboards.backToMenu() }
   );
 }
