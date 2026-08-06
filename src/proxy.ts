@@ -11,7 +11,6 @@ const DEFAULT_LOCALE = "ar";
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60_000; // 1 minute
 const RATE_LIMIT_MAX = 100; // requests per window
-
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
   const record = rateLimitMap.get(ip);
