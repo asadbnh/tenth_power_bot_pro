@@ -8,6 +8,15 @@ import {
 // ─── Auth Guard ───────────────────────────────────────────────────────
 
 async function isAuthorizedAdmin(telegramUserId: number): Promise<boolean> {
+  const envAdminIds = (process.env.TELEGRAM_ADMIN_IDS || "")
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
+
+  if (envAdminIds.includes(String(telegramUserId))) {
+    return true;
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
   const { data } = await supabase
