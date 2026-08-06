@@ -31,23 +31,26 @@ export async function submitQuoteRequest(data: QuoteFormData) {
 
   const { data: user, error: userErr } = await supabase
     .from("users")
-    .insert({
-      full_name: data.name,
-      phone: data.phone,
-      email: data.email ?? null,
-      whatsapp: data.preferWhatsApp ? data.phone : null,
-      city: data.city,
-      source: "quote_form",
-      utm_source: data.utm_source ?? null,
-      utm_medium: data.utm_medium ?? null,
-      utm_campaign: data.utm_campaign ?? null,
-      metadata: { locale: data.locale ?? "ar" },
-    })
+    .upsert(
+      {
+        full_name: data.name,
+        phone: data.phone,
+        email: data.email ?? null,
+        whatsapp: data.preferWhatsApp ? data.phone : null,
+        city: data.city,
+        source: "quote_form",
+        utm_source: data.utm_source ?? null,
+        utm_medium: data.utm_medium ?? null,
+        utm_campaign: data.utm_campaign ?? null,
+        metadata: { locale: data.locale ?? "ar" },
+      },
+      { onConflict: "phone" }
+    )
     .select("id")
     .single();
 
-  if (userErr) {
-    console.error("Failed to create user:", userErr);
+  if (userErr || !user) {
+    console.error("Failed to create/upsert user:", userErr);
     return { success: false, error: "فشل في حفظ البيانات" };
   }
 
@@ -101,13 +104,16 @@ export async function submitContactForm(data: ContactFormData) {
 
   const { data: user } = await supabase
     .from("users")
-    .insert({
-      full_name: data.name,
-      phone: data.phone,
-      email: data.email ?? null,
-      source: "contact_form",
-      metadata: { locale: data.locale ?? "ar" },
-    })
+    .upsert(
+      {
+        full_name: data.name,
+        phone: data.phone,
+        email: data.email ?? null,
+        source: "contact_form",
+        metadata: { locale: data.locale ?? "ar" },
+      },
+      { onConflict: "phone" }
+    )
     .select("id")
     .single();
 
