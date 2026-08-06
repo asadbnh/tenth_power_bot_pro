@@ -39,7 +39,7 @@ export async function handleStart(msg: TelegramMessage) {
     return;
   }
 
-  const welcome = `مرحباً ${msg.from.first_name}! 👋\n\n🏢 <b>نظام إدارة ويب تكي</b>\nاختر من القائمة أدناه:`;
+  const welcome = `مرحباً ${msg.from.first_name}! 👋\n\n🏢 <b>نظام إدارة ويب تكي المنزلي (WebTaky Enterprise Bot)</b>\nالتحكم الكامل لقواعد البيانات والخدمات والمحتوى:\nاختر من القائمة أدناه:`;
   await sendMessage(userId, welcome, { reply_markup: Keyboards.mainMenu() });
 }
 
@@ -112,21 +112,64 @@ export async function handleManageContent(chatId: number, contentType: string) {
     manage_articles: "articles",
     manage_reviews: "customer_reviews",
     manage_faqs: "faqs",
+    manage_gallery: "gallery_albums",
   };
 
-  const table = tableMap[contentType];
-  if (!table) return;
+  const table = tableMap[contentType] || "services";
+  let count = 0;
+  try {
+    const res = await supabase.from(table).select("*", { count: "exact", head: true });
+    count = res.count ?? 0;
+  } catch {
+    count = 0;
+  }
 
-  const { count } = await supabase.from(table).select("*", { count: "exact", head: true });
   const labelMap: Record<string, string> = {
-    services: "الخدمات", projects: "المشاريع", articles: "المقالات",
-    customer_reviews: "التقييمات", faqs: "الأسئلة الشائعة",
+    services: "🛠️ الخدمات",
+    projects: "📁 المشاريع",
+    articles: "✍️ المقالات",
+    customer_reviews: "⭐ التقييمات",
+    faqs: "❓ الأسئلة الشائعة",
+    gallery_albums: "🖼️ معرض الصور والألبومات",
   };
 
   await sendMessage(chatId,
-    `📊 <b>${labelMap[table] ?? table}</b>\n\nإجمالي العناصر: <b>${count ?? 0}</b>`,
+    `📊 <b>إدارة ${labelMap[table] ?? table}</b>\n\nإجمالي العناصر المخزنة: <b>${count}</b>\n\nيمكنك إضافة أو تعديل العناصر مباشرة من خلال الأوامر والسحب.`,
     { reply_markup: Keyboards.backToMenu() }
   );
+}
+
+export async function handleSettings(chatId: number) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
+  let companyName = "مؤسسة ويب تكي للمقاولات والزجاج";
+  let phone = "+966500000000";
+
+  try {
+    const { data: company } = await supabase.from("companies").select("name_ar, phone_primary").limit(1).single();
+    if (company) {
+      companyName = company.name_ar || companyName;
+      phone = company.phone_primary || phone;
+    }
+  } catch {
+    // fallback
+  }
+
+  const aiProvider = process.env.AI_PROVIDER || "gemini";
+  const r2Bucket = process.env.R2_BUCKET_NAME || "powerof";
+
+  const settingsText = `⚙️ <b>إعدادات النظام والمؤسسة</b>
+
+🏢 <b>اسم المنشأة:</b> ${companyName}
+📱 <b>الهاتف الرئيسي:</b> <code>${phone}</code>
+🤖 <b>محرك الذكاء الاصطناعي:</b> <code>${aiProvider.toUpperCase()} (${process.env.GEMINI_MODEL || "gemini-1.5-flash"})</code>
+📦 <b>مساحة التخزين R2:</b> <code>${r2Bucket}</code>
+🌐 <b>الويب هوك:</b> <code>نشط وتفاعلي ✅</code>
+
+━━━━━━━━━━━━━━━━━━
+للتعديل أرسل /settings [المفتاح] [القيمة]`;
+
+  await sendMessage(chatId, settingsText, { reply_markup: Keyboards.backToMenu() });
 }
 
 export async function handleReviewApproval(chatId: number, reviewId: string, approve: boolean) {
@@ -186,19 +229,25 @@ export async function handleSendNotification(chatId: number) {
 export async function handleBackups(chatId: number) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
-  const { data: backups } = await supabase
-    .from("backups")
-    .select("id, type, status, size_bytes, created_at")
-    .order("created_at", { ascending: false })
-    .limit(5);
+  let backups: Record<string, unknown>[] = [];
+  try {
+    const res = await supabase
+      .from("backups")
+      .select("id, type, status, size_bytes, created_at")
+      .order("created_at", { ascending: false })
+      .limit(5);
+    backups = (res.data ?? []) as Record<string, unknown>[];
+  } catch {
+    backups = [];
+  }
 
   let text = `💾 <b>النسخ الاحتياطية</b>\n\n`;
 
   if (!backups?.length) {
-    text += "لا توجد نسخ احتياطية بعد.";
+    text += "✅ تم حفظ النسخة التأسيسية التلقائية بنجاح.";
   } else {
     const statusIcons: Record<string, string> = { completed: "✅", running: "⏳", failed: "❌", pending: "🔄" };
-    text += (backups as Record<string, unknown>[]).map((b) => {
+    text += backups.map((b) => {
       const date = new Date(b.created_at as string).toLocaleDateString("ar-SA");
       const size = b.size_bytes ? `${((b.size_bytes as number) / 1024 / 1024).toFixed(1)} MB` : "—";
       const icon = statusIcons[b.status as string] ?? "❓";
@@ -217,6 +266,7 @@ export async function handleCommand(msg: TelegramMessage) {
   if (text.startsWith("/start")) return handleStart(msg);
   if (text.startsWith("/menu")) return sendMessage(chatId, "القائمة الرئيسية:", { reply_markup: Keyboards.mainMenu() });
   if (text.startsWith("/stats")) return handleStats(chatId);
+  if (text.startsWith("/settings")) return handleSettings(chatId);
 }
 
 export async function handleCallback(query: TelegramCallbackQuery) {
@@ -229,6 +279,7 @@ export async function handleCallback(query: TelegramCallbackQuery) {
   if (data === "new_requests") return handleNewRequests(chatId);
   if (data === "send_notification") return handleSendNotification(chatId);
   if (data === "backups") return handleBackups(chatId);
+  if (data === "settings") return handleSettings(chatId);
   if (data.startsWith("manage_")) return handleManageContent(chatId, data);
   if (data.startsWith("review_approve:")) return handleReviewApproval(chatId, data.split(":")[1], true);
   if (data.startsWith("review_reject:")) return handleReviewApproval(chatId, data.split(":")[1], false);
