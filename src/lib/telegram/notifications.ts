@@ -2,13 +2,28 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sendMessage, Keyboards, formatQuoteAlert, formatMessageAlert } from "./bot";
 
 async function getAdminChatIds(): Promise<number[]> {
+  const envAdminIds = (process.env.TELEGRAM_ADMIN_IDS || "")
+    .split(",")
+    .map((id) => parseInt(id.trim(), 10))
+    .filter((n) => !isNaN(n));
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
-  const { data } = await supabase
-    .from("telegram_admins")
-    .select("telegram_user_id")
-    .eq("is_active", true);
-  return (data as { telegram_user_id: number }[])?.map((a) => a.telegram_user_id) ?? [];
+  let dbAdminIds: number[] = [];
+  try {
+    const { data } = await supabase
+      .from("telegram_admins")
+      .select("telegram_user_id")
+      .eq("is_active", true);
+    if (data) {
+      dbAdminIds = (data as { telegram_user_id: number }[]).map((a) => Number(a.telegram_user_id));
+    }
+  } catch (err) {
+    console.error("Error fetching db admins:", err);
+  }
+
+  // Combine and deduplicate IDs
+  return Array.from(new Set([...envAdminIds, ...dbAdminIds]));
 }
 
 async function broadcastToAdmins(text: string, options?: Parameters<typeof sendMessage>[2]) {
