@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { handleCommand, handleCallback } from "@/lib/telegram/handlers";
+import { handleCommand, handleCallback, handlePhotoMessage } from "@/lib/telegram/handlers";
 import type { TelegramUpdate } from "@/lib/telegram/bot";
 
 /**
@@ -24,7 +24,9 @@ export async function POST(request: NextRequest) {
   try {
     if (update.message) {
       const msg = update.message;
-      if (msg.text?.startsWith("/")) {
+      if (msg.photo?.length) {
+        await handlePhotoMessage(msg);
+      } else if (msg.text?.startsWith("/")) {
         await handleCommand(msg);
       }
     } else if (update.callback_query) {
@@ -32,7 +34,6 @@ export async function POST(request: NextRequest) {
     }
   } catch (err) {
     console.error("Telegram webhook error:", err);
-    // Return 200 always — Telegram will retry on non-200
   }
 
   return NextResponse.json({ ok: true });

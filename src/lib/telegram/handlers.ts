@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
-  sendMessage, editMessage, answerCallbackQuery,
+  sendMessage, editMessage, answerCallbackQuery, getFile, getTelegramFileUrl,
   Keyboards, formatStatsMessage,
   type TelegramMessage, type TelegramCallbackQuery,
 } from "./bot";
@@ -259,6 +259,62 @@ export async function handleBackups(chatId: number) {
 }
 
 // ─── Main Router ──────────────────────────────────────────────────────
+
+export async function handlePhotoMessage(msg: TelegramMessage) {
+  const chatId = msg.chat.id;
+  const userId = msg.from.id;
+  const isAdmin = await isAuthorizedAdmin(userId);
+
+  if (!isAdmin) {
+    await sendMessage(chatId, "⛔ غير مصرح لك بالحفظ.");
+    return;
+  }
+
+  if (!msg.photo?.length) return;
+
+  // Get highest resolution photo
+  const photo = msg.photo[msg.photo.length - 1];
+  const fileRes = await getFile(photo.file_id);
+
+  if (!fileRes?.result?.file_path) {
+    await sendMessage(chatId, "❌ فشل في جلب ملف الصورة من التلجرام.");
+    return;
+  }
+
+  const telegramFileUrl = getTelegramFileUrl(fileRes.result.file_path);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
+
+  // Get company ID
+  const { data: company } = await supabase.from("companies").select("id").limit(1).single();
+  const companyId = company?.id ?? "00000000-0000-0000-0000-000000000001";
+
+  const caption = msg.text || "صورة جديدة في معرض الأعمال والواجهات";
+
+  // Insert into gallery_albums
+  const { data: album, error: albumErr } = await supabase
+    .from("gallery_albums")
+    .insert({
+      company_id: companyId,
+      slug: `album-${Date.now()}`,
+      title_ar: caption,
+      title_en: "New Gallery Upload",
+      is_active: true,
+    })
+    .select("id")
+    .single();
+
+  if (albumErr) {
+    console.error("Gallery insert error:", albumErr);
+    await sendMessage(chatId, `⚠️ تعذر إضافتها للمعرض: ${albumErr.message}`);
+    return;
+  }
+
+  await sendMessage(chatId,
+    `📸 <b>تم إضافة الصورة بنجاح لمعرض الصور والألبومات!</b>\n\n🆔 <b>معرّف الألبوم:</b> <code>${album?.id ?? "—"}</code>\n🔗 <b>رابط الملف:</b> <a href="${telegramFileUrl}">عرض الصورة الحية</a>\n\n✅ مضافة حالياً وتظهر في واجهة معرض الصور بالموقع!`,
+    { reply_markup: Keyboards.backToMenu() }
+  );
+}
 
 export async function handleCommand(msg: TelegramMessage) {
   const chatId = msg.chat.id;

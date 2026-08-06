@@ -146,3 +146,6 @@ async function seedDatabase() {
 }
 
 seedDatabase().catch(console.error);
+
+//npm run seed
+
