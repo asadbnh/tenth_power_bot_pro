@@ -6,6 +6,7 @@ import { MapPin, Calendar, Eye, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { AnimatedCanvasBanner } from "@/components/ui/AnimatedCanvasBanner";
 
 interface Props {
   locale: Locale;
@@ -28,13 +29,17 @@ const DEFAULT_PROJECTS = [
 export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
   const isRtl = locale === "ar";
   const [activeFilter, setActiveFilter] = useState(0);
+  const [imgErrors, setImgErrors] = useState<Record<string | number, boolean>>({});
   const filters = isRtl ? FILTERS_AR : FILTERS_EN;
 
   const projects = (initialProjects && initialProjects.length > 0) ? initialProjects : DEFAULT_PROJECTS;
 
-  const filtered = activeFilter === 0
-    ? projects
-    : projects.filter(p => (p.cat === FILTERS_AR[activeFilter] || p.services?.slug === FILTERS_EN[activeFilter].toLowerCase()));
+  const filtered = projects.filter((project) => {
+    if (activeFilter === 0) return true;
+    const selectedCategory = filters[activeFilter];
+    const cat = project.cat || project.category || "";
+    return cat.includes(selectedCategory) || (isRtl ? project.title_ar : project.title_en)?.includes(selectedCategory);
+  });
 
   return (
     <div className="pt-[var(--header-height)]">
@@ -47,7 +52,7 @@ export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
             className="text-sm font-semibold text-primary-300 uppercase tracking-widest mb-3">{dict.projects.title}</motion.p>
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             className="text-3xl sm:text-5xl font-extrabold text-white mb-4">
-            {isRtl ? "مشاريعنا المنجزة" : "Our Completed Projects"}
+            {isRtl ? "مشاريعنا المميزة" : "Featured Projects"}
           </motion.h1>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
             className="text-lg text-white/60 max-w-2xl mx-auto">{dict.projects.subtitle}</motion.p>
@@ -78,7 +83,8 @@ export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
               const title = project.name || (isRtl ? project.title_ar : project.title_en) || project.title_ar;
               const city = project.city || (isRtl ? project.city_ar : project.city_en) || "السعودية";
               const cat = project.cat || project.services?.slug || "مشروع";
-              const coverImage = project.cover_image_url || project.image_url || "/images/defaults/projects/project-1.jpg";
+              const coverImage = project.cover_image_url || project.image_url;
+              const isError = imgErrors[project.id || i] || !coverImage;
 
               return (
                 <motion.article key={project.id || i}
@@ -89,11 +95,22 @@ export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
                   className="group rounded-2xl overflow-hidden border border-border-light hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-xl transition-all duration-300 bg-surface-elevated cursor-pointer">
 
                   <div className="h-52 bg-surface relative overflow-hidden flex items-center justify-center">
-                    <img src={coverImage} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-                    <span className="absolute top-3 end-3 px-2.5 py-1 rounded-full bg-black/40 text-white text-xs font-medium backdrop-blur-sm">
-                      {cat}
-                    </span>
+                    {isError ? (
+                      <AnimatedCanvasBanner aspectRatio="auto" badge={cat} className="w-full h-full" />
+                    ) : (
+                      <>
+                        <img 
+                          src={coverImage} 
+                          alt={title} 
+                          onError={() => setImgErrors(prev => ({ ...prev, [project.id || i]: true }))}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                        />
+                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                        <span className="absolute top-3 end-3 px-2.5 py-1 rounded-full bg-black/40 text-white text-xs font-medium backdrop-blur-sm">
+                          {cat}
+                        </span>
+                      </>
+                    )}
                   </div>
 
                   <div className="p-5">
