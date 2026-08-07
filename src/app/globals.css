@@ -7,43 +7,43 @@
 
 /* ─── Light Theme Variables ───────────────────────────────────────── */
 :root {
-  /* Primary palette — deep professional blue */
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
-  --color-primary-950: #172554;
+  /* Primary palette — Royal Navy (#0A1D37) */
+  --color-primary-50: #f0f4f9;
+  --color-primary-100: #d9e2ec;
+  --color-primary-200: #b0c4de;
+  --color-primary-300: #7e9dbf;
+  --color-primary-400: #4b73a0;
+  --color-primary-500: #1a385c;
+  --color-primary-600: #0a1d37;
+  --color-primary-700: #08172d;
+  --color-primary-800: #061122;
+  --color-primary-900: #040c18;
+  --color-primary-950: #02060c;
 
-  /* Accent — premium gold */
-  --color-accent-50: #fffbeb;
-  --color-accent-100: #fef3c7;
-  --color-accent-200: #fde68a;
-  --color-accent-300: #fcd34d;
-  --color-accent-400: #fbbf24;
-  --color-accent-500: #f59e0b;
-  --color-accent-600: #d97706;
-  --color-accent-700: #b45309;
-  --color-accent-800: #92400e;
-  --color-accent-900: #78350f;
+  /* Secondary Luxury Gold palette (#D4AF37) & Accent (#F59E0B) */
+  --color-accent-50: #fffdf0;
+  --color-accent-100: #fff9c4;
+  --color-accent-200: #fff18b;
+  --color-accent-300: #fde452;
+  --color-accent-400: #f5d027;
+  --color-accent-500: #d4af37;
+  --color-accent-600: #f59e0b;
+  --color-accent-700: #b38e22;
+  --color-accent-800: #8c6c16;
+  --color-accent-900: #453306;
 
-  /* Surfaces */
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --surface: #f8fafc;
+  /* Surfaces (Light Mode) */
+  --background: #f8fafc;
+  --foreground: #0a1d37;
+  --surface: #ffffff;
   --surface-elevated: #ffffff;
-  --surface-overlay: rgba(0, 0, 0, 0.5);
+  --surface-overlay: rgba(10, 29, 55, 0.5);
   --border: #e2e8f0;
-  --border-light: #f1f5f9;
+  --border-light: #e2e8f0;
 
   /* Text */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
+  --text-primary: #0a1d37;
+  --text-secondary: #64748b;
   --text-tertiary: #94a3b8;
   --text-inverse: #ffffff;
 
@@ -51,24 +51,25 @@
   --success: #10b981;
   --warning: #f59e0b;
   --error: #ef4444;
-  --info: #3b82f6;
+  --info: #0a1d37;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.3);
+  /* Shadows (Light Mode Luxury Elevation) */
+  --shadow-sm: 0 1px 3px rgba(10, 29, 55, 0.05);
+  --shadow-md: 0 2px 8px -2px rgba(10, 29, 55, 0.08);
+  --shadow-lg: 0 4px 16px -4px rgba(10, 29, 55, 0.12);
+  --shadow-xl: 0 12px 24px -6px rgba(10, 29, 55, 0.15);
+  --shadow-glow: 0 0 20px rgba(212, 175, 55, 0.3);
 
   /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(10, 29, 55, 0.08);
   --glass-blur: 12px;
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 50%, #60a5fa 100%);
-  --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-  --gradient-hero: linear-gradient(180deg, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.6) 50%, rgba(15, 23, 42, 0.9) 100%);
+  --gradient-primary: linear-gradient(135deg, #0a1d37 0%, #1a385c 100%);
+  --gradient-accent: linear-gradient(135deg, #d4af37 0%, #f59e0b 100%);
+  --gradient-gold: linear-gradient(135deg, #d4af37 0%, #f5d027 100%);
+  --gradient-hero: linear-gradient(180deg, rgba(10, 29, 55, 0.96) 0%, rgba(10, 29, 55, 0.85) 50%, rgba(10, 29, 55, 0.96) 100%);
   --gradient-surface: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
 
   /* Spacing */
@@ -79,43 +80,42 @@
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
   --radius-full: 9999px;
 
   /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-base: 300ms ease;
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ─── Dark Theme Variables ────────────────────────────────────────── */
 .dark {
-  --background: #0a0f1e;
+  --background: #0f172a;
   --foreground: #f1f5f9;
-  --surface: #111827;
+  --surface: #1e293b;
   --surface-elevated: #1e293b;
-  --surface-overlay: rgba(0, 0, 0, 0.7);
-  --border: #1e293b;
-  --border-light: #1e293b;
+  --surface-overlay: rgba(15, 23, 42, 0.8);
+  --border: #334155;
+  --border-light: rgba(255, 255, 255, 0.08);
 
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --text-tertiary: #64748b;
-  --text-inverse: #0f172a;
+  --text-inverse: #0a1d37;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.2);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.25);
+  --shadow-xl: 0 10px 30px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 25px rgba(212, 175, 55, 0.25);
 
-  --glass-bg: rgba(15, 23, 42, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(30, 41, 59, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.08);
 
-  --gradient-hero: linear-gradient(180deg, rgba(10, 15, 30, 0.95) 0%, rgba(10, 15, 30, 0.7) 50%, rgba(10, 15, 30, 0.95) 100%);
-  --gradient-surface: linear-gradient(180deg, #0a0f1e 0%, #111827 100%);
+  --gradient-hero: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 29, 55, 0.9) 50%, rgba(15, 23, 42, 0.98) 100%);
+  --gradient-surface: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
 }
 
 /* ─── Tailwind v4 Theme Integration ──────────────────────────────── */
@@ -185,6 +185,33 @@ body {
   line-height: 1.7;
   min-height: 100dvh;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ─── Royal Card & Badge Utility Components ────────────────────────── */
+.royal-badge {
+  background-color: #0A1D37;
+  color: #D4AF37;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.royal-badge-gold {
+  background-color: #D4AF37;
+  color: #0A1D37;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.dark .royal-badge {
+  background-color: #1E293B;
+  color: #D4AF37;
+  border-color: rgba(212, 175, 55, 0.4);
 }
 
 /* ─── Typography Scale ────────────────────────────────────────────── */
