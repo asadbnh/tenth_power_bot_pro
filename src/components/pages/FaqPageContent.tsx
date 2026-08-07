@@ -7,9 +7,13 @@ import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-interface Props { locale: Locale; dict: Dictionary; }
+interface Props {
+  locale: Locale;
+  dict: Dictionary;
+  initialFaqs?: any[];
+}
 
-const FAQS = [
+const DEFAULT_FAQS = [
   {
     q_ar: "ما هي أنواع الزجاج المقوى التي تقدمونها؟",
     q_en: "What types of tempered glass do you offer?",
@@ -31,53 +35,21 @@ const FAQS = [
     a_en: "Yes, we offer a comprehensive 5-year warranty on all aluminum works including: no breakage, rust resistance, and color preservation. We also provide free periodic maintenance service during the warranty period.",
     cat: "aluminum",
   },
-  {
-    q_ar: "كيف يتم تحديد سعر المطبخ؟",
-    q_en: "How is kitchen pricing determined?",
-    a_ar: "يتحدد سعر المطبخ بناءً على عدة عوامل: مساحة المطبخ، ونوع الخامات المختارة (محلية أو مستوردة)، وتعقيد التصميم، ونوع الأجهزة إن وجدت. نقدم جلسة تصميم مجانية لتحديد تكلفة دقيقة لمشروعك.",
-    a_en: "Kitchen pricing is determined based on several factors: kitchen area, type of materials chosen (local or imported), design complexity, and type of appliances if any. We offer a free design session to determine an exact cost for your project.",
-    cat: "kitchen",
-  },
-  {
-    q_ar: "هل تعملون في جميع مناطق المملكة؟",
-    q_en: "Do you operate in all regions of Saudi Arabia?",
-    a_ar: "نعم، نغطي معظم مناطق المملكة العربية السعودية بما في ذلك: الرياض، جدة، الدمام، الخبر، مكة المكرمة، المدينة المنورة، أبها، وجازان. تواصل معنا وسنتحقق من إمكانية الخدمة في موقعك.",
-    a_en: "Yes, we cover most regions of Saudi Arabia including: Riyadh, Jeddah, Dammam, Al Khobar, Mecca, Madinah, Abha, and Jizan. Contact us and we will verify service availability in your location.",
-    cat: "general",
-  },
-  {
-    q_ar: "كيف يمكنني الحصول على عرض سعر؟",
-    q_en: "How can I get a price quote?",
-    a_ar: "يمكنك الحصول على عرض سعر مجاني من خلال: طلب عرض سعر عبر موقعنا، أو التواصل عبر واتساب على الرقم +966 50 000 0000، أو زيارة مكاتبنا مباشرة. نرد على جميع الطلبات خلال 24 ساعة.",
-    a_en: "You can get a free quote through: requesting a quote via our website, contacting via WhatsApp at +966 50 000 0000, or visiting our offices directly. We respond to all requests within 24 hours.",
-    cat: "general",
-  },
-  {
-    q_ar: "ما هي الخامات التي تستخدمونها في الديكور؟",
-    q_en: "What materials do you use in decoration?",
-    a_ar: "نستخدم خامات عالية الجودة من أفضل الموردين العالميين، تشمل: الجبس الأمريكي، والخشب الطبيعي والمدبوس، والرخام الطبيعي والصناعي، والزجاج المزخرف، والألياف الزجاجية. جميع خاماتنا مطابقة للمواصفات القياسية.",
-    a_en: "We use high-quality materials from the best global suppliers, including: American gypsum, natural and pressed wood, natural and artificial marble, decorated glass, and fiberglass. All our materials comply with standard specifications.",
-    cat: "decoration",
-  },
-  {
-    q_ar: "هل يمكنني تعديل التصميم بعد البدء في التنفيذ؟",
-    q_en: "Can I modify the design after execution begins?",
-    a_ar: "نحرص على مراجعة وتأكيد جميع التفاصيل قبل البدء في التنفيذ لتجنب أي تعديلات مكلفة. ومع ذلك، في حالة التعديلات الضرورية أثناء التنفيذ، ندرسها ونقدم لك تقييماً للتكلفة الإضافية والوقت اللازم.",
-    a_en: "We ensure to review and confirm all details before starting execution to avoid costly modifications. However, for necessary modifications during execution, we study them and provide you with an assessment of additional cost and time required.",
-    cat: "general",
-  },
 ];
 
-export function FaqPageContent({ locale, dict }: Props) {
+export function FaqPageContent({ locale, dict, initialFaqs }: Props) {
   const isRtl = locale === "ar";
   const [openId, setOpenId] = useState<number | null>(null);
   const [query, setQuery] = useState("");
 
-  const filtered = FAQS.filter(faq => {
+  const faqsList = (initialFaqs && initialFaqs.length > 0) ? initialFaqs : DEFAULT_FAQS;
+
+  const filtered = faqsList.filter(faq => {
+    const question = faq.question || (isRtl ? faq.q_ar : faq.q_en) || faq.q_ar || "";
+    const answer = faq.answer || (isRtl ? faq.a_ar : faq.a_en) || faq.a_ar || "";
     if (!query.trim()) return true;
     const q = query.toLowerCase();
-    return (isRtl ? faq.q_ar : faq.q_en).toLowerCase().includes(q) ||
-      (isRtl ? faq.a_ar : faq.a_en).toLowerCase().includes(q);
+    return question.toLowerCase().includes(q) || answer.toLowerCase().includes(q);
   });
 
   return (
@@ -117,44 +89,49 @@ export function FaqPageContent({ locale, dict }: Props) {
             </div>
           ) : (
             <div className="space-y-3">
-              {filtered.map((faq, i) => (
-                <motion.div key={i}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.35, delay: i * 0.06 }}
-                  className={cn(
-                    "rounded-2xl border transition-all duration-200 overflow-hidden",
-                    openId === i
-                      ? "border-primary-300 dark:border-primary-700 shadow-md"
-                      : "border-border-light hover:border-primary-200 dark:hover:border-primary-800"
-                  )}>
-                  <button
-                    onClick={() => setOpenId(openId === i ? null : i)}
-                    className="w-full flex items-center justify-between gap-4 p-5 text-start bg-surface-elevated hover:bg-surface transition-colors"
-                    aria-expanded={openId === i}>
-                    <span className="font-semibold text-sm sm:text-base leading-snug">
-                      {isRtl ? faq.q_ar : faq.q_en}
-                    </span>
-                    <ChevronDown className={cn("w-5 h-5 text-text-tertiary shrink-0 transition-transform duration-300",
-                      openId === i && "rotate-180 text-primary-600 dark:text-primary-400")} />
-                  </button>
-                  <AnimatePresence initial={false}>
-                    {openId === i && (
-                      <motion.div
-                        key="answer"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}>
-                        <div className="px-5 pb-5 pt-2 text-sm text-text-secondary leading-relaxed border-t border-border-light bg-background">
-                          {isRtl ? faq.a_ar : faq.a_en}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              ))}
+              {filtered.map((faq, i) => {
+                const questionText = faq.question || (isRtl ? faq.q_ar : faq.q_en) || faq.q_ar;
+                const answerText = faq.answer || (isRtl ? faq.a_ar : faq.a_en) || faq.a_ar;
+
+                return (
+                  <motion.div key={faq.id || i}
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.35, delay: i * 0.06 }}
+                    className={cn(
+                      "rounded-2xl border transition-all duration-200 overflow-hidden",
+                      openId === i
+                        ? "border-primary-300 dark:border-primary-700 shadow-md"
+                        : "border-border-light hover:border-primary-200 dark:hover:border-primary-800"
+                    )}>
+                    <button
+                      onClick={() => setOpenId(openId === i ? null : i)}
+                      className="w-full flex items-center justify-between gap-4 p-5 text-start bg-surface-elevated hover:bg-surface transition-colors"
+                      aria-expanded={openId === i}>
+                      <span className="font-semibold text-sm sm:text-base leading-snug">
+                        {questionText}
+                      </span>
+                      <ChevronDown className={cn("w-5 h-5 text-text-tertiary shrink-0 transition-transform duration-300",
+                        openId === i && "rotate-180 text-primary-600 dark:text-primary-400")} />
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {openId === i && (
+                        <motion.div
+                          key="answer"
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}>
+                          <div className="px-5 pb-5 pt-2 text-sm text-text-secondary leading-relaxed border-t border-border-light bg-background">
+                            {answerText}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                );
+              })}
             </div>
           )}
 

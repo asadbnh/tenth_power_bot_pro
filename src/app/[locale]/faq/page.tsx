@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { FaqPageContent } from "@/components/pages/FaqPageContent";
+import { getFaqs } from "@/lib/actions/content";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -16,6 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function FaqPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const dict = await getDictionary(locale as Locale);
-  return <FaqPageContent locale={locale as Locale} dict={dict} />;
+  const validLocale = locale as Locale;
+  const dict = await getDictionary(validLocale);
+  const faqs = await getFaqs(validLocale).catch(() => []);
+
+  return <FaqPageContent locale={validLocale} dict={dict} initialFaqs={faqs as any[]} />;
 }

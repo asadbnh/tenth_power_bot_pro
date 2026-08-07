@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { TestimonialsPageContent } from "@/components/pages/TestimonialsPageContent";
+import { getApprovedReviews } from "@/lib/actions/content";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -16,6 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function TestimonialsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const dict = await getDictionary(locale as Locale);
-  return <TestimonialsPageContent locale={locale as Locale} dict={dict} />;
+  const validLocale = locale as Locale;
+  const dict = await getDictionary(validLocale);
+  const reviews = await getApprovedReviews(12).catch(() => []);
+
+  return <TestimonialsPageContent locale={validLocale} dict={dict} initialReviews={reviews as any[]} />;
 }

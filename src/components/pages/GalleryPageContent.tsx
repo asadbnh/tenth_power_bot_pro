@@ -7,32 +7,34 @@ import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-interface Props { locale: Locale; dict: Dictionary; }
+interface Props {
+  locale: Locale;
+  dict: Dictionary;
+  initialItems?: any[];
+}
 
 const ALBUMS = [
-  { id: 1, title_ar: "مشاريع الزجاج", title_en: "Glass Projects", count: 24, gradient: "from-blue-500 to-cyan-400", emoji: "🪟" },
-  { id: 2, title_ar: "أعمال الألمنيوم", title_en: "Aluminum Works", count: 18, gradient: "from-slate-500 to-gray-400", emoji: "🔩" },
-  { id: 3, title_ar: "تصاميم المطابخ", title_en: "Kitchen Designs", count: 32, gradient: "from-amber-500 to-orange-400", emoji: "🍽️" },
-  { id: 4, title_ar: "مشاريع الديكور", title_en: "Decoration Projects", count: 41, gradient: "from-rose-500 to-pink-400", emoji: "🎨" },
-  { id: 5, title_ar: "الواجهات الزجاجية", title_en: "Glass Facades", count: 15, gradient: "from-indigo-500 to-purple-400", emoji: "🏢" },
-  { id: 6, title_ar: "أبواب ونوافذ", title_en: "Doors & Windows", count: 28, gradient: "from-emerald-500 to-teal-400", emoji: "🚪" },
+  { id: 1, title_ar: "مشاريع الزجاج", title_en: "Glass Projects", count: 24, image_url: "/images/defaults/projects/project-1.jpg" },
+  { id: 2, title_ar: "أعمال الألمنيوم", title_en: "Aluminum Works", count: 18, image_url: "/images/defaults/projects/project-1.jpg" },
+  { id: 3, title_ar: "تصاميم المطابخ", title_en: "Kitchen Designs", count: 32, image_url: "/images/defaults/projects/project-1.jpg" },
+  { id: 4, title_ar: "مشاريع الديكور", title_en: "Decoration Projects", count: 41, image_url: "/images/defaults/projects/project-1.jpg" },
+  { id: 5, title_ar: "الواجهات الزجاجية", title_en: "Glass Facades", count: 15, image_url: "/images/defaults/projects/project-1.jpg" },
+  { id: 6, title_ar: "أبواب ونوافذ", title_en: "Doors & Windows", count: 28, image_url: "/images/defaults/projects/project-1.jpg" },
 ];
 
-// Gallery grid images (using gradient placeholders until R2 is connected)
-const GALLERY_ITEMS = Array.from({ length: 18 }, (_, i) => ({
-  id: i + 1,
-  emoji: ["🪟", "🔩", "🍽️", "🎨", "🏢", "🚪", "🏗️", "🏠", "⭐"][i % 9],
-  gradient: [
-    "from-blue-500 to-cyan-400", "from-slate-500 to-gray-400", "from-amber-500 to-orange-400",
-    "from-rose-500 to-pink-400", "from-indigo-500 to-purple-400", "from-emerald-500 to-teal-400",
-    "from-yellow-500 to-amber-400", "from-violet-500 to-fuchsia-400", "from-blue-600 to-indigo-500"
-  ][i % 9],
-}));
+const DEFAULT_ITEMS = [
+  { id: "1", image_url: "/images/defaults/projects/project-1.jpg", thumbnail_url: "/images/defaults/projects/project-1.jpg" },
+  { id: "2", image_url: "/images/defaults/projects/project-1-before.jpg", thumbnail_url: "/images/defaults/projects/project-1-before.jpg" },
+  { id: "3", image_url: "/images/defaults/projects/project-1-after.jpg", thumbnail_url: "/images/defaults/projects/project-1-after.jpg" },
+];
 
-export function GalleryPageContent({ locale, dict }: Props) {
+export function GalleryPageContent({ locale, dict, initialItems }: Props) {
   const isRtl = locale === "ar";
   const [selectedView, setSelectedView] = useState<"albums" | "grid">("albums");
-  const [lightboxItem, setLightboxItem] = useState<number | null>(null);
+  const [lightboxItem, setLightboxItem] = useState<string | null>(null);
+
+  const items = (initialItems && initialItems.length > 0) ? initialItems : DEFAULT_ITEMS;
+  const activeLightboxObj = items.find((it) => String(it.id) === String(lightboxItem)) || items[0];
 
   return (
     <div className="pt-[var(--header-height)]">
@@ -78,11 +80,11 @@ export function GalleryPageContent({ locale, dict }: Props) {
                   transition={{ duration: 0.4, delay: i * 0.07 }}
                   onClick={() => setSelectedView("grid")}
                   className="group cursor-pointer rounded-2xl overflow-hidden border border-border-light hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-xl transition-all duration-300">
-                  <div className={cn("h-44 bg-gradient-to-br flex items-center justify-center text-5xl relative", album.gradient)}>
-                    <span>{album.emoji}</span>
+                  <div className="h-48 relative overflow-hidden bg-surface">
+                    <img src={album.image_url} alt={album.title_ar} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
                     <div className="absolute inset-0 flex items-end p-4">
-                      <span className="text-white/80 text-xs font-medium bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">
+                      <span className="text-white/90 text-xs font-medium bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full">
                         {album.count} {dict.gallery.photos}
                       </span>
                     </div>
@@ -98,20 +100,16 @@ export function GalleryPageContent({ locale, dict }: Props) {
             </div>
           ) : (
             /* Grid View with Lightbox */
-            <div className="columns-2 sm:columns-3 lg:columns-4 gap-3 space-y-3">
-              {GALLERY_ITEMS.map((item, i) => (
-                <motion.div key={item.id}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {items.map((item, i) => (
+                <motion.div key={item.id || i}
                   initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: i * 0.03 }}
-                  onClick={() => setLightboxItem(item.id)}
-                  className={cn("group relative rounded-xl overflow-hidden cursor-pointer bg-gradient-to-br",
-                    item.gradient,
-                    i % 3 === 0 ? "aspect-square" : i % 3 === 1 ? "aspect-[4/3]" : "aspect-[3/4]")}>
-                  <div className="w-full h-full flex items-center justify-center text-4xl">
-                    {item.emoji}
-                  </div>
+                  onClick={() => setLightboxItem(String(item.id))}
+                  className="group relative h-64 rounded-2xl overflow-hidden cursor-pointer bg-surface border border-border-light hover:shadow-xl transition-all duration-300">
+                  <img src={item.image_url || item.thumbnail_url} alt="Gallery item" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
                     <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
@@ -134,10 +132,9 @@ export function GalleryPageContent({ locale, dict }: Props) {
             </button>
             <motion.div
               initial={{ scale: 0.8 }} animate={{ scale: 1 }} exit={{ scale: 0.8 }}
-              className={cn("w-full max-w-2xl aspect-square rounded-2xl bg-gradient-to-br flex items-center justify-center text-8xl",
-                GALLERY_ITEMS[(lightboxItem - 1) % GALLERY_ITEMS.length]?.gradient)}
+              className="w-full max-w-4xl max-h-[85vh] rounded-2xl overflow-hidden bg-black flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}>
-              {GALLERY_ITEMS[(lightboxItem - 1) % GALLERY_ITEMS.length]?.emoji}
+              <img src={activeLightboxObj?.image_url || activeLightboxObj?.thumbnail_url} alt="Enlarged" className="w-full h-full object-contain" />
             </motion.div>
           </motion.div>
         )}
