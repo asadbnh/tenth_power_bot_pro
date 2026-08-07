@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { X, ZoomIn } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
@@ -33,8 +33,6 @@ export function GalleryPageContent({ locale, dict }: Props) {
   const isRtl = locale === "ar";
   const [selectedView, setSelectedView] = useState<"albums" | "grid">("albums");
   const [lightboxItem, setLightboxItem] = useState<number | null>(null);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: true });
 
   return (
     <div className="pt-[var(--header-height)]">
@@ -67,7 +65,7 @@ export function GalleryPageContent({ locale, dict }: Props) {
         </div>
       </div>
 
-      <div ref={sectionRef} className="py-12 sm:py-16 bg-background">
+      <div className="py-12 sm:py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {selectedView === "albums" ? (
             /* Albums View */
@@ -75,7 +73,8 @@ export function GalleryPageContent({ locale, dict }: Props) {
               {ALBUMS.map((album, i) => (
                 <motion.div key={album.id}
                   initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.07 }}
                   onClick={() => setSelectedView("grid")}
                   className="group cursor-pointer rounded-2xl overflow-hidden border border-border-light hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-xl transition-all duration-300">
@@ -103,7 +102,8 @@ export function GalleryPageContent({ locale, dict }: Props) {
               {GALLERY_ITEMS.map((item, i) => (
                 <motion.div key={item.id}
                   initial={{ opacity: 0, scale: 0.95 }}
-                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: i * 0.03 }}
                   onClick={() => setLightboxItem(item.id)}
                   className={cn("group relative rounded-xl overflow-hidden cursor-pointer bg-gradient-to-br",

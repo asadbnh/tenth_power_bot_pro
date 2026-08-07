@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { Target, Eye, Heart, Award, Users, Star, Clock, CheckCircle2 } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -31,8 +30,6 @@ const TEAM = [
 
 export function AboutPageContent({ locale, dict }: Props) {
   const isRtl = locale === "ar";
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-50px" });
 
   return (
     <div className="pt-[var(--header-height)]">
@@ -74,7 +71,7 @@ export function AboutPageContent({ locale, dict }: Props) {
       </section>
 
       {/* Mission & Vision */}
-      <section ref={sectionRef} className="py-16 sm:py-20 bg-background">
+      <section className="py-16 sm:py-20 bg-background">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8 mb-16">
             {[
@@ -85,7 +82,7 @@ export function AboutPageContent({ locale, dict }: Props) {
             ].map((item, i) => {
               const Icon = item.icon;
               return (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.15 }}
+                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }}
                   className="rounded-2xl border border-border-light bg-surface-elevated p-8">
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-5 shadow-md`}>
                     <Icon className="w-6 h-6 text-white" />
@@ -103,7 +100,7 @@ export function AboutPageContent({ locale, dict }: Props) {
             {VALUES.map((v, i) => {
               const Icon = v.icon;
               return (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 + i * 0.1 }}
+                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 + i * 0.1 }}
                   className="text-center p-6 rounded-2xl border border-border-light bg-surface-elevated hover:border-primary-200 dark:hover:border-primary-800 transition-colors">
                   <Icon className="w-8 h-8 mx-auto mb-3 text-primary-600 dark:text-primary-400" />
                   <h3 className="font-bold mb-2">{isRtl ? v.title_ar : v.title_en}</h3>
@@ -117,7 +114,7 @@ export function AboutPageContent({ locale, dict }: Props) {
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10">{isRtl ? dict.about.team : "Our Team"}</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
             {TEAM.map((member, i) => (
-              <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} animate={isInView ? { opacity: 1, scale: 1 } : {}} transition={{ delay: 0.5 + i * 0.08 }}
+              <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.5 + i * 0.08 }}
                 className="text-center rounded-2xl overflow-hidden border border-border-light bg-surface-elevated">
                 <div className={`h-28 bg-gradient-to-br ${member.gradient} flex items-center justify-center text-4xl`}>
                   {member.emoji}

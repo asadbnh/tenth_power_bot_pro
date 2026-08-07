@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { MapPin, Calendar, Eye, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
@@ -17,22 +17,17 @@ const FILTERS_AR = ["الكل", "زجاج", "ألمنيوم", "مطابخ", "د�
 const FILTERS_EN = ["All", "Glass", "Aluminum", "Kitchens", "Decorations", "Contracting"];
 
 const DEFAULT_PROJECTS = [
-  { id: 1, title_ar: "واجهة برج تجاري — الرياض", title_en: "Commercial Tower Facade — Riyadh", cat: "زجاج", city_ar: "الرياض", city_en: "Riyadh", year: 2024, views: 1240, gradient: "from-blue-600 to-cyan-400", emoji: "🏢" },
-  { id: 2, title_ar: "مطبخ فيلا فاخرة — جدة", title_en: "Luxury Villa Kitchen — Jeddah", cat: "مطابخ", city_ar: "جدة", city_en: "Jeddah", year: 2024, views: 890, gradient: "from-amber-500 to-orange-400", emoji: "🍽️" },
-  { id: 3, title_ar: "ديكور مجمع سكني — الدمام", title_en: "Residential Complex Decor — Dammam", cat: "ديكورات", city_ar: "الدمام", city_en: "Dammam", year: 2023, views: 670, gradient: "from-rose-500 to-pink-400", emoji: "🏠" },
-  { id: 4, title_ar: "أبواب وشبابيك — الخبر", title_en: "Doors & Windows — Al Khobar", cat: "ألمنيوم", city_ar: "الخبر", city_en: "Al Khobar", year: 2024, views: 520, gradient: "from-slate-500 to-gray-400", emoji: "🚪" },
-  { id: 5, title_ar: "مقاولات مبنى إداري — الرياض", title_en: "Administrative Building — Riyadh", cat: "مقاولات", city_ar: "الرياض", city_en: "Riyadh", year: 2023, views: 1100, gradient: "from-yellow-500 to-amber-400", emoji: "🏗️" },
-  { id: 6, title_ar: "واجهات مركز تسوق — جدة", title_en: "Shopping Center Facades — Jeddah", cat: "زجاج", city_ar: "جدة", city_en: "Jeddah", year: 2024, views: 950, gradient: "from-indigo-500 to-purple-400", emoji: "🛍️" },
-  { id: 7, title_ar: "ديكور مطعم فاخر — الرياض", title_en: "Luxury Restaurant Decor — Riyadh", cat: "ديكورات", city_ar: "الرياض", city_en: "Riyadh", year: 2023, views: 780, gradient: "from-emerald-500 to-teal-400", emoji: "🍴" },
-  { id: 8, title_ar: "مطبخ منزلي عصري — المدينة", title_en: "Modern Home Kitchen — Medina", cat: "مطابخ", city_ar: "المدينة المنورة", city_en: "Madinah", year: 2023, views: 430, gradient: "from-violet-500 to-fuchsia-400", emoji: "🏡" },
-  { id: 9, title_ar: "واجهة فندق 5 نجوم — مكة", title_en: "5-Star Hotel Facade — Mecca", cat: "زجاج", city_ar: "مكة المكرمة", city_en: "Mecca", year: 2024, views: 2100, gradient: "from-blue-500 to-indigo-400", emoji: "⭐" },
+  { id: 1, title_ar: "واجهة برج تجاري — الرياض", title_en: "Commercial Tower Facade — Riyadh", cat: "زجاج", city_ar: "الرياض", city_en: "Riyadh", year: 2024, views: 1240, cover_image_url: "/images/defaults/projects/project-1.jpg" },
+  { id: 2, title_ar: "مطبخ فيلا فاخرة — جدة", title_en: "Luxury Villa Kitchen — Jeddah", cat: "مطابخ", city_ar: "جدة", city_en: "Jeddah", year: 2024, views: 890, cover_image_url: "/images/defaults/projects/project-1.jpg" },
+  { id: 3, title_ar: "ديكور مجمع سكني — الدمام", title_en: "Residential Complex Decor — Dammam", cat: "ديكورات", city_ar: "الدمام", city_en: "Dammam", year: 2023, views: 670, cover_image_url: "/images/defaults/projects/project-1.jpg" },
+  { id: 4, title_ar: "أبواب وشبابيك — الخبر", title_en: "Doors & Windows — Al Khobar", cat: "ألمنيوم", city_ar: "الخبر", city_en: "Al Khobar", year: 2024, views: 520, cover_image_url: "/images/defaults/projects/project-1.jpg" },
+  { id: 5, title_ar: "مقاولات مبنى إداري — الرياض", title_en: "Administrative Building — Riyadh", cat: "مقاولات", city_ar: "الرياض", city_en: "Riyadh", year: 2023, views: 1100, cover_image_url: "/images/defaults/projects/project-1.jpg" },
+  { id: 6, title_ar: "واجهات مركز تسوق — جدة", title_en: "Shopping Center Facades — Jeddah", cat: "زجاج", city_ar: "جدة", city_en: "Jeddah", year: 2024, views: 950, cover_image_url: "/images/defaults/projects/project-1.jpg" },
 ];
 
 export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
   const isRtl = locale === "ar";
   const [activeFilter, setActiveFilter] = useState(0);
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-50px" });
   const filters = isRtl ? FILTERS_AR : FILTERS_EN;
 
   const projects = (initialProjects && initialProjects.length > 0) ? initialProjects : DEFAULT_PROJECTS;
@@ -76,23 +71,25 @@ export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
       </div>
 
       {/* Projects Grid */}
-      <section ref={sectionRef} className="py-12 sm:py-16 bg-background">
+      <section className="py-12 sm:py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((project, i) => {
               const title = project.name || (isRtl ? project.title_ar : project.title_en) || project.title_ar;
               const city = project.city || (isRtl ? project.city_ar : project.city_en) || "السعودية";
               const cat = project.cat || project.services?.slug || "مشروع";
+              const coverImage = project.cover_image_url || project.image_url || "/images/defaults/projects/project-1.jpg";
 
               return (
                 <motion.article key={project.id || i}
                   initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.06 }}
                   className="group rounded-2xl overflow-hidden border border-border-light hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-xl transition-all duration-300 bg-surface-elevated cursor-pointer">
 
-                  <div className={cn("h-52 bg-gradient-to-br flex items-center justify-center text-6xl relative", project.gradient || "from-blue-600 to-indigo-700")}>
-                    <span className="select-none">{project.emoji || "🏗️"}</span>
+                  <div className="h-52 bg-surface relative overflow-hidden flex items-center justify-center">
+                    <img src={coverImage} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
                     <span className="absolute top-3 end-3 px-2.5 py-1 rounded-full bg-black/40 text-white text-xs font-medium backdrop-blur-sm">
                       {cat}

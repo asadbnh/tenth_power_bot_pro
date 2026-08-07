@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { Star, Quote, ThumbsUp, CheckCircle2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -57,8 +57,6 @@ const STATS = [
 
 export function TestimonialsPageContent({ locale, dict }: Props) {
   const isRtl = locale === "ar";
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-50px" });
   const [expanded, setExpanded] = useState<number | null>(null);
 
   return (
@@ -96,13 +94,14 @@ export function TestimonialsPageContent({ locale, dict }: Props) {
       </div>
 
       {/* Reviews Grid */}
-      <section ref={sectionRef} className="py-12 sm:py-20 bg-background">
+      <section className="py-12 sm:py-20 bg-background">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {REVIEWS.map((review, i) => (
               <motion.article key={review.id}
                 initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.08 }}
                 className="rounded-2xl border border-border-light bg-surface-elevated p-6 flex flex-col hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-lg transition-all duration-300">
 
@@ -153,7 +152,7 @@ export function TestimonialsPageContent({ locale, dict }: Props) {
           </div>
 
           {/* Write Review CTA */}
-          <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.6 }}
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.6 }}
             className="mt-12 text-center p-8 rounded-2xl bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900">
             <ThumbsUp className="w-10 h-10 mx-auto mb-3 text-primary-600 dark:text-primary-400" />
             <h3 className="text-xl font-bold mb-2">{isRtl ? "شاركنا تجربتك" : "Share Your Experience"}</h3>

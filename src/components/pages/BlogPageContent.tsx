@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { Clock, Tag, ArrowRight, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -63,8 +62,6 @@ const ARTICLES = [
 
 export function BlogPageContent({ locale, dict }: Props) {
   const isRtl = locale === "ar";
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-50px" });
   const [featured, ...rest] = ARTICLES;
 
   return (
@@ -85,10 +82,10 @@ export function BlogPageContent({ locale, dict }: Props) {
         </div>
       </section>
 
-      <section ref={sectionRef} className="py-12 sm:py-20 bg-background">
+      <section className="py-12 sm:py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Featured Article */}
-          <motion.article initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}
+          <motion.article initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
             className="group relative rounded-3xl overflow-hidden border border-border-light hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-2xl transition-all duration-300 mb-10 bg-surface-elevated">
             <div className="grid md:grid-cols-5">
               <div className={cn("md:col-span-2 h-56 md:h-auto bg-gradient-to-br flex items-center justify-center text-7xl", featured.gradient)}>
@@ -124,7 +121,8 @@ export function BlogPageContent({ locale, dict }: Props) {
             {rest.map((article, i) => (
               <motion.article key={article.id}
                 initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: 0.2 + i * 0.08 }}
                 className="group rounded-2xl overflow-hidden border border-border-light hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-xl transition-all duration-300 bg-surface-elevated">
                 <div className={cn("h-44 bg-gradient-to-br flex items-center justify-center text-5xl", article.gradient)}>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Clock, MessageSquare, Send, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
@@ -11,8 +11,6 @@ interface Props { locale: Locale; dict: Dictionary; }
 
 export function ContactPageContent({ locale, dict }: Props) {
   const isRtl = locale === "ar";
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true });
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
 
@@ -45,12 +43,12 @@ export function ContactPageContent({ locale, dict }: Props) {
         </div>
       </section>
 
-      <section ref={sectionRef} className="py-16 sm:py-20 bg-background">
+      <section className="py-16 sm:py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-5 gap-10">
 
             {/* Contact Info */}
-            <motion.div initial={{ opacity: 0, x: isRtl ? 20 : -20 }} animate={isInView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.5 }}
+            <motion.div initial={{ opacity: 0, x: isRtl ? 20 : -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
               className="lg:col-span-2 space-y-5">
               <div className="rounded-2xl border border-border-light bg-surface-elevated p-6 space-y-5">
                 {INFO.map((item, i) => {
@@ -93,7 +91,7 @@ export function ContactPageContent({ locale, dict }: Props) {
             </motion.div>
 
             {/* Contact Form */}
-            <motion.div initial={{ opacity: 0, x: isRtl ? -20 : 20 }} animate={isInView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.5, delay: 0.1 }}
+            <motion.div initial={{ opacity: 0, x: isRtl ? -20 : 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}
               className="lg:col-span-3">
               <div className="rounded-2xl border border-border-light bg-surface-elevated p-8">
                 {status === "sent" ? (

@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import {
   Building2, DoorOpen, GalleryHorizontalEnd, Hammer,
@@ -123,9 +122,6 @@ const DEFAULT_SERVICES = [
 
 export function ServicesPageContent({ locale, dict, initialServices }: Props) {
   const isRtl = locale === "ar";
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-50px" });
-
   const services = (initialServices && initialServices.length > 0) ? initialServices : DEFAULT_SERVICES;
 
   return (
@@ -151,7 +147,7 @@ export function ServicesPageContent({ locale, dict, initialServices }: Props) {
       </section>
 
       {/* Services Grid */}
-      <section ref={sectionRef} className="py-16 sm:py-24 bg-background">
+      <section className="py-16 sm:py-24 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {services.map((service, i) => {
@@ -166,7 +162,8 @@ export function ServicesPageContent({ locale, dict, initialServices }: Props) {
               return (
                 <motion.article key={service.slug || i}
                   initial={{ opacity: 0, y: 30 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.07 }}
                   className="group relative rounded-2xl border border-border-light hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-xl transition-all duration-300 overflow-hidden">
 

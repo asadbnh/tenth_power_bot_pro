@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Search, ChevronDown, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
@@ -72,8 +72,6 @@ export function FaqPageContent({ locale, dict }: Props) {
   const isRtl = locale === "ar";
   const [openId, setOpenId] = useState<number | null>(null);
   const [query, setQuery] = useState("");
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true });
 
   const filtered = FAQS.filter(faq => {
     if (!query.trim()) return true;
@@ -110,7 +108,7 @@ export function FaqPageContent({ locale, dict }: Props) {
       </section>
 
       {/* FAQs */}
-      <section ref={sectionRef} className="py-12 sm:py-20 bg-background">
+      <section className="py-12 sm:py-20 bg-background">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           {filtered.length === 0 ? (
             <div className="text-center py-16">
@@ -122,7 +120,8 @@ export function FaqPageContent({ locale, dict }: Props) {
               {filtered.map((faq, i) => (
                 <motion.div key={i}
                   initial={{ opacity: 0, y: 12 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
                   transition={{ duration: 0.35, delay: i * 0.06 }}
                   className={cn(
                     "rounded-2xl border transition-all duration-200 overflow-hidden",
@@ -160,7 +159,7 @@ export function FaqPageContent({ locale, dict }: Props) {
           )}
 
           {/* Still have questions? */}
-          <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.5 }}
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.5 }}
             className="mt-12 rounded-2xl bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900 p-8 text-center">
             <HelpCircle className="w-10 h-10 mx-auto mb-3 text-primary-600 dark:text-primary-400" />
             <h3 className="text-lg font-bold mb-2">
