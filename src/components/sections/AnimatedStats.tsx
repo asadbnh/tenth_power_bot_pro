@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Award, Building, Clock, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
@@ -106,15 +106,12 @@ function AnimatedCounter({
 }
 
 export function AnimatedStats({ locale, dict }: AnimatedStatsProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-50px" });
   const isRtl = locale === "ar";
   // Suppress unused variable warning — dict is kept for API consistency
   void dict;
 
   return (
     <section
-      ref={sectionRef}
       id="stats"
       className="relative py-20 sm:py-24 overflow-hidden"
       aria-label={isRtl ? "إحصائيات" : "Statistics"}
@@ -140,7 +137,8 @@ export function AnimatedStats({ locale, dict }: AnimatedStatsProps) {
               <motion.div
                 key={stat.label_en}
                 initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.15 }}
                 className="text-center"
               >
@@ -157,7 +155,7 @@ export function AnimatedStats({ locale, dict }: AnimatedStatsProps) {
                   <AnimatedCounter
                     target={stat.value}
                     suffix={stat.suffix}
-                    isVisible={isInView}
+                    isVisible={true}
                   />
                 </div>
                 <div className="text-sm sm:text-base text-white/60 font-medium">

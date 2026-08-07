@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle, Phone } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -18,13 +17,10 @@ interface CTASectionProps {
  * floating shapes, and compelling action buttons.
  */
 export function CTASection({ locale, dict }: CTASectionProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
   const isRtl = locale === "ar";
 
   return (
     <section
-      ref={sectionRef}
       id="cta"
       className="relative py-20 sm:py-28 overflow-hidden"
       aria-label={isRtl ? "تواصل معنا" : "Get in Touch"}
@@ -49,7 +45,8 @@ export function CTASection({ locale, dict }: CTASectionProps) {
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
@@ -66,7 +63,8 @@ export function CTASection({ locale, dict }: CTASectionProps) {
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
@@ -93,7 +91,8 @@ export function CTASection({ locale, dict }: CTASectionProps) {
         {/* Trust note */}
         <motion.p
           initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-8 text-sm text-white/50 flex items-center justify-center gap-1"
         >

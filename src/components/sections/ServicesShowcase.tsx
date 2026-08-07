@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Building2,
   DoorOpen,
@@ -117,15 +116,11 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 export function ServicesShowcase({ locale, dict, initialServices }: ServicesShowcaseProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
   const isRtl = locale === "ar";
-
   const services = (initialServices && initialServices.length > 0) ? initialServices : DEMO_SERVICES;
 
   return (
     <section
-      ref={sectionRef}
       id="services"
       className="relative py-20 sm:py-28 lg:py-32 bg-background overflow-hidden"
       aria-labelledby="services-heading"
@@ -134,7 +129,8 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
@@ -165,7 +161,8 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
               <motion.article
                 key={service.slug || index}
                 initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className={cn(
                   "group relative rounded-2xl p-6",
@@ -212,7 +209,8 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
         {/* View All Button */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.8 }}
           className="text-center mt-12"
         >

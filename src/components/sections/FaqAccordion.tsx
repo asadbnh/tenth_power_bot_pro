@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
@@ -57,8 +57,6 @@ const DEMO_FAQS: FaqItem[] = [
 ];
 
 export function FaqAccordion({ locale, dict, initialFaqs }: FaqAccordionProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const isRtl = locale === "ar";
 
@@ -70,7 +68,6 @@ export function FaqAccordion({ locale, dict, initialFaqs }: FaqAccordionProps) {
 
   return (
     <section
-      ref={sectionRef}
       id="faq"
       className="relative py-20 sm:py-28 bg-surface overflow-hidden"
       aria-labelledby="faq-heading"
@@ -79,7 +76,8 @@ export function FaqAccordion({ locale, dict, initialFaqs }: FaqAccordionProps) {
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="text-center mb-14"
         >
@@ -108,7 +106,8 @@ export function FaqAccordion({ locale, dict, initialFaqs }: FaqAccordionProps) {
               <motion.div
                 key={faq.id || index}
                 initial={{ opacity: 0, y: 10 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
                 className={cn(
                   "rounded-xl border transition-all duration-300",
