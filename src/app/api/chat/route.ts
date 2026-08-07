@@ -1,9 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
  * POST /api/chat
- * AI Chat streaming endpoint connecting directly to Google Gemini API (gemini-1.5-flash)
- * with graceful fallback to contextual business answers if quota is exceeded.
+ * AI Chat streaming endpoint fetching configurable system prompt from Supabase ai_prompts
+ * and connecting to Google Gemini REST API with graceful fallback.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -16,13 +17,37 @@ export async function POST(request: NextRequest) {
 
     let aiResponseText = "";
 
-    // 1. Try Google Gemini REST API if key is set
+    // 1. Fetch System Prompt dynamically from Supabase ai_prompts table
+    let systemPrompt = "";
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const supabase = createAdminClient() as any;
+      const { data: promptRow } = await supabase
+        .from("ai_prompts")
+        .select("system_prompt_ar, system_prompt_en")
+        .eq("prompt_type", "chat")
+        .eq("is_active", true)
+        .limit(1)
+        .single();
+
+      if (promptRow) {
+        systemPrompt = isAr
+          ? promptRow.system_prompt_ar || promptRow.system_prompt_en
+          : promptRow.system_prompt_en || promptRow.system_prompt_ar;
+      }
+    } catch {
+      // fallback if table query fails
+    }
+
+    if (!systemPrompt) {
+      systemPrompt = isAr
+        ? "أنت المساعد الذكي لشركة القوة العاشرة لزجاج وأعمال المقاولات (WebTaky). أجب باحترافية وبإيجاز، وانصح العميل بطلب عرض سعر مجاني."
+        : "You are the AI Assistant for Tenth Power Glass & Contracting (WebTaky). Answer concisely and suggest requesting a free quote.";
+    }
+
+    // 2. Try Google Gemini REST API if key is set
     if (apiKey && apiKey !== "your_gemini_api_key") {
       try {
-        const systemPrompt = isAr
-          ? "أنت المساعد الذكي لمؤسسة WebTaky المتخصصة في أعمال الزجاج السكريت، الواجهات الزجاجية، الألمنيوم، والمطابخ في السعودية. أجب باحترافية وبإيجاز، وانصح العميل بطلب عرض سعر مجاني."
-          : "You are the AI Assistant for WebTaky specializing in tempered glass, glass facades, aluminum, and kitchens in Saudi Arabia. Answer concisely, professionally, and suggest getting a free quote.";
-
         const geminiRes = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
           {

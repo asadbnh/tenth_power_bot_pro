@@ -109,7 +109,10 @@ export async function handleStats(chatId: number) {
       .gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
   ]);
 
-  const text = formatStatsMessage({
+  const { getAnalyticsSummary } = await import("@/lib/actions/content");
+  const analyticsData = await getAnalyticsSummary().catch(() => ({ topServices: [], topKeywords: [] }));
+
+  let text = formatStatsMessage({
     totalRequests: totalRequests ?? 0,
     newRequests: newRequests ?? 0,
     totalAppointments: totalAppointments ?? 0,
@@ -125,6 +128,20 @@ export async function handleStats(chatId: number) {
     totalViews: totalViews ?? 0,
     todayViews: todayViews ?? 0,
   });
+
+  if (analyticsData.topServices.length > 0) {
+    text += "\n\n🔥 <b>أكثر الخدمات مشاهدة:</b>\n";
+    analyticsData.topServices.forEach((s: { name_ar?: string; view_count?: number }, idx: number) => {
+      text += `${idx + 1}. ${s.name_ar || "خدمة"} — 👁️ <b>${s.view_count || 0}</b> مشاهدة\n`;
+    });
+  }
+
+  if (analyticsData.topKeywords.length > 0) {
+    text += "\n🔎 <b>أعلى الكلمات المفتاحية جالباً للزوار:</b>\n";
+    analyticsData.topKeywords.forEach((k: { keyword: string; count: number }, idx: number) => {
+      text += `${idx + 1}. <code>${k.keyword}</code> (${k.count} بحث/زيارة)\n`;
+    });
+  }
 
   await sendMessage(chatId, text, { reply_markup: Keyboards.backToMenu() });
 }

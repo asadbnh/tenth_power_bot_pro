@@ -15,6 +15,21 @@ export async function GET(request: NextRequest) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
 
+  // Log search analytics event asynchronously
+  try {
+    const { data: company } = await supabase.from("companies").select("id").limit(1).single();
+    if (company?.id) {
+      supabase.from("analytics_events").insert({
+        company_id: company.id,
+        event_type: "search",
+        page_path: "/search",
+        metadata: { query, locale },
+      }).then();
+    }
+  } catch {
+    // ignore
+  }
+
   const [services, articles, projects] = await Promise.all([
     supabase
       .from("services")

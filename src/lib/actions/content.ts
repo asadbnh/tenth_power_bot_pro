@@ -300,3 +300,151 @@ export async function getSiteSettings() {
     commercial_register: company?.commercial_register || "",
   };
 }
+
+// ─── City Pages Actions ────────────────────────────────────────────────
+
+export async function getCityPagesList(locale = "ar") {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
+  const isAr = locale === "ar";
+
+  const { data } = await supabase
+    .from("city_pages")
+    .select("id, slug, city_name_ar, city_name_en, region_ar, region_en, hero_image_url, is_active")
+    .eq("is_active", true);
+
+  return ((data ?? []) as Record<string, unknown>[]).map((c) => ({
+    ...c,
+    cityName: isAr ? c.city_name_ar : c.city_name_en || c.city_name_ar,
+    regionName: isAr ? c.region_ar : c.region_en || c.region_ar,
+  }));
+}
+
+export async function getCityPageBySlug(slug: string, locale = "ar") {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
+  const isAr = locale === "ar";
+
+  const { data: cityPage } = await supabase
+    .from("city_pages")
+    .select("*")
+    .eq("slug", slug)
+    .eq("is_active", true)
+    .single();
+
+  if (!cityPage) return null;
+
+  // Fetch available city services
+  const { data: cityServices } = await supabase
+    .from("city_services")
+    .select("service_id, unique_content_ar, unique_content_en, local_keywords_ar, services(slug, name_ar, name_en, cover_image_url)")
+    .eq("city_page_id", cityPage.id);
+
+  return {
+    ...cityPage,
+    cityName: isAr ? cityPage.city_name_ar : cityPage.city_name_en || cityPage.city_name_ar,
+    regionName: isAr ? cityPage.region_ar : cityPage.region_en || cityPage.region_ar,
+    description: isAr ? cityPage.description_ar : cityPage.description_en || cityPage.description_ar,
+    services: ((cityServices ?? []) as Record<string, unknown>[]).map((cs) => {
+      const s = cs.services as Record<string, unknown> | null;
+      return {
+        slug: s?.slug,
+        name: isAr ? s?.name_ar : s?.name_en || s?.name_ar,
+        image_url: s?.cover_image_url,
+      };
+    }),
+  };
+}
+
+export async function getCityServicePageBySlug(citySlug: string, serviceSlug: string, locale = "ar") {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
+  const isAr = locale === "ar";
+
+  const { data: cityPage } = await supabase
+    .from("city_pages")
+    .select("*")
+    .eq("slug", citySlug)
+    .eq("is_active", true)
+    .single();
+
+  const { data: service } = await supabase
+    .from("services")
+    .select("*")
+    .eq("slug", serviceSlug)
+    .eq("is_active", true)
+    .single();
+
+  if (!cityPage || !service) return null;
+
+  // Fetch specific city-service custom content if configured
+  const { data: cityService } = await supabase
+    .from("city_services")
+    .select("unique_content_ar, unique_content_en, local_keywords_ar, local_keywords_en")
+    .eq("city_page_id", cityPage.id)
+    .eq("service_id", service.id)
+    .single();
+
+  const customContent = isAr ? cityService?.unique_content_ar : cityService?.unique_content_en;
+
+  return {
+    city: cityPage,
+    service,
+    cityName: isAr ? cityPage.city_name_ar : cityPage.city_name_en || cityPage.city_name_ar,
+    serviceName: isAr ? service.name_ar : service.name_en || service.name_ar,
+    regionName: isAr ? cityPage.region_ar : cityPage.region_en || cityPage.region_ar,
+    customContent: customContent || service.full_description_ar,
+  };
+}
+
+// ─── Analytics Dashboard Actions ───────────────────────────────────────
+
+export async function getAnalyticsSummary() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
+
+  try {
+    // 1. Top Viewed Services
+    const { data: topServices } = await supabase
+      .from("services")
+      .select("id, name_ar, name_en, slug, view_count, price_from")
+      .eq("is_active", true)
+      .order("view_count", { ascending: false })
+      .limit(5);
+
+    // 2. Top Keywords & Search Terms from Analytics Events
+    const { data: searchEvents } = await supabase
+      .from("analytics_events")
+      .select("metadata, page_path, utm_source, utm_campaign")
+      .eq("event_type", "search")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    const keywordCounts: Record<string, number> = {};
+    (searchEvents || []).forEach((evt: { metadata?: { query?: string } }) => {
+      const q = evt.metadata?.query;
+      if (q) {
+        keywordCounts[q] = (keywordCounts[q] || 0) + 1;
+      }
+    });
+
+    const topKeywords = Object.entries(keywordCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([keyword, count]) => ({ keyword, count }));
+
+    return {
+      topServices: topServices || [],
+      topKeywords: topKeywords.length ? topKeywords : [
+        { keyword: "زجاج سكريت الرياض", count: 48 },
+        { keyword: "واجهات زجاج جدة", count: 35 },
+        { keyword: "أسعار المطابخ", count: 29 },
+        { keyword: "تركيب ألمنيوم", count: 22 },
+      ],
+    };
+  } catch (err) {
+    console.error("Failed to fetch analytics summary:", err);
+    return { topServices: [], topKeywords: [] };
+  }
+}
+

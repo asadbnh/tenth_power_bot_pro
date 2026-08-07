@@ -74,9 +74,33 @@ export function QuotePageContent({ locale, dict }: Props) {
   const prev = () => { if (step > 1) setStep((step - 1) as Step); };
 
   const submit = async () => {
+    if (!canNext()) return;
     setStatus("sending");
-    await new Promise(r => setTimeout(r, 1800));
-    setStatus("sent");
+    try {
+      const { submitQuoteRequest } = await import("@/lib/actions/forms");
+      const res = await submitQuoteRequest({
+        services: form.services,
+        description: form.description,
+        budget: form.budget,
+        urgency: form.urgency,
+        city: form.city,
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        preferWhatsApp: form.preferWhatsApp,
+        locale,
+      });
+
+      if (res.success) {
+        setStatus("sent");
+      } else {
+        alert(isRtl ? "حدث خطأ أثناء حفظ الطلب. يرجى المحاولة مرة أخرى." : "An error occurred. Please try again.");
+        setStatus("idle");
+      }
+    } catch (err) {
+      console.error("Quote submission error:", err);
+      setStatus("idle");
+    }
   };
 
   const STEPS = [

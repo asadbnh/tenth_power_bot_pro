@@ -83,6 +83,16 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Cloudflare Edge Caching for ISR/Static pages
+      {
+        source: "/:locale/(services|projects|blog|cities|faq|testimonials)/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
+          },
+        ],
+      },
     ];
   },
 

@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
 import type { Locale } from "@/lib/i18n/config";
 import { CityServicePageContent } from "@/components/pages/CityServicePageContent";
+import { getCityServicePageBySlug, getCityPagesList, getServices } from "@/lib/actions/content";
 
-const CITIES: Record<string, { ar: string; en: string; region_ar: string; region_en: string }> = {
+const FALLBACK_CITIES: Record<string, { ar: string; en: string; region_ar: string; region_en: string }> = {
   riyadh: { ar: "الرياض", en: "Riyadh", region_ar: "منطقة الرياض", region_en: "Riyadh Region" },
   jeddah: { ar: "جدة", en: "Jeddah", region_ar: "منطقة مكة المكرمة", region_en: "Mecca Region" },
   dammam: { ar: "الدمام", en: "Dammam", region_ar: "المنطقة الشرقية", region_en: "Eastern Province" },
   khobar: { ar: "الخبر", en: "Al Khobar", region_ar: "المنطقة الشرقية", region_en: "Eastern Province" },
-  mecca: { ar: "مكة المكرمة", en: "Mecca", region_ar: "منطقة مكة المكرمة", region_en: "Mecca Region" },
-  madinah: { ar: "المدينة المنورة", en: "Madinah", region_ar: "منطقة المدينة", region_en: "Madinah Region" },
-  abha: { ar: "أبها", en: "Abha", region_ar: "منطقة عسير", region_en: "Asir Region" },
-  tabuk: { ar: "تبوك", en: "Tabuk", region_ar: "منطقة تبوك", region_en: "Tabuk Region" },
-  jizan: { ar: "جازان", en: "Jizan", region_ar: "منطقة جازان", region_en: "Jizan Region" },
-  najran: { ar: "نجران", en: "Najran", region_ar: "منطقة نجران", region_en: "Najran Region" },
 };
 
-const SERVICES: Record<string, { ar: string; en: string }> = {
+const FALLBACK_SERVICES: Record<string, { ar: string; en: string }> = {
   "tempered-glass": { ar: "زجاج سكريت", en: "Tempered Glass" },
   "glass-facades": { ar: "واجهات زجاجية", en: "Glass Facades" },
   "aluminum": { ar: "ألمنيوم", en: "Aluminum" },
@@ -24,8 +19,14 @@ const SERVICES: Record<string, { ar: string; en: string }> = {
 
 export async function generateStaticParams() {
   const params: { city: string; service: string }[] = [];
-  for (const city of Object.keys(CITIES)) {
-    for (const service of Object.keys(SERVICES)) {
+  const dbCities = await getCityPagesList("ar").catch(() => []);
+  const dbServices = await getServices("ar").catch(() => []);
+
+  const cities = dbCities.length ? dbCities.map((c) => (c as unknown as { slug: string }).slug) : Object.keys(FALLBACK_CITIES);
+  const services = dbServices.length ? dbServices.map((s) => (s as unknown as { slug: string }).slug) : Object.keys(FALLBACK_SERVICES);
+
+  for (const city of cities) {
+    for (const service of services) {
       params.push({ city, service });
     }
   }
@@ -38,22 +39,24 @@ export async function generateMetadata({
   params: Promise<{ locale: string; city: string; service: string }>;
 }): Promise<Metadata> {
   const { locale, city, service } = await params;
-  const cityData = CITIES[city];
-  const serviceData = SERVICES[service];
-  if (!cityData || !serviceData) return {};
+  const dbData = await getCityServicePageBySlug(city, service, locale).catch(() => null);
+
+  const fallbackCity = FALLBACK_CITIES[city];
+  const fallbackService = FALLBACK_SERVICES[service];
 
   const isAr = locale === "ar";
-  const cityName = isAr ? cityData.ar : cityData.en;
-  const serviceName = isAr ? serviceData.ar : serviceData.en;
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const cityName = dbData?.cityName || (isAr ? fallbackCity?.ar : fallbackCity?.en) || city;
+  const serviceName = dbData?.serviceName || (isAr ? fallbackService?.ar : fallbackService?.en) || service;
+  const regionName = dbData?.regionName || (isAr ? fallbackCity?.region_ar : fallbackCity?.region_en) || "";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
 
   const title = isAr
     ? `خدمة ${serviceName} في ${cityName} | WebTaky`
     : `${serviceName} Services in ${cityName} | WebTaky`;
 
   const description = isAr
-    ? `افضل شركة توريد وتركيب ${serviceName} في ${cityName} وجميع أحياء ${cityData.region_ar}. ضمان شامل واسعار منافسة.`
-    : `Best ${serviceName} supply & installation services in ${cityName} - ${cityData.region_en}. Comprehensive warranty and competitive rates.`;
+    ? `افضل شركة توريد وتركيب ${serviceName} في ${cityName} وجميع أحياء ${regionName}. ضمان شامل واسعار منافسة.`
+    : `Best ${serviceName} supply & installation services in ${cityName} - ${regionName}. Comprehensive warranty and competitive rates.`;
 
   return {
     title,
@@ -71,24 +74,30 @@ export default async function CityServicePage({
   params: Promise<{ locale: string; city: string; service: string }>;
 }) {
   const { locale, city, service } = await params;
-  const cityData = CITIES[city];
-  const serviceData = SERVICES[service];
+  const dbData = await getCityServicePageBySlug(city, service, locale).catch(() => null);
 
-  if (!cityData || !serviceData) {
+  const fallbackCity = FALLBACK_CITIES[city];
+  const fallbackService = FALLBACK_SERVICES[service];
+
+  if (!dbData && (!fallbackCity || !fallbackService)) {
     const { notFound } = await import("next/navigation");
     notFound();
   }
 
   const isAr = locale === "ar";
+  const cityName = dbData?.cityName || (isAr ? fallbackCity?.ar : fallbackCity?.en) || city;
+  const serviceName = dbData?.serviceName || (isAr ? fallbackService?.ar : fallbackService?.en) || service;
+  const regionName = dbData?.regionName || (isAr ? fallbackCity?.region_ar : fallbackCity?.region_en) || "";
 
   return (
     <CityServicePageContent
       locale={locale as Locale}
       city={city}
       service={service}
-      cityName={isAr ? cityData.ar : cityData.en}
-      serviceName={isAr ? serviceData.ar : serviceData.en}
-      regionName={isAr ? cityData.region_ar : cityData.region_en}
+      cityName={cityName}
+      serviceName={serviceName}
+      regionName={regionName}
     />
   );
 }
+
