@@ -335,12 +335,18 @@ export function AnimatedCanvasBanner({
           {/* Bottom Title & Subtitle */}
           <div>
             {title && (
-              <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight leading-snug drop-shadow-md">
+              <h3 
+                className="text-xl sm:text-2xl font-extrabold !text-white tracking-tight leading-snug drop-shadow-lg"
+                style={{ color: "#ffffff" }}
+              >
                 {title}
               </h3>
             )}
             {subtitle && (
-              <p className="text-xs sm:text-sm text-slate-300/90 mt-1 max-w-md line-clamp-2 drop-shadow-sm font-medium">
+              <p 
+                className="text-xs sm:text-sm !text-slate-200 mt-1 max-w-md line-clamp-2 drop-shadow-md font-medium"
+                style={{ color: "rgba(255, 255, 255, 0.9)" }}
+              >
                 {subtitle}
               </p>
             )}

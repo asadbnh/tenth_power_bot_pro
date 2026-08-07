@@ -11,7 +11,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
   return {
     title: dict.services.title,
     description: dict.services.subtitle,

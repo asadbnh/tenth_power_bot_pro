@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
 
 const LOCALES = ["ar", "en"] as const;
 

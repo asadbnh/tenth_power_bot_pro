@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Bot, User, Sparkles, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
+import { CompanyLogo } from "@/components/ui/CompanyLogo";
 
 interface Message {
   id: string;
@@ -70,6 +71,7 @@ export function AIChatWidget({ locale }: Props) {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
+  const [interactionId, setInteractionId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -111,21 +113,74 @@ export function AIChatWidget({ locale }: Props) {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMsg]);
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI thinking delay
-    await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: newMessages.map(m => ({ role: m.role, content: m.content })),
+          locale,
+          previous_interaction_id: interactionId,
+        }),
+      });
 
-    const response = getSmartResponse(text, locale);
-    setIsTyping(false);
-    setMessages(prev => [...prev, {
-      id: `a-${Date.now()}`,
-      role: "assistant",
-      content: response,
-      timestamp: new Date(),
-    }]);
+      const newInteractionId = res.headers.get("x-interaction-id");
+      if (newInteractionId) {
+        setInteractionId(newInteractionId);
+      }
+
+      if (res.ok && res.body) {
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let assistantContent = "";
+
+        const assistantMsgId = `a-${Date.now()}`;
+        setMessages(prev => [...prev, {
+          id: assistantMsgId,
+          role: "assistant",
+          content: "",
+          timestamp: new Date(),
+        }]);
+
+        setIsTyping(false);
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          assistantContent += chunk;
+
+          setMessages(prev =>
+            prev.map(m =>
+              m.id === assistantMsgId ? { ...m, content: assistantContent } : m
+            )
+          );
+        }
+      } else {
+        setIsTyping(false);
+        const fallback = getSmartResponse(text, locale);
+        setMessages(prev => [...prev, {
+          id: `a-${Date.now()}`,
+          role: "assistant",
+          content: fallback,
+          timestamp: new Date(),
+        }]);
+      }
+    } catch {
+      setIsTyping(false);
+      const fallback = getSmartResponse(text, locale);
+      setMessages(prev => [...prev, {
+        id: `a-${Date.now()}`,
+        role: "assistant",
+        content: fallback,
+        timestamp: new Date(),
+      }]);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -138,6 +193,7 @@ export function AIChatWidget({ locale }: Props) {
   const reset = () => {
     setMessages([]);
     setHasOpened(false);
+    setInteractionId(null);
   };
 
   return (
@@ -159,11 +215,9 @@ export function AIChatWidget({ locale }: Props) {
 
             {/* Header */}
             <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-primary-700 to-primary-800 text-white shrink-0">
-              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
-                <Sparkles className="w-5 h-5" />
-              </div>
+              <CompanyLogo size={32} className="shrink-0 drop-shadow-md" />
               <div className="flex-1">
-                <p className="font-bold text-sm">{isRtl ? "المساعد الذكي" : "AI Assistant"}</p>
+                <p className="font-bold text-sm">{isRtl ? "المساعد الذكي — القوة العاشرة" : "Tenth Power AI Assistant"}</p>
                 <p className="text-xs text-white/70">{isRtl ? "متاح الآن" : "Online now"}</p>
               </div>
               <div className="flex items-center gap-1">

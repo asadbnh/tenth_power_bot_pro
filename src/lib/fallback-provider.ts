@@ -32,7 +32,7 @@ export function getFallbackCompany() {
     phone_primary: "+966500000000",
     phone_secondary: "+966110000000",
     email: "info@webtaky.com",
-    website_url: "https://webtaky.com",
+    website_url: "https://powerof10.netlify.app",
     tax_number: "310000000000003",
     commercial_register: "1010000000",
     logo_url: "/images/defaults/logo.png",

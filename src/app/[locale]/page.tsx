@@ -5,7 +5,7 @@ import { getServices, getFaqs } from "@/lib/actions/content";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ServicesShowcase } from "@/components/sections/ServicesShowcase";
 import { AnimatedStats } from "@/components/sections/AnimatedStats";
-import { BusinessProcess } from "@/components/sections/BusinessProcess";
+import { CinematicGlassVideoSection } from "@/components/sections/CinematicGlassVideoSection";
 import { BeforeAfterSlider } from "@/components/sections/BeforeAfterSlider";
 import { FaqAccordion } from "@/components/sections/FaqAccordion";
 import { GoogleMapsSection } from "@/components/sections/GoogleMapsSection";
@@ -18,7 +18,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
 
   return {
     title: dict.meta.homeTitle,
@@ -59,7 +59,7 @@ export default async function HomePage({
             "@type": "Organization",
             name: dict.meta.siteName,
             description: dict.meta.siteDescription,
-            url: process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com",
+            url: process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app",
           }),
         }}
       />
@@ -73,8 +73,8 @@ export default async function HomePage({
       {/* 3. Animated Statistics */}
       <AnimatedStats locale={validLocale} dict={dict} />
 
-      {/* 4. Business Process Flow */}
-      <BusinessProcess locale={validLocale} />
+      {/* 4. Cinematic Field Video Section (Workers Installing Glass Facades) */}
+      <CinematicGlassVideoSection locale={validLocale} />
 
       {/* 5. Before & After Transformation Slider */}
       <BeforeAfterSlider locale={validLocale} />

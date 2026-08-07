@@ -6,7 +6,8 @@ import { Clock, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import { AnimatedCanvasBanner } from "@/components/ui/AnimatedCanvasBanner";
+import { SmartFallbackImage } from "@/components/ui/SmartFallbackImage";
+import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 
 interface Props {
   locale: Locale;
@@ -21,19 +22,50 @@ export function BlogPageContent({ locale, dict, initialArticles }: Props) {
 
   return (
     <div className="pt-[var(--header-height)]">
-      {/* Hero */}
-      <section className="relative py-16 sm:py-20 bg-gradient-to-br from-primary-950 via-[#0c1445] to-primary-900 overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="text-sm font-semibold text-primary-300 uppercase tracking-widest mb-3">{dict.blog.title}</motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-5xl font-extrabold text-white mb-4">
-            {isRtl ? "مقالات ونصائح متخصصة" : "Expert Articles & Tips"}
+      {/* Cinematic Blog Hero */}
+      <section className="relative py-20 sm:py-28 bg-[#090e1a] overflow-hidden">
+        {/* Ambient Editorial Illumination */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <PageHeroBackground pageKey="blog" />
+          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[38rem] h-[22rem] bg-gradient-to-r from-amber-500/15 via-indigo-600/15 to-amber-400/10 rounded-full blur-[100px]" />
+          <div className="absolute inset-0 opacity-[0.03]"
+            style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#090e1a]/80 via-transparent to-[#090e1a]" />
+        </div>
+
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full royal-badge shadow-xl backdrop-blur-xl border border-amber-500/30">
+            <span className="text-xs sm:text-sm font-bold text-amber-300">
+              {isRtl ? "📚 المركز المعرفي والهندسي" : "📚 Engineering & Architectural Knowledge Hub"}
+            </span>
+          </motion.div>
+
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7 }}
+            className="text-4xl sm:text-6xl font-extrabold text-white leading-tight">
+            {isRtl ? (
+              <>
+                مقالات ودراسات{" "}
+                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                  هندسية متخصصة
+                </span>
+              </>
+            ) : (
+              <>
+                Specialized Engineering{" "}
+                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                  Articles & Insights
+                </span>
+              </>
+            )}
           </motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            className="text-lg text-white/60 max-w-2xl mx-auto">{dict.blog.subtitle}</motion.p>
+
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.7 }}
+            className="text-base sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+            {dict.blog.subtitle || (isRtl
+              ? "اكتشف أحدث المقالات والدراسات الفنية المتعلقة بأنواع الزجاج المقوى (Securit)، قطاعات الألمنيوم المعزولة حرارياً، وأفضل ممارسات البناء الحديث."
+              : "Discover technical insights, tempered glass standards, thermal-break aluminum comparisons, and modern architectural trends.")}
+          </motion.p>
         </div>
       </section>
 
@@ -45,19 +77,14 @@ export function BlogPageContent({ locale, dict, initialArticles }: Props) {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               className="rounded-3xl overflow-hidden border border-border-light bg-surface-elevated hover:shadow-2xl transition-all duration-300 grid md:grid-cols-2">
               <div className="h-64 md:h-auto bg-surface relative overflow-hidden">
-                {featured.cover_image_url || featured.featured_image_url ? (
-                  <img 
-                    src={featured.cover_image_url || featured.featured_image_url} 
-                    alt={isRtl ? featured.title_ar || featured.title : featured.title_en || featured.title} 
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <AnimatedCanvasBanner 
-                    aspectRatio="auto"
-                    title={isRtl ? featured.title_ar || featured.title : featured.title_en || featured.title}
-                    badge={isRtl ? (featured.category_ar || "مقال مميز") : (featured.category_en || "Featured")}
-                  />
-                )}
+                <SmartFallbackImage 
+                  src={featured.cover_image_url || featured.featured_image_url} 
+                  alt={isRtl ? featured.title_ar || featured.title : featured.title_en || featured.title}
+                  aspectRatio="auto"
+                  title={isRtl ? featured.title_ar || featured.title : featured.title_en || featured.title}
+                  badge={isRtl ? (featured.category_ar || "مقال مميز") : (featured.category_en || "Featured")}
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               <div className="p-8 flex flex-col justify-between space-y-6">
@@ -110,20 +137,14 @@ export function BlogPageContent({ locale, dict, initialArticles }: Props) {
 
                     <Link href={`/${locale}/blog/${article.slug}`} className="block">
                       <div className="h-48 bg-surface relative overflow-hidden">
-                        {cover ? (
-                          <>
-                            <img src={cover} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                            <span className="absolute top-3 end-3 px-3 py-1 rounded-full bg-black/50 text-white text-xs font-medium backdrop-blur-sm">
-                              {tag}
-                            </span>
-                          </>
-                        ) : (
-                          <AnimatedCanvasBanner 
-                            aspectRatio="auto"
-                            title={title}
-                            badge={tag}
-                          />
-                        )}
+                        <SmartFallbackImage 
+                          src={cover}
+                          alt={title}
+                          aspectRatio="auto"
+                          title={title}
+                          badge={tag}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
                       </div>
 
                       <div className="p-6 space-y-3">

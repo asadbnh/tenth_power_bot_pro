@@ -75,9 +75,9 @@
     "project_value": 420000.00,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/defaults/projects/project-2.jpg",
-    "before_image_url": "/images/defaults/projects/project-2-before.jpg",
-    "after_image_url": "/images/defaults/projects/project-2-after.jpg"
+    "cover_image_url": "/images/defaults/projects/",
+    "before_image_url": "/images/defaults/projects/",
+    "after_image_url": "/images/defaults/projects/"
   },
   {
     "slug": "tempered-glass-office",
@@ -114,8 +114,8 @@
     "status": "completed",
     "is_featured": true,
     "cover_image_url": "/images/defaults/projects/project-3.jpg",
-    "before_image_url": "/images/defaults/projects/project-3-before.jpg",
-    "after_image_url": "/images/defaults/projects/project-3-after.jpg"
+    "before_image_url": "/images/defaults/projects/",
+    "after_image_url": "/images/defaults/projects/"
   },
   {
     "slug": "modern-kitchen-suite",
@@ -139,8 +139,8 @@
     "project_value": 650000.00,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/defaults/projects/project-1.jpg",
-    "before_image_url": "/images/defaults/projects/project-1-before.jpg",
+    "cover_image_url": "/images/defaults/projects/",
+    "before_image_url": "/images/defaults/projects/",
     "after_image_url": "/images/defaults/projects/project-1-after.jpg"
   }
 ]

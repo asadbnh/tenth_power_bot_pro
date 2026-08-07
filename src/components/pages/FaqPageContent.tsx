@@ -6,6 +6,7 @@ import { Search, ChevronDown, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 
 interface Props {
   locale: Locale;
@@ -30,19 +31,55 @@ export function FaqPageContent({ locale, dict, initialFaqs }: Props) {
 
   return (
     <div className="pt-[var(--header-height)] min-h-dvh bg-gradient-to-b from-background to-surface">
-      {/* Hero */}
-      <section className="relative py-16 sm:py-20 bg-gradient-to-br from-primary-950 via-[#0c1445] to-primary-900 overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-5xl font-extrabold text-white mb-4">{dict.faq.title}</motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            className="text-lg text-white/60 mb-8">{dict.faq.subtitle}</motion.p>
+      {/* Cinematic FAQ Knowledge Base Hero */}
+      <section className="relative py-20 sm:py-28 bg-[#070e1c] overflow-hidden">
+        {/* Ambient Cyan Spotlight */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <PageHeroBackground pageKey="faq" />
+          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[36rem] h-[22rem] bg-gradient-to-r from-cyan-500/15 via-blue-600/15 to-amber-500/15 rounded-full blur-[100px]" />
+          <div className="absolute inset-0 opacity-[0.03]"
+            style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#070e1c]/80 via-transparent to-[#070e1c]" />
+        </div>
 
-          {/* Search box */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-            className="relative max-w-xl mx-auto">
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full royal-badge shadow-xl backdrop-blur-xl border border-cyan-500/30">
+            <HelpCircle className="w-4 h-4 text-cyan-400" />
+            <span className="text-xs sm:text-sm font-bold">
+              {isRtl ? "💡 مركز الاستفسارات والدعم الهندسي" : "💡 Knowledge Base & Technical FAQ"}
+            </span>
+          </motion.div>
+
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7 }}
+            className="text-4xl sm:text-6xl font-extrabold text-white leading-tight">
+            {isRtl ? (
+              <>
+                الأسئلة{" "}
+                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                  الشائعة والمُجابة
+                </span>
+              </>
+            ) : (
+              <>
+                Frequently Asked{" "}
+                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                  Questions
+                </span>
+              </>
+            )}
+          </motion.h1>
+
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.7 }}
+            className="text-base sm:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
+            {dict.faq.subtitle || (isRtl
+              ? "إليك إجابات تفصيلية وشاملة حول معايير التركيب، أنواع الزجاج المقوى، الضمان الشامل، وآلية طلب خدمة معاينة الموقع."
+              : "Comprehensive technical answers about installation standards, glass specifications, warranty terms, and site survey booking.")}
+          </motion.p>
+
+          {/* Search Box Bar */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+            className="relative max-w-xl mx-auto pt-2">
             <Search className={cn("absolute top-1/2 -translate-y-1/2 w-5 h-5 text-white/40", isRtl ? "right-4" : "left-4")} />
             <input type="text" value={query} onChange={(e) => setQuery(e.target.value)}
               placeholder={isRtl ? "ابحث في الأسئلة الشائعة..." : "Search in FAQs..."}

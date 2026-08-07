@@ -8,7 +8,7 @@ import { getFallbackFaqs } from "@/lib/fallback-provider";
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
   return {
     title: dict.faq.title,
     description: dict.faq.subtitle,
@@ -21,7 +21,7 @@ export default async function FaqPage({ params }: { params: Promise<{ locale: st
   const validLocale = locale as Locale;
   const dict = await getDictionary(validLocale);
   const isAr = validLocale === "ar";
-  
+
   let faqs = await getFaqs(validLocale).catch(() => []);
   if (!faqs || faqs.length === 0) {
     const rawFallbacks = getFallbackFaqs();

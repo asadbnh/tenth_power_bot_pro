@@ -24,7 +24,7 @@ export async function generateMetadata({
 
   const cityName = dbCity?.cityName || (locale === "ar" ? fallback?.city_name_ar : fallback?.city_name_en) || city;
   const regionName = dbCity?.regionName || (locale === "ar" ? fallback?.region_ar : fallback?.region_en) || "";
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
 
   const isAr = locale === "ar";
   const title = String(isAr

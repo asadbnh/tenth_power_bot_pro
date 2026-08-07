@@ -4,20 +4,22 @@ import { getFallbackCompany } from "@/lib/fallback-provider";
 
 /**
  * POST /api/chat
- * AI Chat streaming endpoint fetching configurable system prompt from Supabase ai_prompts
- * and connecting to Google Gemini REST API with graceful fallback.
+ * High-performance AI Chat endpoint supporting Google Gemini 3.5 Interactions API (v1beta/interactions)
+ * with session continuity (previous_interaction_id), system instructions, and graceful fallback.
  */
 export async function POST(request: NextRequest) {
   try {
-    const { messages, locale } = await request.json();
+    const { messages, locale, previous_interaction_id, interaction_id } = await request.json();
     const isAr = locale === "ar";
     const lastUserMessage = messages?.[messages.length - 1]?.content ?? "";
+    const previousId = previous_interaction_id || interaction_id;
     const company = getFallbackCompany();
 
-    const apiKey = process.env.GOOGLE_AI_API_KEY;
-    const model = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY;
+    const model = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 
     let aiResponseText = "";
+    let nextInteractionId: string | null = null;
 
     // 1. Fetch System Prompt dynamically from Supabase ai_prompts table
     let systemPrompt = "";
@@ -38,55 +40,105 @@ export async function POST(request: NextRequest) {
           : promptRow.system_prompt_en || promptRow.system_prompt_ar;
       }
     } catch {
-      // fallback if table query fails
+      // fallback if DB query fails
     }
 
     if (!systemPrompt) {
       systemPrompt = isAr
-        ? `أنت المساعد الذكي لـ ${company.name_ar}. أجب باحترافية وبإيجاز، وانصح العميل بطلب عرض سعر مجاني.`
-        : `You are the AI Assistant for ${company.name_en}. Answer concisely and suggest requesting a free quote.`;
+        ? `أنت المساعد الذكي المعماري لـ ${company.name_ar}. أجب باحترافية عن الزجاج السيكوريت، الواجهات الزجاجية، قطاعات الألمنيوم، والمقاولات، وانصح العميل بطلب عرض سعر مجاني.`
+        : `You are the architectural AI Assistant for ${company.name_en}. Answer professionally about securit glass, facades, aluminum, and contracting, and suggest requesting a free quote.`;
     }
 
-    // 2. Try Google Gemini REST API if key is set
+    // 2. Strategy A: Try Google Gemini Interactions API (v1beta/interactions)
     if (apiKey && apiKey !== "your_gemini_api_key") {
       try {
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        const interactionPayload: Record<string, unknown> = {
+          model,
+          input: lastUserMessage,
+          system_instruction: systemPrompt,
+        };
+
+        if (previousId) {
+          interactionPayload.previous_interaction_id = previousId;
+        }
+
+        const interactionsRes = await fetch(
+          "https://generativelanguage.googleapis.com/v1beta/interactions",
           {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [
-                {
-                  role: "user",
-                  parts: [
-                    { text: `${systemPrompt}\n\nسؤال العميل: ${lastUserMessage}` },
-                  ],
-                },
-              ],
-              generationConfig: {
-                maxOutputTokens: 350,
-                temperature: 0.7,
-              },
-            }),
+            headers: {
+              "x-goog-api-key": apiKey,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(interactionPayload),
           }
         );
 
-        if (geminiRes.ok) {
-          const data = await geminiRes.json();
-          const candidateText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (candidateText) {
-            aiResponseText = candidateText;
+        if (interactionsRes.ok) {
+          const data = await interactionsRes.json();
+          // Extract response text and interaction_id
+          const textCandidate =
+            data.outputs?.[0]?.text ||
+            data.text ||
+            data.content ||
+            data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+          if (textCandidate) {
+            aiResponseText = textCandidate;
+            nextInteractionId = data.interaction_id || data.id || previousId || null;
           }
         } else {
-          console.warn("Gemini API warning, status:", geminiRes.status);
+          console.warn("Gemini Interactions API status:", interactionsRes.status);
         }
-      } catch (err) {
-        console.error("Gemini fetch error:", err);
+      } catch (interactionsErr) {
+        console.error("Gemini Interactions API error:", interactionsErr);
+      }
+
+      // 3. Strategy B: Fallback to generateContent API if Interactions API fails
+      if (!aiResponseText) {
+        try {
+          const contentsHistory = (messages || []).map((m: { role: string; content: string }) => ({
+            role: m.role === "assistant" ? "model" : "user",
+            parts: [{ text: m.content }],
+          }));
+
+          const fallbackRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                systemInstruction: {
+                  parts: [{ text: systemPrompt }],
+                },
+                contents: contentsHistory.length > 0 ? contentsHistory : [
+                  {
+                    role: "user",
+                    parts: [{ text: lastUserMessage }],
+                  },
+                ],
+                generationConfig: {
+                  maxOutputTokens: 400,
+                  temperature: 0.7,
+                },
+              }),
+            }
+          );
+
+          if (fallbackRes.ok) {
+            const data = await fallbackRes.json();
+            const candidateText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (candidateText) {
+              aiResponseText = candidateText;
+            }
+          }
+        } catch (genErr) {
+          console.error("Gemini generateContent error:", genErr);
+        }
       }
     }
 
-    // 2. Fallback smart responses if Gemini API is offline or quota reached
+    // 4. Strategy C: Local Smart Business Fallback if offline or quota exceeded
     if (!aiResponseText) {
       const lower = lastUserMessage.toLowerCase();
       if (/price|سعر|تكلفة|كم/.test(lower)) {
@@ -104,25 +156,29 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Stream the output word by word for fluid UI animation
+    // Stream output word by word for fluid UI animation
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
         const words = aiResponseText.split(" ");
         for (const word of words) {
           controller.enqueue(encoder.encode(word + " "));
-          await new Promise((r) => setTimeout(r, 30));
+          await new Promise((r) => setTimeout(r, 25));
         }
         controller.close();
       },
     });
 
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-cache",
-      },
-    });
+    const responseHeaders: Record<string, string> = {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-cache",
+    };
+
+    if (nextInteractionId) {
+      responseHeaders["x-interaction-id"] = nextInteractionId;
+    }
+
+    return new Response(stream, { headers: responseHeaders });
   } catch (error) {
     console.error("Chat API error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

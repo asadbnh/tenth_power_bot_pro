@@ -21,7 +21,7 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   const isAr = locale === "ar";
   const article = await getArticleBySlug(slug, locale).catch(() => null);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
 
   const titleText = article ? (isAr ? article.title_ar || article.title : article.title_en || article.title) : slug.replace(/-/g, " ");
   const title = isAr
@@ -52,7 +52,7 @@ export default async function ArticleDetailPage({
   const dict = await getDictionary(validLocale);
   const article = await getArticleBySlug(slug, validLocale).catch(() => null);
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
   const isAr = validLocale === "ar";
   const titleText = article ? (isAr ? article.title_ar || article.title : article.title_en || article.title) : slug.replace(/-/g, " ");
 

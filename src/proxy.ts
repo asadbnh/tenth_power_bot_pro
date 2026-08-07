@@ -67,9 +67,7 @@ export function proxy(request: NextRequest) {
 
   // If the pathname already has a valid locale, continue
   if (pathnameLocale) {
-    const response = NextResponse.next();
-    response.headers.set("x-locale", pathnameLocale);
-    return response;
+    return NextResponse.next();
   }
 
   // Detect locale from Accept-Language header or cookie
@@ -88,9 +86,7 @@ export function proxy(request: NextRequest) {
   const newUrl = request.nextUrl.clone();
   newUrl.pathname = `/${detectedLocale}${pathname}`;
   
-  const response = NextResponse.redirect(newUrl);
-  response.headers.set("x-locale", detectedLocale);
-  return response;
+  return NextResponse.redirect(newUrl);
 }
 
 export const config = {

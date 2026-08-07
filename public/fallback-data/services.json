@@ -10,7 +10,7 @@
     "price_from": 180.00,
     "price_to": 350.00,
     "price_unit": "متر مربع",
-    "cover_image_url": "/images/defaults/services/tempered-glass.jpg",
+    "cover_image_url": null,
     "icon": "Layers3",
     "features_ar": [
       "مقاوم للصدمات والحرارة العالية",
@@ -48,7 +48,7 @@
     "price_from": 450.00,
     "price_to": 900.00,
     "price_unit": "متر مربع",
-    "cover_image_url": "/images/defaults/services/glass-facades.jpg",
+    "cover_image_url": null,
     "icon": "Building2",
     "features_ar": [
       "زجاج مزدوج معزول حرارياً Low-E",
@@ -58,90 +58,80 @@
     ],
     "features_en": [
       "Low-E Double Insulated Glass",
-      "High Wind Pressure Resistance up to 200 km/h",
-      "Luxury Architectural Designs",
-      "Acoustic Insulation up to 45dB"
+      "High wind load resistance up to 200 km/h",
+      "Luxurious architectural aesthetics",
+      "Acoustic rating up to 45 dB"
     ],
     "specs": [
-      { "label_ar": "نوع النظام", "label_en": "System Type", "value_ar": "كرتن وول، سبايدر، هيكلي (Structural)", "value_en": "Curtain Wall, Spider, Structural Glazing" },
-      { "label_ar": "العزل الحراري", "label_en": "Thermal Insulation", "value_ar": "Low-E Coating + Argon Gas", "value_en": "Low-E Coating + Argon Gas" },
-      { "label_ar": "ضمان التسريب", "label_en": "Leakage Warranty", "value_ar": "10 سنوات ضد تسريب المياه والغبار", "value_en": "10 Years Against Water & Dust Leaks" }
+      { "label_ar": "أنظمة التثبيت", "label_en": "Fitting Systems", "value_ar": "كرتن وول، سبايدر، زجاج هيكلي", "value_en": "Curtain Wall, Spider, Structural Glazing" },
+      { "label_ar": "نوع الزجاج", "label_en": "Glass Spec", "value_ar": "دبل معزول بطلاء Low-E", "value_en": "Double Glazed Low-E Coated" },
+      { "label_ar": "ضمان التسريب", "label_en": "Leakage Warranty", "value_ar": "10 سنوات ضمان عدم التسريب", "value_en": "10-Year Water & Air Leakage Warranty" }
     ],
     "faqs": [
-      { "q_ar": "هل تتحمل الواجهات الزجاجية الرياح القوية بالارتفاعات؟", "q_en": "Can glass facades withstand strong high-altitude winds?", "a_ar": "نعم، نقوم بحساب أحمال الرياح وفق كود البناء السعودي واستخدام قطاعات سبايدر فائقة التحمل.", "a_en": "Yes, we calculate wind load resistance according to KSA building code and use structural spider fittings." }
+      { "q_ar": "هل الواجهات الزجاجية آمنة في الرياح العاصفة؟", "q_en": "Are glass facades safe in high winds?", "a_ar": "نعم، يتم حساب سماكات الزجاج والهياكل المعدنية لتقاوم أشد العواصف وفق كود البناء السعودي.", "a_en": "Yes, glass thickness and frame profiles are engineered to withstand extreme storm loads under SBC." }
     ],
     "is_featured": true,
     "sort_order": 2
   },
   {
-    "slug": "aluminum",
-    "name_ar": "قطاعات ألمنيوم معزولة (سحاب وقاطع)",
-    "name_en": "Thermal Break Aluminum Profiles",
-    "short_description_ar": "توريد وتركيب نواتج الألمنيوم، النوافذ السحابية، والقطاعات الحرارية المعزولة بالكامل بآليات إغلاق ألمانية.",
-    "short_description_en": "Supply & installation of sliding aluminum windows and thermal-break profiles with German hardware locking systems.",
-    "full_description_ar": "ننفذ جميع أعمال قطاعات الألمنيوم المعمارية ذات الجودة العالية (سرايا، جامبو، تكسال، وسوبر جامبو) المزودة بكسر حراري لعزل الحرارة الخارجية الشديدة والحد من استهلاك الطاقة الكهربائية للتكييف.",
-    "full_description_en": "Complete architectural aluminum works using thermal-break profiles engineered to isolate external heat and optimize AC energy consumption.",
-    "price_from": 350.00,
-    "price_to": 750.00,
+    "slug": "aluminum-works",
+    "name_ar": "أعمال الألمنيوم والنوافذ المعزولة",
+    "name_en": "Aluminum Works & Insulated Windows",
+    "short_description_ar": "تصنيع وتراكيب قطاعات الألمنيوم المعزولة حرارياً للنوافذ والأبواب والواجهات بأحدث التقنيات والإكسسوارات الأوروبية.",
+    "short_description_en": "Fabrication and installation of thermal-break aluminum windows, doors, and storefronts with European hardware.",
+    "full_description_ar": "نقدم قطاعات ألمنيوم متطورة مزودة بكسر حراري (Thermal Break) تضمن أقصى درجات توفير الطاقة والتكييف داخل المبنى، مع إكسسوارات إيطالية وألمانية ذات عمر افتراضي طويل وسحب سلس.",
+    "full_description_en": "Advanced thermal-break aluminum profiles engineered to minimize energy loss and HVAC load, featuring premium Italian & German hardware.",
+    "price_from": 320.00,
+    "price_to": 650.00,
     "price_unit": "متر مربع",
-    "cover_image_url": "/images/defaults/services/aluminum.jpg",
+    "cover_image_url": null,
     "icon": "RectangleHorizontal",
     "features_ar": [
-      "عزل حراري وتوفير في طاقة التكييف حتى 35%",
-      "إكسسوارات وإغلاق ألماني محكم",
-      "ألوان دهان إلكتروستاتيك مقاومة للخدش",
-      "منع تسرب المياه والأتربة تماماً"
+      "كسر حراري عالي الكفاءة توفير التكييف",
+      "دهان بودر كوتينج مقاوم للخدش والعوامل الجوية",
+      "إكسسوارات أوروبية تجميع عالي الدقة",
+      "مانع لتسرب المياه والغبار والضوضاء"
     ],
     "features_en": [
-      "Thermal Insulation & Energy Saving up to 35%",
-      "Tight German Locking Hardware",
-      "Scratch-Resistant Electrostatic Paint",
-      "Zero Water & Dust Leakage"
+      "High thermal break insulation",
+      "Weather & scratch resistant powder coating",
+      "Premium European hardware & locks",
+      "Water, dust, and noise sealing"
     ],
     "specs": [
-      { "label_ar": "نوع القطاع", "label_en": "Profile Type", "value_ar": "سرايا، جامبو، تكسال حراري", "value_en": "Saraya, Jumbo, Texal Thermal" },
-      { "label_ar": "الإكسسوارات", "label_en": "Hardware Accessories", "value_ar": "إكسسوارات ألمانية وإيطالية أصلية", "value_en": "Original German & Italian Hardware" },
-      { "label_ar": "الضمان", "label_en": "Warranty", "value_ar": "5 سنوات شاملة للصيانة والتغير", "value_en": "5 Years Maintenance & Parts Warranty" }
+      { "label_ar": "القطاعات المتاحة", "label_en": "Available Profiles", "value_ar": "سرايا، جامبو، سوبر سرايا، معزول حرارياً", "value_en": "Saraya, Jumbo, Super Saraya, Thermal Break" }
     ],
-    "faqs": [
-      { "q_ar": "ما الفرق بين الألمنيوم الحراري والعادي؟", "q_en": "What is the difference between thermal break and standard aluminum?", "a_ar": "الألمنيوم الحراري يحوي عازلاً بين الشق الداخلي والخارجي يمنع نقل الحرارة لداخل الغرفة.", "a_en": "Thermal break aluminum contains an insulator between inner and outer profiles to stop heat conduction." }
-    ],
+    "faqs": [],
     "is_featured": true,
     "sort_order": 3
   },
   {
-    "slug": "kitchens",
-    "name_ar": "مطابخ ألمنيوم وخشب مودرن",
-    "name_en": "Modern Aluminum & Wooden Kitchens",
-    "short_description_ar": "تفصيل وتصميم مطابخ مودرن بقطاعات ألمنيوم ضد الماء والحشرات، وأسطح رخام صناعي وطبيعي مقاومة للحرارة.",
-    "short_description_en": "Custom modern kitchens with waterproof & pest-resistant aluminum frames and heat-resistant quartz/granite countertops.",
-    "full_description_ar": "نصمم ونصنع أفضل المطابخ العصرية الفاخرة المدمجة بقطاعات ألمنيوم مكسوة بألواح الخشب والأكريليك والملامين المطابق للمواصفات الأوروبية، مع مفصلات بلوم النمساوية وأدراج هيدروليكية ذات إغلاق صامت.",
-    "full_description_en": "We design and manufacture modern kitchens integrated with aluminum structural frames, European acrylic doors, Blum Austrian soft-close hardware, and quartz stone countertops.",
+    "slug": "kitchens-and-decor",
+    "name_ar": "المطابخ والديكورات الحديثة",
+    "name_en": "Modern Kitchens & Interior Decor",
+    "short_description_ar": "تصميم وتنفيذ المطابخ الأكريليك والألمنيوم الفاخرة مع أدراج هيدروليكية وإضاءات مخفية تناسب تطلعاتك.",
+    "short_description_en": "Design and installation of modern acrylic & aluminum kitchens with soft-close drawers and ambient LED lighting.",
+    "full_description_ar": "نصمم مطابخ الأحلام بهياكل ألمنيوم غير قابلة للصدأ أو التآكل، ومغلفة بأسطح أكريليك وخشب معالج ضد المياه والحشرات، مع مفصلات وأدراج نمساوية ذات إغلاق صامت.",
+    "full_description_en": "Custom kitchens featuring durable rust-proof aluminum frames clad with acrylic or water-resistant surfaces and Austrian soft-close hardware.",
     "price_from": 1200.00,
     "price_to": 2800.00,
     "price_unit": "متر طولي",
-    "cover_image_url": "/images/defaults/services/kitchens.jpg",
+    "cover_image_url": null,
     "icon": "PaintBucket",
     "features_ar": [
-      "ضد الماء والرطوبة والحشرات 100%",
-      "مفصلات وأدراج هيدروليكية ناعمة Blum",
-      "أسطح كوارتز ورخام طبيعي حراري",
-      "تصميم 3D مجاني قبل التنفيذ"
+      "هيكل ألمنيوم متين مقاوم للماء والحشرات",
+      "أسطح رخام صناعي وجرانيت عالي الجودة",
+      "أدراج ومفصلات هيدروليكية إغلاق صامت",
+      "إضاءات LED مخفية بتصميم مودرن"
     ],
     "features_en": [
-      "100% Water, Moisture & Pest Proof",
-      "Blum Austrian Soft-Close Drawers",
-      "Quartz & Natural Granite Tops",
-      "Free 3D Design Before Production"
+      "Durable water & pest proof aluminum frame",
+      "High quality quartz & granite countertops",
+      "Hydraulic soft-close drawers & hinges",
+      "Modern ambient hidden LED lighting"
     ],
-    "specs": [
-      { "label_ar": "مادة الهيكل الداخلي", "label_en": "Cabinet Frame Material", "value_ar": "ألمنيوم دبل عالي السماكة", "value_en": "Heavy Double Aluminum Profile" },
-      { "label_ar": "نوع المفصلات", "label_en": "Hinges Brand", "value_ar": "Blum النمساوية إغلاق هيدروليك صامت", "value_en": "Blum Austrian Hydraulic Soft-Close" },
-      { "label_ar": "أسطح المطبخ", "label_en": "Countertop Types", "value_ar": "رخام صناعي، كوارتز، رخام طبيعي", "value_en": "Quartz, Natural Granite, Solid Surface" }
-    ],
-    "faqs": [
-      { "q_ar": "هل تقدمون تصميم 3D قبل البدء للتصنيع؟", "q_en": "Do you provide 3D design before manufacturing?", "a_ar": "نعم، نتيح معاينة المطبخ وتقسيماته ثلاثية الأبعاد مجاناً للعميل لضمان الملاءمة.", "a_en": "Yes, we offer free 3D kitchen layout visualization prior to manufacturing." }
-    ],
+    "specs": [],
+    "faqs": [],
     "is_featured": true,
     "sort_order": 4
   }

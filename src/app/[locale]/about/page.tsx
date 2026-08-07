@@ -23,7 +23,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const company = getFallbackCompany();
   const settings = await getSiteSettings().catch(() => null);
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
   const isAr = validLocale === "ar";
 
   const orgSchema = {

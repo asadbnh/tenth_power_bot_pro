@@ -37,7 +37,7 @@ export async function generateMetadata({
   const cityName = dbData?.cityName || (isAr ? fallbackCity?.city_name_ar : fallbackCity?.city_name_en) || city;
   const serviceName = dbData?.serviceName || (isAr ? fallbackService?.name_ar : fallbackService?.name_en) || service;
   const regionName = dbData?.regionName || (isAr ? fallbackCity?.region_ar : fallbackCity?.region_en) || "";
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
 
   const title = isAr
     ? `خدمة ${serviceName} في ${cityName} | WebTaky`

@@ -17,6 +17,7 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { CompanyLogo } from "@/components/ui/CompanyLogo";
 
 interface HeaderProps {
   locale: Locale;
@@ -104,9 +105,7 @@ export function Header({ locale, dict }: HeaderProps) {
             className="flex items-center gap-2.5 shrink-0"
             aria-label={dict.meta.siteName}
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center text-accent-400 font-extrabold text-lg shadow-md border border-accent-500/20">
-              W
-            </div>
+            <CompanyLogo size={36} className="shrink-0" />
             <span className="text-xl font-extrabold text-text-primary transition-colors">
               {dict.meta.siteName}
             </span>

@@ -21,7 +21,7 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   const isAr = locale === "ar";
   const project = await getProjectBySlug(slug, locale).catch(() => null);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
 
   const projectName = project ? (isAr ? project.name_ar : project.name_en) : slug.replace(/-/g, " ");
   const title = isAr
@@ -52,7 +52,7 @@ export default async function ProjectDetailPage({
   const dict = await getDictionary(validLocale);
   const project = await getProjectBySlug(slug, validLocale).catch(() => null);
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
   const isAr = validLocale === "ar";
   const projectName = project ? (isAr ? project.name_ar : project.name_en) : slug.replace(/-/g, " ");
 

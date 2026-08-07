@@ -7,6 +7,7 @@ import { Star, Quote, CheckCircle2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 
 interface Props {
   locale: Locale;
@@ -27,23 +28,64 @@ export function TestimonialsPageContent({ locale, dict, initialReviews }: Props)
 
   return (
     <div className="pt-[var(--header-height)]">
-      {/* Hero */}
-      <section className="relative py-16 sm:py-20 bg-gradient-to-br from-primary-950 via-[#0c1445] to-primary-900 overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-5xl font-extrabold text-white mb-4">{dict.testimonials.title}</motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            className="text-lg text-white/60">{dict.testimonials.subtitle}</motion.p>
+      {/* Cinematic Testimonials Hero */}
+      <section className="relative py-20 sm:py-28 bg-[#090b16] overflow-hidden">
+        {/* Ambient Gold & Sapphire Lighting */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <PageHeroBackground pageKey="testimonials" />
+          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[38rem] h-[22rem] bg-gradient-to-r from-amber-500/20 via-yellow-400/10 to-blue-600/15 rounded-full blur-[100px]" />
+          <div className="absolute inset-0 opacity-[0.03]"
+            style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#090b16]/80 via-transparent to-[#090b16]" />
+        </div>
+
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full royal-badge shadow-xl backdrop-blur-xl border border-amber-500/30">
+            <Quote className="w-4 h-4 text-amber-400" />
+            <span className="text-xs sm:text-sm font-bold">
+              {isRtl ? "آراء وتقييمات عملائنا الموثقة" : "Verified Client Reviews & Testimonials"}
+            </span>
+          </motion.div>
+
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7 }}
+            className="text-4xl sm:text-6xl font-extrabold text-white leading-tight">
+            {isRtl ? (
+              <>
+                ثقة عملائنا هي{" "}
+                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                  وسام فخرنا الحقيقي
+                </span>
+              </>
+            ) : (
+              <>
+                Our Client Trust is{" "}
+                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                  Our Ultimate Honor
+                </span>
+              </>
+            )}
+          </motion.h1>
+
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.7 }}
+            className="text-base sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+            {dict.testimonials.subtitle || (isRtl
+              ? "استمع لشهادات عملائنا الشركاء والمطورين العقاريين وأصحاب الفيلا والمشاريع التجاري حول تجربة التعامل معنا."
+              : "Read real client reviews from homeowners, commercial developers, and project consultants across KSA.")}
+          </motion.p>
 
           {/* Star Rating Display */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-            className="flex items-center justify-center gap-1.5 mt-6">
-            {[1, 2, 3, 4, 5].map((s) => (
-              <Star key={s} className="w-6 h-6 fill-amber-400 text-amber-400" />
-            ))}
-            <span className="text-white font-extrabold text-lg ms-2">4.9 / 5.0</span>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-amber-500/30 backdrop-blur-xl">
+            <div className="flex items-center gap-1">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <Star key={s} className="w-5 h-5 fill-amber-400 text-amber-400 drop-shadow-md" />
+              ))}
+            </div>
+            <span className="text-white font-extrabold text-base ms-2">4.9 / 5.0</span>
+            <span className="text-slate-400 text-xs font-semibold">
+              ({isRtl ? "أكثر من 1,200 تقييم ممتاز" : "1,200+ Verified Ratings"})
+            </span>
           </motion.div>
         </div>
       </section>

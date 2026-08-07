@@ -5,4 +5,4 @@ Disallow: /_next/
 Disallow: /admin/
 
 # Sitemap
-Sitemap: https://webtaky.com/sitemap.xml
+Sitemap: https://powerof10.netlify.app/sitemap.xml

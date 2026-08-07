@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MapPin, CheckCircle2, Phone, ArrowRight, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
+import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 
 interface Props {
   locale: Locale;
@@ -38,22 +39,47 @@ export function CityServicePageContent({ locale, city, service, cityName, servic
     <div className="pt-[var(--header-height)] min-h-dvh bg-gradient-to-b from-background to-surface">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      {/* Hero */}
-      <section className="relative py-20 sm:py-28 bg-gradient-to-br from-primary-950 via-[#0c1445] to-primary-900 text-white text-center overflow-hidden">
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-xs font-semibold text-white/80">
-            <MapPin className="w-4 h-4 text-accent-400" />
-            {cityName} — {regionName}
+      {/* Cinematic Localized Service Hero */}
+      <section className="relative py-20 sm:py-28 bg-[#070e1c] text-white text-center overflow-hidden">
+        {/* Ambient Spotlight */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <PageHeroBackground pageKey="city-service" />
+          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[38rem] h-[22rem] bg-gradient-to-r from-amber-500/20 via-blue-600/15 to-yellow-400/10 rounded-full blur-[100px]" />
+          <div className="absolute inset-0 opacity-[0.03]"
+            style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#070e1c]/80 via-transparent to-[#070e1c]" />
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full royal-badge shadow-xl backdrop-blur-xl border border-amber-500/30">
+            <MapPin className="w-4 h-4 text-amber-400" />
+            <span className="text-xs sm:text-sm font-bold">
+              {cityName} — {regionName}
+            </span>
           </span>
 
-          <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight">
-            {isRtl ? `خدمة ${serviceName} في ${cityName}` : `${serviceName} Services in ${cityName}`}
+          <h1 className="text-4xl sm:text-6xl font-extrabold leading-tight">
+            {isRtl ? (
+              <>
+                خدمة {serviceName} في{" "}
+                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                  {cityName}
+                </span>
+              </>
+            ) : (
+              <>
+                {serviceName} Services in{" "}
+                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                  {cityName}
+                </span>
+              </>
+            )}
           </h1>
 
-          <p className="text-base sm:text-lg text-white/70 max-w-2xl mx-auto">
+          <p className="text-base sm:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {isRtl
-              ? `أفضل حلول ومواصفات ${serviceName} في مدينة ${cityName} وجميع أحياء ${regionName} بشهادة وإشراف فنيين متخصصين وضمان شامل.`
-              : `Premium ${serviceName} solutions in ${cityName} covering all neighborhoods across ${regionName} with full warranty.`}
+              ? `أفضل حلول ومواصفات ${serviceName} في مدينة ${cityName} وجميع أحياء ${regionName} بإشراف مهندسين متخصصين وضمان شامل 10 سنوات.`
+              : `Certified ${serviceName} engineering solutions in ${cityName} covering all neighborhoods with 10-year warranty.`}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">

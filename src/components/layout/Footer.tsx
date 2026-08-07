@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { CompanyLogo } from "@/components/ui/CompanyLogo";
 
 // Inline social icons — lucide-react v1.x dropped Facebook/Instagram/Twitter
 const IconFacebook = () => (
@@ -61,10 +62,8 @@ export function Footer({ locale, dict }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
           {/* Column 1: About & Logo */}
           <div className="lg:col-span-1">
-            <Link href={getHref("")} className="inline-flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                W
-              </div>
+            <Link href={getHref("")} className="inline-flex items-center gap-2 mb-4 group">
+              <CompanyLogo size={40} className="shrink-0 group-hover:scale-105 transition-transform duration-300 drop-shadow-lg" />
               <span className="text-xl font-bold">{dict.meta.siteName}</span>
             </Link>
             <p className="text-white/60 text-sm leading-relaxed mb-6">

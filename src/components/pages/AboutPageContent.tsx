@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Target, Eye, Heart, Award, Users, Star, Clock, CheckCircle2 } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 
 interface Props {
   locale: Locale;
@@ -39,20 +40,50 @@ export function AboutPageContent({ locale, dict, initialCompany }: Props) {
 
   return (
     <div className="pt-[var(--header-height)]">
-      {/* Hero */}
-      <section className="relative py-20 sm:py-28 bg-gradient-to-br from-primary-950 via-[#0c1445] to-primary-900 overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-5xl font-extrabold text-white mb-6">
-            {isRtl ? "من نحن — " : "About Us — "} {companyName}
+      {/* Cinematic About Hero */}
+      <section className="relative py-20 sm:py-28 bg-[#060b18] overflow-hidden">
+        {/* Ambient Royal Gold Glow */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <PageHeroBackground pageKey="about" />
+          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[42rem] h-[25rem] bg-gradient-to-r from-amber-500/20 via-blue-600/15 to-yellow-500/15 rounded-full blur-[110px]" />
+          <div className="absolute inset-0 opacity-[0.04]"
+            style={{ backgroundImage: "linear-gradient(rgba(212,175,55,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.2) 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#060b18]/80 via-transparent to-[#060b18]" />
+        </div>
+
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full royal-badge shadow-xl backdrop-blur-xl border border-amber-500/30">
+            <Award className="w-4 h-4 text-amber-400" />
+            <span className="text-xs sm:text-sm font-bold">
+              {isRtl ? "تأسست عام 2009 — مسيرة 15 عاماً من الريادة" : "Established 2009 — 15 Years of Excellence"}
+            </span>
+          </motion.div>
+
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7 }}
+            className="text-4xl sm:text-6xl font-extrabold text-white leading-tight">
+            {isRtl ? (
+              <>
+                عن الشركة —{" "}
+                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                  {companyName}
+                </span>
+              </>
+            ) : (
+              <>
+                About Us —{" "}
+                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                  {companyName}
+                </span>
+              </>
+            )}
           </motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
+
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.7 }}
+            className="text-base sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-normal">
             {companyDesc || (isRtl
-              ? "شركة رائدة في مجال الزجاج والألمنيوم والمقاولات، تأسست على قيم الجودة والاحترافية لتقديم حلول متكاملة لعملائنا في المملكة العربية السعودية منذ عام 2009."
-              : "A leading company in glass, aluminum, and contracting, founded on values of quality and professionalism to provide integrated solutions for our clients across Saudi Arabia since 2009.")}
+              ? "شركة رائدة في مجال الزجاج والألمنيوم والمقاولات العامة، تأسست على قيم الجودة والاحترافية والابتكار المعماري لتقديم حلول متكاملة لعملاء النخبة والمشاريع الكبرى بالمملكة."
+              : "A leading pioneer in architectural glass, aluminum profiles, and general contracting, committed to engineering mastery and Saudi Building Code standards.")}
           </motion.p>
         </div>
       </section>

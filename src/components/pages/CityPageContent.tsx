@@ -5,6 +5,7 @@ import Link from "next/link";
 import { MapPin, Star, Phone, ArrowRight, Building2, Layers3, RectangleHorizontal, PaintBucket } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
+import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 
 interface CityData { ar: string; en: string; region_ar: string; region_en: string; }
 interface Props { locale: Locale; city: string; cityData: CityData; initialServices?: any[]; }
@@ -45,10 +46,10 @@ export function CityPageContent({ locale, city, cityData, initialServices }: Pro
       addressCountry: "SA",
     },
     telephone: "+966500000000",
-    url: `${process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com"}/${locale}/cities/${city}`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app"}/${locale}/cities/${city}`,
     priceRange: "$$",
     areaServed: cityName,
-    "@id": `${process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com"}/${locale}/cities/${city}#localbusiness`,
+    "@id": `${process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app"}/${locale}/cities/${city}#localbusiness`,
   };
 
   return (
@@ -56,30 +57,54 @@ export function CityPageContent({ locale, city, cityData, initialServices }: Pro
       {/* JSON-LD */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      {/* Hero */}
-      <section className="relative py-20 sm:py-28 bg-gradient-to-br from-primary-950 via-[#0c1445] to-primary-900 overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white/80 text-sm mb-6">
-            <MapPin className="w-4 h-4" />
-            {regionName}
+      {/* Cinematic City Coverage Hero */}
+      <section className="relative py-20 sm:py-28 bg-[#070d1e] overflow-hidden">
+        {/* Regional Ambient Spotlight */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <PageHeroBackground pageKey="cities" />
+          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[25rem] bg-gradient-to-r from-blue-600/20 via-amber-500/15 to-purple-600/20 rounded-full blur-[100px]" />
+          <div className="absolute inset-0 opacity-[0.03]"
+            style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/80 via-transparent to-[#070d1e]" />
+        </div>
+
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full royal-badge shadow-xl backdrop-blur-xl border border-amber-500/30">
+            <MapPin className="w-4 h-4 text-amber-400" />
+            <span className="text-xs sm:text-sm font-bold text-white">
+              {isRtl ? `تغطية شاملة ومباشرة — ${cityName} (${regionName})` : `Full Local Coverage — ${cityName} (${regionName})`}
+            </span>
           </motion.div>
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-5xl font-extrabold text-white mb-6 leading-tight">
-            {isRtl
-              ? `أفضل خدمات الزجاج والألمنيوم والمقاولات في ${cityName}`
-              : `Glass, Aluminum & Contracting Services in ${cityName}`}
+
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7 }}
+            className="text-4xl sm:text-6xl font-extrabold text-white leading-tight">
+            {isRtl ? (
+              <>
+                خدمات الزجاج والألمنيوم والواجهات في{" "}
+                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                  {cityName}
+                </span>
+              </>
+            ) : (
+              <>
+                Premier Glass & Facade Solutions in{" "}
+                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                  {cityName}
+                </span>
+              </>
+            )}
           </motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto mb-8 leading-relaxed">
+
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.7 }}
+            className="text-base sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
             {isRtl
-              ? `نوفر حلول الزجاج السكريت المقوى، الواجهات الزجاجية، قطاعات الألمنيوم والمطابخ العصرية بأعلى معايير الجودة في مدينة ${cityName} وجميع أحياء ${regionName}.`
-              : `Premium tempered glass, glass facades, aluminum profiles, and modern kitchens across ${cityName} and all ${regionName} neighborhoods.`}
+              ? `نوفر أفضل خدمات تصنيع وتوريد وتركيب الزجاج السيكوريت، الواجهات المعمارية، الألمنيوم، والمقاولات في ${cityName} مع معاينة هندسية مجانية وضمان 10 سنوات.`
+              : `Certified installation of securit glass, curtain walls, and aluminum systems in ${cityName} with free engineering survey and 10-year warranty.`}
           </motion.p>
+          
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Link href={`/${locale}/quote`}
               className="inline-flex items-center gap-2 px-7 py-4 rounded-xl bg-accent-500 hover:bg-accent-400 text-primary-950 font-bold text-sm shadow-lg hover:shadow-accent-500/20 transition-all">
               {isRtl ? "اطلب عرض سعر مجاني" : "Request Free Quote"}
@@ -151,7 +176,7 @@ export function CityPageContent({ locale, city, cityData, initialServices }: Pro
       <section className="py-14 bg-surface border-t border-border-light">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex justify-center mb-3">
-            {[1,2,3,4,5].map(i => <Star key={i} className="w-6 h-6 text-amber-400 fill-amber-400" />)}
+            {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-6 h-6 text-amber-400 fill-amber-400" />)}
           </div>
           <p className="text-xl font-bold mb-2">
             {isRtl ? `نخدم عملاءنا في ${cityName} بكل فخر` : `Proudly serving clients in ${cityName}`}
