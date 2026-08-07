@@ -12,15 +12,35 @@
     "price_unit": "متر مربع",
     "cover_image_url": "/images/defaults/services/tempered-glass.jpg",
     "icon": "Layers3",
-    "features_ar": ["مقاوم للصدمات والحرارة", "ضمان 10 سنوات", "إكسسوارات استانلس ستيل 304", "عزل ممتاز للغبار والمياه"],
-    "features_en": ["Impact & Thermal Resistant", "10-Year Warranty", "304 Stainless Fittings", "Dust & Water Isolation"],
+    "features_ar": [
+      "مقاوم للصدمات والحرارة العالية",
+      "إكسسوارات استانلس ستيل 316 ضد الصدأ",
+      "قص وتفصيل بالليزر بدقة متناهية",
+      "ضمان 10 سنوات على التركيب والمواد"
+    ],
+    "features_en": [
+      "High impact & thermal resistance",
+      "316 Stainless steel anti-rust hardware",
+      "Precision laser cutting & sizing",
+      "10-year installation & material warranty"
+    ],
+    "specs": [
+      { "label_ar": "السماكات المتاحة", "label_en": "Available Thickness", "value_ar": "6مم، 8مم، 10مم، 12مم", "value_en": "6mm, 8mm, 10mm, 12mm" },
+      { "label_ar": "أنواع الزجاج", "label_en": "Glass Types", "value_ar": "شفاف، مثلج، ملون، فائق النقاء", "value_en": "Clear, Frosted, Tinted, Ultra-Clear" },
+      { "label_ar": "معيار الأمان", "label_en": "Safety Standard", "value_ar": "ANSI Z97.1 / BS 6206", "value_en": "ANSI Z97.1 / BS 6206" },
+      { "label_ar": "مدة الضمان", "label_en": "Warranty Period", "value_ar": "10 سنوات شاملة", "value_en": "10 Years Full Warranty" }
+    ],
+    "faqs": [
+      { "q_ar": "هل يمكن قص الزجاج السكريت بعد المعالجة؟", "q_en": "Can tempered glass be cut after processing?", "a_ar": "لا، يتم التقطيع والعمليات جميعها قبل إدخال الزجاج فرن السكريت.", "a_en": "No, all cutting and drilling must happen before the tempering heat treatment." },
+      { "q_ar": "ما هي مدة التوريد والتركيب؟", "q_en": "What is the delivery & installation time?", "a_ar": "عادة تتراوح بين 3 إلى 7 أيام عمل حسب حجم المشروع.", "a_en": "Usually takes between 3 to 7 working days depending on project size." }
+    ],
     "is_featured": true,
     "sort_order": 1
   },
   {
     "slug": "glass-facades",
     "name_ar": "واجهات زجاجية (كرتن وول & سبايدر)",
-    "name_en": "Glass Facades (Curtain Wall & Spider)",
+    "name_en": "Glass Facades & Curtain Walls",
     "short_description_ar": "تصميم وتثبيت واجهات المباني الزجاجية الهيكلية وأنظمة الكرتن وول والسبايدر بأعلى معدلات عزل الصوت والحرارة.",
     "short_description_en": "Structural glass facades, curtain walls, and spider fittings for commercial buildings with premium thermal & sound insulation.",
     "full_description_ar": "نمتلك خبرة متقدمة في هندسة وتثبيت واجهات المباني والمراكز التجارية والمستشفيات والشركات بأنظمة الكرتن وول المزدوج والسبايدر المزود بقطع تثبيت استانلس ستيل عالية التحمل، مع زجاج دبل جلاس معالج بنظام العزل الحراري Low-E.",
@@ -30,8 +50,26 @@
     "price_unit": "متر مربع",
     "cover_image_url": "/images/defaults/services/glass-facades.jpg",
     "icon": "Building2",
-    "features_ar": ["زجاج مزدوج معزول حرارياً Low-E", "مقاومة سرعات الرياح العالية", "تصاميم معمارية فخمة", "عزل صوتي يصل لـ 45 ديسيبل"],
-    "features_en": ["Low-E Double Insulated Glass", "High Wind Pressure Resistance", "Luxury Architectural Designs", "Acoustic Insulation up to 45dB"],
+    "features_ar": [
+      "زجاج مزدوج معزول حرارياً Low-E",
+      "مقاومة سرعات الرياح العالية حتى 200 كم/س",
+      "تصاميم معمارية فخمة وانيقة",
+      "عزل صوتي يصل لـ 45 ديسيبل"
+    ],
+    "features_en": [
+      "Low-E Double Insulated Glass",
+      "High Wind Pressure Resistance up to 200 km/h",
+      "Luxury Architectural Designs",
+      "Acoustic Insulation up to 45dB"
+    ],
+    "specs": [
+      { "label_ar": "نوع النظام", "label_en": "System Type", "value_ar": "كرتن وول، سبايدر، هيكلي (Structural)", "value_en": "Curtain Wall, Spider, Structural Glazing" },
+      { "label_ar": "العزل الحراري", "label_en": "Thermal Insulation", "value_ar": "Low-E Coating + Argon Gas", "value_en": "Low-E Coating + Argon Gas" },
+      { "label_ar": "ضمان التسريب", "label_en": "Leakage Warranty", "value_ar": "10 سنوات ضد تسريب المياه والغبار", "value_en": "10 Years Against Water & Dust Leaks" }
+    ],
+    "faqs": [
+      { "q_ar": "هل تتحمل الواجهات الزجاجية الرياح القوية بالارتفاعات؟", "q_en": "Can glass facades withstand strong high-altitude winds?", "a_ar": "نعم، نقوم بحساب أحمال الرياح وفق كود البناء السعودي واستخدام قطاعات سبايدر فائقة التحمل.", "a_en": "Yes, we calculate wind load resistance according to KSA building code and use structural spider fittings." }
+    ],
     "is_featured": true,
     "sort_order": 2
   },
@@ -48,8 +86,26 @@
     "price_unit": "متر مربع",
     "cover_image_url": "/images/defaults/services/aluminum.jpg",
     "icon": "RectangleHorizontal",
-    "features_ar": ["عزل حراري وتوفير في طاقة التكييف", "إكسسوارات وإغلاق ألماني محكم", "ألوان دهان إلكتروستاتيك مقاومة للخدش", "منع تسرب المياه والأتربة"],
-    "features_en": ["Thermal Insulation & Energy Saving", "Tight German Locking Hardware", "Scratch-Resistant Electrostatic Paint", "Zero Water & Dust Leakage"],
+    "features_ar": [
+      "عزل حراري وتوفير في طاقة التكييف حتى 35%",
+      "إكسسوارات وإغلاق ألماني محكم",
+      "ألوان دهان إلكتروستاتيك مقاومة للخدش",
+      "منع تسرب المياه والأتربة تماماً"
+    ],
+    "features_en": [
+      "Thermal Insulation & Energy Saving up to 35%",
+      "Tight German Locking Hardware",
+      "Scratch-Resistant Electrostatic Paint",
+      "Zero Water & Dust Leakage"
+    ],
+    "specs": [
+      { "label_ar": "نوع القطاع", "label_en": "Profile Type", "value_ar": "سرايا، جامبو، تكسال حراري", "value_en": "Saraya, Jumbo, Texal Thermal" },
+      { "label_ar": "الإكسسوارات", "label_en": "Hardware Accessories", "value_ar": "إكسسوارات ألمانية وإيطالية أصلية", "value_en": "Original German & Italian Hardware" },
+      { "label_ar": "الضمان", "label_en": "Warranty", "value_ar": "5 سنوات شاملة للصيانة والتغير", "value_en": "5 Years Maintenance & Parts Warranty" }
+    ],
+    "faqs": [
+      { "q_ar": "ما الفرق بين الألمنيوم الحراري والعادي؟", "q_en": "What is the difference between thermal break and standard aluminum?", "a_ar": "الألمنيوم الحراري يحوي عازلاً بين الشق الداخلي والخارجي يمنع نقل الحرارة لداخل الغرفة.", "a_en": "Thermal break aluminum contains an insulator between inner and outer profiles to stop heat conduction." }
+    ],
     "is_featured": true,
     "sort_order": 3
   },
@@ -66,8 +122,26 @@
     "price_unit": "متر طولي",
     "cover_image_url": "/images/defaults/services/kitchens.jpg",
     "icon": "PaintBucket",
-    "features_ar": ["ضد الماء والرطوبة والحشرات 100%", "مفصلات وأدراج هيدروليكية ناعمة", "أسطح كوارتز ورخام طبيعي", "تصميم 3D مجاني قبل التنفيذ"],
-    "features_en": ["100% Water, Moisture & Pest Proof", "Blum Austrian Soft-Close Drawers", "Quartz & Natural Granite Tops", "Free 3D Design Before Production"],
+    "features_ar": [
+      "ضد الماء والرطوبة والحشرات 100%",
+      "مفصلات وأدراج هيدروليكية ناعمة Blum",
+      "أسطح كوارتز ورخام طبيعي حراري",
+      "تصميم 3D مجاني قبل التنفيذ"
+    ],
+    "features_en": [
+      "100% Water, Moisture & Pest Proof",
+      "Blum Austrian Soft-Close Drawers",
+      "Quartz & Natural Granite Tops",
+      "Free 3D Design Before Production"
+    ],
+    "specs": [
+      { "label_ar": "مادة الهيكل الداخلي", "label_en": "Cabinet Frame Material", "value_ar": "ألمنيوم دبل عالي السماكة", "value_en": "Heavy Double Aluminum Profile" },
+      { "label_ar": "نوع المفصلات", "label_en": "Hinges Brand", "value_ar": "Blum النمساوية إغلاق هيدروليك صامت", "value_en": "Blum Austrian Hydraulic Soft-Close" },
+      { "label_ar": "أسطح المطبخ", "label_en": "Countertop Types", "value_ar": "رخام صناعي، كوارتز، رخام طبيعي", "value_en": "Quartz, Natural Granite, Solid Surface" }
+    ],
+    "faqs": [
+      { "q_ar": "هل تقدمون تصميم 3D قبل البدء للتصنيع؟", "q_en": "Do you provide 3D design before manufacturing?", "a_ar": "نعم، نتيح معاينة المطبخ وتقسيماته ثلاثية الأبعاد مجاناً للعميل لضمان الملاءمة.", "a_en": "Yes, we offer free 3D kitchen layout visualization prior to manufacturing." }
+    ],
     "is_featured": true,
     "sort_order": 4
   }

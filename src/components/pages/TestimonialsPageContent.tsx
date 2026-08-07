@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Star, Quote, ThumbsUp, CheckCircle2, ArrowRight } from "lucide-react";
+import { Star, Quote, CheckCircle2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -14,24 +14,6 @@ interface Props {
   initialReviews?: any[];
 }
 
-const DEFAULT_REVIEWS = [
-  {
-    id: 1, rating: 5, client_name: "عبدالعزيز الشمري", company_ar: "مجموعة الشمري للاستثمار", company_en: "Al-Shamri Investment Group",
-    comment: "تجربة احترافية من الدرجة الأولى. تم تنفيذ واجهات المبنى بجودة استثنائية وفي الوقت المحدد. أنصح بشدة بالتعامل مع هذه الشركة لكل من يبحث عن الجودة والاحترافية.",
-    service_ar: "واجهات زجاجية", service_en: "Glass Facades", avatar_url: "/images/defaults/avatars/avatar-1.jpg", is_verified: true,
-  },
-  {
-    id: 2, rating: 5, client_name: "نورة المطيري", company_ar: "مطاعم نورا", company_en: "Noura Restaurants",
-    comment: "الديكور الذي نفذوه لمطعمنا تجاوز توقعاتنا بمراحل. الإبداع في التصميم والدقة في التنفيذ جعلا من مطعمنا وجهة لا يُنسى. شكراً من القلب.",
-    service_ar: "ديكورات", service_en: "Decorations", avatar_url: "/images/defaults/avatars/avatar-2.jpg", is_verified: true,
-  },
-  {
-    id: 3, rating: 5, client_name: "خالد الزهراني", company_ar: "مقاولات الزهراني", company_en: "Al-Zahrani Contracting",
-    comment: "تعاملت معهم في تنفيذ مشروع مجمع سكني كامل. الالتزام بالمواعيد والجودة العالية وسعر عادل جعلتهم شريكي المفضل للمشاريع القادمة.",
-    service_ar: "مقاولات", service_en: "Contracting", avatar_url: "/images/defaults/avatars/avatar-3.jpg", is_verified: true,
-  },
-];
-
 const STATS = [
   { value: "4.9", label_ar: "متوسط التقييم", label_en: "Average Rating" },
   { value: "1,200+", label_ar: "تقييم موثق", label_en: "Verified Reviews" },
@@ -41,7 +23,7 @@ const STATS = [
 export function TestimonialsPageContent({ locale, dict, initialReviews }: Props) {
   const isRtl = locale === "ar";
   const [expanded, setExpanded] = useState<number | string | null>(null);
-  const reviews = (initialReviews && initialReviews.length > 0) ? initialReviews : DEFAULT_REVIEWS;
+  const reviews = (initialReviews && initialReviews.length > 0) ? initialReviews : [];
 
   return (
     <div className="pt-[var(--header-height)]">
@@ -58,109 +40,95 @@ export function TestimonialsPageContent({ locale, dict, initialReviews }: Props)
           {/* Star Rating Display */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
             className="flex items-center justify-center gap-1.5 mt-6">
-            {[1,2,3,4,5].map(i => <Star key={i} className="w-7 h-7 text-amber-400 fill-amber-400" />)}
-            <span className="text-3xl font-extrabold text-white ms-2">4.9</span>
-            <span className="text-white/50 text-sm ms-1">{isRtl ? "/ 5" : "/ 5"}</span>
+            {[1, 2, 3, 4, 5].map((s) => (
+              <Star key={s} className="w-6 h-6 fill-amber-400 text-amber-400" />
+            ))}
+            <span className="text-white font-extrabold text-lg ms-2">4.9 / 5.0</span>
           </motion.div>
         </div>
       </section>
 
       {/* Stats Bar */}
-      <div className="bg-surface border-b border-border-light">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-5 grid grid-cols-3 gap-4 text-center">
-          {STATS.map((s, i) => (
-            <div key={i}>
-              <p className="text-2xl sm:text-3xl font-extrabold text-primary-600 dark:text-primary-400">{s.value}</p>
-              <p className="text-xs sm:text-sm text-text-secondary mt-0.5">{isRtl ? s.label_ar : s.label_en}</p>
-            </div>
-          ))}
+      <section className="py-10 bg-surface border-b border-border-light">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-3 gap-6 text-center">
+            {STATS.map((stat, i) => (
+              <div key={i}>
+                <p className="text-2xl sm:text-4xl font-black text-primary-600 dark:text-primary-400 mb-1">{stat.value}</p>
+                <p className="text-xs sm:text-sm text-text-tertiary">{isRtl ? stat.label_ar : stat.label_en}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Reviews Grid */}
-      <section className="py-12 sm:py-20 bg-background">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {reviews.map((review, i) => {
-              const name = review.client_name || review.name || "عميل مميز";
-              const commentText = review.comment || (isRtl ? review.text_ar : review.text_en) || "";
-              const company = isRtl ? (review.company_ar || review.company_name || "") : (review.company_en || review.company_name || "");
+              const name = review.reviewer_name || review.client_name || review.name || (isRtl ? "عميل مميز" : "VIP Client");
+              const commentText = review.content_ar || review.content_en || review.comment || (isRtl ? review.text_ar : review.text_en) || "";
+              const company = isRtl ? (review.client_company || review.company_ar || review.company_name || "") : (review.client_company || review.company_en || review.company_name || "");
               const isVerified = review.is_verified ?? review.verified ?? true;
-              const avatar = review.avatar_url || review.client_avatar_url;
+              const avatar = review.reviewer_avatar_url || review.avatar_url || review.client_avatar_url || "/images/defaults/avatars/avatar-1.jpg";
+              const isLong = commentText.length > 180;
+              const isExp = expanded === (review.id || i);
 
               return (
-                <motion.article key={review.id || i}
+                <motion.div key={review.id || i}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.08 }}
-                  className="rounded-2xl border border-border-light bg-surface-elevated p-6 flex flex-col hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-lg transition-all duration-300">
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  className="rounded-3xl p-6 border border-border-light bg-surface-elevated hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-xl transition-all duration-300 flex flex-col justify-between relative">
+                  
+                  <Quote className="w-8 h-8 text-primary-500/10 absolute top-5 end-5" />
 
-                  {/* Quote icon */}
-                  <Quote className="w-8 h-8 text-primary-200 dark:text-primary-800 mb-3 shrink-0" />
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star key={star} className={cn(
+                          "w-4 h-4",
+                          star <= (review.rating || 5) ? "fill-amber-400 text-amber-400" : "text-border-light"
+                        )} />
+                      ))}
+                    </div>
 
-                  {/* Review Text */}
-                  <div className="flex-1">
-                    <p className={cn("text-sm text-text-secondary leading-relaxed", !expanded || expanded !== review.id ? "line-clamp-4" : "")}>
-                      {commentText}
+                    <p className="text-text-secondary text-sm leading-relaxed">
+                      {isLong && !isExp ? `${commentText.slice(0, 180)}...` : commentText}
                     </p>
-                    {commentText.length > 180 && (
-                      <button onClick={() => setExpanded(expanded === review.id ? null : review.id)}
-                        className="text-xs text-primary-600 dark:text-primary-400 mt-1 font-medium">
-                        {expanded === review.id ? (isRtl ? "عرض أقل" : "Show less") : (isRtl ? "قراءة المزيد" : "Read more")}
+
+                    {isLong && (
+                      <button onClick={() => setExpanded(isExp ? null : (review.id || i))}
+                        className="text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline">
+                        {isExp ? (isRtl ? "عرض أقل" : "Show less") : (isRtl ? "قراءة المزيد" : "Read more")}
                       </button>
                     )}
                   </div>
 
-                  {/* Stars */}
-                  <div className="flex gap-0.5 my-4">
-                    {Array.from({ length: 5 }).map((_, si) => (
-                      <Star key={si} className={cn("w-4 h-4", si < (review.rating || 5) ? "text-amber-400 fill-amber-400" : "text-border")} />
-                    ))}
-                  </div>
-
-                  {/* Reviewer */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-border-light">
-                    {avatar ? (
-                      <img src={avatar} alt={name} className="w-10 h-10 rounded-full object-cover shrink-0" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-sm font-bold shrink-0">
-                        {name.charAt(0)}
+                  <div className="flex items-center gap-3 pt-6 mt-6 border-t border-border-light">
+                    <img src={avatar} alt={name} className="w-10 h-10 rounded-full object-cover border border-border-light shrink-0" />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <p className="font-bold text-sm text-text-primary truncate">{name}</p>
+                        {isVerified && <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />}
                       </div>
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-bold truncate">{name}</p>
                       {company && <p className="text-xs text-text-tertiary truncate">{company}</p>}
                     </div>
-                    <div className="shrink-0 text-end">
-                      {isVerified && (
-                        <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          {dict.testimonials.verifiedReview}
-                        </span>
-                      )}
-                      <p className="text-xs text-text-tertiary mt-0.5">{isRtl ? (review.service_ar || "خدمة منفذة") : (review.service_en || "Executed Service")}</p>
-                    </div>
                   </div>
-                </motion.article>
+                </motion.div>
               );
             })}
           </div>
 
-          {/* Write Review CTA */}
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.6 }}
-            className="mt-12 text-center p-8 rounded-2xl bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900">
-            <ThumbsUp className="w-10 h-10 mx-auto mb-3 text-primary-600 dark:text-primary-400" />
-            <h3 className="text-xl font-bold mb-2">{isRtl ? "شاركنا تجربتك" : "Share Your Experience"}</h3>
-            <p className="text-text-secondary text-sm mb-5">
-              {isRtl ? "رأيك يهمنا ويساعد الآخرين على اتخاذ قراراتهم" : "Your feedback matters to us and helps others make their decisions"}
-            </p>
-            <Link href={`/${locale}/contact`}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-colors">
-              {dict.testimonials.writeReview}
+          <div className="mt-16 text-center">
+            <Link href={`/${locale}/quote`}
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-primary-600 text-white font-extrabold text-sm hover:bg-primary-700 active:scale-95 transition-all shadow-lg shadow-primary-600/20">
+              {isRtl ? "شاركنا تجريتك واطلب مشروعك" : "Share Your Experience & Request Project"}
               <ArrowRight className={cn("w-4 h-4", isRtl && "rotate-180")} />
             </Link>
-          </motion.div>
+          </div>
         </div>
       </section>
     </div>

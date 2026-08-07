@@ -89,8 +89,8 @@ export function Header({ locale, dict }: HeaderProps) {
         className={cn(
           "fixed top-0 inset-x-0 z-50 transition-all duration-300 safe-top",
           isScrolled
-            ? "bg-background/80 backdrop-blur-xl border-b border-border shadow-sm"
-            : "bg-transparent"
+            ? "bg-surface/95 dark:bg-background/95 backdrop-blur-xl border-b border-border-light shadow-md"
+            : "bg-surface/85 dark:bg-background/85 backdrop-blur-md border-b border-border-light/50"
         )}
         role="banner"
       >
@@ -101,18 +101,13 @@ export function Header({ locale, dict }: HeaderProps) {
           {/* Logo */}
           <Link
             href={getLocalizedHref("")}
-            className="flex items-center gap-2 shrink-0"
+            className="flex items-center gap-2.5 shrink-0"
             aria-label={dict.meta.siteName}
           >
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-bold text-lg shadow-md">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center text-accent-400 font-extrabold text-lg shadow-md border border-accent-500/20">
               W
             </div>
-            <span
-              className={cn(
-                "text-xl font-bold transition-colors",
-                isScrolled ? "text-text-primary" : "text-white"
-              )}
-            >
+            <span className="text-xl font-extrabold text-text-primary transition-colors">
               {dict.meta.siteName}
             </span>
           </Link>
@@ -124,14 +119,10 @@ export function Header({ locale, dict }: HeaderProps) {
                 key={item.key}
                 href={getLocalizedHref(item.href)}
                 className={cn(
-                  "px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                  "px-3.5 py-2 rounded-xl text-sm font-semibold transition-all duration-200",
                   isActive(item.href)
-                    ? isScrolled
-                      ? "text-primary-600 bg-primary-50 dark:text-primary-400 dark:bg-primary-950"
-                      : "text-white bg-white/15"
-                    : isScrolled
-                      ? "text-text-secondary hover:text-text-primary hover:bg-surface"
-                      : "text-white/70 hover:text-white hover:bg-white/10"
+                    ? "text-primary-600 bg-primary-50 dark:text-accent-400 dark:bg-primary-950/60 font-bold"
+                    : "text-text-secondary hover:text-text-primary hover:bg-surface-elevated"
                 )}
               >
                 {dict.nav[item.key as keyof typeof dict.nav]}
@@ -143,12 +134,7 @@ export function Header({ locale, dict }: HeaderProps) {
           <div className="flex items-center gap-2">
             {/* Search */}
             <button
-              className={cn(
-                "p-2 rounded-lg transition-colors",
-                isScrolled
-                  ? "text-text-secondary hover:bg-surface"
-                  : "text-white/70 hover:bg-white/10"
-              )}
+              className="p-2 rounded-xl text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
               aria-label={dict.nav.search}
             >
               <Search className="w-5 h-5" />
@@ -158,16 +144,11 @@ export function Header({ locale, dict }: HeaderProps) {
             {mounted && (
               <button
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className={cn(
-                  "p-2 rounded-lg transition-colors",
-                  isScrolled
-                    ? "text-text-secondary hover:bg-surface"
-                    : "text-white/70 hover:bg-white/10"
-                )}
+                className="p-2 rounded-xl text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
                 aria-label={theme === "dark" ? dict.common.lightMode : dict.common.darkMode}
               >
                 {theme === "dark" ? (
-                  <Sun className="w-5 h-5" />
+                  <Sun className="w-5 h-5 text-accent-400" />
                 ) : (
                   <Moon className="w-5 h-5" />
                 )}
@@ -177,25 +158,17 @@ export function Header({ locale, dict }: HeaderProps) {
             {/* Language Switcher */}
             <Link
               href={getAlternateHref()}
-              className={cn(
-                "flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
-                isScrolled
-                  ? "text-text-secondary hover:bg-surface border border-border"
-                  : "text-white/70 hover:bg-white/10 border border-white/20"
-              )}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold text-text-secondary hover:text-text-primary hover:bg-surface-elevated border border-border-light transition-all"
               hrefLang={alternateLocale}
             >
-              <Globe className="w-4 h-4" />
+              <Globe className="w-4 h-4 text-accent-500" />
               <span>{alternateLocale === "ar" ? "العربية" : "English"}</span>
             </Link>
 
             {/* CTA Button (Desktop) */}
             <Link
               href={getLocalizedHref("/quote")}
-              className={cn(
-                "hidden sm:inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all",
-                "bg-accent-500 text-white hover:bg-accent-600 shadow-md hover:shadow-lg active:scale-[0.98]"
-              )}
+              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-extrabold bg-gradient-to-r from-accent-500 to-amber-500 text-primary-950 shadow-md hover:shadow-accent-500/20 hover:scale-[1.02] active:scale-95 transition-all"
             >
               {dict.nav.quote}
             </Link>
@@ -203,12 +176,7 @@ export function Header({ locale, dict }: HeaderProps) {
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={cn(
-                "lg:hidden p-2 rounded-lg transition-colors",
-                isScrolled
-                  ? "text-text-primary hover:bg-surface"
-                  : "text-white hover:bg-white/10"
-              )}
+              className="lg:hidden p-2 rounded-xl text-text-primary hover:bg-surface-elevated transition-colors"
               aria-label={isMobileMenuOpen ? dict.common.close : "Menu"}
               aria-expanded={isMobileMenuOpen}
             >

@@ -57,6 +57,7 @@ export async function getServices(locale = "ar") {
 
   return list.map((s) => ({
     ...s,
+    slug: s.slug,
     name: isAr ? s.name_ar : s.name_en || s.name_ar,
     short_description: isAr ? s.short_description_ar : s.short_description_en || s.short_description_ar,
     description: isAr ? s.full_description_ar : s.full_description_en || s.full_description_ar,
@@ -68,33 +69,38 @@ export async function getServiceBySlug(slug: string, locale = "ar") {
   const supabase = createAdminClient() as any;
   const isAr = locale === "ar";
 
-  const { data: service } = await supabase
-    .from("services")
-    .select("*")
-    .eq("slug", slug)
-    .eq("is_active", true)
-    .single();
+  let service: Record<string, unknown> | null = null;
+  try {
+    const { data } = await supabase
+      .from("services")
+      .select("*")
+      .eq("slug", slug)
+      .eq("is_active", true)
+      .single();
+    service = data;
+  } catch {
+    // fallback
+  }
+
+  if (!service) {
+    const fallbacks = getFallbackServices() as Record<string, unknown>[];
+    service = fallbacks.find((s) => s.slug === slug) || fallbacks[0] || null;
+  }
 
   if (!service) return null;
 
-  // Fetch associated projects
-  const { data: projects } = await supabase
-    .from("projects")
-    .select("id, slug, title_ar, title_en")
-    .eq("service_id", service.id)
-    .eq("is_active", true)
-    .limit(6);
-
   return {
     ...service,
+    slug: service.slug,
+    name_ar: service.name_ar,
+    name_en: service.name_en,
+    cover_image_url: service.cover_image_url,
     name: isAr ? service.name_ar : service.name_en || service.name_ar,
     short_description: isAr ? service.short_description_ar : service.short_description_en || service.short_description_ar,
     description: isAr ? service.full_description_ar : service.full_description_en || service.full_description_ar,
-    projects: (projects ?? []).map((p: Record<string, unknown>) => ({
-      id: p.id,
-      slug: p.slug,
-      name: isAr ? p.title_ar : p.title_en || p.title_ar,
-    })),
+    features: isAr ? service.features_ar : service.features_en || service.features_ar || [],
+    specs: service.specs || [],
+    faqs: service.faqs || [],
   };
 }
 
@@ -149,11 +155,61 @@ export async function getProjects(options?: {
 
   const normalized = list.map((p) => ({
     ...p,
+    slug: p.slug,
+    title_ar: p.title_ar,
+    title_en: p.title_en,
+    cover_image_url: p.cover_image_url,
     name: isAr ? p.title_ar : p.title_en || p.title_ar,
     short_description: isAr ? p.description_ar : p.description_en || p.description_ar,
   }));
 
   return { data: normalized, count: totalCount };
+}
+
+export async function getProjectBySlug(slug: string, _locale = "ar") {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
+
+  let project: Record<string, unknown> | null = null;
+  try {
+    const { data } = await supabase
+      .from("projects")
+      .select("*")
+      .eq("slug", slug)
+      .eq("is_active", true)
+      .single();
+    project = data;
+  } catch {
+    // fallback
+  }
+
+  if (!project) {
+    const fallbacks = getFallbackProjects() as Record<string, unknown>[];
+    project = fallbacks.find((p) => p.slug === slug) || fallbacks[0] || null;
+  }
+
+  if (!project) return null;
+
+  return {
+    ...project,
+    slug: project.slug,
+    name_ar: project.title_ar || project.name_ar,
+    name_en: project.title_en || project.name_en,
+    category_ar: project.category_ar || "زجاج وألمنيوم",
+    category_en: project.category_en || "Glass & Aluminum",
+    location_ar: project.location_ar || "الرياض - المملكة العربية السعودية",
+    location_en: project.location_en || "Riyadh - KSA",
+    year: project.year || "2024",
+    client_ar: project.client_ar || project.client_name || "عميل مميز",
+    client_en: project.client_en || project.client_name || "VIP Client",
+    cover_image_url: project.cover_image_url || "/images/defaults/projects/project-1.jpg",
+    description_ar: project.description_ar || "",
+    description_en: project.description_en || project.description_ar || "",
+    challenges_ar: (project.challenges_ar as string[]) || [],
+    challenges_en: (project.challenges_en as string[]) || [],
+    results_ar: (project.results_ar as string[]) || [],
+    results_en: (project.results_en as string[]) || [],
+  };
 }
 
 // ─── Articles Actions ──────────────────────────────────────────────────
@@ -196,9 +252,11 @@ export async function getArticles(options?: { locale?: string; limit?: number; p
 
   const normalized = list.map((a) => ({
     ...a,
+    slug: a.slug,
     title: isAr ? a.title_ar : a.title_en || a.title_ar,
     excerpt: isAr ? a.excerpt_ar : a.excerpt_en || a.excerpt_ar,
-    featured_image_url: a.cover_image_url,
+    featured_image_url: a.cover_image_url || a.featured_image_url,
+    cover_image_url: a.cover_image_url || a.featured_image_url,
   }));
 
   return { data: normalized, count: totalCount };
@@ -231,10 +289,21 @@ export async function getArticleBySlug(slug: string, locale = "ar") {
 
   return {
     ...article,
-    title: isAr ? article.title_ar : article.title_en || article.title_ar,
-    excerpt: isAr ? article.excerpt_ar : article.excerpt_en || article.excerpt_ar,
-    content: isAr ? article.content_ar : article.content_en || article.content_ar,
-    featured_image_url: article.cover_image_url,
+    slug: article.slug,
+    title_ar: article.title_ar || article.title,
+    title_en: article.title_en || article.title,
+    excerpt_ar: article.excerpt_ar || article.excerpt,
+    excerpt_en: article.excerpt_en || article.excerpt,
+    content_ar: article.content_ar || article.content,
+    content_en: article.content_en || article.content,
+    author_ar: article.author_ar || "فريق التحرير",
+    author_en: article.author_en || "Editorial Team",
+    published_at: article.published_at || new Date().toISOString(),
+    title: isAr ? (article.title_ar || article.title) : (article.title_en || article.title_ar || article.title),
+    excerpt: isAr ? (article.excerpt_ar || article.excerpt) : (article.excerpt_en || article.excerpt_ar || article.excerpt),
+    content: isAr ? (article.content_ar || article.content) : (article.content_en || article.content_ar || article.content),
+    featured_image_url: article.cover_image_url || article.featured_image_url,
+    cover_image_url: article.cover_image_url || article.featured_image_url,
   };
 }
 

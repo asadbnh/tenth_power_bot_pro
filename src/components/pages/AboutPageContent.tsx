@@ -5,7 +5,11 @@ import { Target, Eye, Heart, Award, Users, Star, Clock, CheckCircle2 } from "luc
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-interface Props { locale: Locale; dict: Dictionary; }
+interface Props {
+  locale: Locale;
+  dict: Dictionary;
+  initialCompany?: any;
+}
 
 const STATS = [
   { icon: CheckCircle2, value: "500+", label_ar: "مشروع منجز", label_en: "Projects Completed", color: "text-blue-600 dark:text-blue-400" },
@@ -28,8 +32,10 @@ const TEAM = [
   { name_ar: "م. نورة العتيبي", name_en: "Eng. Noura Al-Otaibi", role_ar: "مصممة داخلية", role_en: "Interior Designer", emoji: "👩‍💼", gradient: "from-emerald-500 to-teal-400" },
 ];
 
-export function AboutPageContent({ locale, dict }: Props) {
+export function AboutPageContent({ locale, dict, initialCompany }: Props) {
   const isRtl = locale === "ar";
+  const companyName = initialCompany ? (isRtl ? initialCompany.name_ar : initialCompany.name_en) : dict.about.title;
+  const companyDesc = initialCompany ? (isRtl ? initialCompany.description_ar : initialCompany.description_en) : "";
 
   return (
     <div className="pt-[var(--header-height)]">
@@ -40,13 +46,13 @@ export function AboutPageContent({ locale, dict }: Props) {
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             className="text-3xl sm:text-5xl font-extrabold text-white mb-6">
-            {isRtl ? "من نحن" : "About Us"}
+            {isRtl ? "من نحن — " : "About Us — "} {companyName}
           </motion.h1>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            className="text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
-            {isRtl
+            className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
+            {companyDesc || (isRtl
               ? "شركة رائدة في مجال الزجاج والألمنيوم والمقاولات، تأسست على قيم الجودة والاحترافية لتقديم حلول متكاملة لعملائنا في المملكة العربية السعودية منذ عام 2009."
-              : "A leading company in glass, aluminum, and contracting, founded on values of quality and professionalism to provide integrated solutions for our clients across Saudi Arabia since 2009."}
+              : "A leading company in glass, aluminum, and contracting, founded on values of quality and professionalism to provide integrated solutions for our clients across Saudi Arabia since 2009.")}
           </motion.p>
         </div>
       </section>

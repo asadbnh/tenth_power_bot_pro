@@ -45,7 +45,7 @@ export async function handleStart(msg: TelegramMessage) {
   }
 
   clearAdminState(userId);
-  const welcome = `مرحباً ${msg.from.first_name}! 👋\n\n🏢 <b>نظام إدارة ويب تكي المنزلي (WebTaky Enterprise Suite)</b>\nالتحكم الكامل واللحظي بقاعدة البيانات والعملاء والخدمات والإعدادات:\n\nاختر الأقسام التالية للتحكم:`;
+  const welcome = `مرحباً ${msg.from.first_name}! 👋\n\n🏢 <b>نظام إدارة القوة العاشرة المنزلي (WebTaky Enterprise Suite)</b>\nالتحكم الكامل واللحظي بقاعدة البيانات والعملاء والخدمات والإعدادات:\n\nاختر الأقسام التالية للتحكم:`;
   await sendMessage(userId, welcome, { reply_markup: Keyboards.mainMenu() });
 }
 
@@ -512,7 +512,7 @@ export async function handleCompanyProfile(chatId: number) {
 
   const text = `🏢 <b>ملف المنشأة والهوية</b>
 
-🏛️ <b>الاسم العربي:</b> ${company?.name_ar ?? "مؤسسة ويب تكي"}
+🏛️ <b>الاسم العربي:</b> ${company?.name_ar ?? "مؤسسة القوة العاشرة"}
 🌐 <b>الاسم الانجليزي:</b> ${company?.slug ?? "webtaky"}
 📱 <b>الهاتف الرئيسي:</b> <code>${company?.phone_primary ?? "غير محدد"}</code>
 💬 <b>الواتساب:</b> <code>${company?.whatsapp_number ?? "غير محدد"}</code>

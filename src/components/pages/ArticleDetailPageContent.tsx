@@ -8,81 +8,38 @@ import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-interface ArticleDetail {
-  slug: string;
-  title_ar: string;
-  title_en: string;
-  category_ar: string;
-  category_en: string;
-  readTime: string;
-  date: string;
-  author_ar: string;
-  author_en: string;
-  content_ar: string;
-  content_en: string;
-}
-
-const ARTICLES_DATA: Record<string, ArticleDetail> = {
-  "types-of-tempered-glass": {
-    slug: "types-of-tempered-glass",
-    title_ar: "أنواع الزجاج السكريت واستخداماته في البناء الحديث",
-    title_en: "Types of Tempered Glass & Modern Construction Applications",
-    category_ar: "زجاج ومقاولات",
-    category_en: "Glass & Contracting",
-    readTime: "5 دقائق",
-    date: "15 مايو 2024",
-    author_ar: "م. أحمد الغامدي",
-    author_en: "Eng. Ahmed Al-Ghamdi",
-    content_ar: `يُعد الزجاج السكريت (Tempered Glass) أحد أكثر المواد المعمارية استخداماً في العصر الحديث نظراً لقوته العالية وخصائص الأمان الفريدة التي يتمتع بها مقارنة بالزجاج العادي.
-
-### 1. كيف يتم تصنيع الزجاج السكريت؟
-يتم تسخين الزجاج العادي إلى درجات حرارة تتجاوز 600 درجة مئوية في أفران خاصة، ثم يتم تبريده بشكل سريع جداً بواسطة نفاثات هواء بارد. هذه العملية تخلق إجهادات ضغط عالية على السطح الخارجي بينما يبقى المركز في حالة شد، مما يمنحه قوة مضاعفة بـ 4 إلى 5 مرات.
-
-### 2. أهم أنواع الزجاج السكريت:
-- **الزجاج الشفاف (Clear Tempered):** الأكثر شيوعاً في الواجهات والأبواب.
-- **الزجاج فائق النقاء (Ultra-Clear / Low-Iron):** يتيمز بنقاء كريستالي وعدم وجود أي إخضرار في الحواف.
-- **الزجاج المثلج (Frosted / Sandblasted):** يمنح الخصوصية التامة مع السماح بمرور الضوء.
-- **الزجاج المعزول (Double Glazed Tempered):** مكون من طبقتين بينهما فراغ غاز الأرجون لزيادة العزل الحراري والصوتي.
-
-### 3. التطبيقات الشائعة في السعودية:
-تتنوع الاستخدامات في المملكة بين كبائن الشاور، واجهات المحلات، الدربزينات الزجاجية، والأبواب الاتوماتيكية.`,
-    content_en: `Tempered glass is one of the most widely used architectural materials today due to its structural strength and unique safety features compared to standard annealed glass.
-
-### 1. How is Tempered Glass Manufactured?
-Regular float glass is heated to over 600°C in specialized ovens and rapidly cooled with high-pressure air streams. This process creates intense surface compression while maintaining core tension, multiplying overall strength 4x to 5x.
-
-### 2. Main Types of Tempered Glass:
-- **Clear Tempered:** The standard choice for doors and storefronts.
-- **Ultra-Clear (Low-Iron):** Offers crystal clarity without greenish edge tinting.
-- **Frosted / Sandblasted:** Provides complete visual privacy while transmitting light.
-- **Double Glazed Tempered:** Dual panels with argon gas gap for high insulation.
-
-### 3. Common Applications in KSA:
-Widely used across Saudi Arabia for shower enclosures, retail facades, glass handrails, and automatic sliding doors.`
-  }
-};
+import { AnimatedCanvasBanner } from "@/components/ui/AnimatedCanvasBanner";
 
 interface Props {
   slug: string;
   locale: Locale;
   dict: Dictionary;
+  initialArticle?: any;
 }
 
-export function ArticleDetailPageContent({ slug, locale, dict }: Props) {
+export function ArticleDetailPageContent({ slug, locale, dict, initialArticle }: Props) {
   const isRtl = locale === "ar";
-  const article = ARTICLES_DATA[slug] || {
+  const article = initialArticle || {
     slug,
     title_ar: isRtl ? "دليل معماريك في اختيار أفضل الخامات" : "Architectural Guide to Material Selection",
     title_en: "Architectural Guide to Material Selection",
     category_ar: isRtl ? "نصائح وإرشادات" : "Tips & Guides",
     category_en: "Tips & Guides",
-    readTime: "4 min",
-    date: "2024",
-    author_ar: isRtl ? "فريق التحرير الهندي" : "Editorial Team",
-    author_en: "Editorial Team",
+    read_time_minutes: 5,
+    published_at: "2026-08-01",
+    author_ar: isRtl ? "فريق القوة العاشرة" : "Tenth Power Team",
+    author_en: "Tenth Power Team",
     content_ar: "نقدم لكم في هذا المقال الشامل أحدث النصائح والتوصيات الهندسية لضمان اختيار الخامات والمواد المناسبة لمشروعك المعماري السكني أو التجاري.",
     content_en: "In this comprehensive article we share essential engineering guidance to ensure selecting the ideal materials for your project."
   };
+
+  const title = isRtl ? (article.title_ar || article.title) : (article.title_en || article.title_ar || article.title);
+  const category = isRtl ? (article.category_ar || article.tag_ar || article.category) : (article.category_en || article.tag_en || article.category_ar || article.category || "مقالات");
+  const author = isRtl ? (article.author_ar || article.author || "م. فريق الهندسة") : (article.author_en || article.author_ar || article.author || "Engineering Team");
+  const content = isRtl ? (article.content_ar || article.content) : (article.content_en || article.content_ar || article.content);
+  const readTime = article.read_time_minutes || article.readTime || 5;
+  const date = article.published_at ? new Date(article.published_at).toLocaleDateString(isRtl ? "ar-SA" : "en-US") : "2026";
+  const coverImage = article.cover_image_url || article.featured_image_url;
 
   return (
     <div className="pt-[var(--header-height)] min-h-dvh bg-gradient-to-b from-background to-surface">
@@ -94,39 +51,52 @@ export function ArticleDetailPageContent({ slug, locale, dict }: Props) {
             <ChevronLeft className={cn("w-3 h-3", !isRtl && "rotate-180")} />
             <Link href={`/${locale}/blog`} className="hover:text-white transition-colors">{dict.blog.title}</Link>
             <ChevronLeft className={cn("w-3 h-3", !isRtl && "rotate-180")} />
-            <span className="text-white font-medium">{isRtl ? article.category_ar : article.category_en}</span>
+            <span className="text-white font-medium">{category}</span>
           </div>
 
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-medium text-primary-200">
             <BookOpen className="w-3.5 h-3.5" />
-            {isRtl ? article.category_ar : article.category_en}
+            {category}
           </span>
 
           <h1 className="text-2xl sm:text-4xl font-extrabold leading-tight">
-            {isRtl ? article.title_ar : article.title_en}
+            {title}
           </h1>
 
           <div className="flex flex-wrap gap-4 sm:gap-6 text-xs sm:text-sm text-white/70 pt-2 border-t border-white/10">
             <div className="flex items-center gap-2">
               <User className="w-4 h-4 text-accent-400" />
-              <span>{isRtl ? article.author_ar : article.author_en}</span>
+              <span>{author}</span>
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-accent-400" />
-              <span>{article.date}</span>
+              <span>{date}</span>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-accent-400" />
-              <span>{article.readTime}</span>
+              <span>{readTime} {isRtl ? "دقائق" : "min"}</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Article Content */}
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+        {/* Architectural Article Canvas Banner */}
+        <div className="rounded-3xl overflow-hidden shadow-2xl border border-border-light">
+          {coverImage ? (
+            <img src={coverImage} alt={title} className="w-full h-80 object-cover" />
+          ) : (
+            <AnimatedCanvasBanner 
+              aspectRatio="wide"
+              title={title}
+              badge={category}
+              icon={<BookOpen className="w-5 h-5" />}
+            />
+          )}
+        </div>
         <div className="prose prose-lg dark:prose-invert max-w-none text-text-secondary leading-relaxed whitespace-pre-line">
-          {isRtl ? article.content_ar : article.content_en}
+          {content}
         </div>
 
         {/* Share & CTA */}
@@ -137,7 +107,7 @@ export function ArticleDetailPageContent({ slug, locale, dict }: Props) {
             <ArrowRight className={cn("w-4 h-4", isRtl && "rotate-180")} />
           </Link>
 
-          <button onClick={() => { if (navigator.share) navigator.share({ title: isRtl ? article.title_ar : article.title_en, url: window.location.href }); }}
+          <button onClick={() => { if (typeof window !== "undefined" && navigator.share) navigator.share({ title, url: window.location.href }); }}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border-light hover:bg-surface text-sm font-medium transition-colors text-text-secondary">
             <Share2 className="w-4 h-4" />
             {isRtl ? "مشاركة المقال" : "Share Article"}

@@ -13,47 +13,23 @@ interface Props {
   initialFaqs?: any[];
 }
 
-const DEFAULT_FAQS = [
-  {
-    q_ar: "ما هي أنواع الزجاج المقوى التي تقدمونها؟",
-    q_en: "What types of tempered glass do you offer?",
-    a_ar: "نقدم مجموعة شاملة من الزجاج المقوى بسماكات مختلفة (6 مم، 8 مم، 10 مم، 12 مم)، ويشمل ذلك الزجاج الشفاف، والملون، والعاكس، والمطفي. كل أنواعنا مطابقة لمعايير السلامة السعودية والدولية.",
-    a_en: "We offer a comprehensive range of tempered glass in different thicknesses (6mm, 8mm, 10mm, 12mm), including clear, tinted, reflective, and frosted glass. All our types comply with Saudi and international safety standards.",
-    cat: "glass",
-  },
-  {
-    q_ar: "كم تستغرق مدة تنفيذ مشروع الواجهة الزجاجية؟",
-    q_en: "How long does a glass facade project take?",
-    a_ar: "تعتمد المدة على حجم المشروع. عادةً تستغرق المشاريع الصغيرة 3-7 أيام، والمشاريع المتوسطة 2-4 أسابيع، والمشاريع الكبيرة من 1-3 أشهر. سنقدم لك جدولاً زمنياً تفصيلياً عند دراسة مشروعك.",
-    a_en: "Duration depends on project size. Small projects typically take 3-7 days, medium projects 2-4 weeks, and large projects 1-3 months. We will provide you with a detailed timeline when studying your project.",
-    cat: "glass",
-  },
-  {
-    q_ar: "هل تقدمون ضمانات على أعمال الألمنيوم؟",
-    q_en: "Do you offer warranties on aluminum works?",
-    a_ar: "نعم، نقدم ضماناً شاملاً لمدة 5 سنوات على جميع أعمال الألمنيوم تشمل: عدم الكسر، ومقاومة الصدأ، والحفاظ على الألوان. كما نوفر خدمة الصيانة الدورية المجانية خلال فترة الضمان.",
-    a_en: "Yes, we offer a comprehensive 5-year warranty on all aluminum works including: no breakage, rust resistance, and color preservation. We also provide free periodic maintenance service during the warranty period.",
-    cat: "aluminum",
-  },
-];
-
 export function FaqPageContent({ locale, dict, initialFaqs }: Props) {
   const isRtl = locale === "ar";
   const [openId, setOpenId] = useState<number | null>(null);
   const [query, setQuery] = useState("");
 
-  const faqsList = (initialFaqs && initialFaqs.length > 0) ? initialFaqs : DEFAULT_FAQS;
+  const faqsList = (initialFaqs && initialFaqs.length > 0) ? initialFaqs : [];
 
   const filtered = faqsList.filter(faq => {
-    const question = faq.question || (isRtl ? faq.q_ar : faq.q_en) || faq.q_ar || "";
-    const answer = faq.answer || (isRtl ? faq.a_ar : faq.a_en) || faq.a_ar || "";
+    const question = faq.question || (isRtl ? faq.question_ar : faq.question_en) || faq.question_ar || faq.q_ar || "";
+    const answer = faq.answer || (isRtl ? faq.answer_ar : faq.answer_en) || faq.answer_ar || faq.a_ar || "";
     if (!query.trim()) return true;
     const q = query.toLowerCase();
     return question.toLowerCase().includes(q) || answer.toLowerCase().includes(q);
   });
 
   return (
-    <div className="pt-[var(--header-height)]">
+    <div className="pt-[var(--header-height)] min-h-dvh bg-gradient-to-b from-background to-surface">
       {/* Hero */}
       <section className="relative py-16 sm:py-20 bg-gradient-to-br from-primary-950 via-[#0c1445] to-primary-900 overflow-hidden">
         <div className="absolute inset-0 opacity-[0.04]"
@@ -64,67 +40,53 @@ export function FaqPageContent({ locale, dict, initialFaqs }: Props) {
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
             className="text-lg text-white/60 mb-8">{dict.faq.subtitle}</motion.p>
 
-          {/* Search */}
+          {/* Search box */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-            className="relative">
-            <Search className="absolute top-1/2 -translate-y-1/2 start-4 w-5 h-5 text-white/40" />
-            <input
-              type="search"
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder={dict.faq.searchPlaceholder}
-              className="w-full ps-12 pe-4 py-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
-            />
+            className="relative max-w-xl mx-auto">
+            <Search className={cn("absolute top-1/2 -translate-y-1/2 w-5 h-5 text-white/40", isRtl ? "right-4" : "left-4")} />
+            <input type="text" value={query} onChange={(e) => setQuery(e.target.value)}
+              placeholder={isRtl ? "ابحث في الأسئلة الشائعة..." : "Search in FAQs..."}
+              className={cn(
+                "w-full py-4 rounded-2xl bg-white/10 border border-white/15 text-white placeholder-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-accent-400 backdrop-blur-md transition-all",
+                isRtl ? "pr-12 pl-4" : "pl-12 pr-4"
+              )} />
           </motion.div>
         </div>
       </section>
 
-      {/* FAQs */}
-      <section className="py-12 sm:py-20 bg-background">
+      {/* Accordion List */}
+      <section className="py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           {filtered.length === 0 ? (
-            <div className="text-center py-16">
-              <HelpCircle className="w-12 h-12 mx-auto text-text-tertiary mb-4" />
-              <p className="text-text-secondary">{dict.search.noResults}</p>
+            <div className="text-center py-12 text-text-tertiary">
+              <HelpCircle className="w-12 h-12 mx-auto mb-3 opacity-30" />
+              <p>{isRtl ? "لم نجد نتائج مطابقة لبحثك" : "No FAQs matching your query"}</p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {filtered.map((faq, i) => {
-                const questionText = faq.question || (isRtl ? faq.q_ar : faq.q_en) || faq.q_ar;
-                const answerText = faq.answer || (isRtl ? faq.a_ar : faq.a_en) || faq.a_ar;
+            <div className="space-y-4">
+              {filtered.map((faq, index) => {
+                const isOpen = openId === index;
+                const question = faq.question || (isRtl ? faq.question_ar : faq.question_en) || faq.question_ar || faq.q_ar || "";
+                const answer = faq.answer || (isRtl ? faq.answer_ar : faq.answer_en) || faq.answer_ar || faq.a_ar || "";
 
                 return (
-                  <motion.div key={faq.id || i}
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.35, delay: i * 0.06 }}
-                    className={cn(
-                      "rounded-2xl border transition-all duration-200 overflow-hidden",
-                      openId === i
-                        ? "border-primary-300 dark:border-primary-700 shadow-md"
-                        : "border-border-light hover:border-primary-200 dark:hover:border-primary-800"
-                    )}>
-                    <button
-                      onClick={() => setOpenId(openId === i ? null : i)}
-                      className="w-full flex items-center justify-between gap-4 p-5 text-start bg-surface-elevated hover:bg-surface transition-colors"
-                      aria-expanded={openId === i}>
-                      <span className="font-semibold text-sm sm:text-base leading-snug">
-                        {questionText}
+                  <motion.div key={index} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}
+                    className="rounded-2xl border border-border-light bg-surface-elevated overflow-hidden transition-all shadow-sm">
+                    <button onClick={() => setOpenId(isOpen ? null : index)}
+                      className="w-full p-5 text-start flex items-center justify-between gap-4 font-bold text-sm sm:text-base hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                      <span className="flex items-center gap-3">
+                        <HelpCircle className="w-5 h-5 text-accent-500 shrink-0" />
+                        {question}
                       </span>
-                      <ChevronDown className={cn("w-5 h-5 text-text-tertiary shrink-0 transition-transform duration-300",
-                        openId === i && "rotate-180 text-primary-600 dark:text-primary-400")} />
+                      <ChevronDown className={cn("w-5 h-5 shrink-0 text-text-tertiary transition-transform duration-200", isOpen && "rotate-180")} />
                     </button>
-                    <AnimatePresence initial={false}>
-                      {openId === i && (
-                        <motion.div
-                          key="answer"
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3, ease: "easeInOut" }}>
-                          <div className="px-5 pb-5 pt-2 text-sm text-text-secondary leading-relaxed border-t border-border-light bg-background">
-                            {answerText}
+
+                    <AnimatePresence>
+                      {isOpen && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}
+                          className="overflow-hidden">
+                          <div className="px-5 pb-5 pt-1 text-sm text-text-secondary leading-relaxed border-t border-border-light/60">
+                            {answer}
                           </div>
                         </motion.div>
                       )}
@@ -134,22 +96,6 @@ export function FaqPageContent({ locale, dict, initialFaqs }: Props) {
               })}
             </div>
           )}
-
-          {/* Still have questions? */}
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.5 }}
-            className="mt-12 rounded-2xl bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900 p-8 text-center">
-            <HelpCircle className="w-10 h-10 mx-auto mb-3 text-primary-600 dark:text-primary-400" />
-            <h3 className="text-lg font-bold mb-2">
-              {isRtl ? "لم تجد إجابة لسؤالك؟" : "Didn't find your answer?"}
-            </h3>
-            <p className="text-text-secondary text-sm mb-5">
-              {isRtl ? "فريقنا جاهز للإجابة على جميع استفساراتك" : "Our team is ready to answer all your inquiries"}
-            </p>
-            <a href={`/${locale}/contact`}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-colors text-sm">
-              {isRtl ? "تواصل معنا" : "Contact Us"}
-            </a>
-          </motion.div>
         </div>
       </section>
     </div>

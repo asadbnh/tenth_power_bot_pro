@@ -1,14 +1,39 @@
 [
   {
-    "slug": "commercial-tower-facade-riyadh",
-    "title_ar": "واجهة برج تجاري زجاجي بمدينة الرياض",
-    "title_en": "Commercial Tower Glass Facade in Riyadh",
-    "description_ar": "تصميم وتوريد وتركيب واجهة كرتن وول دبل جلاس بمساحة 3,200 متر مربع لصالح برج تجاري شمال مدينة الرياض مع عزل حراري فائق.",
-    "description_en": "Design, supply, and installation of a 3,200 m² double curtain wall facade for a commercial tower in North Riyadh with superior thermal break insulation.",
-    "client_name": "شركة التطوير المعماري",
-    "location_ar": "طريق الملك فهد، الرياض",
-    "location_en": "King Fahd Road, Riyadh",
+    "slug": "king-abdullah-tower",
+    "title_ar": "برج الملك عبد الله التجاري",
+    "title_en": "King Abdullah Commercial Tower",
+    "category_ar": "واجهات زجاجية",
+    "category_en": "Glass Facades",
+    "location_ar": "الرياض - طريق الملك فهد",
+    "location_en": "Riyadh - King Fahd Road",
     "city": "riyadh",
+    "year": "2024",
+    "client_name": "شركة تطوير العقار القابضة",
+    "client_ar": "شركة تطوير العقار القابضة",
+    "client_en": "Real Estate Development Co.",
+    "description_ar": "تم تنفيذ واجهة زجاجية هيكلية بمساحة 4,500 متر مربع باستخدام زجاج سكريت دبل معزول بطلاء منخفض الانبعاثات (Low-E)، مما قلل استهلاك الطاقة للتبريد بنسبة 35% وخلق مظهراً معمارياً أيقونياً.",
+    "description_en": "Execution of a 4,500 sqm structural glazing facade using double tempered Low-E glass, reducing cooling energy consumption by 35% and creating an iconic architectural statement.",
+    "challenges_ar": [
+      "مقاومة أحمال الرياح العالية بارتفاع 30 طابقاً",
+      "تركيب الزجاج بدون تعطيل الحركة المرورية في طريق الملك فهد",
+      "عزل حراري صارم يتوافق مع كود البناء السعودي"
+    ],
+    "challenges_en": [
+      "High wind load resistance at 30-story height",
+      "Installation without interrupting traffic on King Fahd Road",
+      "Strict thermal insulation compliance with Saudi Building Code"
+    ],
+    "results_ar": [
+      "تسليم المشروع قبل الموعد المحدد بـ 15 يوماً",
+      "تحقيق خفض بـ 35% في استهلاك تكييف الهواء",
+      "شهادة جودة واعتماد من الاستشاري الهندسي للمشروع"
+    ],
+    "results_en": [
+      "Delivered 15 days ahead of schedule",
+      "Achieved 35% HVAC energy reduction",
+      "Quality certification from lead engineering consultant"
+    ],
     "project_value": 1450000.00,
     "status": "completed",
     "is_featured": true,
@@ -17,15 +42,36 @@
     "after_image_url": "/images/defaults/projects/project-1-after.jpg"
   },
   {
-    "slug": "luxury-villa-glass-aluminum-jeddah",
-    "title_ar": "مشروع زجاج وألمنيوم لفيلا سكنية فاخرة بجدة",
-    "title_en": "Luxury Residential Villa Glass & Aluminum in Jeddah",
-    "description_ar": "تنفيذ كبائن شاور زجاجية سكريت، واجهات بانورامية على المسبح، وقطاعات ألمنيوم معزولة بالكامل بمدينة جدة.",
-    "description_en": "Tempered glass shower cabins, panoramic pool facades, and thermal-break aluminum windows for a luxury villa in Jeddah.",
-    "client_name": "الشيخ عبد الرحمن آل سعود",
-    "location_ar": "حي الشاطئ، جدة",
-    "location_en": "Al Shati District, Jeddah",
+    "slug": "luxury-villa-facade",
+    "title_ar": "واجهات وتجهيزات فيلا سكنية فاخرة",
+    "title_en": "Luxury Residential Villa Facade & Glass",
+    "category_ar": "زجاج وألمنيوم",
+    "category_en": "Glass & Aluminum",
+    "location_ar": "جدة - حي الشاطئ",
+    "location_en": "Jeddah - Al Shati District",
     "city": "jeddah",
+    "year": "2024",
+    "client_name": "م. عبد الرحمن الشريف",
+    "client_ar": "م. عبد الرحمن الشريف",
+    "client_en": "Eng. Abdulrahman Al-Sharif",
+    "description_ar": "تنفيذ كبائن شاور زجاجية سكريت 10مم، واجهات بانورامية مطلة على المسبح، ونوافذ ألمنيوم حرارية ذات عزل مائي وحراري متطور في جدة.",
+    "description_en": "Tempered glass 10mm shower enclosures, pool panoramic facades, and thermal-break aluminum window systems in Jeddah.",
+    "challenges_ar": [
+      "مقاومة الرطوبة العالية والأملاح في منطقة الكورنيش",
+      "تثبيت زجاج بانورامي بحجم ضخم بدون أعمدة مروحية"
+    ],
+    "challenges_en": [
+      "Resistance to coastal humidity and salts",
+      "Huge panoramic glass panel installation without vertical breaks"
+    ],
+    "results_ar": [
+      "مظهر عصري وفاخر مع عزل مائي بنسبة 100%",
+      "رضا تام من العميل والمهندس المشرف"
+    ],
+    "results_en": [
+      "Modern luxury appearance with 100% waterproofing",
+      "Complete client and consultant satisfaction"
+    ],
     "project_value": 420000.00,
     "status": "completed",
     "is_featured": true,
@@ -34,20 +80,67 @@
     "after_image_url": "/images/defaults/projects/project-2-after.jpg"
   },
   {
-    "slug": "corporate-office-partitions-dammam",
-    "title_ar": "فواصل زجاجية لمقر شركة بترول بالدمام",
-    "title_en": "Corporate Office Glass Partitions in Dammam",
-    "description_ar": "تركيب قواطع زجاجية سكريت 12مم مع أبواب هيدروليكية وإكسسوارات استانلس 304 لمكاتب الإدارة بالدمام.",
-    "description_en": "Installation of 12mm tempered glass office partitions with hydraulic doors and stainless 304 fittings for corporate offices in Dammam.",
-    "client_name": "مجموعة الخدمات الصناعية",
-    "location_ar": "طريق الكورنيش، الدمام",
-    "location_en": "Corniche Road, Dammam",
+    "slug": "tempered-glass-office",
+    "title_ar": "قواطع زجاج سكريت لمكاتب إدارية",
+    "title_en": "Corporate Office Glass Partitions",
+    "category_ar": "فواصل زجاجية",
+    "category_en": "Glass Partitions",
+    "location_ar": "الدمام - طريق الكورنيش",
+    "location_en": "Dammam - Corniche Road",
     "city": "dammam",
+    "year": "2023",
+    "client_name": "مجموعة الخدمات الصناعية",
+    "client_ar": "مجموعة الخدمات الصناعية",
+    "client_en": "Industrial Services Group",
+    "description_ar": "تركيب قواطع زجاجية سكريت 12مم مع أبواب هيدروليكية وإكسسوارات استانلس 304 لمكاتب الإدارة العليا بالدمام مع عزل صوتي عالي.",
+    "description_en": "Installation of 12mm tempered glass office partitions with hydraulic soft-close doors and 304 stainless hardware in Dammam.",
+    "challenges_ar": [
+      "تركيب القواطع خلال مواعيد العمل الرسمية دون إزعاج",
+      "تحقيق عزل صوتي بين مكاتب الإعداد والاجتماعات"
+    ],
+    "challenges_en": [
+      "Installation during active working hours without noise disruption",
+      "Achieving high soundproofing between meeting rooms"
+    ],
+    "results_ar": [
+      "إنهاء الأعمال في الوقت المحدد بضمان 5 سنوات",
+      "بيئة عمل أنيقة وعازلة للصوت"
+    ],
+    "results_en": [
+      "Completed on schedule with 5-year warranty",
+      "Elegant noise-isolated workspace"
+    ],
     "project_value": 280000.00,
     "status": "completed",
     "is_featured": true,
     "cover_image_url": "/images/defaults/projects/project-3.jpg",
     "before_image_url": "/images/defaults/projects/project-3-before.jpg",
     "after_image_url": "/images/defaults/projects/project-3-after.jpg"
+  },
+  {
+    "slug": "modern-kitchen-suite",
+    "title_ar": "مطابخ ألمنيوم ومودرن لمجمع سكني",
+    "title_en": "Modern Aluminum Kitchens Complex",
+    "category_ar": "مطابخ",
+    "category_en": "Kitchens",
+    "location_ar": "الرياض - حي الياسمين",
+    "location_en": "Riyadh - Al Yasmin District",
+    "city": "riyadh",
+    "year": "2024",
+    "client_name": "شركة الإعمار السكني",
+    "client_ar": "شركة الإعمار السكني",
+    "client_en": "Residential Building Co.",
+    "description_ar": "تصنيع وتجهيز 24 مطبخ ألمنيوم مودرن مقاوم للماء والحشرات بأسطح رخام صناعي ومفصلات بلوم نمساوية.",
+    "description_en": "Manufacture and setup of 24 modern aluminum kitchens with Austrian Blum soft-close fittings and synthetic marble countertops.",
+    "challenges_ar": ["تسليم 24 مطبخاً بجدول زمني ضيق جداً"],
+    "challenges_en": ["Delivering 24 custom kitchens under a tight timeframe"],
+    "results_ar": ["تسليم كافة الوحدات بدقة وجودة عالية"],
+    "results_en": ["Delivered all units with high quality and accuracy"],
+    "project_value": 650000.00,
+    "status": "completed",
+    "is_featured": true,
+    "cover_image_url": "/images/defaults/projects/project-1.jpg",
+    "before_image_url": "/images/defaults/projects/project-1-before.jpg",
+    "after_image_url": "/images/defaults/projects/project-1-after.jpg"
   }
 ]

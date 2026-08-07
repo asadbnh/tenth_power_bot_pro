@@ -2,24 +2,33 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { MapPin, CheckCircle2, Star, Phone, ArrowRight, Building2, Layers3, RectangleHorizontal, PaintBucket } from "lucide-react";
+import { MapPin, Star, Phone, ArrowRight, Building2, Layers3, RectangleHorizontal, PaintBucket } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 
 interface CityData { ar: string; en: string; region_ar: string; region_en: string; }
-interface Props { locale: Locale; city: string; cityData: CityData; }
+interface Props { locale: Locale; city: string; cityData: CityData; initialServices?: any[]; }
 
-const CITY_SERVICES = [
-  { icon: Layers3, slug: "tempered-glass", name_ar: "زجاج سكريت مقوى", name_en: "Tempered Glass", color: "from-blue-500 to-cyan-400" },
-  { icon: Building2, slug: "glass-facades", name_ar: "واجهات زجاجية", name_en: "Glass Facades", color: "from-indigo-500 to-purple-400" },
-  { icon: RectangleHorizontal, slug: "aluminum", name_ar: "أعمال الألمنيوم", name_en: "Aluminum Works", color: "from-slate-500 to-gray-400" },
-  { icon: PaintBucket, slug: "kitchens", name_ar: "مطابخ", name_en: "Kitchens", color: "from-amber-500 to-orange-400" },
+const iconMap: Record<string, React.ElementType> = {
+  Layers3,
+  Building2,
+  RectangleHorizontal,
+  PaintBucket,
+};
+
+const DEFAULT_CITY_SERVICES = [
+  { icon: "Layers3", slug: "tempered-glass", name_ar: "زجاج سكريت مقوى", name_en: "Tempered Glass", color: "from-blue-500 to-cyan-400" },
+  { icon: "Building2", slug: "glass-facades", name_ar: "واجهات زجاجية", name_en: "Glass Facades", color: "from-indigo-500 to-purple-400" },
+  { icon: "RectangleHorizontal", slug: "aluminum", name_ar: "أعمال الألمنيوم", name_en: "Aluminum Works", color: "from-slate-500 to-gray-400" },
+  { icon: "PaintBucket", slug: "kitchens", name_ar: "مطابخ", name_en: "Kitchens", color: "from-amber-500 to-orange-400" },
 ];
 
-export function CityPageContent({ locale, city, cityData }: Props) {
+export function CityPageContent({ locale, city, cityData, initialServices }: Props) {
   const isRtl = locale === "ar";
   const cityName = isRtl ? cityData.ar : cityData.en;
   const regionName = isRtl ? cityData.region_ar : cityData.region_en;
+
+  const servicesList = (initialServices && initialServices.length > 0) ? initialServices : DEFAULT_CITY_SERVICES;
 
   // LocalBusiness structured data for this city
   const schema = {
@@ -36,10 +45,10 @@ export function CityPageContent({ locale, city, cityData }: Props) {
       addressCountry: "SA",
     },
     telephone: "+966500000000",
-    url: `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/cities/${city}`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com"}/${locale}/cities/${city}`,
     priceRange: "$$",
     areaServed: cityName,
-    "@id": `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/cities/${city}#localbusiness`,
+    "@id": `${process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com"}/${locale}/cities/${city}#localbusiness`,
   };
 
   return (
@@ -58,22 +67,22 @@ export function CityPageContent({ locale, city, cityData }: Props) {
             {regionName}
           </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-5xl font-extrabold text-white mb-4">
+            className="text-3xl sm:text-5xl font-extrabold text-white mb-6 leading-tight">
             {isRtl
-              ? `خدمات الزجاج والألمنيوم في ${cityName}`
-              : `Glass & Aluminum Services in ${cityName}`}
+              ? `أفضل خدمات الزجاج والألمنيوم والمقاولات في ${cityName}`
+              : `Glass, Aluminum & Contracting Services in ${cityName}`}
           </motion.h1>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            className="text-lg text-white/60 max-w-2xl mx-auto mb-8">
+            className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto mb-8 leading-relaxed">
             {isRtl
-              ? `نقدم خدمات متكاملة في ${cityName} وجميع أحياء ${regionName} — تركيب احترافي، ضمان شامل، فريق متخصص.`
-              : `We provide comprehensive services across ${cityName} and all of ${regionName} — professional installation, full warranty, specialized team.`}
+              ? `نوفر حلول الزجاج السكريت المقوى، الواجهات الزجاجية، قطاعات الألمنيوم والمطابخ العصرية بأعلى معايير الجودة في مدينة ${cityName} وجميع أحياء ${regionName}.`
+              : `Premium tempered glass, glass facades, aluminum profiles, and modern kitchens across ${cityName} and all ${regionName} neighborhoods.`}
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href={`/${locale}/quote`}
-              className="inline-flex items-center gap-2 px-7 py-4 rounded-xl bg-white text-primary-900 font-bold text-sm hover:bg-white/90 transition-colors shadow-lg">
-              {isRtl ? "احصل على عرض سعر مجاني" : "Get Free Quote"}
+              className="inline-flex items-center gap-2 px-7 py-4 rounded-xl bg-accent-500 hover:bg-accent-400 text-primary-950 font-bold text-sm shadow-lg hover:shadow-accent-500/20 transition-all">
+              {isRtl ? "اطلب عرض سعر مجاني" : "Request Free Quote"}
               <ArrowRight className={cn("w-4 h-4", isRtl && "rotate-180")} />
             </Link>
             <a href="tel:+966500000000"
@@ -112,17 +121,20 @@ export function CityPageContent({ locale, city, cityData }: Props) {
             {isRtl ? `خدماتنا في ${cityName}` : `Our Services in ${cityName}`}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {CITY_SERVICES.map((s, i) => {
-              const Icon = s.icon;
+            {servicesList.map((s: any, i: number) => {
+              const rawIcon = s.icon;
+              const Icon = typeof rawIcon === "string" && iconMap[rawIcon] ? iconMap[rawIcon] : (typeof rawIcon === "function" ? rawIcon : Layers3);
+              const serviceName = isRtl ? (s.name_ar || s.name) : (s.name_en || s.name_ar || s.name);
+              const colorClass = s.color || "from-blue-500 to-cyan-400";
               return (
-                <motion.div key={s.slug} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
+                <motion.div key={s.slug || i} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
                   <Link href={`/${locale}/cities/${city}/${s.slug}`}
                     className="group block rounded-2xl border border-border-light hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-lg transition-all duration-300 p-6 text-center bg-surface-elevated">
-                    <div className={cn("w-14 h-14 rounded-2xl bg-gradient-to-br flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-110 transition-transform", s.color)}>
+                    <div className={cn("w-14 h-14 rounded-2xl bg-gradient-to-br flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-110 transition-transform", colorClass)}>
                       <Icon className="w-7 h-7 text-white" />
                     </div>
                     <h3 className="font-bold text-sm group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                      {isRtl ? s.name_ar : s.name_en}
+                      {serviceName}
                     </h3>
                     <p className="text-xs text-text-tertiary mt-1">
                       {isRtl ? `في ${cityName}` : `in ${cityName}`}
@@ -149,24 +161,9 @@ export function CityPageContent({ locale, city, cityData }: Props) {
               ? `انضم لمئات العملاء الراضين عن خدماتنا في ${cityName} و${regionName}`
               : `Join hundreds of satisfied clients across ${cityName} and ${regionName}`}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {[
-              { icon: CheckCircle2, text_ar: "ضمان على جميع الأعمال", text_en: "Warranty on all works" },
-              { icon: CheckCircle2, text_ar: "فريق متخصص ومعتمد", text_en: "Certified specialist team" },
-              { icon: CheckCircle2, text_ar: "أسعار تنافسية", text_en: "Competitive pricing" },
-            ].map((item, i) => {
-              const Icon = item.icon;
-              return (
-                <div key={i} className="flex items-center gap-2 text-sm text-text-secondary">
-                  <Icon className="w-4 h-4 text-emerald-500 shrink-0" />
-                  {isRtl ? item.text_ar : item.text_en}
-                </div>
-              );
-            })}
-          </div>
           <Link href={`/${locale}/quote`}
-            className="inline-flex items-center gap-2 mt-8 px-8 py-4 rounded-xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-colors shadow-lg">
-            {isRtl ? `احصل على عرض سعر في ${cityName}` : `Get Quote in ${cityName}`}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-bold text-sm transition-all">
+            {isRtl ? "اطلب مشروعك الآن" : "Request Your Project"}
             <ArrowRight className={cn("w-4 h-4", isRtl && "rotate-180")} />
           </Link>
         </div>

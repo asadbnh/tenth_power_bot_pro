@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { Locale } from "@/lib/i18n/config";
 import { CityPageContent } from "@/components/pages/CityPageContent";
 import { getCityPageBySlug, getCityPagesList } from "@/lib/actions/content";
-import { getFallbackCities } from "@/lib/fallback-provider";
+import { getFallbackCities, getFallbackServices } from "@/lib/fallback-provider";
 
 export async function generateStaticParams() {
   const dbCities = await getCityPagesList("ar").catch(() => []);
@@ -67,12 +67,16 @@ export default async function CityPage({
     region_en: String(dbCity?.regionName || fallback?.region_en || ""),
   };
 
+  const services = (dbCity?.services && (dbCity.services as any[]).length > 0)
+    ? dbCity.services
+    : getFallbackServices();
+
   return (
     <CityPageContent
       locale={locale as Locale}
       city={city}
       cityData={cityData}
+      initialServices={services as any[]}
     />
   );
 }
-
