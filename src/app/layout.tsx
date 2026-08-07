@@ -92,8 +92,26 @@ export default function RootLayout({
           <Analytics />
           {children}
         </ThemeProvider>
-        {/* PWA Service Worker registration */}
-        <script dangerouslySetInnerHTML={{ __html: `if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); }); }` }} />
+        {/* PWA Service Worker registration — disabled in dev mode to prevent stale chunk hydration errors */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+                if (${process.env.NODE_ENV === "production"}) {
+                  window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js').catch(() => {});
+                  });
+                } else {
+                  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for (let registration of registrations) {
+                      registration.unregister();
+                    }
+                  });
+                }
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );

@@ -36,12 +36,18 @@ self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET and API routes (always network)
-  if (request.method !== "GET" || url.pathname.startsWith("/api/")) return;
-
-  // Cache-first for static assets (images, fonts, css, js)
+  // Skip non-GET, API routes, and Next.js internal build chunks (_next/)
   if (
-    url.pathname.match(/\.(png|jpg|jpeg|webp|gif|svg|ico|woff2|woff|css|js)$/)
+    request.method !== "GET" ||
+    url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/_next/")
+  ) {
+    return;
+  }
+
+  // Cache-first only for static media & fonts
+  if (
+    url.pathname.match(/\.(png|jpg|jpeg|webp|gif|svg|ico|woff2|woff)$/)
   ) {
     event.respondWith(
       caches.match(request).then(
