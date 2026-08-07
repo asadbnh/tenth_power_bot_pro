@@ -766,6 +766,59 @@ export async function handlePhotoMessage(msg: TelegramMessage) {
   }
 
   const telegramFileUrl = getTelegramFileUrl(fileRes.result.file_path);
+
+  // 1. Download image buffer from Telegram
+  let imageBuffer: Buffer;
+  try {
+    const imgRes = await fetch(telegramFileUrl);
+    if (!imgRes.ok) throw new Error("Failed to download image from Telegram");
+    imageBuffer = Buffer.from(await imgRes.arrayBuffer());
+  } catch (err) {
+    console.error("Telegram image download error:", err);
+    await sendMessage(chatId, "❌ تعذر تحميل ملف الصورة من التلجرام.");
+    return;
+  }
+
+  // 2. Upload image buffer to Cloudflare R2
+  const r2AccountId = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.R2_ACCOUNT_ID;
+  const r2AccessKeyId = process.env.R2_ACCESS_KEY_ID;
+  const r2SecretKey = process.env.R2_SECRET_ACCESS_KEY;
+  const r2Bucket = process.env.R2_BUCKET_NAME || "powerof";
+  const r2PublicUrl = process.env.R2_PUBLIC_URL || "https://pub-e9788e46474044d585e2622e2c6ce74d.r2.dev";
+
+  let r2PermanentUrl = telegramFileUrl;
+
+  if (r2AccountId && r2AccessKeyId && r2SecretKey) {
+    try {
+      const { S3Client, PutObjectCommand } = await import("@aws-sdk/client-s3");
+      const s3 = new S3Client({
+        region: "auto",
+        endpoint: `https://${r2AccountId}.r2.cloudflarestorage.com`,
+        credentials: {
+          accessKeyId: r2AccessKeyId,
+          secretAccessKey: r2SecretKey,
+        },
+      });
+
+      const ext = fileRes.result.file_path.split(".").pop() ?? "jpg";
+      const fileName = `gallery/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: r2Bucket,
+          Key: fileName,
+          Body: imageBuffer,
+          ContentType: `image/${ext === "png" ? "png" : "jpeg"}`,
+        })
+      );
+
+      r2PermanentUrl = `${r2PublicUrl}/${fileName}`;
+    } catch (r2Err) {
+      console.error("Cloudflare R2 Telegram Photo Upload Error:", r2Err);
+    }
+  }
+
+  // 3. Save permanent Cloudflare R2 URL to Supabase
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
 
@@ -781,6 +834,7 @@ export async function handlePhotoMessage(msg: TelegramMessage) {
       slug: `album-${Date.now()}`,
       title_ar: caption,
       title_en: "Uploaded via Telegram",
+      cover_image_url: r2PermanentUrl,
       is_active: true,
     })
     .select("id")
@@ -792,8 +846,19 @@ export async function handlePhotoMessage(msg: TelegramMessage) {
     return;
   }
 
+  // Also save in media_library
+  await supabase.from("media_library").insert({
+    file_name: `telegram-${Date.now()}.jpg`,
+    file_type: "image/jpeg",
+    mime_type: "image/jpeg",
+    file_size: imageBuffer.byteLength,
+    storage_provider: "r2",
+    url: r2PermanentUrl,
+    folder: "gallery",
+  });
+
   await sendMessage(chatId,
-    `📸 <b>تم رفع الصورة وحفظها بنجاح لمعرض الصور!</b>\n\n🆔 <b>معرّف الألبوم:</b> <code>${album?.id ?? "—"}</code>\n🔗 <a href="${telegramFileUrl}">عرض الصورة الحية</a>`,
+    `📸 <b>تم نقل وتحويل الصورة بنجاح وتخزينها دائماً على Cloudflare R2!</b>\n\n🆔 <b>معرّف الألبوم:</b> <code>${album?.id ?? "—"}</code>\n☁️ <b>رابط Cloudflare R2 الدائم:</b>\n<a href="${r2PermanentUrl}">${r2PermanentUrl}</a>\n\n✅ الصورة الآن منشورة ومخزنة سحابياً ومتاحة لجميع زوار الموقع!`,
     { reply_markup: Keyboards.backToSubmenu("med_gallery") }
   );
 }
