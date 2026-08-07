@@ -6,18 +6,26 @@ import Link from "next/link";
 import {
   Building2, DoorOpen, GalleryHorizontalEnd, Hammer,
   Layers3, PaintBucket, RectangleHorizontal, Wrench,
-  ArrowRight, CheckCircle2,
+  ArrowRight, CheckCircle2, type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-interface Props { locale: Locale; dict: Dictionary; }
+interface Props {
+  locale: Locale;
+  dict: Dictionary;
+  initialServices?: any[];
+}
 
-const SERVICES = [
+const iconMap: Record<string, LucideIcon> = {
+  Layers3, Building2, RectangleHorizontal, PaintBucket, GalleryHorizontalEnd, DoorOpen, Hammer, Wrench
+};
+
+const DEFAULT_SERVICES = [
   {
     icon: Layers3,
-    slug: "tempered-glass",
+    slug: "securit-glass",
     name_ar: "زجاج سكريت (مقوى)",
     name_en: "Tempered Glass",
     desc_ar: "زجاج مقوى بأعلى معايير السلامة والجودة للمباني والواجهات التجارية والسكنية. يتحمل أربعة أضعاف قوة الزجاج العادي.",
@@ -113,10 +121,12 @@ const SERVICES = [
   },
 ];
 
-export function ServicesPageContent({ locale, dict }: Props) {
+export function ServicesPageContent({ locale, dict, initialServices }: Props) {
   const isRtl = locale === "ar";
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-50px" });
+
+  const services = (initialServices && initialServices.length > 0) ? initialServices : DEFAULT_SERVICES;
 
   return (
     <div className="pt-[var(--header-height)]">
@@ -144,26 +154,33 @@ export function ServicesPageContent({ locale, dict }: Props) {
       <section ref={sectionRef} className="py-16 sm:py-24 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {SERVICES.map((service, i) => {
-              const Icon = service.icon;
+            {services.map((service, i) => {
+              const Icon = (service.icon && typeof service.icon === "string" && iconMap[service.icon])
+                ? iconMap[service.icon]
+                : (typeof service.icon === "function" ? service.icon : Building2);
+              const name = service.name || (isRtl ? service.name_ar : service.name_en) || service.name_ar;
+              const desc = service.description || service.short_description || (isRtl ? service.desc_ar : service.desc_en) || service.desc_ar;
+
+              const feats: string[] = service.features_ar || service.features_en || (isRtl ? ["جودة عالية", "ضمان شامل", "تنفيذ احترافي"] : ["High Quality", "Comprehensive Warranty", "Professional Execution"]);
+
               return (
-                <motion.article key={service.slug}
+                <motion.article key={service.slug || i}
                   initial={{ opacity: 0, y: 30 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: i * 0.07 }}
                   className="group relative rounded-2xl border border-border-light hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-xl transition-all duration-300 overflow-hidden">
 
                   {/* Header */}
-                  <div className={cn("p-6 flex items-start gap-4", service.bg)}>
-                    <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center shrink-0 bg-gradient-to-br shadow-md", service.color)}>
+                  <div className={cn("p-6 flex items-start gap-4", service.bg || "bg-surface-elevated")}>
+                    <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center shrink-0 bg-gradient-to-br shadow-md", service.color || "from-blue-500 to-indigo-600")}>
                       <Icon className="w-7 h-7 text-white" />
                     </div>
                     <div>
                       <h2 className="text-xl font-bold mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                        {isRtl ? service.name_ar : service.name_en}
+                        {name}
                       </h2>
                       <p className="text-sm text-text-secondary leading-relaxed">
-                        {isRtl ? service.desc_ar : service.desc_en}
+                        {desc}
                       </p>
                     </div>
                   </div>
@@ -171,7 +188,7 @@ export function ServicesPageContent({ locale, dict }: Props) {
                   {/* Features */}
                   <div className="p-6 bg-background">
                     <ul className="grid grid-cols-2 gap-2">
-                      {(isRtl ? service.features_ar : service.features_en).map((feat) => (
+                      {feats.map((feat) => (
                         <li key={feat} className="flex items-center gap-2 text-sm text-text-secondary">
                           <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                           {feat}

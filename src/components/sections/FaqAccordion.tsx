@@ -7,13 +7,23 @@ import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
+export interface FaqItem {
+  id?: string;
+  question_ar?: string;
+  question_en?: string;
+  answer_ar?: string;
+  answer_en?: string;
+  question?: string;
+  answer?: string;
+}
+
 interface FaqAccordionProps {
   locale: Locale;
   dict: Dictionary;
+  initialFaqs?: FaqItem[];
 }
 
-/** Demo FAQ data — in production fetched from Supabase */
-const DEMO_FAQS = [
+const DEMO_FAQS: FaqItem[] = [
   {
     question_ar: "ما هي أنواع الزجاج المتوفرة لديكم؟",
     question_en: "What types of glass do you offer?",
@@ -44,19 +54,15 @@ const DEMO_FAQS = [
     answer_ar: "يمكنك الحصول على عرض سعر مجاني من خلال: التواصل معنا عبر واتساب، ملء نموذج طلب عرض السعر على الموقع، الاتصال المباشر بنا، أو التحدث مع المساعد الذكي. سنقوم بالرد خلال 24 ساعة.",
     answer_en: "You can get a free quote through: contacting us via WhatsApp, filling out the quote request form on the website, calling us directly, or chatting with our AI assistant. We will respond within 24 hours.",
   },
-  {
-    question_ar: "هل تخدمون مناطق خارج المدينة الرئيسية؟",
-    question_en: "Do you serve areas outside the main city?",
-    answer_ar: "نعم، نقدم خدماتنا في جميع المدن الرئيسية والمناطق المحيطة بها. يرجى التواصل معنا لتأكيد التغطية في منطقتك.",
-    answer_en: "Yes, we provide our services in all major cities and surrounding areas. Please contact us to confirm coverage in your area.",
-  },
 ];
 
-export function FaqAccordion({ locale, dict }: FaqAccordionProps) {
+export function FaqAccordion({ locale, dict, initialFaqs }: FaqAccordionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const isRtl = locale === "ar";
+
+  const faqs = (initialFaqs && initialFaqs.length > 0) ? initialFaqs : DEMO_FAQS;
 
   const toggleItem = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -93,11 +99,14 @@ export function FaqAccordion({ locale, dict }: FaqAccordionProps) {
 
         {/* FAQ Items */}
         <div className="space-y-3">
-          {DEMO_FAQS.map((faq, index) => {
+          {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
+            const qText = faq.question || (isRtl ? faq.question_ar : faq.question_en) || faq.question_ar;
+            const aText = faq.answer || (isRtl ? faq.answer_ar : faq.answer_en) || faq.answer_ar;
+
             return (
               <motion.div
-                key={index}
+                key={faq.id || index}
                 initial={{ opacity: 0, y: 10 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
@@ -116,7 +125,7 @@ export function FaqAccordion({ locale, dict }: FaqAccordionProps) {
                   id={`faq-question-${index}`}
                 >
                   <span className="font-semibold text-base sm:text-lg">
-                    {isRtl ? faq.question_ar : faq.question_en}
+                    {qText}
                   </span>
                   <ChevronDown
                     className={cn(
@@ -138,7 +147,7 @@ export function FaqAccordion({ locale, dict }: FaqAccordionProps) {
                       className="overflow-hidden"
                     >
                       <div className="px-5 pb-5 text-text-secondary leading-relaxed">
-                        {isRtl ? faq.answer_ar : faq.answer_en}
+                        {aText}
                       </div>
                     </motion.div>
                   )}
@@ -148,25 +157,6 @@ export function FaqAccordion({ locale, dict }: FaqAccordionProps) {
           })}
         </div>
       </div>
-
-      {/* FAQ Schema (JSON-LD) */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: DEMO_FAQS.map((faq) => ({
-              "@type": "Question",
-              name: isRtl ? faq.question_ar : faq.question_en,
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: isRtl ? faq.answer_ar : faq.answer_en,
-              },
-            })),
-          }),
-        }}
-      />
     </section>
   );
 }

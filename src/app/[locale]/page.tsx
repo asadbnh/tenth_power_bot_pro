@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getServices, getFaqs } from "@/lib/actions/content";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ServicesShowcase } from "@/components/sections/ServicesShowcase";
 import { AnimatedStats } from "@/components/sections/AnimatedStats";
@@ -17,7 +18,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
 
   return {
     title: dict.meta.homeTitle,
@@ -41,6 +42,12 @@ export default async function HomePage({
   const validLocale = locale as Locale;
   const dict = await getDictionary(validLocale);
 
+  // Fetch live services & FAQs from Supabase database
+  const [dbServices, dbFaqs] = await Promise.all([
+    getServices(validLocale).catch(() => []),
+    getFaqs(validLocale).catch(() => []),
+  ]);
+
   return (
     <>
       {/* JSON-LD Structured Data for Organization */}
@@ -60,8 +67,8 @@ export default async function HomePage({
       {/* 1. Cinematic Hero */}
       <HeroSection locale={validLocale} dict={dict} />
 
-      {/* 2. Services Showcase */}
-      <ServicesShowcase locale={validLocale} dict={dict} />
+      {/* 2. Services Showcase (Fed from Supabase DB) */}
+      <ServicesShowcase locale={validLocale} dict={dict} initialServices={dbServices as any[]} />
 
       {/* 3. Animated Statistics */}
       <AnimatedStats locale={validLocale} dict={dict} />
@@ -72,8 +79,8 @@ export default async function HomePage({
       {/* 5. Before & After Transformation Slider */}
       <BeforeAfterSlider locale={validLocale} />
 
-      {/* 6. FAQ Section */}
-      <FaqAccordion locale={validLocale} dict={dict} />
+      {/* 6. FAQ Section (Fed from Supabase DB) */}
+      <FaqAccordion locale={validLocale} dict={dict} initialFaqs={dbFaqs as any[]} />
 
       {/* 7. Google Maps & Office Headquarters */}
       <GoogleMapsSection locale={validLocale} />

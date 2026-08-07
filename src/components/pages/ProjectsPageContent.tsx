@@ -7,12 +7,16 @@ import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-interface Props { locale: Locale; dict: Dictionary; }
+interface Props {
+  locale: Locale;
+  dict: Dictionary;
+  initialProjects?: any[];
+}
 
 const FILTERS_AR = ["الكل", "زجاج", "ألمنيوم", "مطابخ", "ديكورات", "مقاولات"];
 const FILTERS_EN = ["All", "Glass", "Aluminum", "Kitchens", "Decorations", "Contracting"];
 
-const PROJECTS = [
+const DEFAULT_PROJECTS = [
   { id: 1, title_ar: "واجهة برج تجاري — الرياض", title_en: "Commercial Tower Facade — Riyadh", cat: "زجاج", city_ar: "الرياض", city_en: "Riyadh", year: 2024, views: 1240, gradient: "from-blue-600 to-cyan-400", emoji: "🏢" },
   { id: 2, title_ar: "مطبخ فيلا فاخرة — جدة", title_en: "Luxury Villa Kitchen — Jeddah", cat: "مطابخ", city_ar: "جدة", city_en: "Jeddah", year: 2024, views: 890, gradient: "from-amber-500 to-orange-400", emoji: "🍽️" },
   { id: 3, title_ar: "ديكور مجمع سكني — الدمام", title_en: "Residential Complex Decor — Dammam", cat: "ديكورات", city_ar: "الدمام", city_en: "Dammam", year: 2023, views: 670, gradient: "from-rose-500 to-pink-400", emoji: "🏠" },
@@ -24,14 +28,18 @@ const PROJECTS = [
   { id: 9, title_ar: "واجهة فندق 5 نجوم — مكة", title_en: "5-Star Hotel Facade — Mecca", cat: "زجاج", city_ar: "مكة المكرمة", city_en: "Mecca", year: 2024, views: 2100, gradient: "from-blue-500 to-indigo-400", emoji: "⭐" },
 ];
 
-export function ProjectsPageContent({ locale, dict }: Props) {
+export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
   const isRtl = locale === "ar";
   const [activeFilter, setActiveFilter] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-50px" });
   const filters = isRtl ? FILTERS_AR : FILTERS_EN;
 
-  const filtered = activeFilter === 0 ? PROJECTS : PROJECTS.filter(p => p.cat === FILTERS_AR[activeFilter]);
+  const projects = (initialProjects && initialProjects.length > 0) ? initialProjects : DEFAULT_PROJECTS;
+
+  const filtered = activeFilter === 0
+    ? projects
+    : projects.filter(p => (p.cat === FILTERS_AR[activeFilter] || p.services?.slug === FILTERS_EN[activeFilter].toLowerCase()));
 
   return (
     <div className="pt-[var(--header-height)]">
@@ -71,43 +79,48 @@ export function ProjectsPageContent({ locale, dict }: Props) {
       <section ref={sectionRef} className="py-12 sm:py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((project, i) => (
-              <motion.article key={project.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.4, delay: i * 0.06 }}
-                className="group rounded-2xl overflow-hidden border border-border-light hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-xl transition-all duration-300 bg-surface-elevated cursor-pointer">
+            {filtered.map((project, i) => {
+              const title = project.name || (isRtl ? project.title_ar : project.title_en) || project.title_ar;
+              const city = project.city || (isRtl ? project.city_ar : project.city_en) || "السعودية";
+              const cat = project.cat || project.services?.slug || "مشروع";
 
-                {/* Image/Gradient Placeholder */}
-                <div className={cn("h-52 bg-gradient-to-br flex items-center justify-center text-6xl relative", project.gradient)}>
-                  <span className="select-none">{project.emoji}</span>
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-                  <span className="absolute top-3 end-3 px-2 py-1 rounded-full bg-black/40 text-white text-xs font-medium backdrop-blur-sm">
-                    {project.cat}
-                  </span>
-                </div>
+              return (
+                <motion.article key={project.id || i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.4, delay: i * 0.06 }}
+                  className="group rounded-2xl overflow-hidden border border-border-light hover:border-primary-200 dark:hover:border-primary-800 hover:shadow-xl transition-all duration-300 bg-surface-elevated cursor-pointer">
 
-                <div className="p-5">
-                  <h3 className="font-bold text-base mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors leading-snug">
-                    {isRtl ? project.title_ar : project.title_en}
-                  </h3>
-                  <div className="flex items-center justify-between text-xs text-text-tertiary">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5" />
-                      {isRtl ? project.city_ar : project.city_en}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {project.year}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Eye className="w-3.5 h-3.5" />
-                      {project.views.toLocaleString()}
+                  <div className={cn("h-52 bg-gradient-to-br flex items-center justify-center text-6xl relative", project.gradient || "from-blue-600 to-indigo-700")}>
+                    <span className="select-none">{project.emoji || "🏗️"}</span>
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                    <span className="absolute top-3 end-3 px-2.5 py-1 rounded-full bg-black/40 text-white text-xs font-medium backdrop-blur-sm">
+                      {cat}
                     </span>
                   </div>
-                </div>
-              </motion.article>
-            ))}
+
+                  <div className="p-5">
+                    <h3 className="font-bold text-base mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors leading-snug">
+                      {title}
+                    </h3>
+                    <div className="flex items-center justify-between text-xs text-text-tertiary">
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5" />
+                        {city}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {project.year || 2024}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Eye className="w-3.5 h-3.5" />
+                        {(project.views || project.view_count || 100).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </motion.article>
+              );
+            })}
           </div>
         </div>
       </section>
