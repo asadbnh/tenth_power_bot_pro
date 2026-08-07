@@ -1,13 +1,27 @@
 "use server";
 
 /**
- * Quote Request Server Action
- * Called from the Quote wizard form on submission.
- * Saves to DB + fires Telegram notification.
+ * Server Actions for Forms & Analytics Tracking
+ * Fully aligned with Supabase schema (001_initial_schema.sql) and Telegram Notifications.
  */
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyNewQuoteRequest, notifyNewMessage } from "@/lib/telegram/notifications";
+
+const FALLBACK_COMPANY_ID = "00000000-0000-0000-0000-000000000001";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function getDefaultCompanyId(supabase: any): Promise<string> {
+  try {
+    const { data } = await supabase.from("companies").select("id").limit(1).single();
+    if (data?.id) return data.id;
+  } catch {
+    // fallback
+  }
+  return FALLBACK_COMPANY_ID;
+}
+
+// ─── Quote Request Form ───────────────────────────────────────────────
 
 interface QuoteFormData {
   services: string[];
@@ -28,11 +42,14 @@ interface QuoteFormData {
 export async function submitQuoteRequest(data: QuoteFormData) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
+  const companyId = await getDefaultCompanyId(supabase);
 
+  // 1. Upsert Lead User
   const { data: user, error: userErr } = await supabase
     .from("users")
     .upsert(
       {
+        company_id: companyId,
         full_name: data.name,
         phone: data.phone,
         email: data.email ?? null,
@@ -50,29 +67,31 @@ export async function submitQuoteRequest(data: QuoteFormData) {
     .single();
 
   if (userErr || !user) {
-    console.error("Failed to create/upsert user:", userErr);
+    console.error("Failed to create/upsert user in quote request:", userErr);
     return { success: false, error: "فشل في حفظ البيانات" };
   }
 
+  // 2. Insert Quote Request
   const { data: quote, error: quoteErr } = await supabase
     .from("quote_requests")
     .insert({
+      company_id: companyId,
       user_id: user.id,
-      description: `الخدمات: ${data.services.join(", ")}\n\n${data.description}`,
+      description: `الخدمات المطلوبة: ${data.services.join(", ")}\n\nتفاصيل إضافية: ${data.description}`,
       budget_range: data.budget,
       city: data.city,
       urgency: data.urgency,
       status: "new",
-      source: "website",
     })
     .select("id")
     .single();
 
   if (quoteErr) {
-    console.error("Failed to create quote:", quoteErr);
+    console.error("Failed to create quote request:", quoteErr);
     return { success: false, error: "فشل في حفظ الطلب" };
   }
 
+  // 3. Fire Real-time Telegram Admin Alert
   notifyNewQuoteRequest({
     id: quote.id,
     name: data.name,
@@ -82,7 +101,7 @@ export async function submitQuoteRequest(data: QuoteFormData) {
     budget: data.budget,
     urgency: data.urgency,
     description: data.description,
-  }).catch(console.error);
+  }).catch((err) => console.error("Telegram notification error:", err));
 
   return { success: true, id: quote.id };
 }
@@ -101,11 +120,14 @@ interface ContactFormData {
 export async function submitContactForm(data: ContactFormData) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
+  const companyId = await getDefaultCompanyId(supabase);
 
+  // 1. Upsert Lead User
   const { data: user } = await supabase
     .from("users")
     .upsert(
       {
+        company_id: companyId,
         full_name: data.name,
         phone: data.phone,
         email: data.email ?? null,
@@ -117,34 +139,34 @@ export async function submitContactForm(data: ContactFormData) {
     .select("id")
     .single();
 
-  const { error } = await supabase.from("messages").insert({
-    user_id: user?.id ?? null,
-    subject: data.subject ?? null,
-    content: data.message,
-    type: "contact",
-    is_read: false,
-  });
-
-  if (error) return { success: false, error: "فشل في إرسال الرسالة" };
-
-  if (user?.id) {
-    const { data: msg } = await supabase
-      .from("messages")
-      .select("id")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
-
-    notifyNewMessage({
-      id: msg?.id ?? "unknown",
-      name: data.name,
-      phone: data.phone,
-      email: data.email,
-      subject: data.subject,
+  // 2. Insert Contact Message
+  const { data: msg, error } = await supabase
+    .from("messages")
+    .insert({
+      company_id: companyId,
+      user_id: user?.id ?? null,
+      subject: data.subject ?? null,
       content: data.message,
-    }).catch(console.error);
+      type: "contact",
+      is_read: false,
+    })
+    .select("id")
+    .single();
+
+  if (error) {
+    console.error("Failed to insert message:", error);
+    return { success: false, error: "فشل في إرسال الرسالة" };
   }
+
+  // 3. Fire Real-time Telegram Admin Alert
+  notifyNewMessage({
+    id: msg?.id ?? "unknown",
+    name: data.name,
+    phone: data.phone,
+    email: data.email,
+    subject: data.subject,
+    content: data.message,
+  }).catch((err) => console.error("Telegram message notification error:", err));
 
   return { success: true };
 }
@@ -165,6 +187,19 @@ interface AnalyticsEventData {
 export async function trackEvent(data: AnalyticsEventData) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
-  await supabase.from("analytics_events").insert(data);
+  const companyId = await getDefaultCompanyId(supabase);
+
+  await supabase.from("analytics_events").insert({
+    company_id: companyId,
+    event_type: data.event_type,
+    page_path: data.page_path ?? null,
+    referrer: data.referrer ?? null,
+    utm_source: data.utm_source ?? null,
+    utm_medium: data.utm_medium ?? null,
+    utm_campaign: data.utm_campaign ?? null,
+    device_type: data.device_type ?? null,
+    metadata: data.metadata ?? null,
+  });
+
   return { success: true };
 }

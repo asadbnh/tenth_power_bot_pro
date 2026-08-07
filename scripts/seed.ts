@@ -4,8 +4,7 @@ import path from "path";
 
 /**
  * WebTaky Automatic Idempotent Database Seeder
- * Reads seed-data.json and seeds Supabase tables seamlessly.
- * Safe to run multiple times without creating duplicates.
+ * Reads seed-data.json and seeds Supabase tables seamlessly matching 001_initial_schema.sql.
  */
 async function seedDatabase() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -68,48 +67,30 @@ async function seedDatabase() {
     else console.log("✅ Telegram Admin authorized & active!\n");
   }
 
-  // 3. Seed Services & Translations
+  // 3. Seed Services
   console.log("🛠️ Seeding Services...");
   for (const s of seedData.services) {
-    const { data: serviceObj, error: sErr } = await supabase
-      .from("services")
-      .upsert(
-        {
-          company_id: company.id,
-          slug: s.slug,
-          icon: s.icon,
-          is_active: true,
-          is_featured: true,
-        },
-        { onConflict: "slug" }
-      )
-      .select("id")
-      .single();
+    const { error: sErr } = await supabase.from("services").upsert(
+      {
+        company_id: company.id,
+        slug: s.slug,
+        name_ar: s.name_ar,
+        name_en: s.name_en,
+        short_description_ar: s.short_ar,
+        short_description_en: s.short_en,
+        full_description_ar: s.description_ar,
+        full_description_en: s.description_en,
+        icon: s.icon,
+        is_active: true,
+        is_featured: true,
+      },
+      { onConflict: "company_id, slug" }
+    );
 
-    if (!sErr && serviceObj) {
-      // Upsert Arabic translation
-      await supabase.from("service_translations").upsert(
-        {
-          service_id: serviceObj.id,
-          locale: "ar",
-          name: s.name_ar,
-          short_description: s.short_ar,
-          description: s.description_ar,
-        },
-        { onConflict: "service_id, locale" }
-      );
-      // Upsert English translation
-      await supabase.from("service_translations").upsert(
-        {
-          service_id: serviceObj.id,
-          locale: "en",
-          name: s.name_en,
-          short_description: s.short_en,
-          description: s.description_en,
-        },
-        { onConflict: "service_id, locale" }
-      );
+    if (!sErr) {
       console.log(`  ✓ Service seeded: ${s.name_ar}`);
+    } else {
+      console.error(`  ❌ Error seeding service ${s.slug}:`, sErr);
     }
   }
 
@@ -117,35 +98,18 @@ async function seedDatabase() {
   console.log("\n❓ Seeding FAQs...");
   for (let i = 0; i < seedData.faqs.length; i++) {
     const f = seedData.faqs[i];
-    const { data: faqObj, error: fErr } = await supabase
-      .from("faqs")
-      .upsert(
-        {
-          company_id: company.id,
-          sort_order: i + 1,
-          is_active: true,
-        },
-        { onConflict: "id" }
-      )
-      .select("id")
-      .single();
-
-    if (!fErr && faqObj) {
-      await supabase.from("faq_translations").upsert(
-        { faq_id: faqObj.id, locale: "ar", question: f.question_ar, answer: f.answer_ar },
-        { onConflict: "faq_id, locale" }
-      );
-      await supabase.from("faq_translations").upsert(
-        { faq_id: faqObj.id, locale: "en", question: f.question_en, answer: f.answer_en },
-        { onConflict: "faq_id, locale" }
-      );
-    }
+    await supabase.from("faqs").insert({
+      company_id: company.id,
+      question_ar: f.question_ar,
+      question_en: f.question_en,
+      answer_ar: f.answer_ar,
+      answer_en: f.answer_en,
+      sort_order: i + 1,
+      is_active: true,
+    });
   }
 
   console.log("\n🎉 WebTaky Auto-Seeding Completed Successfully!");
 }
 
 seedDatabase().catch(console.error);
-
-//npm run seed
-

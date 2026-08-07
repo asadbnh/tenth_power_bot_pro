@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -33,38 +34,49 @@ export async function POST(request: NextRequest) {
   if (file.size > MAX_FILE_SIZE) return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 413 });
   if (!ALLOWED_TYPES.includes(file.type)) return NextResponse.json({ error: "File type not allowed" }, { status: 415 });
 
-  const r2AccountId = process.env.CLOUDFLARE_ACCOUNT_ID!;
-  const r2AccessKeyId = process.env.R2_ACCESS_KEY_ID!;
-  const r2SecretKey = process.env.R2_SECRET_ACCESS_KEY!;
-  const r2Bucket = process.env.R2_BUCKET_NAME!;
-  const r2PublicUrl = process.env.R2_PUBLIC_URL!;
+  const r2AccountId = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.R2_ACCOUNT_ID;
+  const r2AccessKeyId = process.env.R2_ACCESS_KEY_ID;
+  const r2SecretKey = process.env.R2_SECRET_ACCESS_KEY;
+  const r2Bucket = process.env.R2_BUCKET_NAME || "powerof";
+  const r2PublicUrl = process.env.R2_PUBLIC_URL || "https://pub-e9788e46474044d585e2622e2c6ce74d.r2.dev";
 
   const ext = file.name.split(".").pop() ?? "jpg";
   const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const r2Url = `https://${r2AccountId}.r2.cloudflarestorage.com/${r2Bucket}/${fileName}`;
-  const buffer = await file.arrayBuffer();
+  const buffer = Buffer.from(await file.arrayBuffer());
 
-  const uploadRes = await fetch(r2Url, {
-    method: "PUT",
-    headers: {
-      "Content-Type": file.type,
-      "Content-Length": String(buffer.byteLength),
-      "x-amz-access-key-id": r2AccessKeyId,
-      "x-amz-secret-access-key": r2SecretKey,
+  const s3 = new S3Client({
+    region: "auto",
+    endpoint: `https://${r2AccountId}.r2.cloudflarestorage.com`,
+    credentials: {
+      accessKeyId: r2AccessKeyId!,
+      secretAccessKey: r2SecretKey!,
     },
-    body: buffer,
   });
 
-  if (!uploadRes.ok) return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+  try {
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: r2Bucket,
+        Key: fileName,
+        Body: buffer,
+        ContentType: file.type,
+      })
+    );
+  } catch (err) {
+    console.error("R2 S3 Upload Error:", err);
+    return NextResponse.json({ error: "Cloudflare R2 Upload failed" }, { status: 500 });
+  }
 
   const publicUrl = `${r2PublicUrl}/${fileName}`;
 
   const { data: media } = await supabase
-    .from("media")
+    .from("media_library")
     .insert({
       file_name: file.name,
       file_type: file.type,
+      mime_type: file.type,
       file_size: file.size,
+      storage_provider: "r2",
       url: publicUrl,
       folder,
       uploaded_by: user.id,
