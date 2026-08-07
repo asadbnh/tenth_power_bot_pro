@@ -1,0 +1,53 @@
+[
+  {
+    "slug": "commercial-tower-facade-riyadh",
+    "title_ar": "واجهة برج تجاري زجاجي بمدينة الرياض",
+    "title_en": "Commercial Tower Glass Facade in Riyadh",
+    "description_ar": "تصميم وتوريد وتركيب واجهة كرتن وول دبل جلاس بمساحة 3,200 متر مربع لصالح برج تجاري شمال مدينة الرياض مع عزل حراري فائق.",
+    "description_en": "Design, supply, and installation of a 3,200 m² double curtain wall facade for a commercial tower in North Riyadh with superior thermal break insulation.",
+    "client_name": "شركة التطوير المعماري",
+    "location_ar": "طريق الملك فهد، الرياض",
+    "location_en": "King Fahd Road, Riyadh",
+    "city": "riyadh",
+    "project_value": 1450000.00,
+    "status": "completed",
+    "is_featured": true,
+    "cover_image_url": "/images/defaults/projects/project-1.jpg",
+    "before_image_url": "/images/defaults/projects/project-1-before.jpg",
+    "after_image_url": "/images/defaults/projects/project-1-after.jpg"
+  },
+  {
+    "slug": "luxury-villa-glass-aluminum-jeddah",
+    "title_ar": "مشروع زجاج وألمنيوم لفيلا سكنية فاخرة بجدة",
+    "title_en": "Luxury Residential Villa Glass & Aluminum in Jeddah",
+    "description_ar": "تنفيذ كبائن شاور زجاجية سكريت، واجهات بانورامية على المسبح، وقطاعات ألمنيوم معزولة بالكامل بمدينة جدة.",
+    "description_en": "Tempered glass shower cabins, panoramic pool facades, and thermal-break aluminum windows for a luxury villa in Jeddah.",
+    "client_name": "الشيخ عبد الرحمن آل سعود",
+    "location_ar": "حي الشاطئ، جدة",
+    "location_en": "Al Shati District, Jeddah",
+    "city": "jeddah",
+    "project_value": 420000.00,
+    "status": "completed",
+    "is_featured": true,
+    "cover_image_url": "/images/defaults/projects/project-2.jpg",
+    "before_image_url": "/images/defaults/projects/project-2-before.jpg",
+    "after_image_url": "/images/defaults/projects/project-2-after.jpg"
+  },
+  {
+    "slug": "corporate-office-partitions-dammam",
+    "title_ar": "فواصل زجاجية لمقر شركة بترول بالدمام",
+    "title_en": "Corporate Office Glass Partitions in Dammam",
+    "description_ar": "تركيب قواطع زجاجية سكريت 12مم مع أبواب هيدروليكية وإكسسوارات استانلس 304 لمكاتب الإدارة بالدمام.",
+    "description_en": "Installation of 12mm tempered glass office partitions with hydraulic doors and stainless 304 fittings for corporate offices in Dammam.",
+    "client_name": "مجموعة الخدمات الصناعية",
+    "location_ar": "طريق الكورنيش، الدمام",
+    "location_en": "Corniche Road, Dammam",
+    "city": "dammam",
+    "project_value": 280000.00,
+    "status": "completed",
+    "is_featured": true,
+    "cover_image_url": "/images/defaults/projects/project-3.jpg",
+    "before_image_url": "/images/defaults/projects/project-3-before.jpg",
+    "after_image_url": "/images/defaults/projects/project-3-after.jpg"
+  }
+]

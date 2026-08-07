@@ -2,22 +2,14 @@ import type { Metadata } from "next";
 import type { Locale } from "@/lib/i18n/config";
 import { CityPageContent } from "@/components/pages/CityPageContent";
 import { getCityPageBySlug, getCityPagesList } from "@/lib/actions/content";
-
-const FALLBACK_CITIES: Record<string, { ar: string; en: string; region_ar: string; region_en: string }> = {
-  riyadh: { ar: "الرياض", en: "Riyadh", region_ar: "منطقة الرياض", region_en: "Riyadh Region" },
-  jeddah: { ar: "جدة", en: "Jeddah", region_ar: "منطقة مكة المكرمة", region_en: "Mecca Region" },
-  dammam: { ar: "الدمام", en: "Dammam", region_ar: "المنطقة الشرقية", region_en: "Eastern Province" },
-  khobar: { ar: "الخبر", en: "Al Khobar", region_ar: "المنطقة الشرقية", region_en: "Eastern Province" },
-  mecca: { ar: "مكة المكرمة", en: "Mecca", region_ar: "منطقة مكة المكرمة", region_en: "Mecca Region" },
-  madinah: { ar: "المدينة المنورة", en: "Madinah", region_ar: "منطقة المدينة", region_en: "Madinah Region" },
-};
+import { getFallbackCities } from "@/lib/fallback-provider";
 
 export async function generateStaticParams() {
   const dbCities = await getCityPagesList("ar").catch(() => []);
   if (dbCities && dbCities.length > 0) {
     return dbCities.map((c) => ({ city: (c as unknown as { slug: string }).slug }));
   }
-  return Object.keys(FALLBACK_CITIES).map((city) => ({ city }));
+  return getFallbackCities().map((c) => ({ city: c.slug }));
 }
 
 export async function generateMetadata({
@@ -27,19 +19,20 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, city } = await params;
   const dbCity = await getCityPageBySlug(city, locale).catch(() => null);
-  const fallback = FALLBACK_CITIES[city];
+  const fallbacks = getFallbackCities();
+  const fallback = fallbacks.find((c) => c.slug === city) || fallbacks[0];
 
-  const cityName = dbCity?.cityName || (locale === "ar" ? fallback?.ar : fallback?.en) || city;
+  const cityName = dbCity?.cityName || (locale === "ar" ? fallback?.city_name_ar : fallback?.city_name_en) || city;
   const regionName = dbCity?.regionName || (locale === "ar" ? fallback?.region_ar : fallback?.region_en) || "";
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
 
   const isAr = locale === "ar";
-  const title = isAr
+  const title = String(isAr
     ? `خدمات الزجاج والألمنيوم في ${cityName} | WebTaky`
-    : `Glass & Aluminum Services in ${cityName} | WebTaky`;
-  const description = dbCity?.description || (isAr
+    : `Glass & Aluminum Services in ${cityName} | WebTaky`);
+  const description = String(dbCity?.description || (isAr
     ? `أفضل شركة لخدمات الزجاج السكريت والألمنيوم والمطابخ والديكورات في ${cityName} - ${regionName}. تركيب احترافي وضمان شامل.`
-    : `Best glass, aluminum, kitchens & decoration services in ${cityName} - ${regionName}. Professional installation with comprehensive warranty.`);
+    : `Best glass, aluminum, kitchens & decoration services in ${cityName} - ${regionName}. Professional installation with comprehensive warranty.`));
 
   return {
     title,
@@ -59,7 +52,8 @@ export default async function CityPage({
 }) {
   const { locale, city } = await params;
   const dbCity = await getCityPageBySlug(city, locale).catch(() => null);
-  const fallback = FALLBACK_CITIES[city];
+  const fallbacks = getFallbackCities();
+  const fallback = fallbacks.find((c) => c.slug === city) || fallbacks[0];
 
   if (!dbCity && !fallback) {
     const { notFound } = await import("next/navigation");
@@ -67,10 +61,10 @@ export default async function CityPage({
   }
 
   const cityData = {
-    ar: dbCity?.city_name_ar || fallback?.ar || city,
-    en: dbCity?.city_name_en || fallback?.en || city,
-    region_ar: dbCity?.region_ar || fallback?.region_ar || "",
-    region_en: dbCity?.region_en || fallback?.region_en || "",
+    ar: String(dbCity?.cityName || fallback?.city_name_ar || city),
+    en: String(dbCity?.cityName || fallback?.city_name_en || city),
+    region_ar: String(dbCity?.regionName || fallback?.region_ar || ""),
+    region_en: String(dbCity?.regionName || fallback?.region_en || ""),
   };
 
   return (

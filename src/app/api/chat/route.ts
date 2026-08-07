@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getFallbackCompany } from "@/lib/fallback-provider";
 
 /**
  * POST /api/chat
@@ -11,6 +12,7 @@ export async function POST(request: NextRequest) {
     const { messages, locale } = await request.json();
     const isAr = locale === "ar";
     const lastUserMessage = messages?.[messages.length - 1]?.content ?? "";
+    const company = getFallbackCompany();
 
     const apiKey = process.env.GOOGLE_AI_API_KEY;
     const model = process.env.GEMINI_MODEL || "gemini-1.5-flash";
@@ -41,8 +43,8 @@ export async function POST(request: NextRequest) {
 
     if (!systemPrompt) {
       systemPrompt = isAr
-        ? "أنت المساعد الذكي لشركة القوة العاشرة لزجاج وأعمال المقاولات (WebTaky). أجب باحترافية وبإيجاز، وانصح العميل بطلب عرض سعر مجاني."
-        : "You are the AI Assistant for Tenth Power Glass & Contracting (WebTaky). Answer concisely and suggest requesting a free quote.";
+        ? `أنت المساعد الذكي لـ ${company.name_ar}. أجب باحترافية وبإيجاز، وانصح العميل بطلب عرض سعر مجاني.`
+        : `You are the AI Assistant for ${company.name_en}. Answer concisely and suggest requesting a free quote.`;
     }
 
     // 2. Try Google Gemini REST API if key is set

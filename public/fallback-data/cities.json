@@ -1,0 +1,62 @@
+[
+  {
+    "slug": "riyadh",
+    "city_name_ar": "الرياض",
+    "city_name_en": "Riyadh",
+    "region_ar": "منطقة الرياض",
+    "region_en": "Riyadh Region",
+    "description_ar": "أفضل شركة توريد وتركيب زجاج سكريت وواجهات زجاجية وألمنيوم ومطابخ في مدينة الرياض وجميع أحيائها مع ضمان 10 سنوات على التركيب والمواد.",
+    "description_en": "Leading supply & installation company for tempered glass, glass facades, aluminum, and kitchens in Riyadh with a 10-year warranty.",
+    "hero_image_url": "/images/defaults/cities/riyadh.jpg"
+  },
+  {
+    "slug": "jeddah",
+    "city_name_ar": "جدة",
+    "city_name_en": "Jeddah",
+    "region_ar": "منطقة مكة المكرمة",
+    "region_en": "Mecca Region",
+    "description_ar": "خدمات الزجاج السكريت والواجهات الزجاجية المقاومة للرطوبة والعوامل الجوية في جدة، تركيب كرتن وول وسبايدر بأعلى المعايير الهندسيّة.",
+    "description_en": "Weather and humidity resistant tempered glass & facades in Jeddah. High-spec curtain wall and spider installations.",
+    "hero_image_url": "/images/defaults/cities/jeddah.jpg"
+  },
+  {
+    "slug": "dammam",
+    "city_name_ar": "الدمام",
+    "city_name_en": "Dammam",
+    "region_ar": "المنطقة الشرقية",
+    "region_en": "Eastern Province",
+    "description_ar": "متخصصون في تنفيذ كبائن الشاور الزجاجية والواجهات والمطابخ الألمنيوم في الدمام والخبر والظهران مع التوريد السريع.",
+    "description_en": "Specialized glass shower enclosures, facade systems, and aluminum kitchens in Dammam, Khobar, and Dhahran.",
+    "hero_image_url": "/images/defaults/cities/dammam.jpg"
+  },
+  {
+    "slug": "khobar",
+    "city_name_ar": "الخبر",
+    "city_name_en": "Al Khobar",
+    "region_ar": "المنطقة الشرقية",
+    "region_en": "Eastern Province",
+    "description_ar": "تركيب واجهات زجاجية وفواصل زجاجية مكاتب في مدينة الخبر مع خدمات الصيانة والتسليم في المواعيد المحددة.",
+    "description_en": "Premium glass facades and office partitions installation in Al Khobar with timely delivery and maintenance.",
+    "hero_image_url": "/images/defaults/cities/khobar.jpg"
+  },
+  {
+    "slug": "mecca",
+    "city_name_ar": "مكة المكرمة",
+    "city_name_en": "Mecca",
+    "region_ar": "منطقة مكة المكرمة",
+    "region_en": "Mecca Region",
+    "description_ar": "تنفيذ المشاريع الفندقية والتجارية بالزجاج السكريت المقوى والألمنيوم في مكة المكرمة بأعلى جودة معالجة حرارية.",
+    "description_en": "Hotel and commercial glass projects in Mecca featuring heat-treated tempered glass and aluminum.",
+    "hero_image_url": "/images/defaults/cities/mecca.jpg"
+  },
+  {
+    "slug": "madinah",
+    "city_name_ar": "المدينة المنورة",
+    "city_name_en": "Madinah",
+    "region_ar": "منطقة المدينة",
+    "region_en": "Madinah Region",
+    "description_ar": "أعمال الزجاج والديكورات والمطابخ الحديثة في المدينة المنورة بتصاميم عصرية وضمان حقيقي ضد عيوب التصنيع.",
+    "description_en": "Modern glass, decoration, and kitchen installations in Madinah with comprehensive warranty against defects.",
+    "hero_image_url": "/images/defaults/cities/madinah.jpg"
+  }
+]

@@ -2,28 +2,15 @@ import type { Metadata } from "next";
 import type { Locale } from "@/lib/i18n/config";
 import { CityServicePageContent } from "@/components/pages/CityServicePageContent";
 import { getCityServicePageBySlug, getCityPagesList, getServices } from "@/lib/actions/content";
-
-const FALLBACK_CITIES: Record<string, { ar: string; en: string; region_ar: string; region_en: string }> = {
-  riyadh: { ar: "الرياض", en: "Riyadh", region_ar: "منطقة الرياض", region_en: "Riyadh Region" },
-  jeddah: { ar: "جدة", en: "Jeddah", region_ar: "منطقة مكة المكرمة", region_en: "Mecca Region" },
-  dammam: { ar: "الدمام", en: "Dammam", region_ar: "المنطقة الشرقية", region_en: "Eastern Province" },
-  khobar: { ar: "الخبر", en: "Al Khobar", region_ar: "المنطقة الشرقية", region_en: "Eastern Province" },
-};
-
-const FALLBACK_SERVICES: Record<string, { ar: string; en: string }> = {
-  "tempered-glass": { ar: "زجاج سكريت", en: "Tempered Glass" },
-  "glass-facades": { ar: "واجهات زجاجية", en: "Glass Facades" },
-  "aluminum": { ar: "ألمنيوم", en: "Aluminum" },
-  "kitchens": { ar: "مطابخ", en: "Kitchens" },
-};
+import { getFallbackCities, getFallbackServices } from "@/lib/fallback-provider";
 
 export async function generateStaticParams() {
   const params: { city: string; service: string }[] = [];
   const dbCities = await getCityPagesList("ar").catch(() => []);
   const dbServices = await getServices("ar").catch(() => []);
 
-  const cities = dbCities.length ? dbCities.map((c) => (c as unknown as { slug: string }).slug) : Object.keys(FALLBACK_CITIES);
-  const services = dbServices.length ? dbServices.map((s) => (s as unknown as { slug: string }).slug) : Object.keys(FALLBACK_SERVICES);
+  const cities = dbCities.length ? dbCities.map((c) => (c as unknown as { slug: string }).slug) : getFallbackCities().map((c) => c.slug);
+  const services = dbServices.length ? dbServices.map((s) => (s as unknown as { slug: string }).slug) : getFallbackServices().map((s) => s.slug);
 
   for (const city of cities) {
     for (const service of services) {
@@ -41,12 +28,14 @@ export async function generateMetadata({
   const { locale, city, service } = await params;
   const dbData = await getCityServicePageBySlug(city, service, locale).catch(() => null);
 
-  const fallbackCity = FALLBACK_CITIES[city];
-  const fallbackService = FALLBACK_SERVICES[service];
+  const fallbackCities = getFallbackCities();
+  const fallbackServices = getFallbackServices();
+  const fallbackCity = fallbackCities.find((c) => c.slug === city) || fallbackCities[0];
+  const fallbackService = fallbackServices.find((s) => s.slug === service) || fallbackServices[0];
 
   const isAr = locale === "ar";
-  const cityName = dbData?.cityName || (isAr ? fallbackCity?.ar : fallbackCity?.en) || city;
-  const serviceName = dbData?.serviceName || (isAr ? fallbackService?.ar : fallbackService?.en) || service;
+  const cityName = dbData?.cityName || (isAr ? fallbackCity?.city_name_ar : fallbackCity?.city_name_en) || city;
+  const serviceName = dbData?.serviceName || (isAr ? fallbackService?.name_ar : fallbackService?.name_en) || service;
   const regionName = dbData?.regionName || (isAr ? fallbackCity?.region_ar : fallbackCity?.region_en) || "";
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://webtaky.com";
 
@@ -76,8 +65,10 @@ export default async function CityServicePage({
   const { locale, city, service } = await params;
   const dbData = await getCityServicePageBySlug(city, service, locale).catch(() => null);
 
-  const fallbackCity = FALLBACK_CITIES[city];
-  const fallbackService = FALLBACK_SERVICES[service];
+  const fallbackCities = getFallbackCities();
+  const fallbackServices = getFallbackServices();
+  const fallbackCity = fallbackCities.find((c) => c.slug === city) || fallbackCities[0];
+  const fallbackService = fallbackServices.find((s) => s.slug === service) || fallbackServices[0];
 
   if (!dbData && (!fallbackCity || !fallbackService)) {
     const { notFound } = await import("next/navigation");
@@ -85,9 +76,9 @@ export default async function CityServicePage({
   }
 
   const isAr = locale === "ar";
-  const cityName = dbData?.cityName || (isAr ? fallbackCity?.ar : fallbackCity?.en) || city;
-  const serviceName = dbData?.serviceName || (isAr ? fallbackService?.ar : fallbackService?.en) || service;
-  const regionName = dbData?.regionName || (isAr ? fallbackCity?.region_ar : fallbackCity?.region_en) || "";
+  const cityName = String(dbData?.cityName || (isAr ? fallbackCity?.city_name_ar : fallbackCity?.city_name_en) || city);
+  const serviceName = String(dbData?.serviceName || (isAr ? fallbackService?.name_ar : fallbackService?.name_en) || service);
+  const regionName = String(dbData?.regionName || (isAr ? fallbackCity?.region_ar : fallbackCity?.region_en) || "");
 
   return (
     <CityServicePageContent
