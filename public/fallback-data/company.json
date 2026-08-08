@@ -16,8 +16,9 @@
   "accent_color": "#f59e0b",
   "logo_url": "/images/defaults/logo.png",
   "favicon_url": "/favicon.ico",
+  "hero_bg_type": "auto",
   "hero_video_url": "/videos/defaults/hero-bg.mp4",
-  "hero_fallback_image": "/images/defaults/hero-bg.jpg",
+  "hero_bg_image_url": "/images/defaults/services/glass-facades.jpg",
   "social_links": {
     "twitter": "https://twitter.com/tenthpowerglass",
     "instagram": "https://instagram.com/tenthpowerglass",

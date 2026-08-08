@@ -17,7 +17,9 @@ import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { AnimatedCanvasBanner } from "@/components/ui/AnimatedCanvasBanner";
 import { SmartFallbackImage } from "@/components/ui/SmartFallbackImage";
-import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
+
+import companyData from "../../../public/fallback-data/company.json";
+import pageHeroesData from "../../../public/fallback-data/page-heroes.json";
 
 interface HeroSectionProps {
   locale: Locale;
@@ -69,7 +71,30 @@ export function HeroSection({ locale, dict }: HeroSectionProps) {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [aiPrompt, setAiPrompt] = useState("");
   const [activeSlide, setActiveSlide] = useState(0);
+  const [bgMediaLoaded, setBgMediaLoaded] = useState(false);
+  const [bgMediaError, setBgMediaError] = useState(false);
   const isRtl = locale === "ar";
+
+  // Read background configuration from JSON
+  const bgType = String((companyData as Record<string, unknown>).hero_bg_type || "auto");
+  const rawVideo = (companyData as Record<string, unknown>).hero_video_url;
+  const videoUrl = typeof rawVideo === "string" && rawVideo.trim().length > 0 ? rawVideo : undefined;
+
+  const rawImg = (pageHeroesData as Record<string, unknown>).home || 
+                 (companyData as Record<string, unknown>).hero_bg_image_url || 
+                 (companyData as Record<string, unknown>).hero_fallback_image;
+  const imageUrl = typeof rawImg === "string" && rawImg.trim().length > 0 ? rawImg : undefined;
+
+  // Determine active media mode
+  let activeMediaMode: "video" | "image" | "canvas" = "canvas";
+  if (bgType === "video" && videoUrl) {
+    activeMediaMode = "video";
+  } else if (bgType === "image" && imageUrl) {
+    activeMediaMode = "image";
+  } else if (bgType === "auto") {
+    if (videoUrl) activeMediaMode = "video";
+    else if (imageUrl) activeMediaMode = "image";
+  }
 
   // Automatic periodic slide change every 4.5 seconds
   useEffect(() => {
@@ -122,15 +147,15 @@ export function HeroSection({ locale, dict }: HeroSectionProps) {
       className="relative min-h-dvh flex items-center justify-center pt-[var(--header-height)] pb-16 overflow-hidden bg-[#070d1e] select-none"
       aria-label={isRtl ? "القسم الرئيسي للشركة" : "Main Hero Section"}
     >
-      {/* ── 1. Architectural Canvas Backdrop ──────────────────────────── */}
+      {/* ── 1. Architectural Canvas & Dynamic Media Backdrop ──────────── */}
       <motion.div
-        className="absolute inset-0 z-0 pointer-events-none"
+        className="absolute inset-0 z-0 pointer-events-none overflow-hidden"
         style={{ y: backgroundY }}
       >
-        {/* Optional JSON Background Image with graceful color fallback */}
-        <PageHeroBackground pageKey="home" />
+        {/* Base dark canvas background (ALWAYS active & visible as baseline) */}
+        <div className="absolute inset-0 bg-[#070d1e]" />
 
-        {/* Animated Canvas Glass Blueprint Background */}
+        {/* Base Animated Canvas Glass Blueprint Background (ALWAYS active & visible) */}
         <AnimatedCanvasBanner
           aspectRatio="auto"
           showDetailedGrid={true}
@@ -159,8 +184,41 @@ export function HeroSection({ locale, dict }: HeroSectionProps) {
           transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        {/* Dark Vignette Overlay for Text Contrast */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#070d1e] via-[#070d1e]/60 to-[#070d1e]/80" />
+        {/* Dynamic Video Layer from JSON (Fades in smoothly when loaded, gracefully hidden if loading or failed) */}
+        {activeMediaMode === "video" && videoUrl && !bgMediaError && (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            onCanPlay={() => setBgMediaLoaded(true)}
+            onLoadedData={() => setBgMediaLoaded(true)}
+            onError={() => setBgMediaError(true)}
+            className={cn(
+              "absolute inset-0 w-full h-full object-cover mix-blend-overlay transition-opacity duration-1000 ease-in-out",
+              bgMediaLoaded ? "opacity-50" : "opacity-0"
+            )}
+          >
+            <source src={videoUrl} type="video/mp4" />
+          </video>
+        )}
+
+        {/* Dynamic Image Layer from JSON (Fades in smoothly when loaded, gracefully hidden if loading or failed) */}
+        {activeMediaMode === "image" && imageUrl && !bgMediaError && (
+          <img
+            src={imageUrl}
+            alt=""
+            onLoad={() => setBgMediaLoaded(true)}
+            onError={() => setBgMediaError(true)}
+            className={cn(
+              "absolute inset-0 w-full h-full object-cover mix-blend-overlay transition-opacity duration-1000 ease-in-out",
+              bgMediaLoaded ? "opacity-40" : "opacity-0"
+            )}
+          />
+        )}
+
+        {/* Overlay Vignette Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/80 via-[#070d1e]/40 to-[#070d1e]" />
       </motion.div>
 
       {/* ── 2. Hero Content Container ─────────────────────────────────── */}
