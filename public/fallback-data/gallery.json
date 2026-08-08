@@ -1,0 +1,83 @@
+[
+  {
+    "id": "1",
+    "title_ar": "برج الملك عبد الله - واجهة هيكلية دبل معزولة",
+    "title_en": "King Abdullah Commercial Tower Facade",
+    "category": "glass-facades",
+    "album_id": 5,
+    "image_url": "/images/defaults/projects/project-1.jpg",
+    "thumbnail_url": "/images/defaults/projects/project-1.jpg"
+  },
+  {
+    "id": "2",
+    "title_ar": "زجاج سكريت 12مم - فواصل مكاتب إدارية",
+    "title_en": "12mm Tempered Glass Partitions",
+    "category": "tempered-glass",
+    "album_id": 1,
+    "image_url": "/images/defaults/services/tempered-glass.jpg",
+    "thumbnail_url": "/images/defaults/services/tempered-glass.jpg"
+  },
+  {
+    "id": "3",
+    "title_ar": "مطبخ ألمنيوم مودرن - أسطح رخام صناعي",
+    "title_en": "Modern Aluminum Kitchen Suite",
+    "category": "kitchens",
+    "album_id": 3,
+    "image_url": "/images/defaults/services/kitchens.jpg",
+    "thumbnail_url": "/images/defaults/services/kitchens.jpg"
+  },
+  {
+    "id": "4",
+    "title_ar": "نوافذ ألمنيوم معزولة حرارياً كسر حراري",
+    "title_en": "Thermal Break Aluminum Windows",
+    "category": "aluminum-works",
+    "album_id": 2,
+    "image_url": "/images/defaults/services/aluminum-works.jpg",
+    "thumbnail_url": "/images/defaults/services/aluminum-works.jpg"
+  },
+  {
+    "id": "5",
+    "title_ar": "واجهة وتجهيزات فيلا سكنية فاخرة بجدة",
+    "title_en": "Luxury Residential Villa Facade",
+    "category": "glass-facades",
+    "album_id": 5,
+    "image_url": "/images/defaults/projects/project-2.jpg",
+    "thumbnail_url": "/images/defaults/projects/project-2.jpg"
+  },
+  {
+    "id": "6",
+    "title_ar": "ديكورات زجاج واستانلس ستيل 304",
+    "title_en": "Glass & Stainless 304 Decor",
+    "category": "decorations",
+    "album_id": 4,
+    "image_url": "/images/defaults/services/decorations.jpg",
+    "thumbnail_url": "/images/defaults/services/decorations.jpg"
+  },
+  {
+    "id": "7",
+    "title_ar": "أبواب زجاجية أوتوماتيكية سحب وسلايد",
+    "title_en": "Automatic Sliding Glass Doors",
+    "category": "doors-windows",
+    "album_id": 6,
+    "image_url": "/images/defaults/services/doors-windows.jpg",
+    "thumbnail_url": "/images/defaults/services/doors-windows.jpg"
+  },
+  {
+    "id": "8",
+    "title_ar": "صيانة وتجديد واجهة برج تجاري بالرياض",
+    "title_en": "Commercial Tower Facade Restoration",
+    "category": "maintenance",
+    "album_id": 5,
+    "image_url": "/images/defaults/services/maintenance.jpg",
+    "thumbnail_url": "/images/defaults/services/maintenance.jpg"
+  },
+  {
+    "id": "9",
+    "title_ar": "مشروع مقاولات عامة وتجهيزات هندسية",
+    "title_en": "General Contracting & Building Engineering",
+    "category": "contracting",
+    "album_id": 4,
+    "image_url": "/images/defaults/services/contracting.jpg",
+    "thumbnail_url": "/images/defaults/services/contracting.jpg"
+  }
+]

@@ -10,6 +10,7 @@ import {
   getFallbackArticles,
   getFallbackFaqs,
   getFallbackTestimonials,
+  getFallbackGallery,
 } from "@/lib/fallback-provider";
 
 const FALLBACK_COMPANY_ID = "00000000-0000-0000-0000-000000000001";
@@ -341,12 +342,7 @@ export async function getGalleryItems(options?: { serviceId?: string; limit?: nu
   }
 
   if (items.length === 0) {
-    const projects = getFallbackProjects();
-    items = projects.map((p, idx) => ({
-      id: `fallback-g-${idx}`,
-      image_url: p.cover_image_url || "/images/defaults/projects/project-1.jpg",
-      thumbnail_url: p.cover_image_url || "/images/defaults/projects/project-1.jpg",
-    }));
+    items = getFallbackGallery() as unknown as Record<string, unknown>[];
     totalCount = items.length;
   }
 

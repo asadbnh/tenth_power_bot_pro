@@ -128,3 +128,15 @@ export function getFallbackTestimonials() {
     is_verified?: boolean;
   }>>("testimonials.json", []);
 }
+
+export function getFallbackGallery() {
+  return readJsonFile<Array<{
+    id: string;
+    title_ar: string;
+    title_en: string;
+    category?: string;
+    album_id?: number;
+    image_url: string;
+    thumbnail_url?: string;
+  }>>("gallery.json", []);
+}
