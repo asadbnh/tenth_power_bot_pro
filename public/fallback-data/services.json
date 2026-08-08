@@ -7,10 +7,10 @@
     "short_description_en": "High-impact tempered glass installation (6mm-12mm) for doors, showers, and office partitions with 10-year warranty.",
     "full_description_ar": "نقدم أفضل حلول الزجاج السكريت المقوى الذي يخضع لمعالجة حرارية فائقة لزيادة قوته ومقاومته للضغط الحراري والصدمات الميكانيكية بـ 5 أضعاف الزجاج العادي. مناسب لأبواب المكاتب، كبائن الشاور، المظلات الزجاجية، والأرضيات.",
     "full_description_en": "We offer premium tempered glass solutions treated under extreme heat to enhance thermal and impact strength up to 5x over normal glass. Ideal for office doors, shower cabins, canopies, and glass floors.",
-    "price_from": 180.00,
-    "price_to": 350.00,
+    "price_from": 180.0,
+    "price_to": 350.0,
     "price_unit": "متر مربع",
-    "cover_image_url": null,
+    "cover_image_url": "/images/defaults/services/tempered-glass.jpg",
     "icon": "Layers3",
     "features_ar": [
       "مقاوم للصدمات والحرارة العالية",
@@ -25,14 +25,44 @@
       "10-year installation & material warranty"
     ],
     "specs": [
-      { "label_ar": "السماكات المتاحة", "label_en": "Available Thickness", "value_ar": "6مم، 8مم، 10مم، 12مم", "value_en": "6mm, 8mm, 10mm, 12mm" },
-      { "label_ar": "أنواع الزجاج", "label_en": "Glass Types", "value_ar": "شفاف، مثلج، ملون، فائق النقاء", "value_en": "Clear, Frosted, Tinted, Ultra-Clear" },
-      { "label_ar": "معيار الأمان", "label_en": "Safety Standard", "value_ar": "ANSI Z97.1 / BS 6206", "value_en": "ANSI Z97.1 / BS 6206" },
-      { "label_ar": "مدة الضمان", "label_en": "Warranty Period", "value_ar": "10 سنوات شاملة", "value_en": "10 Years Full Warranty" }
+      {
+        "label_ar": "السماكات المتاحة",
+        "label_en": "Available Thickness",
+        "value_ar": "6مم، 8مم، 10مم، 12مم",
+        "value_en": "6mm, 8mm, 10mm, 12mm"
+      },
+      {
+        "label_ar": "أنواع الزجاج",
+        "label_en": "Glass Types",
+        "value_ar": "شفاف، مثلج، ملون، فائق النقاء",
+        "value_en": "Clear, Frosted, Tinted, Ultra-Clear"
+      },
+      {
+        "label_ar": "معيار الأمان",
+        "label_en": "Safety Standard",
+        "value_ar": "ANSI Z97.1 / BS 6206",
+        "value_en": "ANSI Z97.1 / BS 6206"
+      },
+      {
+        "label_ar": "مدة الضمان",
+        "label_en": "Warranty Period",
+        "value_ar": "10 سنوات شاملة",
+        "value_en": "10 Years Full Warranty"
+      }
     ],
     "faqs": [
-      { "q_ar": "هل يمكن قص الزجاج السكريت بعد المعالجة؟", "q_en": "Can tempered glass be cut after processing?", "a_ar": "لا، يتم التقطيع والعمليات جميعها قبل إدخال الزجاج فرن السكريت.", "a_en": "No, all cutting and drilling must happen before the tempering heat treatment." },
-      { "q_ar": "ما هي مدة التوريد والتركيب؟", "q_en": "What is the delivery & installation time?", "a_ar": "عادة تتراوح بين 3 إلى 7 أيام عمل حسب حجم المشروع.", "a_en": "Usually takes between 3 to 7 working days depending on project size." }
+      {
+        "q_ar": "هل يمكن قص الزجاج السكريت بعد المعالجة؟",
+        "q_en": "Can tempered glass be cut after processing?",
+        "a_ar": "لا، يتم التقطيع والعمليات جميعها قبل إدخال الزجاج فرن السكريت.",
+        "a_en": "No, all cutting and drilling must happen before the tempering heat treatment."
+      },
+      {
+        "q_ar": "ما هي مدة التوريد والتركيب؟",
+        "q_en": "What is the delivery & installation time?",
+        "a_ar": "عادة تتراوح بين 3 إلى 7 أيام عمل حسب حجم المشروع.",
+        "a_en": "Usually takes between 3 to 7 working days depending on project size."
+      }
     ],
     "is_featured": true,
     "sort_order": 1
@@ -45,10 +75,10 @@
     "short_description_en": "Structural glass facades, curtain walls, and spider fittings for commercial buildings with premium thermal & sound insulation.",
     "full_description_ar": "نمتلك خبرة متقدمة في هندسة وتثبيت واجهات المباني والمراكز التجارية والمستشفيات والشركات بأنظمة الكرتن وول المزدوج والسبايدر المزود بقطع تثبيت استانلس ستيل عالية التحمل، مع زجاج دبل جلاس معالج بنظام العزل الحراري Low-E.",
     "full_description_en": "Advanced engineering and installation of commercial glass facades using double curtain walls and heavy-duty stainless spider systems featuring Low-E double insulated glass.",
-    "price_from": 450.00,
-    "price_to": 900.00,
+    "price_from": 450.0,
+    "price_to": 900.0,
     "price_unit": "متر مربع",
-    "cover_image_url": null,
+    "cover_image_url": "/images/defaults/services/glass-facades.jpg",
     "icon": "Building2",
     "features_ar": [
       "زجاج مزدوج معزول حرارياً Low-E",
@@ -63,12 +93,32 @@
       "Acoustic rating up to 45 dB"
     ],
     "specs": [
-      { "label_ar": "أنظمة التثبيت", "label_en": "Fitting Systems", "value_ar": "كرتن وول، سبايدر، زجاج هيكلي", "value_en": "Curtain Wall, Spider, Structural Glazing" },
-      { "label_ar": "نوع الزجاج", "label_en": "Glass Spec", "value_ar": "دبل معزول بطلاء Low-E", "value_en": "Double Glazed Low-E Coated" },
-      { "label_ar": "ضمان التسريب", "label_en": "Leakage Warranty", "value_ar": "10 سنوات ضمان عدم التسريب", "value_en": "10-Year Water & Air Leakage Warranty" }
+      {
+        "label_ar": "أنظمة التثبيت",
+        "label_en": "Fitting Systems",
+        "value_ar": "كرتن وول، سبايدر، زجاج هيكلي",
+        "value_en": "Curtain Wall, Spider, Structural Glazing"
+      },
+      {
+        "label_ar": "نوع الزجاج",
+        "label_en": "Glass Spec",
+        "value_ar": "دبل معزول بطلاء Low-E",
+        "value_en": "Double Glazed Low-E Coated"
+      },
+      {
+        "label_ar": "ضمان التسريب",
+        "label_en": "Leakage Warranty",
+        "value_ar": "10 سنوات ضمان عدم التسريب",
+        "value_en": "10-Year Water & Air Leakage Warranty"
+      }
     ],
     "faqs": [
-      { "q_ar": "هل الواجهات الزجاجية آمنة في الرياح العاصفة؟", "q_en": "Are glass facades safe in high winds?", "a_ar": "نعم، يتم حساب سماكات الزجاج والهياكل المعدنية لتقاوم أشد العواصف وفق كود البناء السعودي.", "a_en": "Yes, glass thickness and frame profiles are engineered to withstand extreme storm loads under SBC." }
+      {
+        "q_ar": "هل الواجهات الزجاجية آمنة في الرياح العاصفة؟",
+        "q_en": "Are glass facades safe in high winds?",
+        "a_ar": "نعم، يتم حساب سماكات الزجاج والهياكل المعدنية لتقاوم أشد العواصف وفق كود البناء السعودي.",
+        "a_en": "Yes, glass thickness and frame profiles are engineered to withstand extreme storm loads under SBC."
+      }
     ],
     "is_featured": true,
     "sort_order": 2
@@ -81,10 +131,10 @@
     "short_description_en": "Fabrication and installation of thermal-break aluminum windows, doors, and storefronts with European hardware.",
     "full_description_ar": "نقدم قطاعات ألمنيوم متطورة مزودة بكسر حراري (Thermal Break) تضمن أقصى درجات توفير الطاقة والتكييف داخل المبنى، مع إكسسوارات إيطالية وألمانية ذات عمر افتراضي طويل وسحب سلس.",
     "full_description_en": "Advanced thermal-break aluminum profiles engineered to minimize energy loss and HVAC load, featuring premium Italian & German hardware.",
-    "price_from": 320.00,
-    "price_to": 650.00,
+    "price_from": 320.0,
+    "price_to": 650.0,
     "price_unit": "متر مربع",
-    "cover_image_url": null,
+    "cover_image_url": "/images/defaults/services/aluminum-works.jpg",
     "icon": "RectangleHorizontal",
     "features_ar": [
       "كسر حراري عالي الكفاءة توفير التكييف",
@@ -99,7 +149,12 @@
       "Water, dust, and noise sealing"
     ],
     "specs": [
-      { "label_ar": "القطاعات المتاحة", "label_en": "Available Profiles", "value_ar": "سرايا، جامبو، سوبر سرايا، معزول حرارياً", "value_en": "Saraya, Jumbo, Super Saraya, Thermal Break" }
+      {
+        "label_ar": "القطاعات المتاحة",
+        "label_en": "Available Profiles",
+        "value_ar": "سرايا، جامبو، سوبر سرايا، معزول حرارياً",
+        "value_en": "Saraya, Jumbo, Super Saraya, Thermal Break"
+      }
     ],
     "faqs": [],
     "is_featured": true,
@@ -113,10 +168,10 @@
     "short_description_en": "Design and installation of modern acrylic & aluminum kitchens with soft-close drawers and ambient LED lighting.",
     "full_description_ar": "نصمم مطابخ الأحلام بهياكل ألمنيوم غير قابلة للصدأ أو التآكل، ومغلفة بأسطح أكريليك وخشب معالج ضد المياه والحشرات، مع مفصلات وأدراج نمساوية ذات إغلاق صامت.",
     "full_description_en": "Custom kitchens featuring durable rust-proof aluminum frames clad with acrylic or water-resistant surfaces and Austrian soft-close hardware.",
-    "price_from": 1200.00,
-    "price_to": 2800.00,
+    "price_from": 1200.0,
+    "price_to": 2800.0,
     "price_unit": "متر طولي",
-    "cover_image_url": null,
+    "cover_image_url": "/images/defaults/services/kitchens.jpg",
     "icon": "PaintBucket",
     "features_ar": [
       "هيكل ألمنيوم متين مقاوم للماء والحشرات",

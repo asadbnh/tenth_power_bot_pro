@@ -34,7 +34,7 @@
       "Achieved 35% HVAC energy reduction",
       "Quality certification from lead engineering consultant"
     ],
-    "project_value": 1450000.00,
+    "project_value": 1450000.0,
     "status": "completed",
     "is_featured": true,
     "cover_image_url": "/images/defaults/projects/project-1.jpg",
@@ -72,12 +72,12 @@
       "Modern luxury appearance with 100% waterproofing",
       "Complete client and consultant satisfaction"
     ],
-    "project_value": 420000.00,
+    "project_value": 420000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/defaults/projects/",
-    "before_image_url": "/images/defaults/projects/",
-    "after_image_url": "/images/defaults/projects/"
+    "cover_image_url": "/images/defaults/projects/project-2.jpg",
+    "before_image_url": "/images/defaults/projects/project-2-before.jpg",
+    "after_image_url": "/images/defaults/projects/project-2-after.jpg"
   },
   {
     "slug": "tempered-glass-office",
@@ -110,12 +110,12 @@
       "Completed on schedule with 5-year warranty",
       "Elegant noise-isolated workspace"
     ],
-    "project_value": 280000.00,
+    "project_value": 280000.0,
     "status": "completed",
     "is_featured": true,
     "cover_image_url": "/images/defaults/projects/project-3.jpg",
-    "before_image_url": "/images/defaults/projects/",
-    "after_image_url": "/images/defaults/projects/"
+    "before_image_url": "/images/defaults/projects/project-3-before.jpg",
+    "after_image_url": "/images/defaults/projects/project-3-after.jpg"
   },
   {
     "slug": "modern-kitchen-suite",
@@ -132,15 +132,23 @@
     "client_en": "Residential Building Co.",
     "description_ar": "تصنيع وتجهيز 24 مطبخ ألمنيوم مودرن مقاوم للماء والحشرات بأسطح رخام صناعي ومفصلات بلوم نمساوية.",
     "description_en": "Manufacture and setup of 24 modern aluminum kitchens with Austrian Blum soft-close fittings and synthetic marble countertops.",
-    "challenges_ar": ["تسليم 24 مطبخاً بجدول زمني ضيق جداً"],
-    "challenges_en": ["Delivering 24 custom kitchens under a tight timeframe"],
-    "results_ar": ["تسليم كافة الوحدات بدقة وجودة عالية"],
-    "results_en": ["Delivered all units with high quality and accuracy"],
-    "project_value": 650000.00,
+    "challenges_ar": [
+      "تسليم 24 مطبخاً بجدول زمني ضيق جداً"
+    ],
+    "challenges_en": [
+      "Delivering 24 custom kitchens under a tight timeframe"
+    ],
+    "results_ar": [
+      "تسليم كافة الوحدات بدقة وجودة عالية"
+    ],
+    "results_en": [
+      "Delivered all units with high quality and accuracy"
+    ],
+    "project_value": 650000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/defaults/projects/",
-    "before_image_url": "/images/defaults/projects/",
-    "after_image_url": "/images/defaults/projects/project-1-after.jpg"
+    "cover_image_url": "/images/defaults/projects/project-4.jpg",
+    "before_image_url": "/images/defaults/projects/project-4-before.jpg",
+    "after_image_url": "/images/defaults/projects/project-4-after.jpg"
   }
 ]
