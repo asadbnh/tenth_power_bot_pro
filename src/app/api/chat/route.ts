@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Strategy A: Try Google Gemini Interactions API (v1beta/interactions)
-    if (apiKey && apiKey !== "your_gemini_api_key") {
+    if (apiKey && apiKey !== "AIzaSyCr0yaaE8_v6Mxs0QIxJ1mqnUscaNiePPY") {
       try {
         const interactionPayload: Record<string, unknown> = {
           model,
@@ -143,16 +143,16 @@ export async function POST(request: NextRequest) {
       const lower = lastUserMessage.toLowerCase();
       if (/price|سعر|تكلفة|كم/.test(lower)) {
         aiResponseText = isAr
-          ? "تختلف الأسعار حسب نوع الخامات والمساحة ونوع الخدمة (زجاج سكريت، واجهات، ألمنيوم، مطابخ). ننصح بطلب عرض سعر مجاني للحصول على تسعيرة دقيقة خلال 24 ساعة! 💰"
-          : "Prices vary based on materials, area, and service type. We recommend requesting a free quote for precise pricing within 24 hours! 💰";
+          ? `تعتمد التقديرات على المواصفات الفنية، سماكة الخامات، والمساحة الإجمالية للمشروع. يرجى تقديم طلب دراسة مشروع للحصول على تقدير مالي معتمد من القسم الهندسي.`
+          : `Project estimates depend on engineering specifications, material thickness, and project area. Please submit a project inquiry for an official engineering estimate.`;
       } else if (/glass|زجاج|سكريت|واجهة/.test(lower)) {
         aiResponseText = isAr
-          ? "ننفذ زجاج السكريت المقوى بسماكات 6-12 مم وأنظمة الكرتن وول والسبايدر للواجهات مع ضمان 10 سنوات على المواد والتركيب. 🪟"
-          : "We install tempered glass in 6-12mm thicknesses and curtain wall / spider systems with 10 years warranty. 🪟";
+          ? `تنفذ ${company.name_ar} أنظمة زجاج السيكوريت المقوى، الواجهات الزجاجية الهيكلية (Curtain Wall & Spider Systems)، وأنظمة الألمنيوم وفق كود البناء السعودي مع الاعتماد الهندسي.`
+          : `${company.name_en} executes tempered glass, structural glazing systems (Curtain Wall & Spider), and aluminum works in compliance with Saudi Building Code standards.`;
       } else {
         aiResponseText = isAr
-          ? "أهلاً بك في WebTaky! أنا هنا لمساعدتك في الاستفسارات عن خدمات الزجاج والألمنيوم والمطابخ وطلب عروض الأسعار. كيف يمكنني مساعدتك؟ 😊"
-          : "Welcome to WebTaky! I am here to help you with glass, aluminum, kitchen inquiries and quote requests. How can I assist you? 😊";
+          ? `أهلاً بك في ${company.name_ar}. أنا المساعد الهندسي الذكي للرد على استفساراتك الفنية حول الواجهات المعمارية، الألمنيوم، والمقاولات العامة.`
+          : `Welcome to ${company.name_en}. I am the engineering AI assistant available to support your technical inquiries on facades and general contracting.`;
       }
     }
 
