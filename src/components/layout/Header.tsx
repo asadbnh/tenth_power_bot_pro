@@ -102,12 +102,13 @@ export function Header({ locale, dict }: HeaderProps) {
           {/* Logo */}
           <Link
             href={getLocalizedHref("")}
-            className="flex items-center gap-2 shrink-0 max-w-[220px] sm:max-w-none"
+            className="flex items-center gap-2 shrink-0"
             aria-label={dict.meta.siteName}
           >
             <CompanyLogo size={28} className="shrink-0 sm:w-8 sm:h-8" />
-            <span className="text-xs sm:text-sm lg:text-base font-bold text-text-primary transition-colors line-clamp-1">
-              {dict.meta.siteName}
+            <span className="text-xs sm:text-sm lg:text-base font-bold text-text-primary transition-colors whitespace-nowrap">
+              <span className="hidden sm:inline">{dict.meta.siteName}</span>
+              <span className="sm:hidden">{isRtl ? "القوة العاشرة" : "Tenth Power"}</span>
             </span>
           </Link>
 
@@ -154,10 +155,10 @@ export function Header({ locale, dict }: HeaderProps) {
               </button>
             )}
 
-            {/* Language Switcher */}
+            {/* Language Switcher (Desktop / Tablet) */}
             <Link
               href={getAlternateHref()}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-text-secondary hover:text-text-primary hover:bg-surface-elevated border border-border-light transition-all shrink-0 whitespace-nowrap"
+              className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-text-secondary hover:text-text-primary hover:bg-surface-elevated border border-border-light transition-all shrink-0 whitespace-nowrap"
               hrefLang={alternateLocale}
             >
               <Globe className="w-3.5 h-3.5 text-amber-500" />
@@ -172,10 +173,10 @@ export function Header({ locale, dict }: HeaderProps) {
               {dict.nav.quote}
             </Link>
 
-            {/* Mobile Menu Toggle */}
+            {/* Mobile Menu Toggle Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-1.5 rounded-lg text-text-primary hover:bg-surface-elevated transition-colors"
+              className="lg:hidden p-2 rounded-xl text-amber-400 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 transition-all shrink-0 ms-1"
               aria-label={isMobileMenuOpen ? dict.common.close : "Menu"}
               aria-expanded={isMobileMenuOpen}
             >
@@ -211,17 +212,17 @@ export function Header({ locale, dict }: HeaderProps) {
               exit={{ x: isRtl ? "-100%" : "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
               className={cn(
-                "absolute top-0 bottom-0 w-[80%] max-w-sm bg-background shadow-2xl",
+                "absolute top-0 bottom-0 w-[85%] max-w-sm bg-background shadow-2xl",
                 "flex flex-col safe-top",
                 isRtl ? "start-0" : "end-0"
               )}
             >
               {/* Mobile Menu Header */}
               <div className="flex items-center justify-between p-4 border-b border-border">
-                <span className="text-lg font-bold">{dict.meta.siteName}</span>
+                <span className="text-base font-bold text-text-primary">{dict.meta.siteName}</span>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-2 rounded-lg hover:bg-surface"
+                  className="p-2 rounded-lg hover:bg-surface text-text-secondary hover:text-text-primary"
                   aria-label={dict.common.close}
                 >
                   <X className="w-5 h-5" />
@@ -239,10 +240,11 @@ export function Header({ locale, dict }: HeaderProps) {
                   >
                     <Link
                       href={getLocalizedHref(item.href)}
+                      onClick={() => setIsMobileMenuOpen(false)}
                       className={cn(
-                        "flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-colors",
+                        "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors",
                         isActive(item.href)
-                          ? "bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300"
+                          ? "bg-amber-500/10 text-amber-500 dark:bg-amber-500/20 font-bold"
                           : "text-text-secondary hover:bg-surface hover:text-text-primary"
                       )}
                     >
@@ -256,10 +258,21 @@ export function Header({ locale, dict }: HeaderProps) {
               </div>
 
               {/* Mobile Menu Footer */}
-              <div className="p-4 border-t border-border space-y-3">
+              <div className="p-4 border-t border-border space-y-2.5">
+                <Link
+                  href={getAlternateHref()}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl border border-border text-xs font-semibold text-text-primary hover:bg-surface transition-colors"
+                  hrefLang={alternateLocale}
+                >
+                  <Globe className="w-4 h-4 text-amber-500" />
+                  <span>{alternateLocale === "ar" ? "اللغة العربية" : "English Language"}</span>
+                </Link>
+
                 <Link
                   href={getLocalizedHref("/quote")}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-accent-500 text-white font-semibold hover:bg-accent-600 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-primary-950 font-bold text-sm hover:brightness-105 transition-all shadow-md"
                 >
                   {dict.nav.quote}
                 </Link>
