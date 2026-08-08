@@ -122,7 +122,7 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
   return (
     <section
       id="services"
-      className="relative py-20 sm:py-28 lg:py-32 bg-background overflow-hidden"
+      className="relative py-10 sm:py-20 lg:py-28 bg-background overflow-hidden"
       aria-labelledby="services-heading"
     >
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -132,24 +132,24 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-8 sm:mb-14"
         >
-          <span className="inline-block text-sm font-semibold text-primary-600 dark:text-primary-400 mb-3 tracking-wider uppercase">
+          <span className="inline-block text-xs sm:text-sm font-semibold text-primary-600 dark:text-primary-400 mb-2 tracking-wider uppercase">
             {dict.services.title}
           </span>
           <h2
             id="services-heading"
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4"
+            className="text-2xl sm:text-4xl lg:text-5xl font-extrabold mb-3"
           >
             {dict.services.title}
           </h2>
-          <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+          <p className="text-xs sm:text-base text-text-secondary max-w-2xl mx-auto">
             {dict.services.subtitle}
           </p>
         </motion.div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {services.map((service, index) => {
             const Icon = (service.icon && iconMap[service.icon]) ? iconMap[service.icon] : Building2;
             const name = isRtl ? service.name_ar : (service.name_en || service.name_ar);
@@ -165,7 +165,7 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className={cn(
-                  "group relative rounded-2xl p-6",
+                  "group relative rounded-2xl p-4 sm:p-6",
                   "bg-surface-elevated border border-border-light",
                   "hover:border-primary-200 dark:hover:border-primary-800",
                   "hover:shadow-xl dark:hover:shadow-primary-900/20",
@@ -174,20 +174,20 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
               >
                 <div
                   className={cn(
-                    "w-14 h-14 rounded-xl flex items-center justify-center mb-5",
+                    "w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-4",
                     "bg-gradient-to-br",
                     service.color || "from-blue-500 to-indigo-600",
-                    "shadow-lg group-hover:scale-110 transition-transform duration-300"
+                    "shadow-md group-hover:scale-105 transition-transform duration-300"
                   )}
                 >
-                  <Icon className="w-7 h-7 text-white" />
+                  <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                 </div>
 
-                <h3 className="text-lg font-bold mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                <h3 className="text-base sm:text-lg font-bold mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                   {name}
                 </h3>
 
-                <p className="text-sm text-text-secondary leading-relaxed">
+                <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">
                   {desc}
                 </p>
 

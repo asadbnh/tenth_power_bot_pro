@@ -159,34 +159,34 @@ export function HeroSection({ locale, dict }: HeroSectionProps) {
           transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        {/* Dark Vignette Gradient for Text Contrast */}
+        {/* Dark Vignette Overlay for Text Contrast */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#070d1e] via-[#070d1e]/60 to-[#070d1e]/80" />
       </motion.div>
 
       {/* ── 2. Hero Content Container ─────────────────────────────────── */}
       <motion.div
-        className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12"
+        className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-10"
         style={{ opacity: contentOpacity, y: contentY }}
       >
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           {/* Left Column: Typography & CTAs */}
-          <div className="lg:col-span-7 space-y-6 sm:space-y-8 text-center lg:text-start">
+          <div className="lg:col-span-7 space-y-3 sm:space-y-6 text-center lg:text-start">
             {/* Royal Badge */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full royal-badge shadow-lg backdrop-blur-xl border border-amber-500/30"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0b172e] text-amber-400 shadow-md backdrop-blur-xl border border-amber-500/40"
             >
-              <span className="relative flex h-2.5 w-2.5">
+              <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
               </span>
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span className="text-xs sm:text-sm font-bold tracking-wide">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-xs sm:text-sm font-bold tracking-wide text-amber-400">
                 {isRtl
-                  ? "القوة العاشرة للمقاولات العامة والزجاج والواجهات"
-                  : "Tenth Power General Contracting & Glass Facades"}
+                  ? "شركة القوة العاشرة للمقاولات العامة والواجهات المعمارية"
+                  : "Tenth Power General Contracting & Facades"}
               </span>
             </motion.div>
 
@@ -195,21 +195,22 @@ export function HeroSection({ locale, dict }: HeroSectionProps) {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.15] tracking-tight"
+              className="text-2xl sm:text-4xl lg:text-6xl font-extrabold !text-white leading-snug sm:leading-[1.15] tracking-tight"
+              style={{ color: "#ffffff" }}
             >
               {isRtl ? (
                 <>
-                  نُحوّل رؤيتك إلى{" "}
-                  <span className="bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 bg-clip-text text-transparent underline decoration-amber-500/30 decoration-wavy decoration-2">
-                    تحفة معمارية
+                  <span className="!text-white" style={{ color: "#ffffff" }}>حلول هندسية متكاملة</span>{" "}
+                  <span className="bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 bg-clip-text text-transparent">
+                    للواجهات المعمارية
                   </span>{" "}
-                  بأعلى معايير الجودة والضمان
+                  <span className="!text-white" style={{ color: "#ffffff" }}>والمقاولات العامة</span>
                 </>
               ) : (
                 <>
-                  Transforming Your Vision into{" "}
+                  <span className="!text-white" style={{ color: "#ffffff" }}>Integrated Engineering Solutions for</span>{" "}
                   <span className="bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 bg-clip-text text-transparent">
-                    Architectural Excellence
+                    Architectural Facades
                   </span>
                 </>
               )}
@@ -220,50 +221,52 @@ export function HeroSection({ locale, dict }: HeroSectionProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="text-base sm:text-lg lg:text-xl text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal"
+              className="text-xs sm:text-base lg:text-lg !text-slate-200 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal"
+              style={{ color: "#e2e8f0" }}
             >
               {dict.hero.subtitle ||
                 (isRtl
-                  ? "حلول متكاملة في الزجاج السيكوريت، الواجهات المعمارية، الألمنيوم، والمقاولات العامة بضمان شامل يصل إلى 10 سنوات."
-                  : "Integrated solutions in securit glass, architectural facades, aluminum profiles, and general contracting with comprehensive 10-year warranty.")}
+                  ? "تطبيق أعلى المعايير الفنية والمواصفات المعمارية المعتمدة في تصميم وتوريد وتنفيذ الزجاج السيكوريت، الألمنيوم، وأنظمة المباني الحديثة."
+                  : "Applying top architectural specifications and building standards in securit glass, structural facades, aluminum, and contracting.")}
             </motion.p>
 
-            {/* CTAs Action Bar */}
+            {/* CTAs Action Bar: 2 Columns Side-by-Side on Mobile */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2"
+              className="grid grid-cols-2 sm:flex sm:flex-row items-center justify-center lg:justify-start gap-2.5 pt-1"
             >
               <Link
                 href={`/${locale}/quote`}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-primary-950 font-extrabold text-base shadow-xl shadow-amber-500/20 hover:shadow-amber-500/40 hover:scale-[1.03] active:scale-95 transition-all duration-300"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-primary-950 font-bold text-xs sm:text-base shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all duration-300"
               >
-                <Sparkles className="w-5 h-5 text-primary-950" />
-                <span>{dict.hero.cta || (isRtl ? "طلب عرض سعر مجاني" : "Request Free Quote")}</span>
-                <ArrowRight className={cn("w-5 h-5", isRtl && "rotate-180")} />
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-950 shrink-0" />
+                <span className="truncate">{dict.hero.ctaSecondary || (isRtl ? "طلب دراسة مشروع" : "Project Inquiry")}</span>
+                <ArrowRight className={cn("w-3.5 h-3.5 hidden sm:inline", isRtl && "rotate-180")} />
               </Link>
 
               <Link
                 href={`/${locale}/services`}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-surface-elevated/80 hover:bg-surface-elevated text-white font-bold text-base border border-white/15 hover:border-amber-500/40 backdrop-blur-md hover:scale-[1.02] active:scale-95 transition-all duration-300"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-base border border-white/20 backdrop-blur-md hover:scale-[1.02] active:scale-95 transition-all duration-300"
+                style={{ color: "#ffffff" }}
               >
-                <Building2 className="w-5 h-5 text-amber-400" />
-                <span>{isRtl ? "استكشف خدماتنا" : "Explore Services"}</span>
+                <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
+                <span className="truncate">{isRtl ? "خدماتنا الهندسية" : "Services"}</span>
               </Link>
             </motion.div>
 
-            {/* AI Prompt Input Trigger Bar */}
+            {/* AI Engineering Assistant Search Input */}
             <motion.form
               onSubmit={handleAiSubmit}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.9 }}
-              className="pt-2 max-w-xl mx-auto lg:mx-0"
+              className="pt-1 max-w-xl mx-auto lg:mx-0"
             >
-              <div className="relative flex items-center p-1.5 rounded-2xl bg-surface-elevated/90 border border-amber-500/30 backdrop-blur-xl shadow-2xl focus-within:border-amber-400 transition-all">
-                <div className="flex items-center gap-2 px-3 text-amber-400">
-                  <Bot className="w-5 h-5 animate-pulse" />
+              <div className="relative flex items-center p-1 rounded-xl bg-[#0b172e]/90 border border-amber-500/30 backdrop-blur-xl shadow-xl focus-within:border-amber-400 transition-all">
+                <div className="flex items-center gap-1.5 px-2.5 text-amber-400">
+                  <Bot className="w-4 h-4 shrink-0" />
                 </div>
                 <input
                   type="text"
@@ -271,16 +274,17 @@ export function HeroSection({ locale, dict }: HeroSectionProps) {
                   onChange={(e) => setAiPrompt(e.target.value)}
                   placeholder={
                     isRtl
-                      ? "🤖 اسأل المساعد الذكي عن تكلفة الواجهات والزجاج..."
-                      : "🤖 Ask AI Assistant about glass & facade pricing..."
+                      ? "استعلام فني عن مواصفات الواجهات والمقاولات..."
+                      : "Technical inquiry on facades & engineering specs..."
                   }
-                  className="w-full bg-transparent text-sm text-white placeholder-slate-400 focus:outline-none px-2 py-2"
+                  className="w-full bg-transparent text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none px-1 py-1.5"
+                  style={{ color: "#ffffff" }}
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-primary-950 font-bold text-xs shrink-0 transition-colors shadow-md"
+                  className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-primary-950 font-bold text-xs shrink-0 transition-colors shadow-sm"
                 >
-                  {isRtl ? "اسأل الآن" : "Ask AI"}
+                  {isRtl ? "استعلام" : "Inquire"}
                 </button>
               </div>
             </motion.form>
@@ -297,10 +301,10 @@ export function HeroSection({ locale, dict }: HeroSectionProps) {
                 x: mousePos.x * -0.5,
                 y: mousePos.y * -0.5,
               }}
-              className="relative w-full max-w-md rounded-3xl overflow-hidden border border-white/20 bg-surface-elevated/95 backdrop-blur-2xl shadow-2xl flex flex-col group"
+              className="relative w-full max-w-md rounded-2xl overflow-hidden border border-white/20 bg-[#0b172e]/95 backdrop-blur-2xl shadow-2xl flex flex-col group"
             >
               {/* Image Frame Container */}
-              <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-[#070d1e]">
+              <div className="relative h-44 sm:h-64 w-full overflow-hidden bg-[#070d1e]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentSlide.id}
@@ -314,7 +318,6 @@ export function HeroSection({ locale, dict }: HeroSectionProps) {
                       src={currentSlide.src}
                       alt={isRtl ? currentSlide.title_ar : currentSlide.title_en}
                       aspectRatio="auto"
-                     
                       className="w-full h-full object-cover"
                     />
                   </motion.div>
@@ -324,11 +327,11 @@ export function HeroSection({ locale, dict }: HeroSectionProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
 
                 {/* Top Badge Overlay */}
-                <div className="absolute top-4 start-4 end-4 flex items-center justify-between z-10">
-                  <span className="royal-badge-gold shadow-md backdrop-blur-md">
+                <div className="absolute top-2.5 start-2.5 end-2.5 flex items-center justify-between z-10">
+                  <span className="bg-amber-500 text-slate-950 font-bold shadow-sm backdrop-blur-md text-[11px] px-2 py-0.5 rounded-full">
                     {isRtl ? currentSlide.badge_ar : currentSlide.badge_en}
                   </span>
-                  <div className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-amber-400 border border-white/10 text-xs font-bold">
+                  <div className="w-6 h-6 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-amber-400 border border-white/20 text-[10px] font-bold">
                     0{activeSlide + 1}
                   </div>
                 </div>
@@ -336,80 +339,50 @@ export function HeroSection({ locale, dict }: HeroSectionProps) {
                 {/* Manual Navigation Arrow Buttons */}
                 <button
                   onClick={() => setActiveSlide((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1))}
-                  className="absolute top-1/2 start-2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-md border border-white/15 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                  className="absolute top-1/2 start-2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-md border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity z-20"
                   aria-label="Previous Slide"
                 >
-                  <ChevronRight className={cn("w-4 h-4", !isRtl && "rotate-180")} />
+                  <ChevronRight className={cn("w-3.5 h-3.5", !isRtl && "rotate-180")} />
                 </button>
                 <button
                   onClick={() => setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length)}
-                  className="absolute top-1/2 end-2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-md border border-white/15 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                  className="absolute top-1/2 end-2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-md border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity z-20"
                   aria-label="Next Slide"
                 >
-                  <ChevronLeft className={cn("w-4 h-4", !isRtl && "rotate-180")} />
+                  <ChevronLeft className={cn("w-3.5 h-3.5", !isRtl && "rotate-180")} />
                 </button>
               </div>
 
               {/* Bottom Project Description & Progress Indicator */}
-              <div className="p-5 sm:p-6 bg-surface-elevated/95 space-y-3">
+              <div className="p-3 sm:p-4 bg-[#070d1e] space-y-1.5 border-t border-white/10">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-extrabold text-sm sm:text-base text-white line-clamp-1">
+                  <h3 className="font-bold text-xs sm:text-sm !text-white line-clamp-1" style={{ color: "#ffffff" }}>
                     {isRtl ? currentSlide.title_ar : currentSlide.title_en}
                   </h3>
                 </div>
 
                 {/* Dots Progress Indicators */}
-                <div className="flex items-center justify-between pt-1">
-                  <div className="flex items-center gap-1.5">
+                <div className="flex items-center justify-between pt-0.5">
+                  <div className="flex items-center gap-1">
                     {HERO_SLIDES.map((slide, idx) => (
                       <button
                         key={slide.id}
                         onClick={() => setActiveSlide(idx)}
                         className={cn(
-                          "h-2 rounded-full transition-all duration-500",
+                          "h-1 rounded-full transition-all duration-500",
                           activeSlide === idx
-                            ? "w-6 bg-amber-400 shadow-md shadow-amber-400/40"
-                            : "w-2 bg-white/20 hover:bg-white/40"
+                            ? "w-4 bg-amber-400 shadow-md shadow-amber-400/40"
+                            : "w-1 bg-white/30 hover:bg-white/50"
                         )}
                         aria-label={`Slide ${idx + 1}`}
                       />
                     ))}
                   </div>
-
-        
                 </div>
               </div>
             </motion.div>
-
-       
-
-          
           </div>
         </div>
-
-        {/* ── 3. Trust Metrics & Statistics Ribbon ─────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 1.1 }}
-          className="mt-16 sm:mt-20 pt-8 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-6 text-center"
-        >
-          {[
-            { value: "+500", label_ar: "مشروع منفذ", label_en: "Executed Projects", color: "text-amber-400" },
-            { value: "15+", label_ar: "سنة خبرة معمارية", label_en: "Years Experience", color: "text-blue-400" },
-            { value: "100%", label_ar: "ضمان جودة المواد", label_en: "Quality Warranty", color: "text-emerald-400" },
-            { value: "1,200+", label_ar: "عميل يثق بنا", label_en: "Satisfied Clients", color: "text-yellow-400" },
-          ].map((stat, idx) => (
-            <div key={idx} className="space-y-1 p-3 rounded-2xl hover:bg-white/5 transition-colors">
-              <p className={cn("text-2xl sm:text-4xl font-extrabold tracking-tight", stat.color)}>
-                {stat.value}
-              </p>
-              <p className="text-xs sm:text-sm font-medium text-slate-300">
-                {isRtl ? stat.label_ar : stat.label_en}
-              </p>
-            </div>
-          ))}
-        </motion.div>
       </motion.div>
 
       {/* ── 4. Scroll Down Indicator ─────────────────────────────────── */}

@@ -69,7 +69,7 @@ export function FaqAccordion({ locale, dict, initialFaqs }: FaqAccordionProps) {
   return (
     <section
       id="faq"
-      className="relative py-20 sm:py-28 bg-surface overflow-hidden"
+      className="relative py-10 sm:py-20 bg-surface overflow-hidden"
       aria-labelledby="faq-heading"
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,24 +79,24 @@ export function FaqAccordion({ locale, dict, initialFaqs }: FaqAccordionProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-14"
+          className="text-center mb-8 sm:mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-50 dark:bg-primary-950/50 mb-4">
-            <HelpCircle className="w-4 h-4 text-primary-600 dark:text-primary-400" />
-            <span className="text-sm font-semibold text-primary-600 dark:text-primary-400">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 dark:bg-primary-950/50 mb-3">
+            <HelpCircle className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
+            <span className="text-xs font-semibold text-primary-600 dark:text-primary-400">
               {dict.faq.title}
             </span>
           </div>
-          <h2 id="faq-heading" className="text-3xl sm:text-4xl font-bold mb-4">
+          <h2 id="faq-heading" className="text-2xl sm:text-4xl font-extrabold mb-3">
             {dict.faq.title}
           </h2>
-          <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+          <p className="text-xs sm:text-base text-text-secondary max-w-2xl mx-auto">
             {dict.faq.subtitle}
           </p>
         </motion.div>
 
         {/* FAQ Items */}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
             const qText = faq.question || (isRtl ? faq.question_ar : faq.question_en) || faq.question_ar;
@@ -112,23 +112,23 @@ export function FaqAccordion({ locale, dict, initialFaqs }: FaqAccordionProps) {
                 className={cn(
                   "rounded-xl border transition-all duration-300",
                   isOpen
-                    ? "border-primary-200 dark:border-primary-800 bg-surface-elevated shadow-md"
+                    ? "border-primary-200 dark:border-primary-800 bg-surface-elevated shadow-sm"
                     : "border-border-light bg-background hover:border-border"
                 )}
               >
                 <button
                   onClick={() => toggleItem(index)}
-                  className="w-full flex items-center justify-between gap-4 p-5 text-start"
+                  className="w-full flex items-center justify-between gap-3 p-4 sm:p-5 text-start"
                   aria-expanded={isOpen}
                   aria-controls={`faq-answer-${index}`}
                   id={`faq-question-${index}`}
                 >
-                  <span className="font-semibold text-base sm:text-lg">
+                  <span className="font-bold text-xs sm:text-base">
                     {qText}
                   </span>
                   <ChevronDown
                     className={cn(
-                      "w-5 h-5 text-text-tertiary shrink-0 transition-transform duration-300",
+                      "w-4 h-4 text-text-tertiary shrink-0 transition-transform duration-300",
                       isOpen && "rotate-180 text-primary-600"
                     )}
                   />
@@ -145,7 +145,7 @@ export function FaqAccordion({ locale, dict, initialFaqs }: FaqAccordionProps) {
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <div className="px-5 pb-5 text-text-secondary leading-relaxed">
+                      <div className="px-4 sm:px-5 pb-4 sm:pb-5 text-xs sm:text-sm text-text-secondary leading-relaxed">
                         {aText}
                       </div>
                     </motion.div>

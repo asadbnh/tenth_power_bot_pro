@@ -25,43 +25,43 @@ function getSmartResponse(input: string, locale: Locale): string {
 
   if (/price|سعر|تكلف|كم/.test(lower)) {
     return isAr
-      ? "يختلف السعر حسب نوع الخدمة والمساحة والمواد المختارة. أنصحك بطلب عرض سعر مجاني عبر صفحة «طلب عرض سعر» ليصلك تقدير دقيق خلال 24 ساعة! 💰"
-      : "Pricing varies by service type, area, and materials. I recommend requesting a free quote through our 'Get Quote' page for an accurate estimate within 24 hours! 💰";
+      ? "تعتمد التكلفة التقديرية للمشروع على نوع النظام الهندسي المطلوب والمساحات الإجمالية والمواصفات الفنية المعتمدة. يمكنك رفع بيانات المشروع عبر صفحة «طلب دراسة مشروع» للحصول على التقييم المالي والفني."
+      : "Project costs depend on the engineering system, total surface area, and technical specifications. You can submit project details via the 'Project Inquiry' page for a detailed proposal.";
   }
   if (/glass|زجاج|سكريت|واجهة/.test(lower)) {
     return isAr
-      ? "نقدم زجاج سكريت مقوى بسماكات 6-12 مم، وواجهات زجاجية كاملة للمباني التجارية والسكنية. الزجاج المقوى أقوى 4 مرات من الزجاج العادي ويتفتت بأمان. هل تريد معرفة المزيد؟ 🪟"
-      : "We offer tempered glass in 6-12mm thicknesses and complete glass facades for commercial and residential buildings. Tempered glass is 4x stronger and shatters safely. Want to know more? 🪟";
+      ? "تنفذ شركة القوة العاشرة أنظمة الزجاج السيكوريت المقوى بسماكات تتراوح بين 6 إلى 12 مم، بالإضافة إلى واجهات الكرتن وول والأنظمة الهيكلية المزدوجة المعزولة وفق كود البناء السعودي SBC."
+      : "Tenth Power executes double-tempered securit glass systems (6-12mm) and curtain wall structural facades conforming to Saudi Building Code (SBC) standards.";
   }
   if (/kitchen|مطبخ/.test(lower)) {
     return isAr
-      ? "نصمم وننفذ مطابخ عصرية بخامات مستوردة، مع جلسة تصميم 3D مجانية. التركيب يتم خلال 48 ساعة وضمان 5 سنوات! هل تريد حجز استشارة مجانية؟ 🍽️"
-      : "We design and install modern kitchens with imported materials, free 3D design session included. Installation within 48 hours with a 5-year warranty! Want to book a free consultation? 🍽️";
+      ? "نقوم بتصميم وتنفيذ القطاعات الهندسية والمطابخ باستخدام قطاعات ألمنيوم عالية الجودة ومقاومة، مع إعداد المخططات ثلاثية الأبعاد قبل البدء في مرحلة التصنيع."
+      : "We engineer and install premium aluminum structural fixtures and kitchens with 3D design plans prior to manufacturing.";
   }
   if (/aluminum|ألمنيوم|نافذة|باب/.test(lower)) {
     return isAr
-      ? "أعمال الألمنيوم تشمل النوافذ والأبواب والديكورات الداخلية والخارجية. نستخدم ألمنيوم أمريكي وألماني بضمان 5 سنوات وحماية كاملة من الصدأ. 🔩"
-      : "Aluminum works include windows, doors, and interior/exterior decorations. We use American and German aluminum with a 5-year warranty and full rust protection. 🔩";
+      ? "تشمل حلول الألمنيوم الأنظمة المعمارية للنوافذ والأبواب المعزولة حرارياً ومائياً (Thermal-Break) بأنظمة استانلس ستيل ذات الكفاءة العالية."
+      : "Our aluminum solutions cover architectural thermal-break window and door systems with heavy-duty stainless steel fittings.";
   }
   if (/contact|تواصل|phone|هاتف|رقم/.test(lower)) {
     return isAr
-      ? "يمكنك التواصل معنا عبر:\n📱 واتساب: +966 50 000 0000\n📧 البريد: info@webtaky.com\n🕐 ساعات العمل: السبت – الخميس 8 ص – 6 م"
-      : "You can reach us via:\n📱 WhatsApp: +966 50 000 0000\n📧 Email: info@webtaky.com\n🕐 Working hours: Sat – Thu 8 AM – 6 PM";
+      ? "يمكنكم التواصل مع المكتب الهندسي والمبيعات عبر:\n• الهاتف المباشر والواتساب: +966 50 000 0000\n• البريد الإلكتروني: info@webtaky.com\n• ساعات العمل: السبت – الخميس من 8:00 صباحاً حتى 6:00 مساءً"
+      : "Contact our engineering & sales team:\n• Direct Phone / WhatsApp: +966 50 000 0000\n• Email: info@webtaky.com\n• Working Hours: Sat – Thu, 8:00 AM – 6:00 PM";
   }
   if (/location|عنوان|مكان|أين/.test(lower)) {
     return isAr
-      ? "مقرنا الرئيسي في الرياض، ونغطي معظم مناطق المملكة العربية السعودية شاملاً جدة والدمام والخبر ومكة والمدينة المنورة. 📍"
-      : "Our main office is in Riyadh, and we cover most regions of Saudi Arabia including Jeddah, Dammam, Al Khobar, Mecca, and Madinah. 📍";
+      ? "المقر الرئيسي: مدينة الرياض – طريق الملك فهد (حي الصحافة). وننفذ المشاريع في كافة مناطق المملكة العربية السعودية."
+      : "Headquarters: Riyadh – King Fahd Road (Al Sahafah Dist.). We execute engineering projects across all KSA regions.";
   }
   if (/warranty|ضمان/.test(lower)) {
     return isAr
-      ? "نقدم ضمانات شاملة:\n✅ زجاج وألمنيوم: 5-10 سنوات\n✅ مطابخ: 5 سنوات\n✅ ديكورات: 3 سنوات\n✅ صيانة طوارئ: 24/7"
-      : "We offer comprehensive warranties:\n✅ Glass & Aluminum: 5-10 years\n✅ Kitchens: 5 years\n✅ Decorations: 3 years\n✅ Emergency maintenance: 24/7";
+      ? "تخضع جميع الأعمال والأنظمة المنفذة لضمان فني معتمد يمتد حتى 10 سنوات على السلامة الهيكلية وجودة العزل والمواصفات الفنية."
+      : "All executed works carry a formal technical warranty of up to 10 years covering structural integrity and insulation quality.";
   }
 
   return isAr
-    ? "شكراً على سؤالك! أنا هنا لمساعدتك في معرفة المزيد عن خدماتنا. يمكنك أيضاً طلب عرض سعر مجاني أو التواصل معنا مباشرة عبر واتساب. كيف يمكنني مساعدتك؟ 😊"
-    : "Thank you for your question! I'm here to help you learn more about our services. You can also request a free quote or contact us directly via WhatsApp. How can I help you? 😊";
+    ? "أهلاً بك. أنا المساعد الهندسي الذكي لشركة القوة العاشرة. يمكنك الاستفسار عن الأنظمة والمعايير الفنية أو تقديم طلب دراسة لمشروعك."
+    : "Welcome. I am the AI Technical Assistant for Tenth Power Contracting. How can I assist you with your project specifications today?";
 }
 
 export function AIChatWidget({ locale }: Props) {
@@ -93,8 +93,8 @@ export function AIChatWidget({ locale }: Props) {
           id: "greeting",
           role: "assistant",
           content: isRtl
-            ? "مرحباً! أنا المساعد الذكي لـ WebTaky. كيف يمكنني مساعدتك اليوم؟ 🏗️\n\nيمكنني مساعدتك في:\n• الاستفسار عن الخدمات والأسعار\n• طلب عرض سعر\n• معرفة مواعيد العمل\n• أي استفسار آخر"
-            : "Hello! I'm WebTaky's smart assistant. How can I help you today? 🏗️\n\nI can help with:\n• Service & pricing inquiries\n• Requesting a quote\n• Working hours\n• Any other question",
+            ? "أهلاً بك في شركة القوة العاشرة للمقاولات والواجهات المعمارية. كيف يمكن للمساعد الهندسي مساندتك في مشروعك اليوم؟\n\n• الاستفسار عن مواصفات الواجهات والزجاج\n• تقديم طلب دراسة وتثمين مشروع\n• التواصل مع المهندس المختص"
+            : "Welcome to Tenth Power General Contracting & Facades. How can our technical assistant help with your engineering project today?\n\n• Facade & Securit Glass Specifications\n• Project Evaluation Inquiry\n• Connect with Lead Engineer",
           timestamp: new Date(),
         }]);
       }, 300);

@@ -26,33 +26,33 @@ const STATS: StatItem[] = [
     icon: Building,
     value: 500,
     suffix: "+",
-    label_ar: "مشروع منجز",
-    label_en: "Projects Completed",
-    color: "text-blue-500",
+    label_ar: "مشروع هندسي منفذ",
+    label_en: "Executed Engineering Projects",
+    color: "text-blue-400",
   },
   {
     icon: Users,
     value: 1200,
     suffix: "+",
-    label_ar: "عميل سعيد",
-    label_en: "Happy Clients",
-    color: "text-emerald-500",
+    label_ar: "جهة وشريك نجاح",
+    label_en: "Corporate Partners",
+    color: "text-emerald-400",
   },
   {
     icon: Clock,
     value: 15,
     suffix: "+",
-    label_ar: "سنة خبرة",
-    label_en: "Years Experience",
-    color: "text-amber-500",
+    label_ar: "سنوات الخبرة الهندسية",
+    label_en: "Years Engineering Experience",
+    color: "text-amber-400",
   },
   {
     icon: Award,
     value: 25,
     suffix: "+",
-    label_ar: "جائزة تميز",
-    label_en: "Awards Won",
-    color: "text-purple-500",
+    label_ar: "اعتماد وجودة قياسية",
+    label_en: "Quality Certifications",
+    color: "text-purple-400",
   },
 ];
 
@@ -113,7 +113,7 @@ export function AnimatedStats({ locale, dict }: AnimatedStatsProps) {
   return (
     <section
       id="stats"
-      className="relative py-20 sm:py-24 overflow-hidden"
+      className="relative py-10 sm:py-20 overflow-hidden"
       aria-label={isRtl ? "إحصائيات" : "Statistics"}
     >
       {/* Background gradient */}
@@ -130,7 +130,7 @@ export function AnimatedStats({ locale, dict }: AnimatedStatsProps) {
       </div>
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 lg:gap-12">
           {STATS.map((stat, index) => {
             const Icon = stat.icon;
             return (
@@ -144,21 +144,21 @@ export function AnimatedStats({ locale, dict }: AnimatedStatsProps) {
               >
                 <div
                   className={cn(
-                    "inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4",
+                    "inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl mb-3",
                     "bg-white/10 backdrop-blur-sm",
                     stat.color
                   )}
                 >
-                  <Icon className="w-8 h-8" />
+                  <Icon className="w-6 h-6 sm:w-8 sm:h-8" />
                 </div>
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-2">
+                <div className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-1">
                   <AnimatedCounter
                     target={stat.value}
                     suffix={stat.suffix}
                     isVisible={true}
                   />
                 </div>
-                <div className="text-sm sm:text-base text-white/60 font-medium">
+                <div className="text-xs sm:text-sm text-white/70 font-medium">
                   {isRtl ? stat.label_ar : stat.label_en}
                 </div>
               </motion.div>

@@ -140,11 +140,12 @@ export function CinematicGlassVideoSection({ locale, videoUrl = "/videos/default
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Worker Silhouette Icons
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 22px sans-serif";
-      ctx.fillText("👷‍♂️", craneX - 110, craneY + 60);
-      ctx.fillText("👷‍♀️", craneX + 95, craneY + 60);
+      // Technical Engineering Nodes (Structural Attachment Points)
+      ctx.fillStyle = "rgba(245, 158, 11, 0.9)";
+      ctx.beginPath();
+      ctx.arc(craneX - 90, craneY + 10, 5, 0, Math.PI * 2);
+      ctx.arc(craneX + 90, craneY + 10, 5, 0, Math.PI * 2);
+      ctx.fill();
 
       ctx.restore();
 
@@ -160,19 +161,19 @@ export function CinematicGlassVideoSection({ locale, videoUrl = "/videos/default
   }, [hasVideoError, videoUrl]);
 
   return (
-    <section className="relative py-20 sm:py-28 bg-[#040814] overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+    <section className="relative py-10 sm:py-24 bg-[#040814] overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4">
+        <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full royal-badge backdrop-blur-xl border border-amber-500/30 shadow-lg"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full royal-badge backdrop-blur-xl border border-amber-500/30 shadow-md"
           >
-            <HardHat className="w-4 h-4 text-amber-400 animate-pulse" />
-            <span className="text-xs sm:text-sm font-bold">
-              {isRtl ? "🎥 فيديو سينمائي — الدقة الميدانية للتنفيذ" : "🎥 Cinematic Video — On-Site Engineering Execution"}
+            <HardHat className="w-3.5 h-3.5 text-amber-400" />
+            <span className="text-xs sm:text-sm font-semibold">
+              {isRtl ? "التنفيذ الهندسي الميداني" : "On-Site Engineering Execution"}
             </span>
           </motion.div>
 
@@ -180,20 +181,20 @@ export function CinematicGlassVideoSection({ locale, videoUrl = "/videos/default
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl sm:text-5xl font-extrabold text-white leading-tight"
+            className="text-2xl sm:text-4xl font-extrabold text-white leading-snug sm:leading-tight"
           >
             {isRtl ? (
               <>
-                شاهد احترافية تركيب{" "}
+                دقة التنفيذ والتركيب الميداني{" "}
                 <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
-                  الواجهات المعمارية الميدانية
+                  للواجهات المعمارية
                 </span>
               </>
             ) : (
               <>
-                Experience On-Site{" "}
+                Precision Field Installation &{" "}
                 <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
-                  Structural Glazing Precision
+                  Structural Assembly
                 </span>
               </>
             )}
@@ -203,11 +204,11 @@ export function CinematicGlassVideoSection({ locale, videoUrl = "/videos/default
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="text-base sm:text-lg text-slate-300 leading-relaxed"
+            className="text-xs sm:text-base text-slate-300 leading-relaxed max-w-2xl mx-auto"
           >
             {isRtl
-              ? "لقطات سينمائية توثق دقة وأمان فريقنا أثناء رفع وتثبيت الألواح الزجاجية الضخمة (Securit Glass) في المشاريع الكبرى بأحدث الرافعات الشفطية."
-              : "Cinematic footage illustrating our engineering crew installing massive double-tempered glass panels on high-rise structures."}
+              ? "توثيق ميداني يوضح آليات السلامة والدقة الهندسية أثناء رفع وتثبيت الواجهات الزجاجية والهياكل المعمارية الضخمة."
+              : "Field documentation illustrating safety standards and precision during structural glass panel installation."}
           </motion.p>
         </div>
 

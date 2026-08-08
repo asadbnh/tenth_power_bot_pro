@@ -68,7 +68,7 @@ export function WhatsAppButton({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
             className={cn(
-              "absolute bottom-full mb-3 bg-white dark:bg-surface-elevated",
+              "hidden sm:block absolute bottom-full mb-3 bg-white dark:bg-surface-elevated",
               "rounded-xl shadow-xl border border-border p-3",
               "min-w-[200px]",
               isRtl ? "start-0" : "end-0"

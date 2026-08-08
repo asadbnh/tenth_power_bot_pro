@@ -22,7 +22,7 @@ export function CTASection({ locale, dict }: CTASectionProps) {
   return (
     <section
       id="cta"
-      className="relative py-20 sm:py-28 overflow-hidden"
+      className="relative py-10 sm:py-20 overflow-hidden"
       aria-label={isRtl ? "تواصل معنا" : "Get in Touch"}
     >
       {/* Background */}
@@ -49,15 +49,15 @@ export function CTASection({ locale, dict }: CTASectionProps) {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-3 sm:mb-4 leading-tight">
             {isRtl
-              ? "جاهز لتحويل مشروعك إلى واقع؟"
-              : "Ready to Transform Your Project?"}
+              ? "هل لديك مشروع ترغب في دراسته وتنفيذه؟"
+              : "Planning an Architectural or Contracting Project?"}
           </h2>
-          <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-xs sm:text-lg text-white/80 max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed">
             {isRtl
-              ? "تواصل معنا اليوم واحصل على استشارة مجانية وعرض سعر مخصص لمشروعك"
-              : "Contact us today for a free consultation and a customized quote for your project"}
+              ? "تواصل مع القسم الهندسي لدراسة المواصفات الفنية وتلقي التقدير المالي المعتمد لمشروعك."
+              : "Connect with our engineering team for technical studies and tailored project proposals."}
           </p>
         </motion.div>
 
@@ -66,23 +66,23 @@ export function CTASection({ locale, dict }: CTASectionProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
         >
           <Button
             variant="accent"
-            size="xl"
-            className="min-w-[220px]"
-            leftIcon={<MessageCircle className="w-5 h-5" />}
+            size="lg"
+            className="w-full sm:w-auto min-w-[200px] text-xs sm:text-base font-bold"
+            leftIcon={<MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />}
           >
             {dict.hero.whatsapp}
           </Button>
           <Button
-            size="xl"
+            size="lg"
             className={cn(
-              "min-w-[220px] bg-white/10 text-white border-2 border-white/30",
+              "w-full sm:w-auto min-w-[200px] bg-white/10 text-white border border-white/30 text-xs sm:text-base font-bold",
               "hover:bg-white/20 backdrop-blur-sm"
             )}
-            leftIcon={<Phone className="w-5 h-5" />}
+            leftIcon={<Phone className="w-4 h-4 sm:w-5 sm:h-5" />}
           >
             {dict.quote.title}
           </Button>
@@ -94,12 +94,12 @@ export function CTASection({ locale, dict }: CTASectionProps) {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-8 text-sm text-white/50 flex items-center justify-center gap-1"
+          className="mt-6 text-xs text-white/60 flex items-center justify-center gap-1"
         >
           <ArrowRight className={cn("w-3 h-3", isRtl && "rotate-180")} />
           {isRtl
-            ? "استشارة مجانية — رد خلال 24 ساعة — بدون التزام"
-            : "Free consultation — Response within 24 hours — No obligation"}
+            ? "التزام كامل بالمواصفات الهندسية وجداول التنفيذ المعتمدة"
+            : "Full compliance with certified engineering specs & project timelines."}
         </motion.p>
       </div>
     </section>
