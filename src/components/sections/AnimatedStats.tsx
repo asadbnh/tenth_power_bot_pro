@@ -113,7 +113,7 @@ export function AnimatedStats({ locale, dict }: AnimatedStatsProps) {
   return (
     <section
       id="stats"
-      className="relative py-10 sm:py-20 overflow-hidden"
+      className="relative py-6 sm:py-14 overflow-hidden"
       aria-label={isRtl ? "إحصائيات" : "Statistics"}
     >
       {/* Background gradient */}
@@ -130,35 +130,35 @@ export function AnimatedStats({ locale, dict }: AnimatedStatsProps) {
       </div>
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 lg:gap-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-8 lg:gap-12">
           {STATS.map((stat, index) => {
             const Icon = stat.icon;
             return (
               <motion.div
                 key={stat.label_en}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.15 }}
-                className="text-center"
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                className="text-center p-2 rounded-xl bg-white/5 sm:bg-transparent"
               >
                 <div
                   className={cn(
-                    "inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl mb-3",
+                    "inline-flex items-center justify-center w-8 h-8 sm:w-14 sm:h-14 rounded-lg sm:rounded-2xl mb-1.5",
                     "bg-white/10 backdrop-blur-sm",
                     stat.color
                   )}
                 >
-                  <Icon className="w-6 h-6 sm:w-8 sm:h-8" />
+                  <Icon className="w-4 h-4 sm:w-7 sm:h-7" />
                 </div>
-                <div className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-1">
+                <div className="text-lg sm:text-3xl lg:text-4xl font-extrabold text-white mb-0.5">
                   <AnimatedCounter
                     target={stat.value}
                     suffix={stat.suffix}
                     isVisible={true}
                   />
                 </div>
-                <div className="text-xs sm:text-sm text-white/70 font-medium">
+                <div className="text-[11px] sm:text-xs text-white/80 font-medium">
                   {isRtl ? stat.label_ar : stat.label_en}
                 </div>
               </motion.div>

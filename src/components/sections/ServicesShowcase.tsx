@@ -122,7 +122,7 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
   return (
     <section
       id="services"
-      className="relative py-10 sm:py-20 lg:py-28 bg-background overflow-hidden"
+      className="relative py-6 sm:py-16 lg:py-20 bg-background overflow-hidden"
       aria-labelledby="services-heading"
     >
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -132,24 +132,24 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-8 sm:mb-14"
+          className="text-center mb-5 sm:mb-12"
         >
-          <span className="inline-block text-xs sm:text-sm font-semibold text-primary-600 dark:text-primary-400 mb-2 tracking-wider uppercase">
+          <span className="inline-block text-xs sm:text-sm font-semibold text-primary-600 dark:text-primary-400 mb-1 tracking-wider uppercase">
             {dict.services.title}
           </span>
           <h2
             id="services-heading"
-            className="text-2xl sm:text-4xl lg:text-5xl font-extrabold mb-3"
+            className="text-xl sm:text-3xl lg:text-4xl font-extrabold mb-2"
           >
             {dict.services.title}
           </h2>
-          <p className="text-xs sm:text-base text-text-secondary max-w-2xl mx-auto">
+          <p className="text-xs sm:text-sm text-text-secondary max-w-2xl mx-auto">
             {dict.services.subtitle}
           </p>
         </motion.div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-5">
           {services.map((service, index) => {
             const Icon = (service.icon && iconMap[service.icon]) ? iconMap[service.icon] : Building2;
             const name = isRtl ? service.name_ar : (service.name_en || service.name_ar);
@@ -160,42 +160,43 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
             return (
               <motion.article
                 key={service.slug || index}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
                 className={cn(
-                  "group relative rounded-2xl p-4 sm:p-6",
+                  "group relative rounded-xl p-3 sm:p-5",
                   "bg-surface-elevated border border-border-light",
                   "hover:border-primary-200 dark:hover:border-primary-800",
-                  "hover:shadow-xl dark:hover:shadow-primary-900/20",
+                  "hover:shadow-md dark:hover:shadow-primary-900/20",
                   "transition-all duration-300 ease-out"
                 )}
               >
-                <div
-                  className={cn(
-                    "w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-4",
-                    "bg-gradient-to-br",
-                    service.color || "from-blue-500 to-indigo-600",
-                    "shadow-md group-hover:scale-105 transition-transform duration-300"
-                  )}
-                >
-                  <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                <div className="flex items-center gap-2.5 mb-2">
+                  <div
+                    className={cn(
+                      "w-8 h-8 sm:w-11 sm:h-11 rounded-lg flex items-center justify-center shrink-0",
+                      "bg-gradient-to-br",
+                      service.color || "from-blue-500 to-indigo-600",
+                      "shadow-sm group-hover:scale-105 transition-transform duration-300"
+                    )}
+                  >
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                  </div>
+                  <h3 className="text-xs sm:text-base font-bold text-text-primary group-hover:text-primary-600 dark:group-hover:text-amber-400 transition-colors line-clamp-1">
+                    {name}
+                  </h3>
                 </div>
 
-                <h3 className="text-base sm:text-lg font-bold mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                  {name}
-                </h3>
-
-                <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">
+                <p className="text-[11px] sm:text-xs text-text-secondary leading-relaxed line-clamp-2">
                   {desc}
                 </p>
 
                 <Link
                   href={`/${locale}/services/${service.slug || ""}`}
                   className={cn(
-                    "mt-4 flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400",
-                    "opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    "mt-2 flex items-center gap-1 text-xs font-semibold text-primary-600 dark:text-amber-400",
+                    "opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   )}
                 >
                   <span>{dict.services.viewDetails}</span>

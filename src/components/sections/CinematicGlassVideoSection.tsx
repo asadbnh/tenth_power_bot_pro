@@ -161,8 +161,8 @@ export function CinematicGlassVideoSection({ locale, videoUrl = "/videos/default
   }, [hasVideoError, videoUrl]);
 
   return (
-    <section className="relative py-10 sm:py-24 bg-[#040814] overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-10">
+    <section className="relative py-6 sm:py-16 bg-[#040814] overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4">
           <motion.div

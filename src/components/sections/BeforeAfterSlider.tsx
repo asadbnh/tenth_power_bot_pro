@@ -35,17 +35,17 @@ export function BeforeAfterSlider({ locale }: Props) {
   };
 
   return (
-    <section className="py-10 sm:py-20 bg-background border-b border-border-light overflow-hidden">
+    <section className="py-6 sm:py-16 bg-background border-b border-border-light overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12 space-y-2">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-100 dark:bg-primary-950 text-xs font-semibold text-primary-600 dark:text-primary-300">
+        <div className="text-center max-w-2xl mx-auto mb-4 sm:mb-8 space-y-1.5">
+          <span className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-primary-100 dark:bg-primary-950 text-xs font-semibold text-primary-600 dark:text-primary-300">
             <Sparkles className="w-3.5 h-3.5" />
             {isRtl ? "المقارنة الميدانية" : "Before & After Transformation"}
           </span>
-          <h2 className="text-2xl sm:text-4xl font-extrabold">
+          <h2 className="text-xl sm:text-3xl font-extrabold">
             {isRtl ? "مقارنة التحول المعماري وجودة الإنهاء" : "Experience the Architectural Transformation"}
           </h2>
-          <p className="text-text-secondary text-xs sm:text-base">
+          <p className="text-text-secondary text-xs sm:text-sm">
             {isRtl
               ? "استعراض تفاعلي يوضح التحول الميداني ودقة تفاصيل تركيب الواجهات الزجاجية والألمنيوم"
               : "Interactive slider showcasing technical precision in structural glass & aluminum projects"}

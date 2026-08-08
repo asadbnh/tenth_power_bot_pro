@@ -22,7 +22,7 @@ export function CTASection({ locale, dict }: CTASectionProps) {
   return (
     <section
       id="cta"
-      className="relative py-10 sm:py-20 overflow-hidden"
+      className="relative py-6 sm:py-16 overflow-hidden"
       aria-label={isRtl ? "تواصل معنا" : "Get in Touch"}
     >
       {/* Background */}
@@ -49,12 +49,12 @@ export function CTASection({ locale, dict }: CTASectionProps) {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-3 sm:mb-4 leading-tight">
+          <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-2 sm:mb-4 leading-tight">
             {isRtl
               ? "هل لديك مشروع ترغب في دراسته وتنفيذه؟"
               : "Planning an Architectural or Contracting Project?"}
           </h2>
-          <p className="text-xs sm:text-lg text-white/80 max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed">
+          <p className="text-xs sm:text-base text-white/80 max-w-2xl mx-auto mb-4 sm:mb-6 leading-relaxed">
             {isRtl
               ? "تواصل مع القسم الهندسي لدراسة المواصفات الفنية وتلقي التقدير المالي المعتمد لمشروعك."
               : "Connect with our engineering team for technical studies and tailored project proposals."}
@@ -66,23 +66,23 @@ export function CTASection({ locale, dict }: CTASectionProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
+          className="grid grid-cols-2 gap-2 sm:flex sm:flex-row items-center justify-center sm:gap-4 max-w-md mx-auto sm:max-w-none"
         >
           <Button
             variant="accent"
             size="lg"
-            className="w-full sm:w-auto min-w-[200px] text-xs sm:text-base font-bold"
-            leftIcon={<MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />}
+            className="w-full sm:w-auto min-w-0 sm:min-w-[200px] text-xs sm:text-base font-bold py-2.5 px-3"
+            leftIcon={<MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />}
           >
             {dict.hero.whatsapp}
           </Button>
           <Button
             size="lg"
             className={cn(
-              "w-full sm:w-auto min-w-[200px] bg-white/10 text-white border border-white/30 text-xs sm:text-base font-bold",
+              "w-full sm:w-auto min-w-0 sm:min-w-[200px] bg-white/10 text-white border border-white/30 text-xs sm:text-base font-bold py-2.5 px-3",
               "hover:bg-white/20 backdrop-blur-sm"
             )}
-            leftIcon={<Phone className="w-4 h-4 sm:w-5 sm:h-5" />}
+            leftIcon={<Phone className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />}
           >
             {dict.quote.title}
           </Button>

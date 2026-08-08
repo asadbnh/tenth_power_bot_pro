@@ -69,7 +69,7 @@ export function FaqAccordion({ locale, dict, initialFaqs }: FaqAccordionProps) {
   return (
     <section
       id="faq"
-      className="relative py-10 sm:py-20 bg-surface overflow-hidden"
+      className="relative py-6 sm:py-16 bg-surface overflow-hidden"
       aria-labelledby="faq-heading"
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,24 +79,24 @@ export function FaqAccordion({ locale, dict, initialFaqs }: FaqAccordionProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-8 sm:mb-12"
+          className="text-center mb-5 sm:mb-10"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 dark:bg-primary-950/50 mb-3">
+          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-primary-50 dark:bg-primary-950/50 mb-2">
             <HelpCircle className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
             <span className="text-xs font-semibold text-primary-600 dark:text-primary-400">
               {dict.faq.title}
             </span>
           </div>
-          <h2 id="faq-heading" className="text-2xl sm:text-4xl font-extrabold mb-3">
+          <h2 id="faq-heading" className="text-xl sm:text-3xl font-extrabold mb-2">
             {dict.faq.title}
           </h2>
-          <p className="text-xs sm:text-base text-text-secondary max-w-2xl mx-auto">
+          <p className="text-xs sm:text-sm text-text-secondary max-w-2xl mx-auto">
             {dict.faq.subtitle}
           </p>
         </motion.div>
 
         {/* FAQ Items */}
-        <div className="space-y-2.5">
+        <div className="space-y-2">
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
             const qText = faq.question || (isRtl ? faq.question_ar : faq.question_en) || faq.question_ar;
@@ -118,7 +118,7 @@ export function FaqAccordion({ locale, dict, initialFaqs }: FaqAccordionProps) {
               >
                 <button
                   onClick={() => toggleItem(index)}
-                  className="w-full flex items-center justify-between gap-3 p-4 sm:p-5 text-start"
+                  className="w-full flex items-center justify-between gap-3 p-3 sm:p-4 text-start"
                   aria-expanded={isOpen}
                   aria-controls={`faq-answer-${index}`}
                   id={`faq-question-${index}`}
