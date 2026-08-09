@@ -1,0 +1,40 @@
+{
+  "slug": "tenth-power-glass",
+  "name_ar": "مؤسسة القوة العاشرة للزجاج والألمنيوم والمقاولات",
+  "name_en": "Tenth Power Glass & Aluminum Contracting",
+  "description_ar": "المؤسسة الرائدة في المملكة العربية السعودية المتخصصة في تنفيذ أعمال الزجاج السكريت المقوى، الواجهات الزجاجية الكرتن وول والسبايدر، قطاعات الألمنيوم المعزولة، والمطابخ العصرية بأعلى معايير الجودة والضمان الشامل.",
+  "description_en": "Leading Saudi enterprise specializing in high-grade tempered glass, glass facades, curtain wall & spider systems, thermal-break aluminum profiles, and modern kitchens with full warranty.",
+  "whatsapp_number": "+966500000000",
+  "phone_primary": "+966500000000",
+  "phone_secondary": "+966110000000",
+  "email": "info@webtaky.com",
+  "website_url": "https://powerof10.netlify.app",
+  "tax_number": "310000000000003",
+  "commercial_register": "1010000000",
+  "primary_color": "#1e3a8a",
+  "secondary_color": "#0d9488",
+  "accent_color": "#f59e0b",
+  "logo_url": "/images/defaults/logo.png",
+  "favicon_url": "/favicon.ico",
+  "hero_bg_type": "auto",
+  "hero_video_url": "/videos/defaults/hero-bg.mp4",
+  "hero_image_url": "/videos/defaults/hero-bg.gif",
+  "hero_images": [],
+  "social_links": {
+    "twitter": "https://twitter.com/tenthpowerglass",
+    "instagram": "https://instagram.com/tenthpowerglass",
+    "snapchat": "https://snapchat.com/add/tenthpowerglass",
+    "tiktok": "https://tiktok.com/@tenthpowerglass",
+    "linkedin": "https://linkedin.com/company/tenthpowerglass"
+  },
+  "address": {
+    "street_ar": "طريق الملك فهد، حي الصحافة",
+    "street_en": "King Fahd Road, Al Sahafah District",
+    "city_ar": "الرياض",
+    "city_en": "Riyadh",
+    "region_ar": "منطقة الرياض",
+    "region_en": "Riyadh Region",
+    "country": "SA",
+    "postal_code": "13315"
+  }
+}

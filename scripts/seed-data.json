@@ -1,0 +1,74 @@
+{
+  "company": {
+    "name_ar": "مؤسسة القوة العاشرة للمقاولات والزجاج",
+    "name_en": "WebTaky Contracting & Glass Enterprise",
+    "slug": "webtaky",
+    "description_ar": "أفضل شركة متخصصة في توريد وتركيب الزجاج السكريت، الواجهات الزجاجية، قطاعات الألمنيوم والمطابخ بأعلى معايير الجودة والضمان الشامل.",
+    "description_en": "Leading company specializing in supply & installation of tempered glass, facades, aluminum profiles & kitchens with full warranty.",
+    "whatsapp_number": "+966500000000",
+    "phone_primary": "+966500000000",
+    "email": "info@webtaky.com",
+    "website_url": "https://powerof10.netlify.app"
+  },
+  "telegram_admin": {
+    "telegram_user_id": 5887234832,
+    "telegram_username": "run_kernel",
+    "role": "super_admin"
+  },
+  "services": [
+    {
+      "slug": "tempered-glass",
+      "icon": "Layers3",
+      "name_ar": "زجاج سكريت مقوى",
+      "name_en": "Tempered Glass",
+      "short_ar": "تركيب زجاج سكريت عالي المقاومة للصدمات والحرارة مع ضمان 10 سنوات",
+      "short_en": "High-impact & heat-resistant tempered glass installation with 10-year warranty",
+      "description_ar": "يتميز الزجاج السكريت بمقاومته الفائقة للصدمات والحرارة مقارنة بالزجاج العادي. نستخدم أفضل أكسسوارات الاستانلس ستيل 316 المقاوم للصدأ.",
+      "description_en": "Tempered glass is 4 to 5 times stronger than regular glass against impacts and heat. We use premium 316 stainless steel accessories."
+    },
+    {
+      "slug": "glass-facades",
+      "icon": "Building2",
+      "name_ar": "واجهات زجاجية (ك Curtain Wall)",
+      "name_en": "Glass Facades & Curtain Walls",
+      "short_ar": "تصميم وتنفيذ واجهات المبانى التجارية والفيلا بأحدث أنظمة الكرتن وول والسبايدر",
+      "short_en": "Design & execution of commercial and residential glass facades using Curtain Wall & Spider systems",
+      "description_ar": "نقدم حلولاً هندسية متكاملة للواجهات الزجاجية الهيكلية (Structural Glazing) وأنظمة الكرتن وول التي تعطي المبنى مظهرًا معمارياً فخماً.",
+      "description_en": "We engineer structural glazing and curtain wall systems that grant buildings a luxurious architectural aesthetic with sound insulation."
+    },
+    {
+      "slug": "aluminum",
+      "icon": "RectangleHorizontal",
+      "name_ar": "قطاعات الألمنيوم المعزولة",
+      "name_en": "Aluminum Systems",
+      "short_ar": "تصنيع وتركيب النوافذ والأبواب بأحدث القطاعات الحرارية المعزولة (Thermal Break)",
+      "short_en": "Manufacturing & installation of thermal break doors and windows",
+      "description_ar": "تصنيع وتفصيل قطاعات الألمنيوم الخاصة بالأبواب والشبابيك مع التركيز على القطاعات المعزولة حرارياً لتوفير الكهرباء والتكييف.",
+      "description_en": "Precision engineering of aluminum window and door profiles focusing on Thermal Break systems to optimize energy consumption."
+    },
+    {
+      "slug": "kitchens",
+      "icon": "PaintBucket",
+      "name_ar": "مطابخ الألمنيوم والخشب العصرية",
+      "name_en": "Modern Kitchen Solutions",
+      "short_ar": "تصميم وتنفيذ المطابخ العصرية بخامات ألمنيوم وكلادينج ورخام صناعي عالي الفخامة",
+      "short_en": "Design & crafting of modern aluminum, cladding & solid surface kitchens",
+      "description_ar": "تصميم مطابخ أحلامك بأرقى التصاميم الإيطالية والألمانية، باستخدام ألواح الألمنيوم المعالجة ضد البكتيريا والرطوبة والمياه.",
+      "description_en": "Crafting dream kitchens with Italian & German design concepts using antibacterial, moisture-proof aluminum panels."
+    }
+  ],
+  "faqs": [
+    {
+      "question_ar": "ما هي مدة الضمان المقدمة على أعمال الزجاج والألمنيوم؟",
+      "question_en": "What is the warranty period for glass & aluminum works?",
+      "answer_ar": "نقدم ضماناً حقيقياً مكتوباً يمتد من 5 إلى 10 سنوات يشمل جودة التركيب وعزل المياه والأتربة وعدم تغير لون الأكسسوارات.",
+      "answer_en": "We offer a written warranty ranging from 5 to 10 years covering installation quality, water & dust sealing, and hardware durability."
+    },
+    {
+      "question_ar": "هل تقدمون معاينة موقعية ورفع مقاسات مجانية؟",
+      "question_en": "Do you provide free site visits and measurements?",
+      "answer_ar": "نعم، يقدم فريقنا الهندسي خدمة المعاينة الموقعية ورفع المقاسات بالليزر مجاناً في جميع المدن المغطاة.",
+      "answer_en": "Yes, our engineering team provides free site visits and laser measurements across all covered cities."
+    }
+  ]
+}

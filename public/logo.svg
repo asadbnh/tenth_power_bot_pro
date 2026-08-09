@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <linearGradient id="tenthPowerGoldGrad" x1="10%" y1="78%" x2="90%" y2="28%">
+      <stop offset="0%" stop-color="#9A7B1C" />
+      <stop offset="20%" stop-color="#D4AF37" />
+      <stop offset="50%" stop-color="#FBF5B7" />
+      <stop offset="70%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#AA771C" />
+    </linearGradient>
+  </defs>
+  <path
+    fill="url(#tenthPowerGoldGrad)"
+    d="M 10,75 Q 50,65 90,75 L 90,78 Q 50,68 10,78 Z M 20,72 L 20,53 C 20,50 24,50 24,53 L 24,71 Z M 26,70 Q 30,51 36,49 C 40,48 41,51 41,54 L 41,66 Z M 43,65 L 43,33 C 43,28 48,28 51,28 L 62,28 L 62,65 L 58,65 L 58,32 L 47,32 L 47,65 Z M 65,65 L 65,35 L 69,37 L 69,65 Z M 71,65 L 71,46 L 75,43 L 75,50 L 79,46 L 79,65 Z"
+  />
+</svg>

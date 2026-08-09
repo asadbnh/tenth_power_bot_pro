@@ -1,0 +1,209 @@
+{
+  "meta": {
+    "siteName": "WebTaky",
+    "siteDescription": "Professional Business & Contracting Website Platform",
+    "homeTitle": "Home"
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "projects": "Projects",
+    "gallery": "Gallery",
+    "blog": "Blog",
+    "about": "About Us",
+    "contact": "Contact Us",
+    "quote": "Request Quote",
+    "faq": "FAQ",
+    "testimonials": "Testimonials",
+    "search": "Search"
+  },
+  "hero": {
+    "title": "Transforming Your Vision Into Exceptional Reality",
+    "subtitle": "Comprehensive solutions in glass, aluminum, and contracting with the highest standards of quality and professionalism",
+    "cta": "Explore Our Services",
+    "ctaSecondary": "Request a Quote",
+    "whatsapp": "Chat on WhatsApp"
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "We offer a comprehensive range of professional services",
+    "viewAll": "View All Services",
+    "viewDetails": "View Details",
+    "relatedProjects": "Related Projects",
+    "features": "Service Features",
+    "priceFrom": "Starting from",
+    "requestQuote": "Request Quote"
+  },
+  "projects": {
+    "title": "Our Projects",
+    "subtitle": "We take pride in executing outstanding projects that reflect our expertise",
+    "viewAll": "View All Projects",
+    "viewDetails": "View Details",
+    "client": "Client",
+    "location": "Location",
+    "duration": "Duration",
+    "value": "Value",
+    "specifications": "Specifications",
+    "beforeAfter": "Before & After",
+    "filter": "Filter by"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Specialized articles and tips in our field",
+    "readMore": "Read More",
+    "readTime": "min read",
+    "relatedArticles": "Related Articles",
+    "tags": "Tags",
+    "share": "Share Article",
+    "tableOfContents": "Table of Contents"
+  },
+  "gallery": {
+    "title": "Gallery",
+    "subtitle": "Browse our outstanding work",
+    "viewAlbum": "View Album",
+    "photos": "photos",
+    "videos": "videos"
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Our Story and Vision",
+    "mission": "Our Mission",
+    "vision": "Our Vision",
+    "values": "Our Values",
+    "team": "Our Team",
+    "history": "Our History",
+    "stats": {
+      "projects": "Projects Completed",
+      "clients": "Happy Clients",
+      "experience": "Years of Experience",
+      "awards": "Awards"
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We'd love to hear from you",
+    "form": {
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "subject": "Subject",
+      "message": "Your Message",
+      "service": "Requested Service",
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Your message has been sent successfully! We'll get back to you soon.",
+      "error": "An error occurred. Please try again."
+    },
+    "info": {
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "workingHours": "Working Hours",
+      "followUs": "Follow Us"
+    }
+  },
+  "quote": {
+    "title": "Request a Quote",
+    "subtitle": "Get a customized quote for your project",
+    "step1": "Service Type",
+    "step2": "Project Details",
+    "step3": "Contact Information",
+    "step4": "Review & Submit",
+    "description": "Project Description",
+    "budget": "Expected Budget",
+    "urgency": "Urgency Level",
+    "city": "City",
+    "submit": "Submit Request",
+    "success": "Your request has been received! We'll contact you within 24 hours."
+  },
+  "faq": {
+    "title": "FAQ",
+    "subtitle": "Answers to the most frequently asked questions",
+    "searchPlaceholder": "Search questions..."
+  },
+  "testimonials": {
+    "title": "Testimonials",
+    "subtitle": "What our clients say about us",
+    "writeReview": "Write a Review",
+    "verifiedReview": "Verified Review"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search the site...",
+    "results": "Search Results",
+    "noResults": "No results found",
+    "searching": "Searching..."
+  },
+  "chat": {
+    "title": "AI Assistant",
+    "subtitle": "How can I help you?",
+    "placeholder": "Type your message here...",
+    "send": "Send",
+    "suggestions": {
+      "services": "What services do you offer?",
+      "prices": "What are your prices?",
+      "quote": "I want a quote",
+      "contact": "I want to talk to someone"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "viewMore": "View More",
+    "viewLess": "View Less",
+    "all": "All",
+    "featured": "Featured",
+    "new": "New",
+    "popular": "Most Popular",
+    "noData": "No data available",
+    "offline": "You are offline",
+    "offlineMessage": "Some content may not be up to date",
+    "installApp": "Install App",
+    "installPrompt": "Install the app for quick access and a better experience",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "language": "Language",
+    "arabic": "العربية",
+    "english": "English",
+    "shareOn": "Share on",
+    "copyLink": "Copy Link",
+    "copied": "Copied!",
+    "notFound": "Page Not Found",
+    "notFoundMessage": "Sorry, we couldn't find the page you're looking for.",
+    "goHome": "Go Home"
+  },
+  "footer": {
+    "quickLinks": "Quick Links",
+    "ourServices": "Our Services",
+    "contactInfo": "Contact Info",
+    "newsletter": "Newsletter",
+    "newsletterPlaceholder": "Your email",
+    "subscribe": "Subscribe",
+    "rights": "All rights reserved",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions"
+  },
+  "days": {
+    "sunday": "Sunday",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday"
+  },
+  "pwa": {
+    "install": "Install App",
+    "installDescription": "Install our app for a better and faster experience",
+    "installButton": "Install Now",
+    "dismiss": "Later",
+    "offlineReady": "App is ready to work offline",
+    "updateAvailable": "New update available",
+    "updateNow": "Update Now"
+  }
+}

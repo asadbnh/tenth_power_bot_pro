@@ -1,0 +1,29 @@
+[
+  {
+    "reviewer_name": "المهندس خالد العتيبي",
+    "client_company": "مجموعة العتيبي القابضة",
+    "rating": 5,
+    "content_ar": "تم تنفيذ واجهة البرج التجاري بمدينة الرياض بدقة متناهية والتزام كامل بالمواعيد. العزل الحراري ممتاز جداً والصوت منعدم داخل المكاتب.",
+    "content_en": "Commercial tower facade executed with extreme precision and deadline commitment. Excellent thermal insulation.",
+    "reviewer_avatar_url": "/images/defaults/avatars/avatar-1.jpg",
+    "is_verified": true
+  },
+  {
+    "reviewer_name": "الدكتور فهد الشمري",
+    "client_company": "فيلا خاصة - جدة",
+    "rating": 5,
+    "content_ar": "تركيب كبائن شاور زجاج سكريت واكسسوارات استانلس فاخرة. تعامل راقي جداً من المهندسين والفنيين وضمان حقيقي.",
+    "content_en": "High-end tempered glass shower cabins and stainless fittings installed cleanly. Highly professional team.",
+    "reviewer_avatar_url": "/images/defaults/avatars/avatar-2.jpg",
+    "is_verified": true
+  },
+  {
+    "reviewer_name": "الاستاذة سارة الدوسري",
+    "client_company": "مطابخ سكنية - الرياض",
+    "rating": 5,
+    "content_ar": "تفصيل مطبخ ألمنيوم مودرن مع مفصلات بلوم النمساوية وأسطح الكوارتز. النتيجة فاقت التوقعات والجودة ممتازة.",
+    "content_en": "Custom modern aluminum kitchen with Blum hinges and quartz tops. Result exceeded expectations.",
+    "reviewer_avatar_url": "/images/defaults/avatars/avatar-3.jpg",
+    "is_verified": true
+  }
+]
