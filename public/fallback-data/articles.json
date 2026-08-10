@@ -13,7 +13,7 @@
     "author_en": "Eng. Ahmed Al-Ghamdi",
     "content_ar": "يُعد الزجاج السكريت (Tempered Glass) أحد أكثر المواد المعمارية استخداماً في العصر الحديث نظراً لقوته العالية وخصائص الأمان الفريدة التي يتمتع بها مقارنة بالزجاج العادي.\n\n### 1. كيف يتم تصنيع الزجاج السكريت؟\nيتم تسخين الزجاج العادي إلى درجات حرارة تتجاوز 600 درجة مئوية في أفران خاصة، ثم يتم تبريده بشكل سريع جداً بواسطة نفاثات هواء بارد. هذه العملية تخلق إجهادات ضغط عالية على السطح الخارجي بينما يبقى المركز في حالة شد، مما يمنحه قوة مضاعفة بـ 4 إلى 5 مرات.\n\n### 2. أهم أنواع الزجاج السكريت:\n- **الزجاج الشفاف (Clear Tempered):** الأكثر شيوعاً في الواجهات والأبواب.\n- **الزجاج فائق النقاء (Ultra-Clear / Low-Iron):** يتميز بنقاء كريستالي وعدم وجود أي إخضرار في الحواف.\n- **الزجاج المثلج (Frosted / Sandblasted):** يمنح الخصوصية التامة مع السماح بمرور الضوء.\n- **الزجاج المعزول (Double Glazed Tempered):** مكون من طبقتين بينهما فراغ غاز الأرجون لزيادة العزل الحراري والصوتي.\n\n### 3. التطبيقات الشائعة في السعودية:\nتتنوع الاستخدامات في المملكة بين كبائن الشاور، واجهات المحلات، الدربزينات الزجاجية، والأبواب الاوتوماتيكية.",
     "content_en": "Tempered glass is one of the most widely used architectural materials today due to its structural strength and unique safety features compared to standard annealed glass.\n\n### 1. How is Tempered Glass Manufactured?\nRegular float glass is heated to over 600°C in specialized ovens and rapidly cooled with high-pressure air streams. This process creates intense surface compression while maintaining core tension, multiplying overall strength 4x to 5x.\n\n### 2. Main Types of Tempered Glass:\n- **Clear Tempered:** The standard choice for doors and storefronts.\n- **Ultra-Clear (Low-Iron):** Offers crystal clarity without greenish edge tinting.\n- **Frosted / Sandblasted:** Provides complete visual privacy while transmitting light.\n- **Double Glazed Tempered:** Dual panels with argon gas gap for high insulation.\n\n### 3. Common Applications in KSA:\nWidely applied in shower enclosures, storefronts, balustrades, and automated doors.",
-    "cover_image_url": "/images/defaults/blog/types-of-tempered-glass.jpg"
+    "cover_image_url": "/images/defaults/blog/types-of-tempered-glass.webp"
   },
   {
     "slug": "aluminum-vs-upvc",
@@ -29,7 +29,7 @@
     "author_en": "Eng. Sara Al-Mutairi",
     "content_ar": "عند التخطيط لبناء أو تجديد منزلك في المملكة، تبرز الحيرة الدائمة بين اختيار قطاعات الألمنيوم المعزولة حرارياً أم نوافذ الـ UPVC.\n\n### 1. المتانة والعمر الافتراضي\nالألمنيوم يمتاز بتحمل استثنائي للعوامل الجوية الصعبة والحرارة الشديدة دون أن يتأثر ششكله أو يتمدد، بينما الـ UPVC قد يتأثر على المدى الطويل بأشعة الشمس المباشرة.\n\n### 2. العزل الحراري والتكييف\nقطاعات الألمنيوم المزودة بكسر حراري (Thermal Break) تحقق نتائج عزل حراري تضاهي الـ UPVC مع المحافظة على متانة قطاع المعدن وأناقته.",
     "content_en": "When planning windows for your home in Saudi Arabia, choosing between thermal-break aluminum and UPVC is a major decision.\n\n### 1. Durability & Lifespan\nAluminum exhibits extraordinary weather resistance against high temperatures without warping, while UPVC can degrade over long direct sun exposure.\n\n### 2. Thermal Insulation\nThermal break aluminum profiles match UPVC insulation metrics while providing superior structural metal rigidity.",
-    "cover_image_url": "/images/defaults/blog/aluminum-vs-upvc.jpg"
+    "cover_image_url": "/images/defaults/blog/aluminum-vs-upvc.webp"
   },
   {
     "slug": "kitchen-design-trends-2024",
@@ -45,6 +45,6 @@
     "author_en": "Eng. Noura Al-Otaibi",
     "content_ar": "تتجه التصاميم الحديثة للمطابخ نحو استخدام هيكل ألمنيوم متين مغطى بألواح الخشب والأكريليك مع أدراج هيدروليكية ذات إغلاق صامت لمزيد من الراحة والفخامة.",
     "content_en": "Modern kitchen architecture favors robust aluminum framing clad with European acrylic doors and Austrian soft-close hardware.",
-    "cover_image_url": "/images/defaults/blog/kitchen-design-trends-2024.jpg"
+    "cover_image_url": "/images/defaults/blog/kitchen-design-trends-2024.webp"
   }
 ]

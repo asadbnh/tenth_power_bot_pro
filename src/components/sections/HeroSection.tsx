@@ -31,7 +31,7 @@ const HERO_SLIDES = [
     title_en: "Commercial Tower — Structural Glazing Facade",
     badge_ar: "زجاج سيكوريت 12مم دبل",
     badge_en: "12mm Double Tempered",
-    src: "/images/defaults/projects/project-1.jpg",
+    src: "/images/defaults/projects/project-1.webp",
   },
   {
     id: 2,

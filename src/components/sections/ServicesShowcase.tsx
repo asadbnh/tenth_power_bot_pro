@@ -180,7 +180,7 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
             const desc = isRtl
               ? (service.desc_ar || service.short_description_ar || "")
               : (service.desc_en || service.short_description_en || service.desc_ar || "");
-            const coverImage = service.cover_image_url || "/images/defaults/services/glass-facades.jpg";
+            const coverImage = service.cover_image_url || "/images/defaults/services/glass-facades.webp";
 
             return (
               <motion.article

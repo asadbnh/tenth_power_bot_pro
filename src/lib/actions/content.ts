@@ -203,7 +203,7 @@ export async function getProjectBySlug(slug: string, _locale = "ar") {
     year: project.year || "2024",
     client_ar: project.client_ar || project.client_name || "عميل مميز",
     client_en: project.client_en || project.client_name || "VIP Client",
-    cover_image_url: project.cover_image_url || "/images/defaults/projects/project-1.jpg",
+    cover_image_url: project.cover_image_url || "/images/defaults/projects/project-1.webp",
     description_ar: project.description_ar || "",
     description_en: project.description_en || project.description_ar || "",
     challenges_ar: (project.challenges_ar as string[]) || [],
@@ -331,8 +331,8 @@ export async function getGalleryItems(options?: { serviceId?: string; limit?: nu
         const media = g.media_library as { file_url?: string; cdn_url?: string } | null;
         return {
           id: g.id,
-          image_url: media?.cdn_url || media?.file_url || "/images/defaults/projects/project-1.jpg",
-          thumbnail_url: media?.cdn_url || media?.file_url || "/images/defaults/projects/project-1.jpg",
+          image_url: media?.cdn_url || media?.file_url || "/images/defaults/projects/project-1.webp",
+          thumbnail_url: media?.cdn_url || media?.file_url || "/images/defaults/projects/project-1.webp",
         };
       });
       totalCount = count ?? items.length;

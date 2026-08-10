@@ -17,24 +17,24 @@ interface Props {
 }
 
 const ALBUMS = [
-  { id: 1, title_ar: "مشاريع الزجاج", title_en: "Glass Projects", count: 24, image_url: "/images/defaults/services/tempered-glass.jpg" },
-  { id: 2, title_ar: "أعمال الألمنيوم", title_en: "Aluminum Works", count: 18, image_url: "/images/defaults/services/aluminum-works.jpg" },
-  { id: 3, title_ar: "تصاميم المطابخ", title_en: "Kitchen Designs", count: 32, image_url: "/images/defaults/services/kitchens.jpg" },
-  { id: 4, title_ar: "مشاريع الديكور", title_en: "Decoration Projects", count: 41, image_url: "/images/defaults/services/decorations.jpg" },
-  { id: 5, title_ar: "الواجهات الزجاجية", title_en: "Glass Facades", count: 15, image_url: "/images/defaults/services/glass-facades.jpg" },
-  { id: 6, title_ar: "أبواب ونوافذ", title_en: "Doors & Windows", count: 28, image_url: "/images/defaults/services/doors-windows.jpg" },
+  { id: 1, title_ar: "مشاريع الزجاج", title_en: "Glass Projects", count: 24, image_url: "/images/defaults/services/tempered-glass.webp" },
+  { id: 2, title_ar: "أعمال الألمنيوم", title_en: "Aluminum Works", count: 18, image_url: "/images/defaults/services/aluminum-works.webp" },
+  { id: 3, title_ar: "تصاميم المطابخ", title_en: "Kitchen Designs", count: 32, image_url: "/images/defaults/services/kitchens.webp" },
+  { id: 4, title_ar: "مشاريع الديكور", title_en: "Decoration Projects", count: 41, image_url: "/images/defaults/services/decorations.webp" },
+  { id: 5, title_ar: "الواجهات الزجاجية", title_en: "Glass Facades", count: 15, image_url: "/images/defaults/services/glass-facades.webp" },
+  { id: 6, title_ar: "أبواب ونوافذ", title_en: "Doors & Windows", count: 28, image_url: "/images/defaults/services/doors-windows.webp" },
 ];
 
 const DEFAULT_ITEMS = [
-  { id: "1", title_ar: "برج الملك عبد الله - واجهة هيكلية دبل معزولة", title_en: "King Abdullah Commercial Tower Facade", image_url: "/images/defaults/projects/project-1.jpg", thumbnail_url: "/images/defaults/projects/project-1.jpg" },
-  { id: "2", title_ar: "زجاج سكريت 12مم - فواصل مكاتب إدارية", title_en: "12mm Tempered Glass Partitions", image_url: "/images/defaults/services/tempered-glass.jpg", thumbnail_url: "/images/defaults/services/tempered-glass.jpg" },
-  { id: "3", title_ar: "مطبخ ألمنيوم مودرن - أسطح رخام صناعي", title_en: "Modern Aluminum Kitchen Suite", image_url: "/images/defaults/services/kitchens.jpg", thumbnail_url: "/images/defaults/services/kitchens.jpg" },
-  { id: "4", title_ar: "نوافذ ألمنيوم معزولة حرارياً كسر حراري", title_en: "Thermal Break Aluminum Windows", image_url: "/images/defaults/services/aluminum-works.jpg", thumbnail_url: "/images/defaults/services/aluminum-works.jpg" },
-  { id: "5", title_ar: "واجهة وتجهيزات فيلا سكنية فاخرة بجدة", title_en: "Luxury Residential Villa Facade", image_url: "/images/defaults/projects/project-2.jpg", thumbnail_url: "/images/defaults/projects/project-2.jpg" },
-  { id: "6", title_ar: "ديكورات زجاج واستانلس ستيل 304", title_en: "Glass & Stainless 304 Decor", image_url: "/images/defaults/services/decorations.jpg", thumbnail_url: "/images/defaults/services/decorations.jpg" },
-  { id: "7", title_ar: "أبواب زجاجية أوتوماتيكية سحب وسلايد", title_en: "Automatic Sliding Glass Doors", image_url: "/images/defaults/services/doors-windows.jpg", thumbnail_url: "/images/defaults/services/doors-windows.jpg" },
-  { id: "8", title_ar: "صيانة وتجديد واجهة برج تجاري بالرياض", title_en: "Commercial Tower Facade Restoration", image_url: "/images/defaults/services/maintenance.jpg", thumbnail_url: "/images/defaults/services/maintenance.jpg" },
-  { id: "9", title_ar: "مشروع مقاولات عامة وتجهيزات هندسية", title_en: "General Contracting & Building Engineering", image_url: "/images/defaults/services/contracting.jpg", thumbnail_url: "/images/defaults/services/contracting.jpg" },
+  { id: "1", title_ar: "برج الملك عبد الله - واجهة هيكلية دبل معزولة", title_en: "King Abdullah Commercial Tower Facade", image_url: "/images/defaults/projects/project-1.webp", thumbnail_url: "/images/defaults/projects/project-1.webp" },
+  { id: "2", title_ar: "زجاج سكريت 12مم - فواصل مكاتب إدارية", title_en: "12mm Tempered Glass Partitions", image_url: "/images/defaults/services/tempered-glass.webp", thumbnail_url: "/images/defaults/services/tempered-glass.webp" },
+  { id: "3", title_ar: "مطبخ ألمنيوم مودرن - أسطح رخام صناعي", title_en: "Modern Aluminum Kitchen Suite", image_url: "/images/defaults/services/kitchens.webp", thumbnail_url: "/images/defaults/services/kitchens.webp" },
+  { id: "4", title_ar: "نوافذ ألمنيوم معزولة حرارياً كسر حراري", title_en: "Thermal Break Aluminum Windows", image_url: "/images/defaults/services/aluminum-works.webp", thumbnail_url: "/images/defaults/services/aluminum-works.webp" },
+  { id: "5", title_ar: "واجهة وتجهيزات فيلا سكنية فاخرة بجدة", title_en: "Luxury Residential Villa Facade", image_url: "/images/defaults/projects/project-2.webp", thumbnail_url: "/images/defaults/projects/project-2.webp" },
+  { id: "6", title_ar: "ديكورات زجاج واستانلس ستيل 304", title_en: "Glass & Stainless 304 Decor", image_url: "/images/defaults/services/decorations.webp", thumbnail_url: "/images/defaults/services/decorations.webp" },
+  { id: "7", title_ar: "أبواب زجاجية أوتوماتيكية سحب وسلايد", title_en: "Automatic Sliding Glass Doors", image_url: "/images/defaults/services/doors-windows.webp", thumbnail_url: "/images/defaults/services/doors-windows.webp" },
+  { id: "8", title_ar: "صيانة وتجديد واجهة برج تجاري بالرياض", title_en: "Commercial Tower Facade Restoration", image_url: "/images/defaults/services/maintenance.webp", thumbnail_url: "/images/defaults/services/maintenance.webp" },
+  { id: "9", title_ar: "مشروع مقاولات عامة وتجهيزات هندسية", title_en: "General Contracting & Building Engineering", image_url: "/images/defaults/services/contracting.webp", thumbnail_url: "/images/defaults/services/contracting.webp" },
 ];
 
 export function GalleryPageContent({ locale, dict, initialItems }: Props) {

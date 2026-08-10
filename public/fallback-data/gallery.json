@@ -5,8 +5,8 @@
     "title_en": "King Abdullah Commercial Tower Facade",
     "category": "glass-facades",
     "album_id": 5,
-    "image_url": "/images/defaults/projects/project-1.jpg",
-    "thumbnail_url": "/images/defaults/projects/project-1.jpg"
+    "image_url": "/images/defaults/projects/project-1.webp",
+    "thumbnail_url": "/images/defaults/projects/project-1.webp"
   },
   {
     "id": "2",
@@ -14,8 +14,8 @@
     "title_en": "12mm Tempered Glass Partitions",
     "category": "tempered-glass",
     "album_id": 1,
-    "image_url": "/images/defaults/services/tempered-glass.jpg",
-    "thumbnail_url": "/images/defaults/services/tempered-glass.jpg"
+    "image_url": "/images/defaults/services/tempered-glass.webp",
+    "thumbnail_url": "/images/defaults/services/tempered-glass.webp"
   },
   {
     "id": "3",
@@ -23,8 +23,8 @@
     "title_en": "Modern Aluminum Kitchen Suite",
     "category": "kitchens",
     "album_id": 3,
-    "image_url": "/images/defaults/services/kitchens.jpg",
-    "thumbnail_url": "/images/defaults/services/kitchens.jpg"
+    "image_url": "/images/defaults/services/kitchens.webp",
+    "thumbnail_url": "/images/defaults/services/kitchens.webp"
   },
   {
     "id": "4",
@@ -32,8 +32,8 @@
     "title_en": "Thermal Break Aluminum Windows",
     "category": "aluminum-works",
     "album_id": 2,
-    "image_url": "/images/defaults/services/aluminum-works.jpg",
-    "thumbnail_url": "/images/defaults/services/aluminum-works.jpg"
+    "image_url": "/images/defaults/services/aluminum-works.webp",
+    "thumbnail_url": "/images/defaults/services/aluminum-works.webp"
   },
   {
     "id": "5",
@@ -41,8 +41,8 @@
     "title_en": "Luxury Residential Villa Facade",
     "category": "glass-facades",
     "album_id": 5,
-    "image_url": "/images/defaults/projects/project-2.jpg",
-    "thumbnail_url": "/images/defaults/projects/project-2.jpg"
+    "image_url": "/images/defaults/projects/project-2.webp",
+    "thumbnail_url": "/images/defaults/projects/project-2.webp"
   },
   {
     "id": "6",
@@ -50,8 +50,8 @@
     "title_en": "Glass & Stainless 304 Decor",
     "category": "decorations",
     "album_id": 4,
-    "image_url": "/images/defaults/services/decorations.jpg",
-    "thumbnail_url": "/images/defaults/services/decorations.jpg"
+    "image_url": "/images/defaults/services/decorations.webp",
+    "thumbnail_url": "/images/defaults/services/decorations.webp"
   },
   {
     "id": "7",
@@ -59,8 +59,8 @@
     "title_en": "Automatic Sliding Glass Doors",
     "category": "doors-windows",
     "album_id": 6,
-    "image_url": "/images/defaults/services/doors-windows.jpg",
-    "thumbnail_url": "/images/defaults/services/doors-windows.jpg"
+    "image_url": "/images/defaults/services/doors-windows.webp",
+    "thumbnail_url": "/images/defaults/services/doors-windows.webp"
   },
   {
     "id": "8",
@@ -68,8 +68,8 @@
     "title_en": "Commercial Tower Facade Restoration",
     "category": "maintenance",
     "album_id": 5,
-    "image_url": "/images/defaults/services/maintenance.jpg",
-    "thumbnail_url": "/images/defaults/services/maintenance.jpg"
+    "image_url": "/images/defaults/services/maintenance.webp",
+    "thumbnail_url": "/images/defaults/services/maintenance.webp"
   },
   {
     "id": "9",
@@ -77,7 +77,7 @@
     "title_en": "General Contracting & Building Engineering",
     "category": "contracting",
     "album_id": 4,
-    "image_url": "/images/defaults/services/contracting.jpg",
-    "thumbnail_url": "/images/defaults/services/contracting.jpg"
+    "image_url": "/images/defaults/services/contracting.webp",
+    "thumbnail_url": "/images/defaults/services/contracting.webp"
   }
 ]

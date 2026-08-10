@@ -38,7 +38,7 @@ export async function generateMetadata({
       canonical: `${appUrl}/${locale}/blog/${slug}`,
       languages: { ar: `${appUrl}/ar/blog/${slug}`, en: `${appUrl}/en/blog/${slug}` },
     },
-    openGraph: { title, description, images: [String(article?.cover_image_url || "/images/defaults/projects/project-1.jpg")] },
+    openGraph: { title, description, images: [String(article?.cover_image_url || "/images/defaults/projects/project-1.webp")] },
   };
 }
 
@@ -62,7 +62,7 @@ export default async function ArticleDetailPage({
     headline: titleText,
     description: article?.excerpt_ar || article?.excerpt_en || "",
     url: `${appUrl}/${validLocale}/blog/${slug}`,
-    image: article?.cover_image_url || `${appUrl}/images/defaults/projects/project-1.jpg`,
+    image: article?.cover_image_url || `${appUrl}/images/defaults/projects/project-1.webp`,
     datePublished: article?.published_at || new Date().toISOString(),
     author: {
       "@type": "Person",

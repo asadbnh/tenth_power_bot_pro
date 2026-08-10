@@ -38,7 +38,7 @@ export async function generateMetadata({
       canonical: `${appUrl}/${locale}/projects/${slug}`,
       languages: { ar: `${appUrl}/ar/projects/${slug}`, en: `${appUrl}/en/projects/${slug}` },
     },
-    openGraph: { title, description, images: [String(project?.cover_image_url || "/images/defaults/projects/project-1.jpg")] },
+    openGraph: { title, description, images: [String(project?.cover_image_url || "/images/defaults/projects/project-1.webp")] },
   };
 }
 
@@ -62,7 +62,7 @@ export default async function ProjectDetailPage({
     name: projectName,
     description: project?.description_ar || project?.description_en || "",
     url: `${appUrl}/${validLocale}/projects/${slug}`,
-    image: project?.cover_image_url || `${appUrl}/images/defaults/projects/project-1.jpg`,
+    image: project?.cover_image_url || `${appUrl}/images/defaults/projects/project-1.webp`,
     provider: {
       "@type": "Organization",
       name: "WebTaky - Tenth Power Contracting",

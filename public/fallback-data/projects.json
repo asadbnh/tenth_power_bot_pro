@@ -37,9 +37,9 @@
     "project_value": 1450000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/defaults/projects/project-1.jpg",
-    "before_image_url": "/images/defaults/projects/project-1-before.jpg",
-    "after_image_url": "/images/defaults/projects/project-1-after.jpg"
+    "cover_image_url": "/images/defaults/projects/project-1.webp",
+    "before_image_url": "/images/defaults/projects/project-1-before.webp",
+    "after_image_url": "/images/defaults/projects/project-1-after.webp"
   },
   {
     "slug": "luxury-villa-facade",
@@ -75,9 +75,9 @@
     "project_value": 420000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/defaults/projects/project-2.jpg",
-    "before_image_url": "/images/defaults/projects/project-2-before.jpg",
-    "after_image_url": "/images/defaults/projects/project-2-after.jpg"
+    "cover_image_url": "/images/defaults/projects/project-2.webp",
+    "before_image_url": "/images/defaults/projects/project-2-before.webp",
+    "after_image_url": "/images/defaults/projects/project-2-after.webp"
   },
   {
     "slug": "tempered-glass-office",
@@ -113,9 +113,9 @@
     "project_value": 280000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/defaults/projects/project-3.jpg",
-    "before_image_url": "/images/defaults/projects/project-3-before.jpg",
-    "after_image_url": "/images/defaults/projects/project-3-after.jpg"
+    "cover_image_url": "/images/defaults/projects/project-3.webp",
+    "before_image_url": "/images/defaults/projects/project-3-before.webp",
+    "after_image_url": "/images/defaults/projects/project-3-after.webp"
   },
   {
     "slug": "modern-kitchen-suite",
@@ -147,8 +147,8 @@
     "project_value": 650000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/defaults/projects/project-4.jpg",
-    "before_image_url": "/images/defaults/projects/project-4-before.jpg",
-    "after_image_url": "/images/defaults/projects/project-4-after.jpg"
+    "cover_image_url": "/images/defaults/projects/project-4.webp",
+    "before_image_url": "/images/defaults/projects/project-4-before.webp",
+    "after_image_url": "/images/defaults/projects/project-4-after.webp"
   }
 ]

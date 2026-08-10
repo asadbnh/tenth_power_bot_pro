@@ -38,7 +38,7 @@ export async function generateMetadata({
       canonical: `${appUrl}/${locale}/services/${slug}`,
       languages: { ar: `${appUrl}/ar/services/${slug}`, en: `${appUrl}/en/services/${slug}` },
     },
-    openGraph: { title, description, images: [String(service?.cover_image_url || "/images/defaults/services/tempered-glass.jpg")] },
+    openGraph: { title, description, images: [String(service?.cover_image_url || "/images/defaults/services/tempered-glass.webp")] },
   };
 }
 
