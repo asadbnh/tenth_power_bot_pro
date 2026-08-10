@@ -9,6 +9,7 @@ import { BeforeAfterSlider } from "@/components/sections/BeforeAfterSlider";
 import { FaqAccordion } from "@/components/sections/FaqAccordion";
 import { GoogleMapsSection } from "@/components/sections/GoogleMapsSection";
 import { CTASection } from "@/components/sections/CTASection";
+import { DevNoticeModal } from "@/components/ui/DevNoticeModal";
 
 export async function generateMetadata({
   params,
@@ -86,6 +87,9 @@ export default async function HomePage({
 
       {/* 8. Call To Action Section */}
       <CTASection locale={validLocale} dict={dict} />
+
+      {/* 9. Temporary Development Notice Modal */}
+      <DevNoticeModal locale={validLocale} />
     </>
   );
 }
