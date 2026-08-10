@@ -35,20 +35,20 @@ export function BeforeAfterSlider({ locale }: Props) {
   };
 
   return (
-    <section className="py-6 sm:py-16 bg-background border-b border-border-light overflow-hidden">
+    <section className="py-12 sm:py-20 bg-background border-b border-border-light overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-4 sm:mb-8 space-y-1.5">
-          <span className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-primary-100 dark:bg-primary-950 text-xs font-semibold text-primary-600 dark:text-primary-300">
+        <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-10 space-y-2">
+          <span className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-amber-500/10 text-xs font-semibold text-amber-600 dark:text-amber-400">
             <Sparkles className="w-3.5 h-3.5" />
             {isRtl ? "المقارنة الميدانية" : "Before & After Transformation"}
           </span>
-          <h2 className="text-xl sm:text-3xl font-extrabold">
-            {isRtl ? "مقارنة التحول المعماري وجودة الإنهاء" : "Experience the Architectural Transformation"}
+          <h2 className="text-xl sm:text-3xl font-extrabold text-text-primary">
+            {isRtl ? "مقارنة التحول المعماري وديكور المقاهي" : "Experience the Architectural Transformation"}
           </h2>
           <p className="text-text-secondary text-xs sm:text-sm">
             {isRtl
-              ? "استعراض تفاعلي يوضح التحول الميداني ودقة تفاصيل تركيب الواجهات الزجاجية والألمنيوم"
-              : "Interactive slider showcasing technical precision in structural glass & aluminum projects"}
+              ? "استعراض تفاعلي يوضح التحول قبل وبعد عملية تنفيذ الديكور والتجهيز الفني في المملكة"
+              : "Interactive slider showcasing technical precision in fit-out & decoration projects"}
           </p>
         </div>
 
@@ -65,34 +65,44 @@ export function BeforeAfterSlider({ locale }: Props) {
           className="relative aspect-[16/9] max-w-4xl mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl border border-border-light select-none cursor-ew-resize"
         >
           {/* AFTER Image (Background) */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary-900 via-slate-900 to-indigo-950 flex items-center justify-center text-white">
-            <div className="text-center p-4 sm:p-8 space-y-1 sm:space-y-2">
-              <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
-                {isRtl ? "بعد التنفيذ — واجهة زجاجية هيكلية" : "AFTER — Structural Glazing Facade"}
+          <div className="absolute inset-0 w-full h-full bg-[#050b18]">
+            <img
+              src="/images/defaults/projects/cafe-after.png"
+              alt="After decoration"
+              className="w-full h-full object-cover pointer-events-none"
+            />
+            {/* Label Overlay */}
+            <div className="absolute bottom-4 end-4 z-10">
+              <span className="px-3 py-1 rounded-full bg-emerald-500/90 text-white text-[10px] sm:text-xs font-bold shadow-lg backdrop-blur-sm">
+                {isRtl ? "بعد التنفيذ — ديكور كافي فاخر" : "AFTER — Luxury Cafe Decor"}
               </span>
-              <p className="text-base sm:text-2xl font-extrabold">{isRtl ? "إنهاء معماري معتمد وعزل حراري كامل" : "Certified Finish & Thermal Insulation"}</p>
             </div>
           </div>
 
           {/* BEFORE Image (Clipped Overlay) */}
           <div
-            className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-stone-900 flex items-center justify-center text-white overflow-hidden"
+            className="absolute inset-0 w-full h-full bg-[#101010] overflow-hidden"
             style={{ clipPath: `polygon(0 0, ${sliderPosition}% 0, ${sliderPosition}% 100%, 0 100%)` }}
           >
-            <div className="text-center p-4 sm:p-8 space-y-1 sm:space-y-2">
-              <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/30">
-                {isRtl ? "قبل التنفيذ — المنشأة السابقة" : "BEFORE — Previous Structure"}
+            <img
+              src="/images/defaults/projects/cafe-before.png"
+              alt="Before decoration"
+              className="w-full h-full object-cover pointer-events-none"
+            />
+            {/* Label Overlay */}
+            <div className="absolute bottom-4 start-4 z-10">
+              <span className="px-3 py-1 rounded-full bg-amber-500/90 text-white text-[10px] sm:text-xs font-bold shadow-lg backdrop-blur-sm">
+                {isRtl ? "قبل التنفيذ — الهيكل الخرساني" : "BEFORE — Concrete Shell"}
               </span>
-              <p className="text-base sm:text-2xl font-extrabold text-zinc-400">{isRtl ? "مبنى قبل مرحلة التطوير الهندسي" : "Structure Prior to Development"}</p>
             </div>
           </div>
 
-          {/* Slider Handle */}
+          {/* Slider Handle Line */}
           <div
-            className="absolute top-0 bottom-0 w-1 bg-white shadow-2xl cursor-ew-resize flex items-center justify-center"
+            className="absolute top-0 bottom-0 w-0.5 bg-white/80 shadow-2xl cursor-ew-resize flex items-center justify-center z-20 pointer-events-none"
             style={{ left: `${sliderPosition}%` }}
           >
-            <div className="w-10 h-10 rounded-full bg-white text-primary-900 font-bold shadow-xl border-2 border-primary-500 flex items-center justify-center text-xs">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white text-primary-950 font-bold shadow-2xl border-2 border-amber-500 flex items-center justify-center text-sm pointer-events-auto transform -translate-x-1/2">
               ↔
             </div>
           </div>

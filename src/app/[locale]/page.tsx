@@ -4,7 +4,6 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getServices, getFaqs } from "@/lib/actions/content";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ServicesShowcase } from "@/components/sections/ServicesShowcase";
-import { AnimatedStats } from "@/components/sections/AnimatedStats";
 import { CinematicGlassVideoSection } from "@/components/sections/CinematicGlassVideoSection";
 import { BeforeAfterSlider } from "@/components/sections/BeforeAfterSlider";
 import { FaqAccordion } from "@/components/sections/FaqAccordion";
