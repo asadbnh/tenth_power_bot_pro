@@ -1,18 +1,18 @@
 [
   {
     "slug": "tempered-glass",
-    "image_url": "/images/defaults/services/luxury-partitions.png"
+    "image_url": "/images/defaults/services/luxury-partitions.webp"
   },
   {
     "slug": "glass-facades",
-    "image_url": "/images/defaults/services/luxury-facade.png"
+    "image_url": "/images/defaults/services/luxury-facade.webp"
   },
   {
     "slug": "aluminum-works",
-    "image_url": "/images/defaults/services/luxury-sliding-doors.png"
+    "image_url": "/images/defaults/services/luxury-sliding-doors.webp"
   },
   {
     "slug": "kitchens-and-decor",
-    "image_url": "/images/defaults/services/luxury-kitchen.png"
+    "image_url": "/images/defaults/services/luxury-kitchen.webp"
   }
 ]

@@ -67,7 +67,7 @@ export function BeforeAfterSlider({ locale }: Props) {
           {/* AFTER Image (Background) */}
           <div className="absolute inset-0 w-full h-full bg-[#050b18]">
             <img
-              src="/images/defaults/projects/cafe-after.png"
+              src="/images/defaults/projects/cafe-after.webp"
               alt="After decoration"
               className="w-full h-full object-cover pointer-events-none"
             />
@@ -85,7 +85,7 @@ export function BeforeAfterSlider({ locale }: Props) {
             style={{ clipPath: `polygon(0 0, ${sliderPosition}% 0, ${sliderPosition}% 100%, 0 100%)` }}
           >
             <img
-              src="/images/defaults/projects/cafe-before.png"
+              src="/images/defaults/projects/cafe-before.webp"
               alt="Before decoration"
               className="w-full h-full object-cover pointer-events-none"
             />

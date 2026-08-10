@@ -10,7 +10,7 @@
     "price_from": 180.0,
     "price_to": 350.0,
     "price_unit": "متر مربع",
-    "cover_image_url": "/images/defaults/services/luxury-partitions.png",
+    "cover_image_url": "/images/defaults/services/luxury-partitions.webp",
     "icon": "Layers3",
     "features_ar": [
       "مقاوم للصدمات والحرارة العالية",
@@ -78,7 +78,7 @@
     "price_from": 450.0,
     "price_to": 900.0,
     "price_unit": "متر مربع",
-    "cover_image_url": "/images/defaults/services/luxury-facade.png",
+    "cover_image_url": "/images/defaults/services/luxury-facade.webp",
     "icon": "Building2",
     "features_ar": [
       "زجاج مزدوج معزول حرارياً Low-E",
@@ -134,7 +134,7 @@
     "price_from": 320.0,
     "price_to": 650.0,
     "price_unit": "متر مربع",
-    "cover_image_url": "/images/defaults/services/luxury-sliding-doors.png",
+    "cover_image_url": "/images/defaults/services/luxury-sliding-doors.webp",
     "icon": "RectangleHorizontal",
     "features_ar": [
       "كسر حراري عالي الكفاءة توفير التكييف",
@@ -171,7 +171,7 @@
     "price_from": 1200.0,
     "price_to": 2800.0,
     "price_unit": "متر طولي",
-    "cover_image_url": "/images/defaults/services/luxury-kitchen.png",
+    "cover_image_url": "/images/defaults/services/luxury-kitchen.webp",
     "icon": "PaintBucket",
     "features_ar": [
       "هيكل ألمنيوم متين مقاوم للماء والحشرات",

@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: process.env.NEXT_PUBLIC_R2_CUSTOM_DOMAIN || "media.webtaky.com",
+        hostname: process.env.NEXT_PUBLIC_R2_CUSTOM_DOMAIN || "pub-e9788e46474044d585e2622e2c6ce74d.r2.dev",
       },
     ],
     formats: ["image/avif", "image/webp"],
