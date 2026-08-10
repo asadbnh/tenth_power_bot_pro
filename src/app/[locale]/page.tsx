@@ -70,8 +70,8 @@ export default async function HomePage({
       {/* 2. Services Showcase (Fed from Supabase DB) */}
       <ServicesShowcase locale={validLocale} dict={dict} initialServices={dbServices as any[]} />
 
-      {/* 3. Animated Statistics */}
-      <AnimatedStats locale={validLocale} dict={dict} />
+      {/* 3. Animated Statistics 
+      <AnimatedStats locale={validLocale} dict={dict} />*/}
 
       {/* 4. Cinematic Field Video Section (Workers Installing Glass Facades) */}
       <CinematicGlassVideoSection locale={validLocale} />

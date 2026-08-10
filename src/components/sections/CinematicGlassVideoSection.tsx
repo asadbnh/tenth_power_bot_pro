@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Play, Pause, HardHat } from "lucide-react";
+import { HardHat } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
 
 interface Props {
@@ -19,19 +19,7 @@ export function CinematicGlassVideoSection({ locale, videoUrl = "/videos/default
   const isRtl = locale === "ar";
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
   const [hasVideoError, setHasVideoError] = useState(false);
-
-  // Toggle video playback
-  const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (isPlaying) {
-      videoRef.current.pause();
-    } else {
-      videoRef.current.play().catch(() => {});
-    }
-    setIsPlaying(!isPlaying);
-  };
 
   // Canvas Cinematic Animation Fallback (Crane & Glass Facade Camera Motion)
   useEffect(() => {
@@ -200,16 +188,6 @@ export function CinematicGlassVideoSection({ locale, videoUrl = "/videos/default
             )}
           </motion.h2>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-xs sm:text-base text-slate-300 leading-relaxed max-w-2xl mx-auto"
-          >
-            {isRtl
-              ? "توثيق ميداني يوضح آليات السلامة والدقة الهندسية أثناء رفع وتثبيت الواجهات الزجاجية والهياكل المعمارية الضخمة."
-              : "Field documentation illustrating safety standards and precision during structural glass panel installation."}
-          </motion.p>
         </div>
 
         {/* Video Screen Container */}
@@ -243,41 +221,7 @@ export function CinematicGlassVideoSection({ locale, videoUrl = "/videos/default
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
 
 
-          {/* Bottom Controls & Video Metadata Bar */}
-          <div className="absolute bottom-4 inset-x-4 sm:bottom-6 sm:inset-x-6 z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/15">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={togglePlay}
-                className="w-12 h-12 rounded-xl bg-amber-500 hover:bg-amber-400 text-primary-950 flex items-center justify-center font-bold shadow-lg transition-transform active:scale-90 shrink-0"
-                aria-label={isPlaying ? "Pause Video" : "Play Video"}
-              >
-                {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ms-0.5" />}
-              </button>
 
-              <div>
-                <h3 className="text-sm sm:text-base font-extrabold text-white leading-snug">
-                  {isRtl ? "تركيب واجهات زجاج سيكوريت دبل 12 مم" : "Double Tempered 12mm Glazing Installation"}
-                </h3>
-                <p className="text-xs text-slate-300 font-medium">
-                  {isRtl ? "مشروع برج الملك فهد التجاري — الرياض" : "King Fahd Commercial Tower — Riyadh"}
-                </p>
-              </div>
-            </div>
-
-      {/*
-<div className="flex items-center gap-4 text-xs font-semibold text-amber-300">
-  <span className="flex items-center gap-1.5">
-    <Building2 className="w-4 h-4 text-amber-400" />
-    {isRtl ? "ارتفاع 30 طابقاً" : "30 Stories Height"}
-  </span>
-
-  <span className="flex items-center gap-1.5">
-    <ShieldCheck className="w-4 h-4 text-emerald-400" />
-    {isRtl ? "رافعات شفط ألمانية" : "German Vacuum Cranes"}
-  </span>
-</div>
-*/}
-          </div>
         </motion.div>
       </div>
     </section>
