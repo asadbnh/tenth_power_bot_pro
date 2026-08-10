@@ -72,7 +72,7 @@ export function BeforeAfterSlider({ locale }: Props) {
               className="w-full h-full object-cover pointer-events-none"
             />
             {/* Label Overlay */}
-            <div className="absolute bottom-4 end-4 z-10">
+            <div className="absolute bottom-4 right-4 z-10">
               <span className="px-3 py-1 rounded-full bg-emerald-500/90 text-white text-[10px] sm:text-xs font-bold shadow-lg backdrop-blur-sm">
                 {isRtl ? "بعد التنفيذ — ديكور كافي فاخر" : "AFTER — Luxury Cafe Decor"}
               </span>
@@ -90,7 +90,7 @@ export function BeforeAfterSlider({ locale }: Props) {
               className="w-full h-full object-cover pointer-events-none"
             />
             {/* Label Overlay */}
-            <div className="absolute bottom-4 start-4 z-10">
+            <div className="absolute bottom-4 left-4 z-10">
               <span className="px-3 py-1 rounded-full bg-amber-500/90 text-white text-[10px] sm:text-xs font-bold shadow-lg backdrop-blur-sm">
                 {isRtl ? "قبل التنفيذ — الهيكل الخرساني" : "BEFORE — Concrete Shell"}
               </span>
