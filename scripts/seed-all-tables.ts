@@ -12,9 +12,9 @@ export const COMPANY_CONFIG = {
   name_en: "Tenth Power Glass & Aluminum Contracting",
   description_ar: "المؤسسة الرائدة في المملكة العربية السعودية المتخصصة في تنفيذ أعمال الزجاج السكريت المقوى، الواجهات الزجاجية الكرتن وول والسبايدر، قطاعات الألمنيوم المعزولة، والمطابخ العصرية بأعلى معايير الجودة والضمان الشامل 10 سنوات.",
   description_en: "Leading Saudi enterprise specializing in high-grade tempered glass, glass facades, curtain wall & spider systems, thermal-break aluminum profiles, and modern kitchens with full 10-year warranty.",
-  phone_primary: "+966551234567",
-  phone_secondary: "+966112345678",
-  whatsapp_number: "+966551234567",
+  phone_primary: "+966532438253",
+  phone_secondary: "+966532438253",
+  whatsapp_number: "966532438253",
   email: "info@powerof10.sa",
   website_url: "https://powerof10.netlify.app",
   tax_number: "310000000000003",
@@ -25,8 +25,7 @@ export const COMPANY_CONFIG = {
     tiktok: "https://tiktok.com/@tenthpowerglass",
     telegram_bot: "https://t.me/tenthpower_bot",
     telegram_channel: "https://t.me/TenthPowerSA",
-    twitter: "https://twitter.com/tenthpowerglass",
-    linkedin: "https://linkedin.com/company/tenthpowerglass",
+   
   },
   address: {
     city_ar: "الرياض",
@@ -574,7 +573,7 @@ async function seedAllTables() {
       'م. خالد العتيبي', 'Eng. Khalid Al-Otaibi', 'مدير مشاريع - شركة الإنماء', 'Project Manager',
       'تعامل راقي جداً والتزام تام بالمواعيد والمخططات الهندسية. جودة الواجهات الزجاجية وسرعة التركيب كانت ممتازة.',
       'Exceptional professionalism and strict adherence to deadlines. Glass facade quality was superb.',
-      5, true, true, '/images/defaults/testimonials/client-1.webp'
+      5, true, true, ${`${R2_PUBLIC_BASE}/testimonials/client-1.webp`}
     );
   `;
 

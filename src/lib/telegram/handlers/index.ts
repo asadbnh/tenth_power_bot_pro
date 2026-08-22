@@ -186,7 +186,7 @@ export async function handleTextMessage(msg: TelegramMessage) {
       price_from: price,
       price_to: price * 1.5,
       icon: "Layers",
-      cover_image_url: "/images/defaults/services/luxury-facade.webp",
+      cover_image_url: "https://pub-e9788e46474044d585e2622e2c6ce74d.r2.dev/services/luxury-facade.webp",
       is_active: true,
       is_featured: false,
     }).select("id").single();
@@ -246,7 +246,7 @@ export async function handleTextMessage(msg: TelegramMessage) {
       city,
       project_value: val,
       status: "completed",
-      cover_image_url: "/images/defaults/projects/office-partition.webp",
+      cover_image_url: "https://pub-e9788e46474044d585e2622e2c6ce74d.r2.dev/projects/project-1.webp",
       is_featured: true,
     }).select("id").single();
 
