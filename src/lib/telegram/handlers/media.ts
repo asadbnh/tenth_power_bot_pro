@@ -116,14 +116,14 @@ export async function handleGalleryAlbumDelete(chatId: number, id: string, messa
   await handleGalleryAlbumsList(chatId, messageId);
 }
 
-// ─── Direct Telegram Photo Message Listener ───────────────────────────
+// ─── Direct Telegram Photo & Video Message Listener ───────────────────
 
-export async function handlePhotoUpload(msg: TelegramMessage) {
+export async function handlePhotoUpload(msg: TelegramMessage, targetFolder: "services" | "projects" | "gallery" | "advertisements" | "uploads" = "uploads") {
   const chatId = msg.chat.id;
   if (!msg.photo || msg.photo.length === 0) return;
 
   const largestPhoto = msg.photo[msg.photo.length - 1];
-  await sendMessage(chatId, `⏳ <b>جاري استلام ومعالجة الصورة وتسجيلها في مكتبة الوسائط...</b>`);
+  await sendMessage(chatId, `⏳ <b>جاري استلام الصورة ورفعها مباشرة إلى خادم Cloudflare R2 في مجلد [${targetFolder}]...</b>`);
 
   try {
     const fileRes = await getFile(largestPhoto.file_id);
@@ -133,7 +133,24 @@ export async function handlePhotoUpload(msg: TelegramMessage) {
     }
 
     const tgUrl = getTelegramFileUrl(fileRes.result.file_path);
-    const fileName = `telegram-upload-${Date.now()}.jpg`;
+    
+    // Download image buffer from Telegram
+    const downloadRes = await fetch(tgUrl);
+    if (!downloadRes.ok) {
+      await sendMessage(chatId, `❌ فشل في جلب ملف الصورة من خادم تلجرام.`);
+      return;
+    }
+
+    const arrayBuf = await downloadRes.arrayBuffer();
+    const imageBuffer = Buffer.from(arrayBuf);
+    const originalFileName = `telegram-${Date.now()}.jpg`;
+
+    // Upload directly to Cloudflare R2
+    const { uploadToR2 } = await import("@/lib/storage/r2");
+    const r2Result = await uploadToR2(imageBuffer, targetFolder, originalFileName, "image/jpeg");
+
+    const permanentUrl = r2Result.success && r2Result.url ? r2Result.url : tgUrl;
+    const webpUrl = r2Result.webpUrl || permanentUrl;
 
     const db = createDbClient();
     const { data: company } = await db.from("companies").select("id").limit(1).single();
@@ -141,35 +158,35 @@ export async function handlePhotoUpload(msg: TelegramMessage) {
 
     const { data: media } = await db.from("media_library").insert({
       company_id: companyId,
-      file_name: fileName,
-      original_name: fileName,
-      file_url: tgUrl,
-      cdn_url: tgUrl,
-      webp_url: tgUrl,
+      file_name: originalFileName,
+      original_name: originalFileName,
+      file_url: permanentUrl,
+      cdn_url: permanentUrl,
+      webp_url: webpUrl,
       mime_type: "image/jpeg",
       file_size: largestPhoto.file_size,
       width: largestPhoto.width,
       height: largestPhoto.height,
-      storage_provider: "telegram",
-      storage_path: fileRes.result.file_path,
-    }).select("id, file_url").single();
+      storage_provider: "r2",
+      storage_path: r2Result.key || `uploads/${originalFileName}`,
+    }).select("id").single();
 
+    // Add metadata
     if (media?.id) {
       await db.from("media_metadata").insert({
         media_id: media.id,
-        alt_text_ar: "صورة جديدة من أعمال القوة العاشرة",
-        alt_text_en: "Tenth Power project photo",
-        caption_ar: "تم الرفع عبر لوحة تلجرام",
+        alt_text_ar: "صورة مرفوعة عبر بوت تلجرام",
+        caption_ar: msg.caption || "مرفوعات الوسائط",
       });
     }
 
     await sendMessage(
       chatId,
-      `✅ <b>تم رفع وتسجيل الصورة بنجاح!</b>\n\n🆔 <b>المعرّف:</b> <code>${media.id}</code>\n📐 <b>الأبعاد:</b> ${largestPhoto.width}x${largestPhoto.height}\n🔗 <b>الرابط:</b> <a href="${tgUrl}">عرض الصورة</a>\n\n🔔 <b>هل ترغب في إرسال إشعار فوري لعملاء التطبيق بهذه الصورة؟</b>`,
-      { reply_markup: Keyboards.askPushPrompt("photo", media.id) }
+      `✅ <b>تم رفع الصورة بنجاح إلى Cloudflare R2!</b>\n\n📁 <b>المجلد:</b> <code>powerof/${targetFolder}/</code>\n📐 <b>الأبعاد:</b> ${largestPhoto.width}x${largestPhoto.height} px\n💾 <b>الحجم:</b> ${Math.round((largestPhoto.file_size || 0) / 1024)} KB\n🔗 <b>الرابط الدائم:</b>\n<code>${permanentUrl}</code>\n\n🔔 <b>هل ترغب في إرسال إشعار فوري لعملاء تطبيق الأندرويد بهذه الصورة؟</b>`,
+      { reply_markup: Keyboards.askPushPrompt("photo", media?.id || "photo-" + Date.now()) }
     );
-  } catch (err) {
-    console.error("Photo upload handling error:", err);
-    await sendMessage(chatId, `❌ حدث خطأ أثناء معالجة الصورة.`);
+  } catch (err: any) {
+    console.error("Photo upload error:", err);
+    await sendMessage(chatId, `❌ حدث خطأ أثناء معالجة ورفع الصورة: ${err?.message || "Unknown error"}`);
   }
 }

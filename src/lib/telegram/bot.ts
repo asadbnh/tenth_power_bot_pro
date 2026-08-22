@@ -17,7 +17,9 @@ export type TelegramMessage = {
   from: { id: number; first_name: string; username?: string };
   chat: { id: number; type: string };
   text?: string;
+  caption?: string;
   photo?: Array<{ file_id: string; file_size: number; width: number; height: number }>;
+  video?: { file_id: string; file_size?: number; width?: number; height?: number; duration?: number };
   document?: { file_id: string; file_name: string; mime_type: string };
   date: number;
 };
