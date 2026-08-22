@@ -1,15 +1,9 @@
--- ═══════════════════════════════════════════════════════════════════════
--- WebTaky Enterprise Platform — Initial Database Schema
--- Migration: 001_initial_schema.sql
--- Description: Creates all 35+ tables for the complete platform
--- ═══════════════════════════════════════════════════════════════════════
 
--- Enable required extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";    -- Trigram similarity for search
 
 -- ─── Companies ───────────────────────────────────────────────────────
-CREATE TABLE companies (
+CREATE TABLE IF NOT EXISTS companies (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name_ar TEXT NOT NULL,
   name_en TEXT NOT NULL,
@@ -42,7 +36,7 @@ CREATE TABLE companies (
 );
 
 -- ─── Categories ──────────────────────────────────────────────────────
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   parent_id UUID REFERENCES categories(id) ON DELETE SET NULL,
@@ -60,7 +54,7 @@ CREATE TABLE categories (
 );
 
 -- ─── Services ────────────────────────────────────────────────────────
-CREATE TABLE services (
+CREATE TABLE IF NOT EXISTS services (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   category_id UUID REFERENCES categories(id) ON DELETE SET NULL,
@@ -83,6 +77,8 @@ CREATE TABLE services (
   is_featured BOOLEAN NOT NULL DEFAULT false,
   is_active BOOLEAN NOT NULL DEFAULT true,
   view_count INTEGER NOT NULL DEFAULT 0,
+  review_count INTEGER NOT NULL DEFAULT 0,
+  rating_avg DECIMAL(3, 2) NOT NULL DEFAULT 5.00,
   seo_keywords_ar JSONB,
   seo_keywords_en JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -91,7 +87,7 @@ CREATE TABLE services (
 );
 
 -- ─── Projects ────────────────────────────────────────────────────────
-CREATE TABLE projects (
+CREATE TABLE IF NOT EXISTS projects (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   service_id UUID REFERENCES services(id) ON DELETE SET NULL,
@@ -111,13 +107,15 @@ CREATE TABLE projects (
   is_featured BOOLEAN NOT NULL DEFAULT false,
   is_active BOOLEAN NOT NULL DEFAULT true,
   view_count INTEGER NOT NULL DEFAULT 0,
+  review_count INTEGER NOT NULL DEFAULT 0,
+  rating_avg DECIMAL(3, 2) NOT NULL DEFAULT 5.00,
   specifications JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE(company_id, slug)
 );
 
 -- ─── Articles ────────────────────────────────────────────────────────
-CREATE TABLE articles (
+CREATE TABLE IF NOT EXISTS articles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   author_id UUID,
@@ -141,7 +139,7 @@ CREATE TABLE articles (
 );
 
 -- ─── Testimonials ────────────────────────────────────────────────────
-CREATE TABLE testimonials (
+CREATE TABLE IF NOT EXISTS testimonials (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   service_id UUID REFERENCES services(id) ON DELETE SET NULL,
@@ -159,7 +157,7 @@ CREATE TABLE testimonials (
 );
 
 -- ─── FAQs ────────────────────────────────────────────────────────────
-CREATE TABLE faqs (
+CREATE TABLE IF NOT EXISTS faqs (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   service_id UUID REFERENCES services(id) ON DELETE SET NULL,
@@ -174,9 +172,9 @@ CREATE TABLE faqs (
 );
 
 -- ─── Media Library ───────────────────────────────────────────────────
-CREATE TABLE media_library (
+CREATE TABLE IF NOT EXISTS media_library (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  company_id UUID REFERENCES companies(id) ON DELETE CASCADE,
   file_name TEXT NOT NULL,
   original_name TEXT NOT NULL,
   file_url TEXT NOT NULL,
@@ -195,7 +193,7 @@ CREATE TABLE media_library (
 );
 
 -- ─── Media Metadata ──────────────────────────────────────────────────
-CREATE TABLE media_metadata (
+CREATE TABLE IF NOT EXISTS media_metadata (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   media_id UUID NOT NULL REFERENCES media_library(id) ON DELETE CASCADE,
   title_ar TEXT,
@@ -215,7 +213,7 @@ CREATE TABLE media_metadata (
 );
 
 -- ─── SEO Metadata ────────────────────────────────────────────────────
-CREATE TABLE seo_metadata (
+CREATE TABLE IF NOT EXISTS seo_metadata (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   entity_type TEXT NOT NULL,
@@ -242,7 +240,7 @@ CREATE TABLE seo_metadata (
 );
 
 -- ─── City Pages ──────────────────────────────────────────────────────
-CREATE TABLE city_pages (
+CREATE TABLE IF NOT EXISTS city_pages (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   city_name_ar TEXT NOT NULL,
@@ -261,7 +259,7 @@ CREATE TABLE city_pages (
 );
 
 -- ─── City Services (junction) ────────────────────────────────────────
-CREATE TABLE city_services (
+CREATE TABLE IF NOT EXISTS city_services (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   city_page_id UUID NOT NULL REFERENCES city_pages(id) ON DELETE CASCADE,
   service_id UUID NOT NULL REFERENCES services(id) ON DELETE CASCADE,
@@ -274,7 +272,7 @@ CREATE TABLE city_services (
 );
 
 -- ─── Users (leads/customers) ────────────────────────────────────────
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   full_name TEXT,
@@ -287,11 +285,12 @@ CREATE TABLE users (
   utm_medium TEXT,
   utm_campaign TEXT,
   metadata JSONB,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT users_company_phone_key UNIQUE (company_id, phone)
 );
 
 -- ─── Appointments ────────────────────────────────────────────────────
-CREATE TABLE appointments (
+CREATE TABLE IF NOT EXISTS appointments (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -305,7 +304,7 @@ CREATE TABLE appointments (
 );
 
 -- ─── Quote Requests ──────────────────────────────────────────────────
-CREATE TABLE quote_requests (
+CREATE TABLE IF NOT EXISTS quote_requests (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -321,7 +320,7 @@ CREATE TABLE quote_requests (
 );
 
 -- ─── Messages ────────────────────────────────────────────────────────
-CREATE TABLE messages (
+CREATE TABLE IF NOT EXISTS messages (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -334,7 +333,7 @@ CREATE TABLE messages (
 );
 
 -- ─── Chat Sessions ──────────────────────────────────────────────────
-CREATE TABLE chat_sessions (
+CREATE TABLE IF NOT EXISTS chat_sessions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -346,7 +345,7 @@ CREATE TABLE chat_sessions (
 );
 
 -- ─── Chat Messages ──────────────────────────────────────────────────
-CREATE TABLE chat_messages (
+CREATE TABLE IF NOT EXISTS chat_messages (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   session_id UUID NOT NULL REFERENCES chat_sessions(id) ON DELETE CASCADE,
   role TEXT NOT NULL CHECK (role IN ('user', 'assistant', 'system')),
@@ -356,7 +355,7 @@ CREATE TABLE chat_messages (
 );
 
 -- ─── AI Prompts ──────────────────────────────────────────────────────
-CREATE TABLE ai_prompts (
+CREATE TABLE IF NOT EXISTS ai_prompts (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   prompt_type TEXT NOT NULL DEFAULT 'chat',
@@ -372,7 +371,7 @@ CREATE TABLE ai_prompts (
 );
 
 -- ─── Company Settings ────────────────────────────────────────────────
-CREATE TABLE company_settings (
+CREATE TABLE IF NOT EXISTS company_settings (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   key TEXT NOT NULL,
@@ -383,7 +382,7 @@ CREATE TABLE company_settings (
 );
 
 -- ─── Company Contacts ────────────────────────────────────────────────
-CREATE TABLE company_contacts (
+CREATE TABLE IF NOT EXISTS company_contacts (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   type TEXT NOT NULL,
@@ -396,7 +395,7 @@ CREATE TABLE company_contacts (
 );
 
 -- ─── Business Hours ──────────────────────────────────────────────────
-CREATE TABLE business_hours (
+CREATE TABLE IF NOT EXISTS business_hours (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   day_of_week INTEGER NOT NULL CHECK (day_of_week BETWEEN 0 AND 6),
@@ -409,7 +408,7 @@ CREATE TABLE business_hours (
 );
 
 -- ─── Company Addresses ──────────────────────────────────────────────
-CREATE TABLE company_addresses (
+CREATE TABLE IF NOT EXISTS company_addresses (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   label_ar TEXT,
@@ -429,7 +428,7 @@ CREATE TABLE company_addresses (
 );
 
 -- ─── Push Subscriptions ──────────────────────────────────────────────
-CREATE TABLE push_subscriptions (
+CREATE TABLE IF NOT EXISTS push_subscriptions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -441,25 +440,28 @@ CREATE TABLE push_subscriptions (
 );
 
 -- ─── Analytics Events ────────────────────────────────────────────────
-CREATE TABLE analytics_events (
+CREATE TABLE IF NOT EXISTS analytics_events (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  company_id UUID REFERENCES companies(id) ON DELETE CASCADE,
   event_type TEXT NOT NULL,
   page_path TEXT,
   referrer TEXT,
   utm_source TEXT,
   utm_medium TEXT,
   utm_campaign TEXT,
+  utm_term TEXT,
+  utm_content TEXT,
   device_type TEXT,
   browser TEXT,
   country TEXT,
   city TEXT,
+  session_id TEXT,
   metadata JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- ─── Gallery Albums ──────────────────────────────────────────────────
-CREATE TABLE gallery_albums (
+CREATE TABLE IF NOT EXISTS gallery_albums (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   title_ar TEXT NOT NULL,
@@ -475,7 +477,7 @@ CREATE TABLE gallery_albums (
 );
 
 -- ─── Gallery Items ───────────────────────────────────────────────────
-CREATE TABLE gallery_items (
+CREATE TABLE IF NOT EXISTS gallery_items (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   album_id UUID NOT NULL REFERENCES gallery_albums(id) ON DELETE CASCADE,
   media_id UUID NOT NULL REFERENCES media_library(id) ON DELETE CASCADE,
@@ -485,7 +487,7 @@ CREATE TABLE gallery_items (
 );
 
 -- ─── Project Images ──────────────────────────────────────────────────
-CREATE TABLE project_images (
+CREATE TABLE IF NOT EXISTS project_images (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
   media_id UUID NOT NULL REFERENCES media_library(id) ON DELETE CASCADE,
@@ -494,7 +496,7 @@ CREATE TABLE project_images (
 );
 
 -- ─── Project Videos ──────────────────────────────────────────────────
-CREATE TABLE project_videos (
+CREATE TABLE IF NOT EXISTS project_videos (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
   video_url TEXT NOT NULL,
@@ -506,7 +508,7 @@ CREATE TABLE project_videos (
 );
 
 -- ─── Project Before/After ────────────────────────────────────────────
-CREATE TABLE project_before_after (
+CREATE TABLE IF NOT EXISTS project_before_after (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
   before_image_id UUID NOT NULL REFERENCES media_library(id) ON DELETE CASCADE,
@@ -517,7 +519,7 @@ CREATE TABLE project_before_after (
 );
 
 -- ─── Service Images ──────────────────────────────────────────────────
-CREATE TABLE service_images (
+CREATE TABLE IF NOT EXISTS service_images (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   service_id UUID NOT NULL REFERENCES services(id) ON DELETE CASCADE,
   media_id UUID NOT NULL REFERENCES media_library(id) ON DELETE CASCADE,
@@ -526,7 +528,7 @@ CREATE TABLE service_images (
 );
 
 -- ─── Article Images ──────────────────────────────────────────────────
-CREATE TABLE article_images (
+CREATE TABLE IF NOT EXISTS article_images (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   article_id UUID NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
   media_id UUID NOT NULL REFERENCES media_library(id) ON DELETE CASCADE,
@@ -534,7 +536,7 @@ CREATE TABLE article_images (
 );
 
 -- ─── Article Tags ────────────────────────────────────────────────────
-CREATE TABLE article_tags (
+CREATE TABLE IF NOT EXISTS article_tags (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   article_id UUID NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
   tag_ar TEXT NOT NULL,
@@ -544,7 +546,7 @@ CREATE TABLE article_tags (
 );
 
 -- ─── Notification Log ────────────────────────────────────────────────
-CREATE TABLE notification_log (
+CREATE TABLE IF NOT EXISTS notification_log (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   type TEXT NOT NULL,
@@ -559,7 +561,7 @@ CREATE TABLE notification_log (
 );
 
 -- ─── Audit Log ───────────────────────────────────────────────────────
-CREATE TABLE audit_log (
+CREATE TABLE IF NOT EXISTS audit_log (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   actor_type TEXT NOT NULL,
@@ -574,7 +576,7 @@ CREATE TABLE audit_log (
 );
 
 -- ─── Telegram Admins ─────────────────────────────────────────────────
-CREATE TABLE telegram_admins (
+CREATE TABLE IF NOT EXISTS telegram_admins (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   telegram_user_id BIGINT NOT NULL,
@@ -586,7 +588,7 @@ CREATE TABLE telegram_admins (
 );
 
 -- ─── Backups ─────────────────────────────────────────────────────────
-CREATE TABLE backups (
+CREATE TABLE IF NOT EXISTS backups (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   backup_url TEXT,
@@ -598,7 +600,7 @@ CREATE TABLE backups (
 );
 
 -- ─── Search Index ────────────────────────────────────────────────────
-CREATE TABLE search_index (
+CREATE TABLE IF NOT EXISTS search_index (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   entity_type TEXT NOT NULL,
@@ -613,7 +615,7 @@ CREATE TABLE search_index (
 );
 
 -- ─── Customer Reviews ────────────────────────────────────────────────
-CREATE TABLE customer_reviews (
+CREATE TABLE IF NOT EXISTS customer_reviews (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   service_id UUID REFERENCES services(id) ON DELETE SET NULL,
@@ -636,61 +638,77 @@ CREATE TABLE customer_reviews (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS advertisements (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title_ar VARCHAR(255) NOT NULL,
+    subtitle_ar TEXT,
+    media_type VARCHAR(20) NOT NULL DEFAULT 'image', -- 'image' | 'video' | 'banner'
+    media_url TEXT NOT NULL,
+    target_route TEXT DEFAULT '/contact',            -- e.g. '/projects/p1', '/contact', '/services'
+    action_title_ar VARCHAR(100) DEFAULT 'تواصل معنا الآن',
+    start_date TIMESTAMPTZ DEFAULT NOW(),
+    end_date TIMESTAMPTZ,
+    is_active BOOLEAN DEFAULT TRUE,
+    priority INT DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
 -- ═══════════════════════════════════════════════════════════════════
 -- Indexes
 -- ═══════════════════════════════════════════════════════════════════
 
 -- Company lookups
-CREATE INDEX idx_companies_slug ON companies(slug);
+CREATE INDEX IF NOT EXISTS idx_companies_slug ON companies(slug);
 
 -- Category lookups
-CREATE INDEX idx_categories_company ON categories(company_id);
-CREATE INDEX idx_categories_parent ON categories(parent_id);
-CREATE INDEX idx_categories_slug ON categories(company_id, slug);
+CREATE INDEX IF NOT EXISTS idx_categories_company ON categories(company_id);
+CREATE INDEX IF NOT EXISTS idx_categories_parent ON categories(parent_id);
+CREATE INDEX IF NOT EXISTS idx_categories_slug ON categories(company_id, slug);
 
 -- Service lookups
-CREATE INDEX idx_services_company ON services(company_id);
-CREATE INDEX idx_services_category ON services(category_id);
-CREATE INDEX idx_services_slug ON services(company_id, slug);
-CREATE INDEX idx_services_featured ON services(company_id, is_featured) WHERE is_active = true;
+CREATE INDEX IF NOT EXISTS idx_services_company ON services(company_id);
+CREATE INDEX IF NOT EXISTS idx_services_category ON services(category_id);
+CREATE INDEX IF NOT EXISTS idx_services_slug ON services(company_id, slug);
+CREATE INDEX IF NOT EXISTS idx_services_featured ON services(company_id, is_featured) WHERE is_active = true;
 
 -- Project lookups
-CREATE INDEX idx_projects_company ON projects(company_id);
-CREATE INDEX idx_projects_service ON projects(service_id);
-CREATE INDEX idx_projects_slug ON projects(company_id, slug);
-CREATE INDEX idx_projects_featured ON projects(company_id, is_featured) WHERE is_active = true;
+CREATE INDEX IF NOT EXISTS idx_projects_company ON projects(company_id);
+CREATE INDEX IF NOT EXISTS idx_projects_service ON projects(service_id);
+CREATE INDEX IF NOT EXISTS idx_projects_slug ON projects(company_id, slug);
+CREATE INDEX IF NOT EXISTS idx_projects_featured ON projects(company_id, is_featured) WHERE is_active = true;
 
 -- Article lookups
-CREATE INDEX idx_articles_company ON articles(company_id);
-CREATE INDEX idx_articles_slug ON articles(company_id, slug);
-CREATE INDEX idx_articles_status ON articles(company_id, status);
-CREATE INDEX idx_articles_published ON articles(company_id, published_at) WHERE status = 'published';
+CREATE INDEX IF NOT EXISTS idx_articles_company ON articles(company_id);
+CREATE INDEX IF NOT EXISTS idx_articles_slug ON articles(company_id, slug);
+CREATE INDEX IF NOT EXISTS idx_articles_status ON articles(company_id, status);
+CREATE INDEX IF NOT EXISTS idx_articles_published ON articles(company_id, published_at) WHERE status = 'published';
 
 -- Analytics time-series
-CREATE INDEX idx_analytics_company_time ON analytics_events(company_id, created_at DESC);
-CREATE INDEX idx_analytics_event_type ON analytics_events(company_id, event_type);
+CREATE INDEX IF NOT EXISTS idx_analytics_company_time ON analytics_events(company_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_event_type ON analytics_events(company_id, event_type);
 
 -- Search GIN index
-CREATE INDEX idx_search_vector ON search_index USING GIN(search_vector);
-CREATE INDEX idx_search_company_locale ON search_index(company_id, locale);
+CREATE INDEX IF NOT EXISTS idx_search_vector ON search_index USING GIN(search_vector);
+CREATE INDEX IF NOT EXISTS idx_search_company_locale ON search_index(company_id, locale);
 
 -- SEO lookups
-CREATE INDEX idx_seo_entity ON seo_metadata(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_seo_entity ON seo_metadata(entity_type, entity_id);
 
 -- Chat session lookups
-CREATE INDEX idx_chat_sessions_company ON chat_sessions(company_id, created_at DESC);
-CREATE INDEX idx_chat_messages_session ON chat_messages(session_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_chat_sessions_company ON chat_sessions(company_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_chat_messages_session ON chat_messages(session_id, created_at);
 
 -- User lookups
-CREATE INDEX idx_users_company ON users(company_id);
-CREATE INDEX idx_users_email ON users(company_id, email);
+CREATE INDEX IF NOT EXISTS idx_users_company ON users(company_id);
+CREATE INDEX IF NOT EXISTS idx_users_phone ON users(company_id, phone);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(company_id, email);
 
 -- Audit log
-CREATE INDEX idx_audit_company_time ON audit_log(company_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_company_time ON audit_log(company_id, created_at DESC);
 
 -- City pages
-CREATE INDEX idx_city_pages_company ON city_pages(company_id);
-CREATE INDEX idx_city_pages_slug ON city_pages(company_id, slug);
+CREATE INDEX IF NOT EXISTS idx_city_pages_company ON city_pages(company_id);
+CREATE INDEX IF NOT EXISTS idx_city_pages_slug ON city_pages(company_id, slug);
 
 -- ═══════════════════════════════════════════════════════════════════
 -- Triggers: Auto-update updated_at timestamp
@@ -704,34 +722,141 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_companies_updated_at ON companies;
 CREATE TRIGGER trg_companies_updated_at
   BEFORE UPDATE ON companies
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+DROP TRIGGER IF EXISTS trg_services_updated_at ON services;
 CREATE TRIGGER trg_services_updated_at
   BEFORE UPDATE ON services
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+DROP TRIGGER IF EXISTS trg_articles_updated_at ON articles;
 CREATE TRIGGER trg_articles_updated_at
   BEFORE UPDATE ON articles
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+DROP TRIGGER IF EXISTS trg_seo_updated_at ON seo_metadata;
 CREATE TRIGGER trg_seo_updated_at
   BEFORE UPDATE ON seo_metadata
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+DROP TRIGGER IF EXISTS trg_settings_updated_at ON company_settings;
 CREATE TRIGGER trg_settings_updated_at
   BEFORE UPDATE ON company_settings
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+DROP TRIGGER IF EXISTS trg_ai_prompts_updated_at ON ai_prompts;
 CREATE TRIGGER trg_ai_prompts_updated_at
   BEFORE UPDATE ON ai_prompts
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- ═══════════════════════════════════════════════════════════════════
--- Function: Full-text search across content
+-- Search Index Auto-Sync Trigger Function & Triggers
 -- ═══════════════════════════════════════════════════════════════════
 
+CREATE OR REPLACE FUNCTION sync_search_index_trigger()
+RETURNS TRIGGER AS $$
+DECLARE
+  comp_id UUID;
+  rec_title TEXT;
+  rec_preview TEXT;
+  rec_path TEXT;
+  rec_entity_type TEXT;
+BEGIN
+  rec_entity_type := TG_TABLE_NAME;
+
+  IF rec_entity_type = 'services' THEN
+    comp_id := NEW.company_id;
+    rec_title := COALESCE(NEW.name_ar, NEW.name_en, '');
+    rec_preview := COALESCE(NEW.short_description_ar, NEW.short_description_en, '');
+    rec_path := '/ar/services/' || NEW.slug;
+  ELSIF rec_entity_type = 'projects' THEN
+    comp_id := NEW.company_id;
+    rec_title := COALESCE(NEW.title_ar, NEW.title_en, '');
+    rec_preview := COALESCE(NEW.description_ar, NEW.description_en, '');
+    rec_path := '/ar/projects/' || NEW.slug;
+  ELSIF rec_entity_type = 'articles' THEN
+    comp_id := NEW.company_id;
+    rec_title := COALESCE(NEW.title_ar, NEW.title_en, '');
+    rec_preview := COALESCE(NEW.excerpt_ar, NEW.excerpt_en, '');
+    rec_path := '/ar/blog/' || NEW.slug;
+  ELSIF rec_entity_type = 'city_pages' THEN
+    comp_id := NEW.company_id;
+    rec_title := 'خدمات الزجاج والألمنيوم في ' || COALESCE(NEW.city_name_ar, NEW.city_name_en, '');
+    rec_preview := COALESCE(NEW.description_ar, NEW.description_en, '');
+    rec_path := '/ar/cities/' || NEW.slug;
+  ELSE
+    RETURN NEW;
+  END IF;
+
+  INSERT INTO search_index (
+    company_id, entity_type, entity_id, locale, title, content_preview, url_path, search_vector
+  ) VALUES (
+    comp_id, rec_entity_type, NEW.id, 'ar', rec_title, rec_preview, rec_path,
+    to_tsvector('simple', rec_title || ' ' || COALESCE(rec_preview, ''))
+  )
+  ON CONFLICT (entity_type, entity_id, locale) DO UPDATE SET
+    company_id = EXCLUDED.company_id,
+    title = EXCLUDED.title,
+    content_preview = EXCLUDED.content_preview,
+    url_path = EXCLUDED.url_path,
+    search_vector = EXCLUDED.search_vector,
+    updated_at = now();
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS trg_sync_search_services ON services;
+CREATE TRIGGER trg_sync_search_services
+  AFTER INSERT OR UPDATE ON services
+  FOR EACH ROW EXECUTE FUNCTION sync_search_index_trigger();
+
+DROP TRIGGER IF EXISTS trg_sync_search_projects ON projects;
+CREATE TRIGGER trg_sync_search_projects
+  AFTER INSERT OR UPDATE ON projects
+  FOR EACH ROW EXECUTE FUNCTION sync_search_index_trigger();
+
+DROP TRIGGER IF EXISTS trg_sync_search_articles ON articles;
+CREATE TRIGGER trg_sync_search_articles
+  AFTER INSERT OR UPDATE ON articles
+  FOR EACH ROW EXECUTE FUNCTION sync_search_index_trigger();
+
+DROP TRIGGER IF EXISTS trg_sync_search_city_pages ON city_pages;
+CREATE TRIGGER trg_sync_search_city_pages
+  AFTER INSERT OR UPDATE ON city_pages
+  FOR EACH ROW EXECUTE FUNCTION sync_search_index_trigger();
+
+-- ═══════════════════════════════════════════════════════════════════
+-- Customer Reviews Rating Auto-Update Trigger Function
+-- ═══════════════════════════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION update_service_ratings_trigger()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.service_id IS NOT NULL AND NEW.is_approved = true THEN
+    UPDATE services
+    SET 
+      review_count = (SELECT COUNT(*) FROM customer_reviews WHERE service_id = NEW.service_id AND is_approved = true),
+      rating_avg = COALESCE((SELECT AVG(rating)::DECIMAL(3,2) FROM customer_reviews WHERE service_id = NEW.service_id AND is_approved = true), 5.00)
+    WHERE id = NEW.service_id;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS trg_update_service_ratings ON customer_reviews;
+CREATE TRIGGER trg_update_service_ratings
+  AFTER INSERT OR UPDATE ON customer_reviews
+  FOR EACH ROW EXECUTE FUNCTION update_service_ratings_trigger();
+
+-- ═══════════════════════════════════════════════════════════════════
+-- RPC Functions: Search & Analytics
+-- ═══════════════════════════════════════════════════════════════════
+
+-- 1. Full-text search across content
 CREATE OR REPLACE FUNCTION search_content(
   search_query TEXT,
   search_locale TEXT DEFAULT 'ar',
@@ -763,4 +888,50 @@ BEGIN
   ORDER BY rank DESC
   LIMIT result_limit;
 END;
-$$ LANGUAGE plpgsql STABLE;
+$$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
+
+-- 2. Top Viewed Services Analytics
+CREATE OR REPLACE FUNCTION get_top_viewed_services(
+  target_company_id UUID,
+  result_limit INTEGER DEFAULT 10
+)
+RETURNS TABLE (
+  id UUID,
+  name_ar TEXT,
+  name_en TEXT,
+  slug TEXT,
+  view_count INTEGER,
+  price_from DECIMAL
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT s.id, s.name_ar, s.name_en, s.slug, s.view_count, s.price_from
+  FROM services s
+  WHERE s.company_id = target_company_id AND s.is_active = true
+  ORDER BY s.view_count DESC
+  LIMIT result_limit;
+END;
+$$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
+
+-- 3. Top Traffic Search Keywords Analytics
+CREATE OR REPLACE FUNCTION get_top_search_keywords(
+  target_company_id UUID,
+  result_limit INTEGER DEFAULT 10
+)
+RETURNS TABLE (
+  keyword TEXT,
+  event_count BIGINT
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    COALESCE(metadata->>'query', utm_term, utm_source, 'المواضيع العامة') AS keyword,
+    COUNT(*) AS event_count
+  FROM analytics_events
+  WHERE (target_company_id IS NULL OR company_id = target_company_id)
+    AND event_type IN ('search', 'page_view', 'quote_submit')
+  GROUP BY keyword
+  ORDER BY event_count DESC
+  LIMIT result_limit;
+END;
+$$ LANGUAGE plpgsql STABLE SECURITY DEFINER;

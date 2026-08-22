@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createDbClient } from "@/lib/db";
 import {
   sendMessage, Keyboards, formatQuoteAlert, formatMessageAlert, formatAppointmentAlert
 } from "./bot";
@@ -9,11 +9,10 @@ async function getAdminChatIds(): Promise<number[]> {
     .map((id) => parseInt(id.trim(), 10))
     .filter((n) => !isNaN(n));
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = createAdminClient() as any;
+  const db = createDbClient();
   let dbAdminIds: number[] = [];
   try {
-    const { data } = await supabase
+    const { data } = await db
       .from("telegram_admins")
       .select("telegram_user_id")
       .eq("is_active", true);
@@ -36,13 +35,13 @@ export async function notifyNewQuoteRequest(data: {
   id: string; name: string; phone: string; services: string[];
   city: string; budget: string; urgency: string; description: string;
 }) {
-  await broadcastToAdmins(formatQuoteAlert(data), { reply_markup: Keyboards.requestActions(data.id) });
+  await broadcastToAdmins(formatQuoteAlert(data), { reply_markup: Keyboards.quoteActions(data.id) });
 }
 
 export async function notifyNewMessage(data: {
   id: string; name: string; phone: string; email?: string; subject?: string; content: string;
 }) {
-  await broadcastToAdmins(formatMessageAlert(data), { reply_markup: Keyboards.backToMenu() });
+  await broadcastToAdmins(formatMessageAlert(data), { reply_markup: Keyboards.messageActions(data.id, false) });
 }
 
 export async function notifyNewAppointment(data: {
@@ -74,8 +73,7 @@ export async function notifyAuditSecurityAlert(data: {
 }
 
 export async function sendDailyReport() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = createAdminClient() as any;
+  const db = createDbClient();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -85,10 +83,10 @@ export async function sendDailyReport() {
     { count: todayMessages },
     { count: todayViews },
   ] = await Promise.all([
-    supabase.from("quote_requests").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
-    supabase.from("appointments").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
-    supabase.from("messages").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
-    supabase.from("analytics_events").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
+    db.from("quote_requests").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
+    db.from("appointments").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
+    db.from("messages").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
+    db.from("analytics_events").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
   ]);
 
   const date = today.toLocaleDateString("ar-SA", { weekday: "long", year: "numeric", month: "long", day: "numeric" });

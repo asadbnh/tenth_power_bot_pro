@@ -1,30 +1,11 @@
-import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/database";
+import { createDbClient } from "@/lib/db";
 
 /**
- * Creates a Supabase client with the SERVICE_ROLE key.
- * This client bypasses RLS and should ONLY be used in:
- * - Server Actions
- * - Route Handlers  
- * - Edge Functions
- * - Telegram Bot handlers
- * 
- * NEVER expose this client to the browser.
+ * Database client for Server Actions, Route Handlers, and Telegram Bot.
+ * Powered by Neon SQL (PostgreSQL Serverless).
  */
 export function createAdminClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error(
-      "Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY"
-    );
-  }
-
-  return createClient<Database>(supabaseUrl, serviceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  });
+  return createDbClient();
 }
+
+export { createDbClient };
