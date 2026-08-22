@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "npx tsx --env-file=.env.local scripts/seed.ts",
-    "seed:all": "npx tsx --env-file=.env.local scripts/seed-all-tables.ts"
+    "seed:all": "npx tsx --env-file=.env.local scripts/seed-all-tables.ts",
+    "db:clean": "npx tsx --env-file=.env.local scripts/clean-database.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1105.0",
