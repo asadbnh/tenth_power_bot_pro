@@ -19,6 +19,12 @@ const serverEnvSchema = z.object({
   TELEGRAM_BOT_TOKEN: z.string().min(1).optional(),
   TELEGRAM_WEBHOOK_SECRET: z.string().min(1).optional(),
   TELEGRAM_ADMIN_IDS: z.string().min(1).optional(),
+  TELEGRAM_CHANNEL_ID: z.string().optional(),
+
+  // App Stores & Website
+  GOOGLE_PLAY_URL: z.string().url().optional().or(z.literal("")),
+  APPLE_APP_STORE_URL: z.string().url().optional().or(z.literal("")),
+  SITE_URL: z.string().url().optional().or(z.literal("")),
 
   // AI
   AI_PROVIDER: z.enum(["openai", "gemini"]).default("gemini"),

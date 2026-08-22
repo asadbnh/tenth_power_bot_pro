@@ -302,6 +302,47 @@ export const Keyboards = {
     ],
   }),
 
+  // ─── Visitor Portal Keyboards ───────────────────────────────────────
+
+  visitorMenu: (): InlineKeyboard => ({
+    inline_keyboard: [
+      [{ text: "🛠️ خدماتنا وأعمالنا", callback_data: "vis_services" }, { text: "📁 أحدث المشاريع", callback_data: "vis_projects" }],
+      [{ text: "🖼️ معرض الصور", callback_data: "vis_gallery" }, { text: "📝 طلب مقايسة وعرض سعر", callback_data: "vis_quote_prompt" }],
+      [{ text: "🌐 قنوات التواصل والفروع", callback_data: "vis_contacts" }, { text: "📱 تحميل التطبيق والموقع", callback_data: "vis_downloads" }],
+    ],
+  }),
+
+  visitorDownloadLinks: (): InlineKeyboard => {
+    const playUrl = process.env.GOOGLE_PLAY_URL?.trim();
+    const appStoreUrl = process.env.APPLE_APP_STORE_URL?.trim();
+    const siteUrl = process.env.SITE_URL?.trim() || process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://powerof10.netlify.app";
+
+    const rows: InlineKeyboardButton[][] = [];
+
+    // 1. Google Play Button (Only if defined and non-empty)
+    if (playUrl && playUrl !== "" && playUrl !== "null") {
+      rows.push([{ text: "🤖 تحميل من متجر Google Play", url: playUrl }]);
+    }
+
+    // 2. Apple App Store Button (Only if defined and non-empty)
+    if (appStoreUrl && appStoreUrl !== "" && appStoreUrl !== "null") {
+      rows.push([{ text: "🍏 تحميل من متجر App Store", url: appStoreUrl }]);
+    }
+
+    // 3. Official Website Button (Only if defined and non-empty)
+    if (siteUrl && siteUrl !== "" && siteUrl !== "null") {
+      rows.push([{ text: "🌐 زيارة الموقع الإلكتروني الرسمي", url: siteUrl }]);
+    }
+
+    rows.push([{ text: "◀️ رجوع للواجهة الرئيسية", callback_data: "vis_menu" }]);
+
+    return { inline_keyboard: rows };
+  },
+
+  visitorBackToMenu: (): InlineKeyboard => ({
+    inline_keyboard: [[{ text: "◀️ رجوع للواجهة الرئيسية", callback_data: "vis_menu" }]],
+  }),
+
   cancelWizard: (returnTo: string): InlineKeyboard => ({
     inline_keyboard: [[{ text: "❌ إلغاء والعودة", callback_data: returnTo }]],
   }),

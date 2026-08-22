@@ -12,3 +12,4 @@ export * from "./handlers/reviews";
 export * from "./handlers/marketing";
 export * from "./handlers/settings";
 export * from "./handlers/system";
+export * from "./handlers/visitor";

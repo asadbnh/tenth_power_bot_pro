@@ -5,6 +5,10 @@ import {
 import { getAdminState, setAdminState, clearAdminState } from "../state";
 import { isAuthorizedAdmin, handleStart, handleHelp, handleStats } from "./main";
 import {
+  handleVisitorStart, handleVisitorMenu, handleVisitorServices, handleVisitorProjects,
+  handleVisitorGallery, handleVisitorContacts, handleVisitorDownloads, handleVisitorQuotePrompt, handleVisitorQuoteText,
+} from "./visitor";
+import {
   handleQuotesList, handleQuoteDetails, handleQuoteStatusChange, handleQuoteDelete,
   handleAppointmentsList, handleAppointmentDetails, handleAppointmentStatusChange, handleAppointmentDelete,
   handleMessagesList, handleMessageDetails, handleMessageToggleRead, handleMessageReplyPrompt, handleMessageDelete,
@@ -45,6 +49,9 @@ import {
   handleNotificationLogs, handleBroadcastPushPrompt, handlePushConfirm,
 } from "./system";
 import { sendAndroidPushNotification } from "../push";
+import {
+  publishProjectToChannel, publishServiceToChannel, publishAdToChannel, publishNotificationToChannel
+} from "../channel";
 import { createDbClient } from "@/lib/db";
 
 // ─── Command Router ───────────────────────────────────────────────────
@@ -52,8 +59,10 @@ import { createDbClient } from "@/lib/db";
 export async function handleCommand(msg: TelegramMessage) {
   const userId = msg.from.id;
   const isAdmin = await isAuthorizedAdmin(userId);
+
+  // If visitor / non-admin, open the Visitor Portal
   if (!isAdmin) {
-    await sendMessage(userId, `⛔ <b>غير مصرح لك بالوصول.</b>\n\n🆔 رقم حسابك: <code>${userId}</code>`);
+    await handleVisitorStart(msg);
     return;
   }
 
@@ -124,8 +133,19 @@ export async function handleCommand(msg: TelegramMessage) {
 
 export async function handleTextMessage(msg: TelegramMessage) {
   const userId = msg.from.id;
+  const isAdmin = await isAuthorizedAdmin(userId);
   const text = msg.text?.trim() || "";
   const state = getAdminState(userId);
+
+  // Handle Visitor Text / Quote Flow
+  if (!isAdmin) {
+    if (state && (state.step === "awaiting_visitor_quote_service" || state.step === "awaiting_visitor_quote_phone")) {
+      await handleVisitorQuoteText(msg);
+    } else {
+      await handleVisitorStart(msg);
+    }
+    return;
+  }
 
   if (!state || state.step === "idle") {
     await handleStart(msg);
@@ -136,7 +156,7 @@ export async function handleTextMessage(msg: TelegramMessage) {
   const { data: company } = await db.from("companies").select("id").limit(1).single();
   const companyId = company?.id || "00000000-0000-0000-0000-000000000001";
 
-  // 1. Service Wizard (Name -> Desc -> Price -> Ask Push)
+  // 1. Service Wizard
   if (state.step === "awaiting_service_name") {
     setAdminState(userId, "awaiting_service_desc", { name_ar: text });
     await sendMessage(userId, `✍️ <b>اسم الخدمة:</b> ${text}\n\nالآن أرسل <b>وصفاً مختصراً للخدمة</b>:`);
@@ -171,16 +191,24 @@ export async function handleTextMessage(msg: TelegramMessage) {
       is_featured: false,
     }).select("id").single();
 
+    // Auto publish to Telegram Channel
+    await publishServiceToChannel({
+      name_ar,
+      short_description_ar: desc_ar,
+      price_from: price,
+      slug,
+    });
+
     clearAdminState(userId);
     await sendMessage(
       userId,
-      `🎉 <b>تمت إضافة الخدمة بنجاح!</b>\n\n🛠️ <b>الخدمة:</b> ${name_ar}\n💰 <b>السعر:</b> ${price} ريال\n\n🟢 الخدمة مفعلة ومتاحة بالموقع.\n\n🔔 <b>هل ترغب في إرسال إشعار فوري لعملاء تطبيق الأندرويد بهذه الخدمة؟</b>`,
+      `🎉 <b>تمت إضافة الخدمة ونشرها في القناة بنجاح!</b>\n\n🛠️ <b>الخدمة:</b> ${name_ar}\n💰 <b>السعر:</b> ${price} ريال\n\n🔔 <b>هل ترغب في إرسال إشعار فوري لعملاء تطبيق الأندرويد بهذه الخدمة؟</b>`,
       { reply_markup: Keyboards.askPushPrompt("service", newSrv?.id || slug) }
     );
     return;
   }
 
-  // 2. Project Wizard (Title -> Client -> City -> Value -> Ask Push)
+  // 2. Project Wizard
   if (state.step === "awaiting_project_title") {
     setAdminState(userId, "awaiting_project_client", { title_ar: text });
     await sendMessage(userId, `👤 أرسل <b>اسم العميل أو الجهة</b> (مثال: شركة برج الرياض التجارية):`);
@@ -222,10 +250,19 @@ export async function handleTextMessage(msg: TelegramMessage) {
       is_featured: true,
     }).select("id").single();
 
+    // Auto publish to Telegram Channel
+    await publishProjectToChannel({
+      title_ar,
+      client_name,
+      city,
+      project_value: val,
+      slug,
+    });
+
     clearAdminState(userId);
     await sendMessage(
       userId,
-      `🎉 <b>تمت إضافة المشروع بنجاح!</b>\n\n🏢 <b>المشروع:</b> ${title_ar}\n📍 <b>المدينة:</b> ${city}\n💰 <b>القيمة:</b> ${val.toLocaleString("ar-SA")} ر.س\n\n🔔 <b>هل ترغب في إرسال إشعار فوري لعملاء تطبيق الأندرويد بهذا المشروع؟</b>`,
+      `🎉 <b>تمت إضافة المشروع ونشره في القناة بنجاح!</b>\n\n🏢 <b>المشروع:</b> ${title_ar}\n📍 <b>المدينة:</b> ${city}\n💰 <b>القيمة:</b> ${val.toLocaleString("ar-SA")} ر.س\n\n🔔 <b>هل ترغب في إرسال إشعار فوري لعملاء تطبيق الأندرويد بهذا المشروع؟</b>`,
       { reply_markup: Keyboards.askPushPrompt("project", newPrj?.id || slug) }
     );
     return;
@@ -244,16 +281,22 @@ export async function handleTextMessage(msg: TelegramMessage) {
       company_id: companyId,
       title_ar,
       title_en: title_ar,
-      type: "banner",
-      position: "home_top",
-      link_url: text,
+      media_type: "image",
+      target_route: text,
       is_active: true,
+      priority: 1,
+    });
+
+    // Auto publish to Telegram Channel
+    await publishAdToChannel({
+      title_ar,
+      target_route: text,
     });
 
     clearAdminState(userId);
     await sendMessage(
       userId,
-      `🎉 <b>تم إنشاء وتفعيل الإعلان بنجاح!</b>\n\n📢 <b>العنوان:</b> ${title_ar}\n🔗 <b>الرابط:</b> <code>${text}</code>`,
+      `🎉 <b>تم إنشاء الإعلان ونشره في القناة بنجاح!</b>\n\n📢 <b>العنوان:</b> ${title_ar}\n🔗 <b>الرابط:</b> <code>${text}</code>`,
       { reply_markup: Keyboards.backToSubmenu("cnt_ads") }
     );
     return;
@@ -306,7 +349,7 @@ export async function handleTextMessage(msg: TelegramMessage) {
     return;
   }
 
-  // 6. Broadcast Push Notification Wizard (Title -> Body -> Screen Selection)
+  // 6. Broadcast Push Notification Wizard
   if (state.step === "awaiting_push_title") {
     setAdminState(userId, "awaiting_push_body", { title: text });
     await sendMessage(
@@ -389,14 +432,25 @@ export async function handleTextMessage(msg: TelegramMessage) {
 export async function handleCallback(query: TelegramCallbackQuery) {
   const userId = query.from.id;
   const isAdmin = await isAuthorizedAdmin(userId);
-  if (!isAdmin) {
-    await answerCallbackQuery(query.id, "⛔ غير مصرح");
-    return;
-  }
-
-  await answerCallbackQuery(query.id);
   const data = query.data;
   const messageId = query.message.message_id;
+
+  await answerCallbackQuery(query.id);
+
+  // ─── Visitor Portal Callbacks (Accessible by all users) ─────────────
+  if (data === "vis_menu") return handleVisitorMenu(userId, messageId);
+  if (data === "vis_services") return handleVisitorServices(userId, messageId);
+  if (data === "vis_projects") return handleVisitorProjects(userId, messageId);
+  if (data === "vis_gallery") return handleVisitorGallery(userId, messageId);
+  if (data === "vis_contacts") return handleVisitorContacts(userId, messageId);
+  if (data === "vis_downloads") return handleVisitorDownloads(userId, messageId);
+  if (data === "vis_quote_prompt") return handleVisitorQuotePrompt(userId);
+
+  // ─── Admin-Only Actions Guard ───────────────────────────────────────
+  if (!isAdmin) {
+    await handleVisitorMenu(userId, messageId);
+    return;
+  }
 
   // 1. Navigation Menus
   if (data === "main_menu") {
@@ -526,9 +580,10 @@ export async function handleCallback(query: TelegramCallbackQuery) {
     const title = (state?.payload?.title as string) || "تنبيه من القوة العاشرة";
     const body = (state?.payload?.body as string) || "تفضل بزيارة تطبيقنا للاطلاع على آخر العروض!";
     await sendAndroidPushNotification({ title, body, screen: screenRoute });
+    await publishNotificationToChannel(title, body, screenRoute);
     await sendMessage(
       userId,
-      `🚀 <b>تم إرسال الإشعار بنجاح لكافة مستخدمي التطبيق!</b>\n\n🔔 <b>العنوان:</b> ${title}\n📝 <b>النص:</b> ${body}\n🎯 <b>المسار:</b> <code>${screenRoute}</code>`,
+      `🚀 <b>تم إرسال الإشعار بنجاح للتطبيق ونشره في القناة!</b>\n\n🔔 <b>العنوان:</b> ${title}\n📝 <b>النص:</b> ${body}\n🎯 <b>المسار:</b> <code>${screenRoute}</code>`,
       { reply_markup: Keyboards.backToMenu() }
     );
     return;
@@ -555,6 +610,9 @@ export async function handleCallback(query: TelegramCallbackQuery) {
 export async function handlePhotoMessage(msg: TelegramMessage) {
   const userId = msg.from.id;
   const isAdmin = await isAuthorizedAdmin(userId);
-  if (!isAdmin) return;
+  if (!isAdmin) {
+    await sendMessage(userId, `شكراً لك! لمعاينة أعمالنا وطلب المقايسة يرجى استخدام القائمة أدناه:`, { reply_markup: Keyboards.visitorMenu() });
+    return;
+  }
   await handlePhotoUpload(msg);
 }
