@@ -1,6 +1,7 @@
 import { createDbClient } from "@/lib/db";
 import { sendMessage, editMessage, Keyboards } from "../bot";
 import { setAdminState } from "../state";
+import { sendAndroidPushNotification } from "../push";
 
 // ─── Telegram Admins Handlers ─────────────────────────────────────────
 
@@ -98,6 +99,78 @@ export async function handleAuditLog(chatId: number, messageId?: number) {
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
 }
 
+// ─── Notification Logs & Push Handlers ────────────────────────────────
+
+export async function handleNotificationLogs(chatId: number, messageId?: number) {
+  const db = createDbClient();
+  const { data: logs } = await db
+    .from("notification_log")
+    .select("id, type, title_ar, body_ar, target_audience, sent_count, sent_at")
+    .order("sent_at", { ascending: false })
+    .limit(8);
+
+  let text = `📜 <b>سجل الإشعارات الصادرة للتطبيق (${logs?.length ?? 0}):</b>\n\n`;
+  (logs as Record<string, any>[] || []).forEach((l, idx) => {
+    text += `${idx + 1}. 🔔 <b>${l.title_ar || "إشعار فوري"}</b> [${l.type || "push"}]\n`;
+    text += `   📝 <code>${(l.body_ar || "").slice(0, 50)}...</code>\n`;
+    text += `   👥 الجمهور: <code>${l.target_audience || "الجميع"}</code> | 📅 ${new Date(l.sent_at).toLocaleTimeString("ar-SA")}\n\n`;
+  });
+
+  const inline_keyboard = [
+    [{ text: "🔔 إرسال إشعار فوري جديد", callback_data: "push_broadcast_prompt" }],
+    [{ text: "◀️ رجوع للأمان", callback_data: "menu_system" }],
+  ];
+
+  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
+  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleBroadcastPushPrompt(chatId: number) {
+  setAdminState(chatId, "awaiting_push_title");
+  await sendMessage(
+    chatId,
+    `🔔 <b>إرسال إشعار فوري لتطبيق الأندرويد — الخطوة 1/3</b>\n\nأرسل الآن <b>عنوان الإشعار</b> (مثال: 🏗️ مشروع منجز جديد في الرياض):`,
+    { reply_markup: Keyboards.cancelWizard("main_menu") }
+  );
+}
+
+export async function handlePushConfirm(chatId: number, entityType: string, entityId: string) {
+  const db = createDbClient();
+  let title = "🔔 تحديث جديد من القوة العاشرة";
+  let body = "تفقد أحدث أعمال وخدمات الزجاج والكلادينج لدينا الآن!";
+  let screen = "/";
+
+  if (entityType === "project") {
+    const { data: p } = await db.from("projects").select("title_ar, slug").eq("id", entityId).single();
+    title = `🏗️ مشروع منجز جديد: ${p?.title_ar || "مشروع مميز"}`;
+    body = "تم تسليم مشروع واجهات زجاج سيكوريت وكلادينج فاخر، تصفح التفاصيل الآن!";
+    screen = `/projects/${p?.slug || entityId}`;
+  } else if (entityType === "service") {
+    const { data: s } = await db.from("services").select("name_ar").eq("id", entityId).single();
+    title = `🛠️ خدمة جديدة: ${s?.name_ar || "خدمات الزجاج"}`;
+    body = "تعرف على أحدث حلول وخدمات الزجاج والألمنيوم المعزول مع الضمان.";
+    screen = `/services`;
+  } else if (entityType === "photo") {
+    title = "🖼️ صور جديدة في معرض الأعمال";
+    body = "شاهد أحدث أعمال وتصاميم واجهات الزجاج والديكور من تنفيذنا.";
+    screen = `/gallery`;
+  }
+
+  await sendAndroidPushNotification({
+    title,
+    body,
+    screen,
+    projectId: entityType === "project" ? entityId : undefined,
+    serviceId: entityType === "service" ? entityId : undefined,
+  });
+
+  await sendMessage(
+    chatId,
+    `🚀 <b>تم إرسال الإشعار الفوري بنجاح إلى عملاء التطبيق!</b>\n\n🔔 <b>العنوان:</b> ${title}\n📝 <b>النص:</b> ${body}\n🎯 <b>الشاشة المستهدفة:</b> <code>${screen}</code>`,
+    { reply_markup: Keyboards.backToMenu() }
+  );
+}
+
 // ─── Backups Handlers ─────────────────────────────────────────────────
 
 export async function handleBackupsList(chatId: number, messageId?: number) {
@@ -128,9 +201,10 @@ export async function handlePushSubscriptions(chatId: number, messageId?: number
   const db = createDbClient();
   const { count } = await db.from("push_subscriptions").select("*", { count: "exact", head: true });
 
-  const text = `🔔 <b>اشتراكات الإشعارات الفورية (Web Push)</b>\n\nإجمالي الأجهزة والمشتركين النشطين: <b>${count ?? 0}</b> جهاز.`;
+  const text = `📱 <b>مشتركي الإشعارات الفورية (Android & Web Push)</b>\n\nإجمالي الأجهزة والمشتركين النشطين: <b>${count ?? 0}</b> جهاز.\n\nيمكنك إرسال إشعار فوري لجميع الأجهزة بنقرة زر واحدة.`;
   const inline_keyboard = [
-    [{ text: "◀️ رجوع للأمان", callback_data: "menu_system" }]
+    [{ text: "🔔 إرسال إشعار جماعي الآن", callback_data: "push_broadcast_prompt" }],
+    [{ text: "◀️ رجوع للأمان", callback_data: "menu_system" }],
   ];
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });

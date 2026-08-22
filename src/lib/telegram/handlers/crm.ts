@@ -303,3 +303,73 @@ export async function handleUserDelete(chatId: number, userId: string, messageId
   await sendMessage(chatId, `🗑️ تم حذف العميل.`);
   await handleUsersList(chatId, messageId);
 }
+
+// ─── Chat Sessions & Messages (AI Chatbot) ────────────────────────────
+
+export async function handleChatSessionsList(chatId: number, messageId?: number) {
+  const db = createDbClient();
+  const { data: sessions } = await db
+    .from("chat_sessions")
+    .select("id, status, message_count, created_at")
+    .order("created_at", { ascending: false })
+    .limit(8);
+
+  if (!sessions || sessions.length === 0) {
+    const emptyText = "🤖 <b>محادثات الشات بوت والزوار</b>\n\nلا توجد جلسات محادثة مسجلة حالياً.";
+    if (messageId) await editMessage(chatId, messageId, emptyText, Keyboards.backToSubmenu("menu_crm"));
+    else await sendMessage(chatId, emptyText, { reply_markup: Keyboards.backToSubmenu("menu_crm") });
+    return;
+  }
+
+  let text = `🤖 <b>أحدث جلسات محادثات الزوار (${sessions.length}):</b>\n\n`;
+  const inline_keyboard: any[][] = [];
+
+  (sessions as Record<string, any>[]).forEach((s, idx) => {
+    const statusIcon = s.status === "active" ? "🟢 نشطة" : "⚪ منتهية";
+    text += `${idx + 1}. [${statusIcon}] <b>جلسة زائر</b> (💬 ${s.message_count || 0} رسائل)\n`;
+    text += `   📅 ${new Date(s.created_at).toLocaleTimeString("ar-SA")}\n\n`;
+
+    inline_keyboard.push([
+      { text: `💬 تفريغ المحادثة رقم ${idx + 1}`, callback_data: `chat_transcript:${s.id}` },
+      { text: `🗑️ حذف`, callback_data: `chat_delete:${s.id}` },
+    ]);
+  });
+
+  inline_keyboard.push([{ text: "◀️ رجوع للمبيعات", callback_data: "menu_crm" }]);
+
+  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
+  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleChatTranscript(chatId: number, sessionId: string, messageId?: number) {
+  const db = createDbClient();
+  const { data: msgs } = await db
+    .from("chat_messages")
+    .select("role, content, created_at")
+    .eq("session_id", sessionId)
+    .order("created_at", { ascending: true });
+
+  let text = `💬 <b>سجل تفريغ المحادثة الحية (Chat Transcript):</b>\n\n`;
+  (msgs as Record<string, any>[] || []).forEach((m) => {
+    const senderIcon = m.role === "user" ? "👤 الزائر" : "🤖 المساعد";
+    text += `<b>${senderIcon}:</b> ${m.content}\n\n`;
+  });
+
+  if (!msgs || msgs.length === 0) {
+    text += `<i>لا توجد رسائل مسجلة في هذه الجلسة بعد.</i>`;
+  }
+
+  const inline_keyboard = [
+    [{ text: "◀️ رجوع لقائمة المحادثات", callback_data: "crm_chats" }]
+  ];
+
+  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
+  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleChatSessionDelete(chatId: number, sessionId: string, messageId?: number) {
+  const db = createDbClient();
+  await db.from("chat_sessions").delete().eq("id", sessionId);
+  await sendMessage(chatId, `🗑️ تم حذف جلسة المحادثة.`);
+  await handleChatSessionsList(chatId, messageId);
+}

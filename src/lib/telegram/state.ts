@@ -1,6 +1,6 @@
 /**
  * Telegram Admin Bot Stateful Wizard Session Store
- * Handles multi-step conversation flows across all database models.
+ * Handles multi-step conversation flows across all 40 database models.
  */
 
 export type AdminStep =
@@ -13,13 +13,28 @@ export type AdminStep =
   | "awaiting_service_name"
   | "awaiting_service_desc"
   | "awaiting_service_price"
+  | "awaiting_project_title"
+  | "awaiting_project_client"
+  | "awaiting_project_city"
+  | "awaiting_project_value"
+  | "awaiting_ad_title"
+  | "awaiting_ad_link"
+  | "awaiting_ad_type"
+  | "awaiting_address_city"
+  | "awaiting_address_street"
+  | "awaiting_address_map"
+  | "awaiting_category_name"
+  | "awaiting_category_slug"
   | "awaiting_article_ai_topic"
   | "awaiting_company_name"
   | "awaiting_company_phone"
   | "awaiting_company_whatsapp"
   | "awaiting_social_link"
   | "awaiting_admin_add"
-  | "awaiting_ai_prompt_text";
+  | "awaiting_ai_prompt_text"
+  | "awaiting_push_title"
+  | "awaiting_push_body"
+  | "awaiting_push_screen";
 
 export type AdminState = {
   step: AdminStep;

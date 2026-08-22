@@ -1,5 +1,6 @@
 import { createDbClient } from "@/lib/db";
-import { sendMessage, editMessage } from "../bot";
+import { sendMessage, editMessage, Keyboards } from "../bot";
+import { setAdminState } from "../state";
 
 // ─── Company Profile Handlers ─────────────────────────────────────────
 
@@ -49,6 +50,55 @@ export async function handleToggleMaintenance(chatId: number, messageId?: number
     );
     await handleCompanyProfile(chatId, messageId);
   }
+}
+
+// ─── Company Addresses & Branches Handlers ────────────────────────────
+
+export async function handleCompanyAddressesList(chatId: number, messageId?: number) {
+  const db = createDbClient();
+  const { data: addresses } = await db
+    .from("company_addresses")
+    .select("id, label_ar, city_ar, street_ar, google_maps_url, is_primary")
+    .order("is_primary", { ascending: false });
+
+  let text = `📍 <b>فروع وعناوين المنشأة (${addresses?.length ?? 0}):</b>\n\n`;
+  const inline_keyboard: any[][] = [];
+
+  (addresses as Record<string, any>[] || []).forEach((a, idx) => {
+    const primary = a.is_primary ? "⭐ رئيسي" : "";
+    text += `${idx + 1}. 🏢 <b>${a.label_ar || "فرع"}</b> ${primary}\n`;
+    text += `   📍 ${a.city_ar || "الرياض"} - ${a.street_ar || "طريق الملك فهد"}\n`;
+    if (a.google_maps_url) text += `   🗺️ <a href="${a.google_maps_url}">موقع الخريطة (Google Maps)</a>\n`;
+    text += `\n`;
+
+    inline_keyboard.push([
+      { text: `🗑️ حذف الفرع رقم ${idx + 1}`, callback_data: `addr_delete:${a.id}` }
+    ]);
+  });
+
+  inline_keyboard.push([
+    { text: "➕ إضافة عنوان/فرع جديد", callback_data: "addr_add_prompt" }
+  ]);
+  inline_keyboard.push([{ text: "◀️ رجوع للإعدادات", callback_data: "menu_settings" }]);
+
+  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
+  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleCompanyAddressDelete(chatId: number, id: string, messageId?: number) {
+  const db = createDbClient();
+  await db.from("company_addresses").delete().eq("id", id);
+  await sendMessage(chatId, `🗑️ تم حذف العنوان/الفرع.`);
+  await handleCompanyAddressesList(chatId, messageId);
+}
+
+export async function handleCompanyAddressAddPrompt(chatId: number) {
+  setAdminState(chatId, "awaiting_address_city");
+  await sendMessage(
+    chatId,
+    `📍 <b>إضافة فرع أو عنوان جديد — الخطوة 1/3</b>\n\nأرسل الآن <b>اسم المدينة واسم الفرع</b> (مثال: فرع جدة - حي الروضة):`,
+    { reply_markup: Keyboards.cancelWizard("set_addresses") }
+  );
 }
 
 // ─── Social Contacts Handlers ─────────────────────────────────────────

@@ -55,6 +55,8 @@ export async function handleServiceDetails(chatId: number, serviceId: string, me
     return;
   }
 
+  const { data: images } = await db.from("service_images").select("id, is_cover").eq("service_id", serviceId);
+
   const text = `🛠️ <b>تفاصيل الخدمة</b>
 
 🏛️ <b>الاسم العربي:</b> ${s.name_ar}
@@ -63,6 +65,7 @@ export async function handleServiceDetails(chatId: number, serviceId: string, me
 💰 <b>نطاق السعر:</b> ${s.price_from || "—"} إلى ${s.price_to || "—"} ريال / ${s.price_unit || "متر"}
 🟢 <b>الحالة:</b> ${s.is_active ? "مفعلة وتظهر للزوار" : "معطلة ومخفية"}
 ⭐ <b>مميزة في الصفحة الرئيسية:</b> ${s.is_featured ? "نعم" : "لا"}
+🖼️ <b>الصور الإضافية:</b> ${images?.length || 0} صورة
 👁️ <b>عدد المشاهدات:</b> ${s.view_count || 0}
 
 📝 <b>الوصف:</b>
@@ -118,8 +121,14 @@ export async function handleProjectsList(chatId: number, messageId?: number) {
 
   if (!projects || projects.length === 0) {
     const emptyText = "📁 <b>معرض المشاريع والأعمال</b>\n\nلا توجد مشاريع مسجلة حالياً.";
-    if (messageId) await editMessage(chatId, messageId, emptyText, Keyboards.backToSubmenu("menu_content"));
-    else await sendMessage(chatId, emptyText, { reply_markup: Keyboards.backToSubmenu("menu_content") });
+    const kb = {
+      inline_keyboard: [
+        [{ text: "➕ إضافة مشروع جديد", callback_data: "prj_add_prompt" }],
+        [{ text: "◀️ رجوع لقائمة المحتوى", callback_data: "menu_content" }],
+      ],
+    };
+    if (messageId) await editMessage(chatId, messageId, emptyText, kb);
+    else await sendMessage(chatId, emptyText, { reply_markup: kb });
     return;
   }
 
@@ -136,6 +145,9 @@ export async function handleProjectsList(chatId: number, messageId?: number) {
     ]);
   });
 
+  inline_keyboard.push([
+    { text: "➕ إضافة مشروع جديد", callback_data: "prj_add_prompt" }
+  ]);
   inline_keyboard.push([{ text: "◀️ رجوع لقائمة المحتوى", callback_data: "menu_content" }]);
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
@@ -147,6 +159,117 @@ export async function handleProjectDelete(chatId: number, id: string, messageId?
   await db.from("projects").delete().eq("id", id);
   await sendMessage(chatId, `🗑️ تم حذف المشروع.`);
   await handleProjectsList(chatId, messageId);
+}
+
+export async function handleProjectAddPrompt(chatId: number) {
+  setAdminState(chatId, "awaiting_project_title");
+  await sendMessage(
+    chatId,
+    `➕ <b>إضافة مشروع جديد — الخطوة 1/4</b>\n\nأرسل الآن <b>عنوان أو اسم المشروع</b> (مثال: واجهات زجاجية لبرج الأعمال الحديث):`,
+    { reply_markup: Keyboards.cancelWizard("cnt_projects") }
+  );
+}
+
+// ─── Before & After Handlers ──────────────────────────────────────────
+
+export async function handleBeforeAfterList(chatId: number, messageId?: number) {
+  const db = createDbClient();
+  const { data: list } = await db
+    .from("project_before_after")
+    .select("id, project_id, caption_ar, sort_order")
+    .order("sort_order", { ascending: true });
+
+  let text = `🔄 <b>مقارنات قبل وبعد (Before & After) (${list?.length ?? 0}):</b>\n\n`;
+  const inline_keyboard: any[][] = [];
+
+  (list as Record<string, any>[] || []).forEach((item, idx) => {
+    text += `${idx + 1}. 🔄 <b>${item.caption_ar || "مقارنة قبل وبعد"}</b>\n`;
+    inline_keyboard.push([
+      { text: `🗑️ حذف المقارنة رقم ${idx + 1}`, callback_data: `ba_delete:${item.id}` }
+    ]);
+  });
+
+  inline_keyboard.push([{ text: "◀️ رجوع للمحتوى", callback_data: "menu_content" }]);
+
+  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
+  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleBeforeAfterDelete(chatId: number, id: string, messageId?: number) {
+  const db = createDbClient();
+  await db.from("project_before_after").delete().eq("id", id);
+  await sendMessage(chatId, `🗑️ تم حذف عنصر المقارنة.`);
+  await handleBeforeAfterList(chatId, messageId);
+}
+
+// ─── Advertisements Handlers ──────────────────────────────────────────
+
+export async function handleAdsList(chatId: number, messageId?: number) {
+  const db = createDbClient();
+  const { data: ads } = await db
+    .from("advertisements")
+    .select("id, title_ar, target_route, is_active, priority, media_type")
+    .order("created_at", { ascending: false });
+
+  if (!ads || ads.length === 0) {
+    const emptyText = "📢 <b>الإعلانات والعروض الترويجية</b>\n\nلا توجد إعلانات مسجلة حالياً.";
+    const kb = {
+      inline_keyboard: [
+        [{ text: "➕ إضافة إعلان أو بانر جديد", callback_data: "ad_add_prompt" }],
+        [{ text: "◀️ رجوع للمحتوى", callback_data: "menu_content" }],
+      ],
+    };
+    if (messageId) await editMessage(chatId, messageId, emptyText, kb);
+    else await sendMessage(chatId, emptyText, { reply_markup: kb });
+    return;
+  }
+
+  let text = `📢 <b>قائمة الإعلانات والبانرات الترويجية (${ads.length}):</b>\n\n`;
+  const inline_keyboard: any[][] = [];
+
+  (ads as Record<string, any>[]).forEach((ad, idx) => {
+    const status = ad.is_active ? "🟢 نشط" : "🔴 متوقف";
+    text += `${idx + 1}. [${status}] <b>${ad.title_ar}</b> (${ad.media_type || "صورة"})\n`;
+    text += `   🔗 التوجيه: <code>${ad.target_route || "/"}</code>\n\n`;
+
+    inline_keyboard.push([
+      { text: `🔄 تفعيل/تعطيل: ${ad.title_ar.slice(0, 14)}`, callback_data: `ad_toggle:${ad.id}` },
+      { text: `🗑️ حذف`, callback_data: `ad_delete:${ad.id}` },
+    ]);
+  });
+
+  inline_keyboard.push([
+    { text: "➕ إضافة إعلان أو بانر جديد", callback_data: "ad_add_prompt" }
+  ]);
+  inline_keyboard.push([{ text: "◀️ رجوع لقائمة المحتوى", callback_data: "menu_content" }]);
+
+  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
+  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleAdToggle(chatId: number, id: string, messageId?: number) {
+  const db = createDbClient();
+  const { data: ad } = await db.from("advertisements").select("is_active").eq("id", id).single();
+  if (ad) {
+    await db.from("advertisements").update({ is_active: !ad.is_active }).eq("id", id);
+    await handleAdsList(chatId, messageId);
+  }
+}
+
+export async function handleAdDelete(chatId: number, id: string, messageId?: number) {
+  const db = createDbClient();
+  await db.from("advertisements").delete().eq("id", id);
+  await sendMessage(chatId, `🗑️ تم حذف الإعلان.`);
+  await handleAdsList(chatId, messageId);
+}
+
+export async function handleAdAddPrompt(chatId: number) {
+  setAdminState(chatId, "awaiting_ad_title");
+  await sendMessage(
+    chatId,
+    `📢 <b>إضافة إعلان أو عرض ترويجي — الخطوة 1/2</b>\n\nأرسل الآن <b>عنوان الإعلان</b> (مثال: خصم 20% بمناسبة اليوم الوطني):`,
+    { reply_markup: Keyboards.cancelWizard("cnt_ads") }
+  );
 }
 
 // ─── Categories Handlers ──────────────────────────────────────────────
@@ -168,6 +291,9 @@ export async function handleCategoriesList(chatId: number, messageId?: number) {
     ]);
   });
 
+  inline_keyboard.push([
+    { text: "➕ إضافة تصنيف جديد", callback_data: "cat_add_prompt" }
+  ]);
   inline_keyboard.push([{ text: "◀️ رجوع لقائمة المحتوى", callback_data: "menu_content" }]);
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
@@ -179,6 +305,15 @@ export async function handleCategoryDelete(chatId: number, id: string, messageId
   await db.from("categories").delete().eq("id", id);
   await sendMessage(chatId, `🗑️ تم حذف التصنيف.`);
   await handleCategoriesList(chatId, messageId);
+}
+
+export async function handleCategoryAddPrompt(chatId: number) {
+  setAdminState(chatId, "awaiting_category_name");
+  await sendMessage(
+    chatId,
+    `📂 <b>إضافة تصنيف جديد</b>\n\nأرسل الآن <b>اسم التصنيف</b> (مثال: أعمال الألمنيوم والكلادينج):`,
+    { reply_markup: Keyboards.cancelWizard("cnt_categories") }
+  );
 }
 
 // ─── Articles & AI Generator Handlers ─────────────────────────────────
@@ -234,11 +369,15 @@ export async function handleArticleDetails(chatId: number, id: string, messageId
     return;
   }
 
+  const { data: tags } = await db.from("article_tags").select("tag").eq("article_id", id);
+  const tagList = tags?.map((t: any) => `#${t.tag}`).join(" ") || "—";
+
   const text = `✍️ <b>تفاصيل المقال</b>
 
 📰 <b>العنوان:</b> ${a.title_ar}
 🔗 <b>الرابط:</b> <code>/blog/${a.slug}</code>
 📊 <b>الحالة:</b> <b>${a.status}</b>
+🏷️ <b>الوسوم:</b> ${tagList}
 ⏱️ <b>وقت القراءة:</b> ${a.read_time_minutes || 3} دقائق
 👁️ <b>المشاهدات:</b> ${a.view_count || 0}
 
@@ -318,7 +457,7 @@ export async function handleArticleAiGenerate(chatId: number, topic: string) {
     .replace(/\s+/g, "-")
     .slice(0, 50) + "-" + Date.now().toString().slice(-4);
 
-  await db.from("articles").insert({
+  const { data: art } = await db.from("articles").insert({
     company_id: companyId,
     title_ar: title,
     title_en: title,
@@ -331,7 +470,14 @@ export async function handleArticleAiGenerate(chatId: number, topic: string) {
     status: "published",
     read_time_minutes: 4,
     published_at: new Date().toISOString(),
-  });
+  }).select("id").single();
+
+  if (art?.id) {
+    await db.from("article_tags").insert([
+      { article_id: art.id, tag: "مقاولات" },
+      { article_id: art.id, tag: "زجاج_سكريت" },
+    ]);
+  }
 
   await sendMessage(
     chatId,

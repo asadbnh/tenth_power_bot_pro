@@ -45,7 +45,8 @@ export async function handleMediaUploadPrompt(chatId: number, messageId?: number
 أرسل أي صورة مباشرة إلى هذه المحادثة (كصورة أو ملف)، وسيقوم البوت تلقائياً بما يلي:
 1. معالجة وتخزين الصورة.
 2. تسجيلها في جدول <code>media_library</code> بقاعدة البيانات.
-3. تزويدك برابط مباشر لمعاينتها وربطها بالمشاريع والخدمات.`;
+3. تزويدك برابط مباشر لمعاينتها وربطها بالمشاريع والخدمات.
+4. سؤالك عما إذا كنت ترغب في إرسال إشعار فوري للعملاء.`;
 
   if (messageId) await editMessage(chatId, messageId, text, Keyboards.backToSubmenu("menu_media"));
   else await sendMessage(chatId, text, { reply_markup: Keyboards.backToSubmenu("menu_media") });
@@ -66,7 +67,8 @@ export async function handleGalleryAlbumsList(chatId: number, messageId?: number
   (albums as Record<string, any>[] || []).forEach((a, idx) => {
     text += `${idx + 1}. 🖼️ <b>${a.title_ar}</b> (Slug: <code>${a.slug}</code>)\n`;
     inline_keyboard.push([
-      { text: `🗑️ حذف الألبوم: ${a.title_ar}`, callback_data: `alb_delete:${a.id}` }
+      { text: `🖼️ استعراض صور الألبوم`, callback_data: `alb_items:${a.id}` },
+      { text: `🗑️ حذف الألبوم`, callback_data: `alb_delete:${a.id}` },
     ]);
   });
 
@@ -74,6 +76,37 @@ export async function handleGalleryAlbumsList(chatId: number, messageId?: number
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleGalleryAlbumItems(chatId: number, albumId: string, messageId?: number) {
+  const db = createDbClient();
+  const { data: items } = await db
+    .from("gallery_items")
+    .select("id, title_ar, sort_order, is_featured")
+    .eq("album_id", albumId)
+    .order("sort_order", { ascending: true });
+
+  let text = `🖼️ <b>الصور داخل الألبوم (${items?.length ?? 0}):</b>\n\n`;
+  const inline_keyboard: any[][] = [];
+
+  (items as Record<string, any>[] || []).forEach((it, idx) => {
+    text += `${idx + 1}. 🖼️ <b>${it.title_ar || "صورة"}</b>\n`;
+    inline_keyboard.push([
+      { text: `🗑️ حذف الصورة رقم ${idx + 1}`, callback_data: `it_delete:${it.id}` }
+    ]);
+  });
+
+  inline_keyboard.push([{ text: "◀️ رجوع لقائمة الألبومات", callback_data: "med_gallery" }]);
+
+  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
+  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleGalleryItemDelete(chatId: number, id: string, messageId?: number) {
+  const db = createDbClient();
+  await db.from("gallery_items").delete().eq("id", id);
+  await sendMessage(chatId, `🗑️ تم حذف عنصر المعرض.`);
+  await handleGalleryAlbumsList(chatId, messageId);
 }
 
 export async function handleGalleryAlbumDelete(chatId: number, id: string, messageId?: number) {
@@ -121,10 +154,19 @@ export async function handlePhotoUpload(msg: TelegramMessage) {
       storage_path: fileRes.result.file_path,
     }).select("id, file_url").single();
 
+    if (media?.id) {
+      await db.from("media_metadata").insert({
+        media_id: media.id,
+        alt_text_ar: "صورة جديدة من أعمال القوة العاشرة",
+        alt_text_en: "Tenth Power project photo",
+        caption_ar: "تم الرفع عبر لوحة تلجرام",
+      });
+    }
+
     await sendMessage(
       chatId,
-      `✅ <b>تم رفع وتسجيل الصورة بنجاح!</b>\n\n🆔 <b>المعرّف:</b> <code>${media.id}</code>\n📐 <b>الأبعاد:</b> ${largestPhoto.width}x${largestPhoto.height}\n🔗 <b>الرابط:</b> <a href="${tgUrl}">عرض الصورة</a>`,
-      { reply_markup: Keyboards.backToSubmenu("menu_media") }
+      `✅ <b>تم رفع وتسجيل الصورة بنجاح!</b>\n\n🆔 <b>المعرّف:</b> <code>${media.id}</code>\n📐 <b>الأبعاد:</b> ${largestPhoto.width}x${largestPhoto.height}\n🔗 <b>الرابط:</b> <a href="${tgUrl}">عرض الصورة</a>\n\n🔔 <b>هل ترغب في إرسال إشعار فوري لعملاء التطبيق بهذه الصورة؟</b>`,
+      { reply_markup: Keyboards.askPushPrompt("photo", media.id) }
     );
   } catch (err) {
     console.error("Photo upload handling error:", err);

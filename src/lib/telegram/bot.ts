@@ -1,7 +1,7 @@
 /**
  * Telegram Bot Service & Keyboard Registry
  * Handles all Telegram API interactions, inline keyboards, and message formatters
- * for comprehensive control over all 37 database tables in WebTaky.
+ * for comprehensive control over all 40 database tables in WebTaky.
  */
 
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
@@ -73,7 +73,7 @@ export async function sendMessage(
 ) {
   return telegramRequest("sendMessage", {
     chat_id: chatId,
-    text: text.slice(0, 4000), // Protect against Telegram message limit
+    text: text.slice(0, 4000),
     parse_mode: options.parse_mode ?? "HTML",
     disable_web_page_preview: options.disable_web_page_preview ?? true,
     ...options,
@@ -133,7 +133,8 @@ export const Keyboards = {
       [{ text: "📊 الإحصائيات الشاملة", callback_data: "menu_stats" }, { text: "💼 المبيعات والعملاء", callback_data: "menu_crm" }],
       [{ text: "🛠️ محتوى الموقع والخدمات", callback_data: "menu_content" }, { text: "🖼️ الوسائط والصور", callback_data: "menu_media" }],
       [{ text: "⭐ التقييمات والآراء", callback_data: "menu_reviews" }, { text: "📍 صفحات المدن والتسويق", callback_data: "menu_marketing" }],
-      [{ text: "⚙️ إعدادات المنشأة والذكاء الاصطناعي", callback_data: "menu_settings" }, { text: "🛡️ الأمان والعمليات", callback_data: "menu_system" }],
+      [{ text: "⚙️ إعدادات المنشأة والفروع", callback_data: "menu_settings" }, { text: "🛡️ الأمان والإشعارات", callback_data: "menu_system" }],
+      [{ text: "🔔 إرسال إشعار فوري للتطبيق", callback_data: "push_broadcast_prompt" }],
     ],
   }),
 
@@ -141,6 +142,7 @@ export const Keyboards = {
     inline_keyboard: [
       [{ text: "📋 طلبات عروض الأسعار", callback_data: "crm_quotes" }, { text: "📅 المواعيد والحجوزات", callback_data: "crm_appointments" }],
       [{ text: "💬 الرسائل والاستفسارات", callback_data: "crm_messages" }, { text: "👥 دليل العملاء (Leads)", callback_data: "crm_users" }],
+      [{ text: "🤖 محادثات الزوار والشات بوت", callback_data: "crm_chats" }],
       [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
     ],
   }),
@@ -149,7 +151,8 @@ export const Keyboards = {
     inline_keyboard: [
       [{ text: "🛠️ الخدمات والكتالوج", callback_data: "cnt_services" }, { text: "📁 المشاريع والمعارض", callback_data: "cnt_projects" }],
       [{ text: "✍️ المقالات والمدونة", callback_data: "cnt_articles" }, { text: "📂 التصنيفات", callback_data: "cnt_categories" }],
-      [{ text: "❓ الأسئلة الشائعة (FAQs)", callback_data: "cnt_faqs" }, { text: "🤖 توليد مقال بالـ AI", callback_data: "cnt_ai_article" }],
+      [{ text: "❓ الأسئلة الشائعة", callback_data: "cnt_faqs" }, { text: "📢 الإعلانات والبانرات", callback_data: "cnt_ads" }],
+      [{ text: "🔄 مقارنات قبل وبعد", callback_data: "cnt_before_after" }, { text: "🤖 توليد مقال بالـ AI", callback_data: "cnt_ai_article" }],
       [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
     ],
   }),
@@ -165,6 +168,7 @@ export const Keyboards = {
   reviewsMenu: (): InlineKeyboard => ({
     inline_keyboard: [
       [{ text: "⏳ التقييمات المعلقة", callback_data: "rev_pending" }, { text: "⭐ كافة التقييمات المعتمدة", callback_data: "rev_approved" }],
+      [{ text: "🌟 تقييمات العملاء المباشرة", callback_data: "rev_direct_reviews" }],
       [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
     ],
   }),
@@ -173,25 +177,51 @@ export const Keyboards = {
     inline_keyboard: [
       [{ text: "📍 صفحات المدن (City Pages)", callback_data: "mkt_cities" }, { text: "🔗 خدمات المدن المرتبطة", callback_data: "mkt_city_services" }],
       [{ text: "🔍 الكلمات الأكثر بحثاً", callback_data: "mkt_keywords" }, { text: "📈 أحداث الزيارات", callback_data: "mkt_analytics" }],
+      [{ text: "🏷️ إدارة الـ SEO والعناوين", callback_data: "mkt_seo" }, { text: "⚡ إعادة بناء فهرس البحث", callback_data: "mkt_rebuild_search" }],
       [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
     ],
   }),
 
   settingsMenu: (): InlineKeyboard => ({
     inline_keyboard: [
-      [{ text: "🏢 ملف وهوية المنشأة", callback_data: "set_profile" }, { text: "🌐 قنوات التواصل والسوشيال", callback_data: "set_social" }],
-      [{ text: "🚧 وضع الصيانة (🟢/🔴)", callback_data: "set_toggle_maint" }, { text: "⏰ ساعات العمل والدوام", callback_data: "set_hours" }],
-      [{ text: "🤖 موجهات الذكاء الاصطناعي", callback_data: "set_ai_prompt" }, { text: "🔑 مخزن الإعدادات", callback_data: "set_store" }],
+      [{ text: "🏢 ملف وهوية المنشأة", callback_data: "set_profile" }, { text: "📍 فروع وعناوين المنشأة", callback_data: "set_addresses" }],
+      [{ text: "🌐 قنوات التواصل والسوشيال", callback_data: "set_social" }, { text: "⏰ ساعات العمل والدوام", callback_data: "set_hours" }],
+      [{ text: "🚧 وضع الصيانة (🟢/🔴)", callback_data: "set_toggle_maint" }, { text: "🤖 موجهات الذكاء الاصطناعي", callback_data: "set_ai_prompt" }],
+      [{ text: "🔑 مخزن الإعدادات", callback_data: "set_store" }],
       [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
     ],
   }),
 
   systemMenu: (): InlineKeyboard => ({
     inline_keyboard: [
+      [{ text: "🔔 إرسال إشعار فوري للتطبيق", callback_data: "push_broadcast_prompt" }, { text: "📜 سجل الإشعارات الصادرة", callback_data: "sys_notification_logs" }],
       [{ text: "👑 مسؤولي التلجرام", callback_data: "sys_admins" }, { text: "➕ إضافة مسؤول جديد", callback_data: "sys_add_admin" }],
       [{ text: "🛡️ سجل العمليات والأمان", callback_data: "sys_audit" }, { text: "💾 النسخ الاحتياطية", callback_data: "sys_backups" }],
-      [{ text: "🔔 اشتراكات الإشعارات", callback_data: "sys_push" }],
+      [{ text: "📱 مشتركي الإشعارات", callback_data: "sys_push" }],
       [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
+    ],
+  }),
+
+  // Ask Admin if they want to notify app users after adding content
+  askPushPrompt: (entityType: string, entityId: string): InlineKeyboard => ({
+    inline_keyboard: [
+      [
+        { text: "🔔 نعم، إرسال إشعار فوري للعملاء", callback_data: `push_confirm:${entityType}:${entityId}` },
+      ],
+      [
+        { text: "❌ لا، بدون إشعار (افتراضي)", callback_data: `push_skip:${entityType}` },
+      ],
+    ],
+  }),
+
+  // Screen selection for custom broadcast
+  pushScreenSelector: (): InlineKeyboard => ({
+    inline_keyboard: [
+      [{ text: "🏠 الواجهة الرئيسية (/)", callback_data: "push_screen:/" }],
+      [{ text: "📁 معرض المشاريع (/projects)", callback_data: "push_screen:/projects" }, { text: "🛠️ قائمة الخدمات (/services)", callback_data: "push_screen:/services" }],
+      [{ text: "📞 طلب تسعير وتواصل (/contact)", callback_data: "push_screen:/contact" }, { text: "🖼️ معرض الصور (/gallery)", callback_data: "push_screen:/gallery" }],
+      [{ text: "🏢 من نحن (/about)", callback_data: "push_screen:/about" }, { text: "🌐 قنوات التواصل (/social)", callback_data: "push_screen:/social" }],
+      [{ text: "❌ إلغاء", callback_data: "main_menu" }],
     ],
   }),
 

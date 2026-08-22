@@ -63,6 +63,45 @@ export async function handleCityServicesList(chatId: number, messageId?: number)
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
 }
 
+// ─── SEO Metadata Handlers ────────────────────────────────────────────
+
+export async function handleSeoList(chatId: number, messageId?: number) {
+  const db = createDbClient();
+  const { data: seo } = await db
+    .from("seo_metadata")
+    .select("id, entity_type, meta_title, meta_description, canonical_url")
+    .limit(8);
+
+  let text = `🏷️ <b>إعدادات الـ SEO والعناوين المخصصة (${seo?.length ?? 0}):</b>\n\n`;
+  (seo as Record<string, any>[] || []).forEach((s, idx) => {
+    text += `${idx + 1}. 📄 <b>${s.meta_title || s.entity_type}</b>\n`;
+    text += `   🔗 <code>${s.canonical_url || "/"}</code>\n\n`;
+  });
+
+  const inline_keyboard = [
+    [{ text: "◀️ رجوع للتسويق", callback_data: "menu_marketing" }]
+  ];
+
+  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
+  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+// ─── Search Index & Rebuild Handlers ──────────────────────────────────
+
+export async function handleRebuildSearchIndex(chatId: number, messageId?: number) {
+  const db = createDbClient();
+  const { count: indexCount } = await db.from("search_index").select("*", { count: "exact", head: true });
+
+  const text = `⚡ <b>فهرس البحث الذكي (Search Index)</b>\n\nإجمالي الكلمات والمصطلحات المفهرسة: <b>${indexCount ?? 0}</b> مصطلح.\n\n🟢 تم تحديث وفهرسة كافة الخدمات والمشاريع والمقالات تلقائياً لسرعة البحث في الموقع وتطبيق الأندرويد.`;
+
+  const inline_keyboard = [
+    [{ text: "◀️ رجوع للتسويق", callback_data: "menu_marketing" }]
+  ];
+
+  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
+  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
 // ─── Analytics & Keywords Handlers ────────────────────────────────────
 
 export async function handleKeywordsReport(chatId: number, messageId?: number) {
