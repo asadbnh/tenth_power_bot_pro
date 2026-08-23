@@ -20,10 +20,10 @@ export const COMPANY_CONFIG = {
   tax_number: "310000000000003",
   commercial_register: "1010000000",
   social: {
-    instagram: "https://instagram.com/tenthpowerglass",
-    snapchat: "https://snapchat.com/add/tenthpowerglass",
-    tiktok: "https://tiktok.com/@tenthpowerglass",
-    telegram_bot: "https://t.me/tenthpower_bot",
+    instagram: "https://www.instagram.com/ZJJ4021",
+    snapchat: "https://www.snapchat.com/add/zjjskryt24?share_id=dOfCOthKqmw&locale=ar-AE",
+    tiktok: "https://www.tiktok.com/@user0532438253?_t=ZS-8zOaCY7q4xg&_r=1",
+    telegram_bot: "https://t.me/Ponamohabot",
     telegram_channel: "https://t.me/TenthPowerSA",
    
   },
