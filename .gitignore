@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Secrets and Firebase Service Account
+*firebase-adminsdk*.json
+service-account*.json
+
+# Backups
+backups/*.zip
