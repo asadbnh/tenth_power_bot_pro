@@ -122,7 +122,12 @@ export async function handleCommand(msg: TelegramMessage) {
       await handleAuditLog(userId);
       break;
     case "/backups":
-      await handleBackupsList(userId);
+    case "/backup":
+      await sendMessage(
+        userId,
+        "📦 <b>مركز النسخ الاحتياطي والأرشيف السحابي</b>\n\nيمكنك إنشاء نسخة احتياطية فورية وشاملة لكافة الجداول الـ 40 والوسائط والصور بصيغة Zip وإرسالها لخزنة التلجرام، أو استعراض السجلات السابقة:",
+        { reply_markup: Keyboards.backupMenu() }
+      );
       break;
     default:
       await handleStart(msg);
@@ -603,6 +608,58 @@ export async function handleCallback(query: TelegramCallbackQuery) {
   if (data === "sys_audit") return handleAuditLog(userId, messageId);
   if (data === "sys_backups") return handleBackupsList(userId, messageId);
   if (data === "sys_push") return handlePushSubscriptions(userId, messageId);
+
+  // Backup Center Callbacks
+  if (data === "menu_backup") {
+    const text = `💾 <b>مركز النسخ الاحتياطي والأرشيف السحابي</b>\n\nاختر أحد الإجراءات أدناه:`;
+    if (messageId) return editMessage(userId, messageId, text, Keyboards.backupMenu());
+    return sendMessage(userId, text, { reply_markup: Keyboards.backupMenu() });
+  }
+
+  if (data === "backup_create_now") {
+    const progressMsg = await sendMessage(userId, `⏳ <b>جاري بدء عملية النسخ الاحتياطي الشاملة...</b>`);
+    const pMsgId = progressMsg?.result?.message_id;
+
+    try {
+      const { createFullBackupArchive } = await import("@/lib/backup");
+      const result = await createFullBackupArchive({
+        targetTelegramChatId: userId,
+        onProgress: async (stepText) => {
+          if (pMsgId) {
+            await editMessage(userId, pMsgId, `🔄 <b>عملية النسخ جارية...</b>\n\n${stepText}`);
+          }
+        },
+      });
+
+      const sizeMB = (result.fileSizeBytes / (1024 * 1024)).toFixed(2);
+      const successText = `🎉 <b>اكتملت عملية النسخ الاحتياطي بنجاح!</b>\n\n📁 <b>اسم الملف:</b> <code>${result.fileName}</code>\n📊 <b>الجداول:</b> ${result.tablesCount} جدولاً\n🖼️ <b>الوسائط:</b> ${result.mediaCount} ملف\n💾 <b>الحجم:</b> ${sizeMB} MB\n\n🛡️ تم إرسال الأرشيف بالكامل إليك كملف Zip، وتم توثيقه في قاعدة البيانات.`;
+      
+      if (pMsgId) await editMessage(userId, pMsgId, successText, Keyboards.backToMenu());
+      else await sendMessage(userId, successText, { reply_markup: Keyboards.backToMenu() });
+    } catch (err: any) {
+      console.error("Backup creation error:", err);
+      const errText = `❌ <b>حدث خطأ أثناء النسخ الاحتياطي:</b>\n<code>${err?.message || "Unknown error"}</code>`;
+      if (pMsgId) await editMessage(userId, pMsgId, errText, Keyboards.backToMenu());
+      else await sendMessage(userId, errText, { reply_markup: Keyboards.backToMenu() });
+    }
+    return;
+  }
+
+  if (data === "backup_info") {
+    const infoText = `📖 <b>طريقة استعادة البيانات محلياً (Local Restore):</b>
+
+1. قم بتحميل ملف الـ <code>.zip</code> من التلجرام إلى مجلد المشروع <code>./backups/</code>.
+2. شغّل أمر الاستعادة الفوري في الترمينال:
+   <code>npm run backup:restore</code>
+3. سيقوم النظام تلقائياً بما يلي:
+   • فك ضغط واستخراج جميع الصور والفيديوهات إلى <code>public/images/</code>.
+   • حقن واسترجاع كافة الـ 40 جدولاً بقاعدة البيانات.
+
+✨ <i>يضمن لك هذا الخيار الحماية الكاملة من أي توقف لأي سيرفر خارجي.</i>`;
+
+    if (messageId) return editMessage(userId, messageId, infoText, Keyboards.backToSubmenu("menu_backup"));
+    return sendMessage(userId, infoText, { reply_markup: Keyboards.backToSubmenu("menu_backup") });
+  }
 }
 
 // ─── Photo Message Forwarder ──────────────────────────────────────────

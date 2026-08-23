@@ -106,17 +106,42 @@ export async function answerCallbackQuery(queryId: string, text?: string) {
   });
 }
 
-export async function sendPhoto(
-  chatId: number,
-  photoUrl: string,
-  caption?: string
-) {
+export async function sendPhoto(chatId: number, photo: string, caption?: string) {
   return telegramRequest("sendPhoto", {
     chat_id: chatId,
-    photo: photoUrl,
-    caption: caption?.slice(0, 1024),
+    photo,
+    caption,
     parse_mode: "HTML",
   });
+}
+
+export async function sendDocument(
+  chatId: number | string,
+  documentBuffer: Buffer,
+  filename: string,
+  caption?: string
+) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) return { ok: false, error: "Bot token missing" };
+
+  const formData = new FormData();
+  formData.append("chat_id", String(chatId));
+  if (caption) {
+    formData.append("caption", caption);
+    formData.append("parse_mode", "HTML");
+  }
+  const blob = new Blob([new Uint8Array(documentBuffer)], { type: "application/zip" });
+  formData.append("document", blob, filename);
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendDocument`, {
+      method: "POST",
+      body: formData,
+    });
+    return await res.json();
+  } catch (err: any) {
+    return { ok: false, error: err?.message || "Failed to send document" };
+  }
 }
 
 export async function getFile(fileId: string) {
@@ -198,8 +223,16 @@ export const Keyboards = {
     inline_keyboard: [
       [{ text: "🔔 إرسال إشعار فوري للتطبيق", callback_data: "push_broadcast_prompt" }, { text: "📜 سجل الإشعارات الصادرة", callback_data: "sys_notification_logs" }],
       [{ text: "👑 مسؤولي التلجرام", callback_data: "sys_admins" }, { text: "➕ إضافة مسؤول جديد", callback_data: "sys_add_admin" }],
-      [{ text: "🛡️ سجل العمليات والأمان", callback_data: "sys_audit" }, { text: "💾 النسخ الاحتياطية", callback_data: "sys_backups" }],
+      [{ text: "🛡️ سجل العمليات والأمان", callback_data: "sys_audit" }, { text: "💾 مركز النسخ الاحتياطي", callback_data: "menu_backup" }],
       [{ text: "📱 مشتركي الإشعارات", callback_data: "sys_push" }],
+      [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
+    ],
+  }),
+
+  backupMenu: (): InlineKeyboard => ({
+    inline_keyboard: [
+      [{ text: "🚀 إنشاء نسخة احتياطية فورية الآن (.zip)", callback_data: "backup_create_now" }],
+      [{ text: "📜 سجل النسخ السابقة", callback_data: "sys_backups" }, { text: "📖 طريقة الاستعادة محلياً", callback_data: "backup_info" }],
       [{ text: "◀️ القائمة الرئيسية", callback_data: "main_menu" }],
     ],
   }),
