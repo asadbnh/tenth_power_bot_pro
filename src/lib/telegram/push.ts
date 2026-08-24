@@ -39,7 +39,21 @@ function getFirebaseAdminApp(): App | null {
   }
 
   try {
-    // 1. Direct check for service account json in workspace
+    // 1. Direct JSON string or Base64 from environment variable (Best for Netlify / Vercel)
+    if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+      let raw = process.env.FIREBASE_SERVICE_ACCOUNT_KEY.trim();
+      // Support base64 encoded JSON
+      if (!raw.startsWith("{") && !raw.startsWith("[")) {
+        raw = Buffer.from(raw, "base64").toString("utf8");
+      }
+      const serviceAccount = JSON.parse(raw);
+      firebaseAppInstance = initializeApp({
+        credential: cert(serviceAccount),
+      });
+      return firebaseAppInstance;
+    }
+
+    // 2. Direct check for service account json in workspace
     const keyFileName = "coffee-spark-ai-barista-1b800-firebase-adminsdk-fbsvc-22b98c4ca0.json";
     const fullKeyPath = path.join(process.cwd(), keyFileName);
 
@@ -51,7 +65,7 @@ function getFirebaseAdminApp(): App | null {
       return firebaseAppInstance;
     }
 
-    // 2. Fallback to environment variables if provided
+    // 3. Fallback to individual environment variables if provided
     if (
       process.env.FIREBASE_PROJECT_ID &&
       process.env.FIREBASE_CLIENT_EMAIL &&
