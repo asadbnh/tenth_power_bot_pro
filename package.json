@@ -12,7 +12,8 @@
     "db:clean": "npx tsx --env-file=.env.local scripts/clean-database.ts",
     "backup": "npx tsx --env-file=.env.local scripts/backup.ts",
     "backup:restore": "npx tsx --env-file=.env.local scripts/restore.ts",
-    "test:push": "npx tsx --env-file=.env.local scripts/test-push.ts"
+    "test:push": "npx tsx --env-file=.env.local scripts/test-push.ts",
+    "env:sync": "npx tsx scripts/sync-env.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1105.0",
