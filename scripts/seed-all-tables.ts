@@ -256,6 +256,16 @@ async function seedAllTables() {
 
   const mediaMap: Record<string, { id: string; url: string; webpUrl: string }> = {};
   for (const img of rawImages) {
+    const existing = await sql`
+      SELECT id, file_url, webp_url FROM media_library 
+      WHERE company_id = ${companyId} AND file_name = ${img.file} 
+      LIMIT 1;
+    `;
+    if (existing.length > 0) {
+      mediaMap[img.file] = { id: existing[0].id, url: existing[0].file_url, webpUrl: existing[0].webp_url || existing[0].file_url };
+      continue;
+    }
+
     const uploaded = await getOrUploadR2Image(img.path, img.folder);
     const rows = await sql`
       INSERT INTO media_library (
@@ -318,7 +328,7 @@ async function seedAllTables() {
       short_en: "Execution of impact-resistant tempered glass doors, partitions and facades with 10-12mm thickness.",
       full_ar: "نقدم حلول الزجاج السيكوريت المعالج حرارياً بأعلى معايير الأمان ومقاومة الصدمات والحرارة العالية مع إكسسوارات ستانلس ستيل 304 المقاومة للصدأ وضمان شامل لمدة 10 سنوات.",
       full_en: "We offer thermally tempered securit glass solutions with maximum safety and heat resistance with stainless steel 304 accessories and 10-year warranty.",
-      icon: "Shield",
+      icon: "Layers3",
       imgFile: "tempered-glass.webp",
       price_from: 250,
       price_to: 450,
@@ -334,7 +344,7 @@ async function seedAllTables() {
       short_en: "Curtain wall and spider structural glass facades for commercial towers and luxury modern villas.",
       full_ar: "تصميم وتنفيذ الواجهات الزجاجية الهيكلية كرتن وول وأنظمة السبايدر بأحدث التقنيات الهندسية وعزل حراري وصوتي فائق معتمد لدى كود البناء السعودي.",
       full_en: "Design and execution of curtain wall structural facades and spider systems with high thermal & acoustic insulation.",
-      icon: "Building",
+      icon: "Building2",
       imgFile: "glass-facades.webp",
       price_from: 450,
       price_to: 850,
@@ -342,15 +352,15 @@ async function seedAllTables() {
       features_en: ["Double glazed with Argon gas", "100% sound & heat proof", "Wind & pressure resistant", "Certified engineering"],
     },
     {
-      slug: "aluminum-profiles",
+      slug: "aluminum",
       catSlug: "aluminum",
-      name_ar: "قطاعات ألمنيوم معزولة حرارياً",
+      name_ar: "أعمال الألمنيوم والنوافذ المعزولة",
       name_en: "Thermal-Break Aluminum Works",
       short_ar: "أبواب ونوافذ ألمنيوم سرايا وجامبو معزولة حرارياً بأحدث الألوان والطلاءات.",
       short_en: "Thermal-break aluminum Saraya and Jumbo doors & windows with high weather resistance.",
       full_ar: "تنفيذ قطاعات الألمنيوم المعزولة حرارياً (Thermal Break) بأجود أنواع الألمنيوم والدهانات المقاومة للعوامل الجوية وأشعة الشمس مع كفرات وإكسسوارات إيطالية.",
       full_en: "High-grade thermal break aluminum profiles with Italian hardware and powder coating resistant to harsh weather.",
-      icon: "Layers",
+      icon: "RectangleHorizontal",
       imgFile: "aluminum-works.webp",
       price_from: 350,
       price_to: 650,
@@ -358,7 +368,7 @@ async function seedAllTables() {
       features_en: ["Thermal break with EPDM gaskets", "Jumbo and Saraya profiles", "Original Italian hardware", "Powder coated colors"],
     },
     {
-      slug: "modern-kitchens",
+      slug: "kitchens",
       catSlug: "kitchens",
       name_ar: "مطابخ ألمنيوم وكلادينج عصرية",
       name_en: "Modern Aluminum & Cladding Kitchens",
@@ -366,12 +376,76 @@ async function seedAllTables() {
       short_en: "Design and custom fabrication of water-resistant cladding aluminum kitchens and built-in cabinets.",
       full_ar: "أحدث تصاميم المطابخ والخزائن العصرية المقاومة للمياه والرطوبة والحرارة مع مفصلات هايدروليك ناعمة الإغلاق وضمان استبدال.",
       full_en: "Modern aluminum and cladding kitchens resistant to moisture and heat with soft-close hydraulic hinges.",
-      icon: "Utensils",
+      icon: "PaintBucket",
       imgFile: "kitchens.webp",
       price_from: 600,
       price_to: 1200,
       features_ar: ["كلادينج خليجي عالي الجودة", "مفصلات هايدروليك بلوم", "مقاوم للماء والنمل الأبيض", "تصميم ثلاثي الأبعاد 3D مجاني"],
       features_en: ["Premium Gulf cladding", "Blum soft-close hinges", "Water and termite proof", "Free 3D visual design"],
+    },
+    {
+      slug: "decorations",
+      catSlug: "glass-works",
+      name_ar: "ديكورات زجاجية داخلية وخارجية",
+      name_en: "Interior & Exterior Glass Decorations",
+      short_ar: "ديكورات مرايا ليد جدارية، قواطع مكتبية، ودرابزينات زجاجية عصرية.",
+      short_en: "Modern LED smart mirrors, office partitions, and architectural glass railings.",
+      full_ar: "تصميم وتنفيذ أجمل الديكورات الزجاجية والمرايا العصرية بأشكال هندسية راقية وإضاءات مخفية تناسب القصور والفلل والمقرات الإدارية.",
+      full_en: "Custom architectural glass decoration, smart LED mirrors, and luxury glass handrails.",
+      icon: "GalleryHorizontalEnd",
+      imgFile: "luxury-facade.webp",
+      price_from: 300,
+      price_to: 700,
+      features_ar: ["مرايا بلجيكية أصلية", "قص ليزر وشطف دقيق", "إضاءة ليد ذكية", "تصاميم مخصصة حسب الطلب"],
+      features_en: ["Belgian original mirrors", "Precision laser beveling", "Smart LED lights", "Custom designs"],
+    },
+    {
+      slug: "doors-windows",
+      catSlug: "aluminum",
+      name_ar: "أبواب ونوافذ أوتوماتيكية ومعزولة",
+      name_en: "Automatic Doors & Insulated Windows",
+      short_ar: "تركيب أبواب زجاج أوتوماتيكية بمستشعرات حركة ونوافذ قلاب وسحاب عازلة.",
+      short_en: "Automatic sliding glass doors with sensors and soundproof sliding windows.",
+      full_ar: "حلول الأبواب والنوافذ المتطورة للمباني التجارية والخاصة بمحركات أوتوماتيكية ألمانية وإيطالية معتمدة وأنظمة قفل ذكية.",
+      full_en: "Advanced door and window automation with German and Italian motion sensors.",
+      icon: "DoorOpen",
+      imgFile: "tempered-glass.webp",
+      price_from: 400,
+      price_to: 950,
+      features_ar: ["محركات أوتوماتيكية ألمانية", "حساسات حركة فائقة الاستجابة", "عزل تام للهواء والأتربة", "ضمان 5 سنوات"],
+      features_en: ["German automatic motors", "Motion sensors", "Dust and air sealing", "5-year warranty"],
+    },
+    {
+      slug: "contracting",
+      catSlug: "facades",
+      name_ar: "مقاولات عامة وتشطيبات معمارية",
+      name_en: "General Contracting & Architectural Finishing",
+      short_ar: "إشراف هندسي وتنفيذ متكامل لمشاريع التشطيبات والكلادينج والواجهات.",
+      short_en: "Full engineering supervision and execution for fit-out and architectural facades.",
+      full_ar: "خدمات مقاولات إنشائية ومعمارية شاملة تبدأ من التأسيس والتجهيز وحتى تسليم المفتاح بكفاءة هندسية مطابقة لكود البناء السعودي.",
+      full_en: "Comprehensive contracting and turnkey architectural finishing conforming to SBC standards.",
+      icon: "Hammer",
+      imgFile: "glass-facades.webp",
+      price_from: 500,
+      price_to: 1500,
+      features_ar: ["إشراف هندسي معتمد", "التزام صارم بالجدول الزمني", "مطابقة كود البناء السعودي", "عقود موثقة وضمانات شاملة"],
+      features_en: ["Certified engineering", "Strict schedule adherence", "SBC code compliance", "Formal contracts"],
+    },
+    {
+      slug: "maintenance",
+      catSlug: "glass-works",
+      name_ar: "صيانة دورية وطارئة للواجهات والزجاج",
+      name_en: "Preventive & Emergency Maintenance",
+      short_ar: "خدمات صيانة فورية واستبدال الزجاج المكسور وتجديد عوازل السيليكون الهيكلي.",
+      short_en: "Emergency glass replacement and weather-proofing silicone maintenance.",
+      full_ar: "فريق صيانة متنقل ومجهز بأحدث الرافعات والمعدات لمعالجة تسريب المياه والحرارة وتغيير مفصلات وأقفال الزجاج والألمنيوم على مدار الساعة.",
+      full_en: "Mobile maintenance units equipped with cherry pickers for rapid facade sealing and glass repairs.",
+      icon: "Wrench",
+      imgFile: "tempered-glass.webp",
+      price_from: 200,
+      price_to: 500,
+      features_ar: ["استجابة طارئة وسريعة", "سيليكون إنشائي ألماني معتمد", "فنيون متخصصون ذوو خبرة", "ضمان على الصيانة"],
+      features_en: ["Rapid emergency response", "Structural German silicone", "Specialized technicians", "Warranty on maintenance"],
     },
   ];
 
@@ -391,7 +465,16 @@ async function seedAllTables() {
         ${s.icon}, ${coverUrl}, ${s.price_from}, ${s.price_to}, 'متر مربع',
         ${s.features_ar}, ${s.features_en}, true, true, ${i + 1}
       )
-      ON CONFLICT (company_id, slug) DO UPDATE SET name_ar = EXCLUDED.name_ar
+      ON CONFLICT (company_id, slug) DO UPDATE SET
+        name_ar = EXCLUDED.name_ar,
+        name_en = EXCLUDED.name_en,
+        short_description_ar = EXCLUDED.short_description_ar,
+        short_description_en = EXCLUDED.short_description_en,
+        full_description_ar = EXCLUDED.full_description_ar,
+        full_description_en = EXCLUDED.full_description_en,
+        cover_image_url = EXCLUDED.cover_image_url,
+        icon = EXCLUDED.icon,
+        is_active = true
       RETURNING id;
     `;
     const sId = srvRows[0].id;
@@ -399,8 +482,8 @@ async function seedAllTables() {
 
     if (mediaMap[s.imgFile]) {
       await sql`
-        INSERT INTO service_images (service_id, media_id, image_url, is_cover, sort_order)
-        VALUES (${sId}, ${mediaMap[s.imgFile].id}, ${coverUrl}, true, 1);
+        INSERT INTO service_images (service_id, media_id, is_cover, sort_order)
+        VALUES (${sId}, ${mediaMap[s.imgFile].id}, true, 1);
       `;
     }
   }
@@ -438,6 +521,20 @@ async function seedAllTables() {
       beforeImg: "cafe-before.webp",
       afterImg: "cafe-after.webp",
     },
+    {
+      slug: "nakheel-commercial-complex",
+      title_ar: "مجمع النخيل التجاري - الدمام",
+      title_en: "Al-Nakheel Commercial Complex - Dammam",
+      desc_ar: "واجهات زجاجية ونظام سبايدر للمعارض والمطاعم مع أبواب أوتوماتيكية إيطالية الصنع.",
+      desc_en: "Curtain wall and spider glass facades for retail showrooms with Italian automated doors.",
+      client: "مجموعة النخيل للاستثمار",
+      city: "الدمام",
+      val: 890000,
+      area: 2100,
+      coverImg: "glass-facades.webp",
+      beforeImg: "project-1-before.webp",
+      afterImg: "project-1-after.webp",
+    },
   ];
 
   for (let i = 0; i < projectsList.length; i++) {
@@ -446,24 +543,27 @@ async function seedAllTables() {
     const prjRows = await sql`
       INSERT INTO projects (
         company_id, service_id, slug, title_ar, title_en,
-        description_ar, description_en, client_name, location, city,
-        project_value, area_sqm, status, start_date, completion_date,
-        cover_image_url, is_featured, sort_order
+        description_ar, description_en, client_name, location_ar, location_en, city,
+        project_value, status, start_date, end_date,
+        is_featured, is_active
       ) VALUES (
         ${companyId}, ${serviceMap["glass-facades"] || null}, ${p.slug}, ${p.title_ar}, ${p.title_en},
-        ${p.desc_ar}, ${p.desc_en}, ${p.client}, ${p.city}, ${p.city},
-        ${p.val}, ${p.area}, 'completed', '2025-01-10', '2025-06-25',
-        ${coverUrl}, true, ${i + 1}
+        ${p.desc_ar}, ${p.desc_en}, ${p.client}, ${p.city}, ${p.city}, ${p.city},
+        ${p.val}, 'completed', '2025-01-10', '2025-06-25',
+        true, true
       )
-      ON CONFLICT (company_id, slug) DO UPDATE SET title_ar = EXCLUDED.title_ar
+      ON CONFLICT (company_id, slug) DO UPDATE SET
+        title_ar = EXCLUDED.title_ar,
+        description_ar = EXCLUDED.description_ar,
+        is_active = true
       RETURNING id;
     `;
     const pId = prjRows[0].id;
 
     if (mediaMap[p.coverImg]) {
       await sql`
-        INSERT INTO project_images (project_id, media_id, image_url, is_cover, sort_order)
-        VALUES (${pId}, ${mediaMap[p.coverImg].id}, ${coverUrl}, true, 1);
+        INSERT INTO project_images (project_id, media_id, is_cover, sort_order)
+        VALUES (${pId}, ${mediaMap[p.coverImg].id}, true, 1);
       `;
     }
 
@@ -479,8 +579,8 @@ async function seedAllTables() {
 
     // Video link
     await sql`
-      INSERT INTO project_videos (project_id, title_ar, video_url, video_type, is_featured, sort_order)
-      VALUES (${pId}, 'جولة فيديو للمشروع بعد التسليم', 'https://pub-e9788e46474044d585e2622e2c6ce74d.r2.dev/projects/sample-tour.mp4', 'direct', true, 1);
+      INSERT INTO project_videos (project_id, title_ar, video_url, sort_order)
+      VALUES (${pId}, 'جولة فيديو للمشروع بعد التسليم', 'https://pub-e9788e46474044d585e2622e2c6ce74d.r2.dev/projects/sample-tour.mp4', 1);
     `;
   }
 
@@ -497,12 +597,13 @@ async function seedAllTables() {
   const albId = albumRows[0].id;
 
   for (const [idx, imgKey] of ["glass-facades.webp", "luxury-facade.webp", "project-1.webp"].entries()) {
-    const itemUrl = mediaMap[imgKey]?.url || `${R2_PUBLIC_BASE}/gallery/${imgKey}`;
     const mId = mediaMap[imgKey]?.id || null;
-    await sql`
-      INSERT INTO gallery_items (album_id, media_id, image_url, title_ar, title_en, sort_order, is_featured)
-      VALUES (${albId}, ${mId}, ${itemUrl}, 'صورة من أعمال الواجهات الزجاجية', 'Glass facade picture', ${idx + 1}, true);
-    `;
+    if (mId) {
+      await sql`
+        INSERT INTO gallery_items (album_id, media_id, type, sort_order)
+        VALUES (${albId}, ${mId}, 'image', ${idx + 1});
+      `;
+    }
   }
 
   // ════════════════════════════════════════════════════════════════════
@@ -512,10 +613,10 @@ async function seedAllTables() {
   const adImgUrl = mediaMap["luxury-facade.webp"]?.url || `${R2_PUBLIC_BASE}/advertisements/banner-1.webp`;
   await sql`
     INSERT INTO advertisements (
-      company_id, title_ar, subtitle_ar, media_type, media_url,
+      title_ar, subtitle_ar, media_type, media_url,
       target_route, action_title_ar, start_date, end_date, is_active, priority
     ) VALUES (
-      ${companyId}, 'خصم 15% على واجهات الزجاج السكريت والكلادينج', 'لفترة محدودة - احصل على معاينة وتصميم 3D مجاناً',
+      'خصم 15% على واجهات الزجاج السكريت والكلادينج', 'لفترة محدودة - احصل على معاينة وتصميم 3D مجاناً',
       'image', ${adImgUrl}, '/quote', 'احجز الآن', now(), now() + interval '30 days', true, 1
     );
   `;
@@ -528,8 +629,8 @@ async function seedAllTables() {
   const artRows = await sql`
     INSERT INTO articles (
       company_id, slug, title_ar, title_en, excerpt_ar, excerpt_en,
-      content_ar, content_en, cover_image_url, author_name,
-      status, published_at, reading_time_minutes, is_featured
+      content_ar, content_en, cover_image_url,
+      status, published_at, read_time_minutes, is_featured
     ) VALUES (
       ${companyId}, 'advantages-of-tempered-glass-facades',
       'مميزات زجاج السيكوريت المقوى في واجهات المباني والمنازل',
@@ -538,7 +639,7 @@ async function seedAllTables() {
       'Comprehensive guide on why tempered glass is essential for modern facades in Saudi climate.',
       '<p>يعتبر زجاج السيكوريت المقوى أحد أفضل الخيارات الهندسية لواجهات المباني والفلل لما يوفره من عزل فائق وأمان كامل...</p>',
       '<p>Tempered securit glass represents one of the top architectural choices for building facades...</p>',
-      ${artImgUrl}, 'م. أنس الحربي', 'published', now(), 5, true
+      ${artImgUrl}, 'published', now(), 5, true
     )
     ON CONFLICT (company_id, slug) DO UPDATE SET title_ar = EXCLUDED.title_ar
     RETURNING id;
@@ -546,17 +647,18 @@ async function seedAllTables() {
   const artId = artRows[0].id;
 
   await sql`
-    INSERT INTO article_tags (article_id, tag_ar, tag_en)
+    INSERT INTO article_tags (article_id, tag_ar, tag_en, slug)
     VALUES
-      (${artId}, 'زجاج_سيكوريت', 'tempered_glass'),
-      (${artId}, 'واجهات_زجاج', 'glass_facades'),
-      (${artId}, 'مقاولات_الرياض', 'riyadh_contracting');
+      (${artId}, 'زجاج_سيكوريت', 'tempered_glass', 'tempered-glass'),
+      (${artId}, 'واجهات_زجاج', 'glass_facades', 'glass-facades'),
+      (${artId}, 'مقاولات_الرياض', 'riyadh_contracting', 'riyadh-contracting')
+    ON CONFLICT (article_id, slug) DO NOTHING;
   `;
 
   if (mediaMap["tempered-glass.webp"]) {
     await sql`
-      INSERT INTO article_images (article_id, media_id, image_url, is_cover, sort_order)
-      VALUES (${artId}, ${mediaMap["tempered-glass.webp"].id}, ${artImgUrl}, true, 1);
+      INSERT INTO article_images (article_id, media_id, context)
+      VALUES (${artId}, ${mediaMap["tempered-glass.webp"].id}, 'featured');
     `;
   }
 
@@ -566,11 +668,11 @@ async function seedAllTables() {
   console.log("1️⃣4️⃣ Seeding 'testimonials' & 'customer_reviews'...");
   await sql`
     INSERT INTO testimonials (
-      company_id, service_id, client_name_ar, client_name_en, client_title_ar, client_title_en,
-      content_ar, content_en, rating, is_featured, is_approved, avatar_url
+      company_id, service_id, client_name, client_title,
+      content_ar, content_en, rating, is_featured, is_approved, client_avatar_url
     ) VALUES (
       ${companyId}, ${serviceMap["glass-facades"] || null},
-      'م. خالد العتيبي', 'Eng. Khalid Al-Otaibi', 'مدير مشاريع - شركة الإنماء', 'Project Manager',
+      'م. خالد العتيبي', 'مدير مشاريع - شركة الإنماء',
       'تعامل راقي جداً والتزام تام بالمواعيد والمخططات الهندسية. جودة الواجهات الزجاجية وسرعة التركيب كانت ممتازة.',
       'Exceptional professionalism and strict adherence to deadlines. Glass facade quality was superb.',
       5, true, true, ${`${R2_PUBLIC_BASE}/testimonials/client-1.webp`}
@@ -601,7 +703,7 @@ async function seedAllTables() {
   ];
   for (const [idx, f] of faqsData.entries()) {
     await sql`
-      INSERT INTO faqs (company_id, question_ar, question_en, answer_ar, answer_en, category, sort_order, is_active)
+      INSERT INTO faqs (company_id, question_ar, question_en, answer_ar, answer_en, page_context, sort_order, is_active)
       VALUES (${companyId}, ${f.q_ar}, ${f.q_ar}, ${f.a_ar}, ${f.a_ar}, ${f.cat}, ${idx + 1}, true);
     `;
   }
@@ -618,27 +720,23 @@ async function seedAllTables() {
   for (const c of cities) {
     const cityRows = await sql`
       INSERT INTO city_pages (
-        company_id, slug, name_ar, name_en, region_ar, region_en,
-        title_ar, title_en, meta_description_ar, meta_description_en,
-        content_ar, content_en, is_active
+        company_id, slug, city_name_ar, city_name_en, region_ar, region_en,
+        description_ar, description_en, is_active
       ) VALUES (
         ${companyId}, ${c.slug}, ${c.name_ar}, ${c.name_en}, ${c.region}, ${c.region},
-        ${`أفضل مقاول واجهات زجاج وسيكوريت في ${c.name_ar}`}, ${`Best Glass Facades Contractor in ${c.name_en}`},
-        ${`خدمات توريد وتركيب الزجاج السكريت والواجهات المعمارية والكلادينج في ${c.name_ar} بأعلى جودة وضمان 10 سنوات.`},
+        ${`خدمات توريد وتركيب الزجاج السكريت والواجهات المعمارية في ${c.name_ar} بأعلى جودة وضمان 10 سنوات.`},
         ${`Supplying and installing securit glass facades and cladding in ${c.name_en} with 10-year warranty.`},
-        ${`<p>نغطي كافة أحياء ومشاريع ${c.name_ar} مع فريق هندسي متخصص للمعاينة والتركيب السريع...</p>`},
-        ${`<p>Serving all districts in ${c.name_en} with certified installation teams...</p>`},
         true
       )
-      ON CONFLICT (company_id, slug) DO UPDATE SET name_ar = EXCLUDED.name_ar
+      ON CONFLICT (company_id, slug) DO UPDATE SET city_name_ar = EXCLUDED.city_name_ar
       RETURNING id;
     `;
     const cityId = cityRows[0].id;
 
     if (serviceMap["tempered-glass"]) {
       await sql`
-        INSERT INTO city_services (city_page_id, service_id, custom_title_ar, custom_content_ar, is_active)
-        VALUES (${cityId}, ${serviceMap["tempered-glass"]}, ${`تركيب زجاج سيكوريت في ${c.name_ar}`}, ${`أفضل أسعار تركيب الزجاج السيكوريت بالضمان في ${c.name_ar}`}, true)
+        INSERT INTO city_services (city_page_id, service_id, unique_content_ar, unique_content_en)
+        VALUES (${cityId}, ${serviceMap["tempered-glass"]}, ${`تركيب زجاج سيكوريت في ${c.name_ar}`}, ${`Tempered glass installation in ${c.name_en}`})
         ON CONFLICT (city_page_id, service_id) DO NOTHING;
       `;
     }
@@ -649,37 +747,36 @@ async function seedAllTables() {
   // ════════════════════════════════════════════════════════════════════
   console.log("1️⃣7️⃣ Seeding 'users', 'quote_requests', 'appointments', 'messages'...");
   const userRows = await sql`
-    INSERT INTO users (company_id, full_name, email, phone, city, source, role)
-    VALUES (${companyId}, 'سلطان الدوسري', 'sultan@example.com', '0551122334', 'الرياض', 'website', 'customer')
+    INSERT INTO users (company_id, full_name, email, phone, city, source)
+    VALUES (${companyId}, 'سلطان الدوسري', 'sultan@example.com', '0551122334', 'الرياض', 'website')
+    ON CONFLICT (company_id, phone) DO UPDATE SET full_name = EXCLUDED.full_name
     RETURNING id;
   `;
   const uId = userRows[0].id;
 
-  const quoteRows = await sql`
-    INSERT INTO quote_requests (
-      company_id, user_id, service_ids, project_type, area_sqm,
-      city, address, budget_range, urgency, description, status
-    ) VALUES (
-      ${companyId}, ${uId}, ${[serviceMap["glass-facades"] || ""]}, 'commercial', 250,
-      'الرياض', 'حي الصحافة', '50,000 - 100,000 ريال', 'high',
-      'طلب عرض سعر وتركيب واجهات زجاجية كرتن وول لمعرض تجاري جديد.', 'new'
-    )
-    RETURNING id;
-  `;
-
   await sql`
-    INSERT INTO appointments (
-      company_id, user_id, quote_request_id, appointment_type,
-      scheduled_date, scheduled_time, status, notes
+    INSERT INTO quote_requests (
+      company_id, user_id, service_id,
+      city, budget_range, urgency, description, status
     ) VALUES (
-      ${companyId}, ${uId}, ${quoteRows[0].id}, 'site_survey',
-      CURRENT_DATE + interval '2 days', '10:00:00', 'confirmed', 'معاينة الموقع ورفع المقاسات الهندسية'
+      ${companyId}, ${uId}, ${serviceMap["glass-facades"] || null},
+      'الرياض', '50,000 - 100,000 ريال', 'high',
+      'طلب عرض سعر وتركيب واجهات زجاجية كرتن وول لمعرض تجاري جديد.', 'new'
     );
   `;
 
   await sql`
-    INSERT INTO messages (company_id, user_id, name, phone, email, subject, message, is_read)
-    VALUES (${companyId}, ${uId}, 'سلطان الدوسري', '0551122334', 'sultan@example.com', 'استفسار عن سماكات السيكوريت', 'السلام عليكم، ارغب بمعرفة سماكات الزجاج المتوفرة لديكم للشاور روم.', false);
+    INSERT INTO appointments (
+      company_id, user_id, status, preferred_date, preferred_time, notes, source
+    ) VALUES (
+      ${companyId}, ${uId}, 'confirmed',
+      now() + interval '2 days', '10:00 AM', 'معاينة الموقع ورفع المقاسات الهندسية', 'website'
+    );
+  `;
+
+  await sql`
+    INSERT INTO messages (company_id, user_id, subject, content, type, is_read)
+    VALUES (${companyId}, ${uId}, 'استفسار عن سماكات السيكوريت', 'السلام عليكم، ارغب بمعرفة سماكات الزجاج المتوفرة لديكم للشاور روم.', 'contact', false);
   `;
 
   // ════════════════════════════════════════════════════════════════════
@@ -705,10 +802,11 @@ async function seedAllTables() {
   // ════════════════════════════════════════════════════════════════════
   console.log("1️⃣9️⃣ Seeding 'ai_prompts' table...");
   await sql`
-    INSERT INTO ai_prompts (company_id, prompt_type, system_prompt, model, temperature, max_tokens, is_active)
+    INSERT INTO ai_prompts (company_id, prompt_type, system_prompt_ar, system_prompt_en, model, temperature, max_tokens, is_active)
     VALUES (
       ${companyId}, 'sales_assistant',
       'أنت المساعد الذكي المعتمد لمؤسسة القوة العاشرة للزجاج والألمنيوم. قدم استشارات احترافية ودقيقة حول الزجاج السيكوريت والواجهات والأسعار وشجع العميل على طلب المقايسة المجانية.',
+      'You are the certified AI Assistant for Tenth Power Glass & Aluminum Contracting. Provide precise advice on securit glass, facades, and quotes.',
       'gemini-1.5-flash', 0.4, 1024, true
     )
     ON CONFLICT (company_id, prompt_type) DO UPDATE SET is_active = true;
@@ -731,19 +829,19 @@ async function seedAllTables() {
   `;
 
   await sql`
-    INSERT INTO analytics_events (company_id, event_name, page_path, locale, visitor_id)
+    INSERT INTO analytics_events (company_id, event_type, page_path, session_id)
     VALUES
-      (${companyId}, 'page_view', '/', 'ar', 'vis-001'),
-      (${companyId}, 'quote_click', '/quote', 'ar', 'vis-001');
+      (${companyId}, 'page_view', '/', 'sess-001'),
+      (${companyId}, 'quote_click', '/quote', 'sess-001');
   `;
 
   await sql`
-    INSERT INTO search_index (company_id, entity_type, entity_id, title_ar, title_en, content_ar, url)
+    INSERT INTO search_index (company_id, entity_type, entity_id, locale, title, content_preview, url_path)
     VALUES (
-      ${companyId}, 'service', ${serviceMap["tempered-glass"] || companyId},
-      'زجاج سكريت مقوى', 'Tempered Securit Glass',
-      'تركيب زجاج سيكوريت مقوى للأبواب والواجهات والمكاتب', '/services/tempered-glass'
-    );
+      ${companyId}, 'service', ${serviceMap["tempered-glass"] || companyId}, 'ar',
+      'زجاج سكريت مقوى', 'تركيب زجاج سيكوريت مقوى للأبواب والواجهات والمكاتب', '/services/tempered-glass'
+    )
+    ON CONFLICT (entity_type, entity_id, locale) DO NOTHING;
   `;
 
   // ════════════════════════════════════════════════════════════════════
@@ -751,8 +849,9 @@ async function seedAllTables() {
   // ════════════════════════════════════════════════════════════════════
   console.log("2️⃣1️⃣ Seeding 'push_subscriptions', 'notification_log', 'audit_log', 'backups'...");
   await sql`
-    INSERT INTO push_subscriptions (company_id, user_id, endpoint, keys, is_active)
-    VALUES (${companyId}, ${uId}, 'https://fcm.googleapis.com/fcm/send/sample-token-1', ${JSON.stringify({ p256dh: "key", auth: "auth" })}, true);
+    INSERT INTO push_subscriptions (company_id, user_id, endpoint, p256dh, auth, is_active)
+    VALUES (${companyId}, ${uId}, 'https://fcm.googleapis.com/fcm/send/sample-token-1', 'sample-p256dh-key', 'sample-auth-key', true)
+    ON CONFLICT (endpoint) DO NOTHING;
   `;
 
   await sql`
@@ -761,21 +860,19 @@ async function seedAllTables() {
   `;
 
   await sql`
-    INSERT INTO audit_log (company_id, actor_id, actor_name, action, entity_type, details)
-    VALUES (${companyId}, 5887234832, 'admin_powerof10', 'SEED_DATABASE', 'all_tables', ${JSON.stringify({ status: "success", cloud: "cloudflare_r2" })});
+    INSERT INTO audit_log (company_id, actor_type, actor_id, action, entity_type, new_values)
+    VALUES (${companyId}, 'admin', '5887234832', 'SEED_DATABASE', 'all_tables', ${JSON.stringify({ status: "success", cloud: "cloudflare_r2" })});
   `;
 
   await sql`
-    INSERT INTO backups (company_id, backup_type, file_name, file_url, file_size, status)
-    VALUES (${companyId}, 'full', 'backup-initial.sql', 'https://pub-e9788e46474044d585e2622e2c6ce74d.r2.dev/backups/initial.sql', 154000, 'completed');
+    INSERT INTO backups (company_id, backup_url, type, size_bytes, status, triggered_by)
+    VALUES (${companyId}, 'https://pub-e9788e46474044d585e2622e2c6ce74d.r2.dev/backups/initial.sql', 'full', 154000, 'completed', 'admin_seed');
   `;
 
   console.log("\n🎉✨ ALL 40 TABLES FULLY SEEDED WITH CLOUDFLARE R2 IMAGES! ✨🎉\n");
 }
 
+seedAllTables().catch(console.error);
+
 export { seedAllTables };
 
-// Only execute directly if invoked via CLI
-if (require.main === module) {
-  seedAllTables().catch(console.error);
-}

@@ -19,43 +19,53 @@ import { AnimatedCanvasBanner } from "@/components/ui/AnimatedCanvasBanner";
 import { SmartFallbackImage } from "@/components/ui/SmartFallbackImage";
 import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 
+export interface HeroSlideItem {
+  id: number | string;
+  title_ar: string;
+  title_en: string;
+  badge_ar?: string;
+  badge_en?: string;
+  src: string | null;
+}
+
 interface HeroSectionProps {
   locale: Locale;
   dict: Dictionary;
+  initialSlides?: HeroSlideItem[];
 }
 
-const HERO_SLIDES = [
+const HERO_SLIDES: HeroSlideItem[] = [
   {
     id: 1,
-    title_ar: "برج التجارة المعماري — واجهات زجاجية هيكلية",
-    title_en: "Commercial Tower — Structural Glazing Facade",
+    title_ar: "برج الأعمال الحديث — واجهات زجاجية هيكلية",
+    title_en: "Modern Business Tower — Structural Glazing Facade",
     badge_ar: "زجاج سيكوريت 12مم دبل",
     badge_en: "12mm Double Tempered",
     src: "/images/defaults/projects/project-1.webp",
   },
   {
     id: 2,
-    title_ar: "مجمع النخيل السكني — ألمنيوم كسر حراري",
-    title_en: "Al-Nakheel Residence — Thermal-Break Aluminum",
+    title_ar: "فيلا سكنية فاخرة — حي الملقا بالرياض",
+    title_en: "Luxury Modern Villa — Al Malqa District",
     badge_ar: "عزل حراري وضوضاء 100%",
     badge_en: "100% Thermal & Noise Proof",
-    src: null,
+    src: "/images/defaults/services/luxury-facade.webp",
   },
   {
     id: 3,
-    title_ar: "المبنى الإداري — أبواب وواجهات أوتوماتيكية",
-    title_en: "Corporate HQ — Automatic Glass Doors",
+    title_ar: "مجمع النخيل التجاري — واجهات زجاج ونظام سبايدر",
+    title_en: "Al-Nakheel Commercial Complex — Spider Facades",
     badge_ar: "إكسسوارات استانلس ستيل 316",
     badge_en: "Stainless 316 Hardware",
-    src: null,
+    src: "/images/defaults/services/glass-facades.webp",
   },
   {
     id: 4,
-    title_ar: "مركز الرياض التجاري — أنظمة كرتن وول وسبايدر",
-    title_en: "Riyadh Trade Mall — Curtain Wall & Spider System",
+    title_ar: "مشاريع الألمنيوم والواجهات — كرتن وول",
+    title_en: "Thermal-Break Aluminum & Curtain Wall Works",
     badge_ar: "مواصفات SBC معتمدة",
     badge_en: "SBC Saudi Building Code",
-    src: null,
+    src: "/images/defaults/services/aluminum-works.webp",
   },
 ];
 
@@ -64,22 +74,24 @@ const HERO_SLIDES = [
  * Inspired by high-end luxury architectural & product launches.
  * GPU-accelerated, SEO-friendly, fully responsive, and conversion-optimized.
  */
-export function HeroSection({ locale, dict }: HeroSectionProps) {
+export function HeroSection({ locale, dict, initialSlides }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [aiPrompt, setAiPrompt] = useState("");
   const [activeSlide, setActiveSlide] = useState(0);
   const isRtl = locale === "ar";
 
+  const slides = initialSlides && initialSlides.length > 0 ? initialSlides : HERO_SLIDES;
+
   // Automatic periodic slide change every 4.5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+      setActiveSlide((prev) => (prev + 1) % slides.length);
     }, 4500);
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
-  const currentSlide = HERO_SLIDES[activeSlide];
+  const currentSlide = slides[activeSlide % slides.length];
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -338,14 +350,14 @@ export function HeroSection({ locale, dict }: HeroSectionProps) {
 
                 {/* Manual Navigation Arrow Buttons */}
                 <button
-                  onClick={() => setActiveSlide((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1))}
+                  onClick={() => setActiveSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1))}
                   className="absolute top-1/2 start-2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-md border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity z-20"
                   aria-label="Previous Slide"
                 >
                   <ChevronRight className={cn("w-3.5 h-3.5", !isRtl && "rotate-180")} />
                 </button>
                 <button
-                  onClick={() => setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length)}
+                  onClick={() => setActiveSlide((prev) => (prev + 1) % slides.length)}
                   className="absolute top-1/2 end-2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-md border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity z-20"
                   aria-label="Next Slide"
                 >
@@ -364,7 +376,7 @@ export function HeroSection({ locale, dict }: HeroSectionProps) {
                 {/* Dots Progress Indicators */}
                 <div className="flex items-center justify-between pt-0.5">
                   <div className="flex items-center gap-1">
-                    {HERO_SLIDES.map((slide, idx) => (
+                    {slides.map((slide, idx) => (
                       <button
                         key={slide.id}
                         onClick={() => setActiveSlide(idx)}

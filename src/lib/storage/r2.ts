@@ -27,11 +27,16 @@ export function getR2Client(): S3Client | null {
   });
 }
 
+let foldersEnsured = false;
+
 /**
  * Ensures standard folders (services/, projects/, gallery/, advertisements/, uploads/)
  * exist in the Cloudflare R2 bucket on startup or on first call.
  */
 export async function ensureR2Folders(): Promise<{ success: boolean; createdFolders: string[] }> {
+  if (foldersEnsured) {
+    return { success: true, createdFolders: [] };
+  }
   const s3 = getR2Client();
   const bucket = process.env.R2_BUCKET_NAME || "powerof";
   const created: string[] = [];
@@ -68,6 +73,7 @@ export async function ensureR2Folders(): Promise<{ success: boolean; createdFold
     }
   }
 
+  foldersEnsured = true;
   return { success: true, createdFolders: created };
 }
 

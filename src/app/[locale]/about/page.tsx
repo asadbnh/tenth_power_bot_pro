@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { AboutPageContent } from "@/components/pages/AboutPageContent";
-import { getFallbackCompany } from "@/lib/fallback-provider";
-import { getSiteSettings } from "@/lib/actions/content";
+import { getCompany, getSiteSettings } from "@/lib/actions/content";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -20,7 +19,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params;
   const validLocale = locale as Locale;
   const dict = await getDictionary(validLocale);
-  const company = getFallbackCompany();
+  const company = await getCompany();
   const settings = await getSiteSettings().catch(() => null);
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";

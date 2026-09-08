@@ -7,9 +7,13 @@ import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-interface Props { locale: Locale; dict: Dictionary; }
+interface Props {
+  locale: Locale;
+  dict: Dictionary;
+  company?: any;
+}
 
-export function ContactPageContent({ locale, dict }: Props) {
+export function ContactPageContent({ locale, dict, company }: Props) {
   const isRtl = locale === "ar";
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
@@ -17,16 +21,52 @@ export function ContactPageContent({ locale, dict }: Props) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("sending");
-    // Simulate API call — real implementation will POST to /api/contact
-    await new Promise((r) => setTimeout(r, 1500));
-    setStatus("sent");
+    try {
+      const { submitContactForm } = await import("@/lib/actions/forms");
+      const res = await submitContactForm({
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        locale,
+      });
+      if (res.success) {
+        setStatus("sent");
+      } else {
+        alert(isRtl ? "فشل إرسال الرسالة، يرجى المحاولة لاحقاً" : "Failed to send message, please try again");
+        setStatus("idle");
+      }
+    } catch (err) {
+      console.error("Error submitting contact form:", err);
+      setStatus("idle");
+    }
   }
 
   const INFO = [
-    { icon: MapPin, label: dict.contact.info.address, value: isRtl ? "الرياض، المملكة العربية السعودية" : "Riyadh, Saudi Arabia" },
-    { icon: Phone, label: dict.contact.info.phone, value: "+966 50 000 0000", href: "tel:+966500000000" },
-    { icon: Mail, label: dict.contact.info.email, value: "info@webtaky.com", href: "mailto:info@webtaky.com" },
-    { icon: Clock, label: dict.contact.info.workingHours, value: isRtl ? "السبت – الخميس: 8 ص – 6 م" : "Sat – Thu: 8 AM – 6 PM" },
+    {
+      icon: MapPin,
+      label: dict.contact.info.address,
+      value: (isRtl ? company?.address?.address_line_1_ar : company?.address?.address_line_1_en) ||
+        (isRtl ? "الرياض، المملكة العربية السعودية" : "Riyadh, Saudi Arabia"),
+    },
+    {
+      icon: Phone,
+      label: dict.contact.info.phone,
+      value: company?.phone_primary || "+966 50 000 0000",
+      href: `tel:${(company?.phone_primary || "+966500000000").replace(/\s+/g, "")}`,
+    },
+    {
+      icon: Mail,
+      label: dict.contact.info.email,
+      value: company?.email || "info@webtaky.com",
+      href: `mailto:${company?.email || "info@webtaky.com"}`,
+    },
+    {
+      icon: Clock,
+      label: dict.contact.info.workingHours,
+      value: isRtl ? "السبت – الخميس: 8 ص – 6 م" : "Sat – Thu: 8 AM – 6 PM",
+    },
   ];
 
   return (
@@ -74,7 +114,7 @@ export function ContactPageContent({ locale, dict }: Props) {
               </div>
 
               {/* WhatsApp quick contact */}
-              <a href="https://wa.me/966500000000?text=مرحباً، أريد التواصل معكم"
+              <a href={`https://wa.me/${(company?.whatsapp_number || "966500000000").replace(/[^0-9]/g, "")}?text=${encodeURIComponent(isRtl ? "مرحباً، أريد التواصل معكم" : "Hello, I would like to contact you")}`}
                 target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl bg-[#25D366] text-white font-semibold hover:bg-[#20BD5A] transition-colors shadow-md hover:shadow-lg">
                 <MessageSquare className="w-5 h-5" />

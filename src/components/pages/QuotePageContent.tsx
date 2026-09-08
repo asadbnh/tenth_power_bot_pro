@@ -11,7 +11,22 @@ import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
-interface Props { locale: Locale; dict: Dictionary; }
+interface Props {
+  locale: Locale;
+  dict: Dictionary;
+  initialServices?: any[];
+}
+
+const ICON_MAP: Record<string, any> = {
+  Layers3,
+  Building2,
+  RectangleHorizontal,
+  PaintBucket,
+  GalleryHorizontalEnd,
+  DoorOpen,
+  Hammer,
+  Wrench,
+};
 
 const SERVICES = [
   { icon: Layers3, name_ar: "زجاج سكريت", name_en: "Tempered Glass", value: "tempered-glass" },
@@ -47,7 +62,7 @@ interface FormData {
   preferWhatsApp: boolean;
 }
 
-export function QuotePageContent({ locale, dict }: Props) {
+export function QuotePageContent({ locale, dict, initialServices }: Props) {
   const isRtl = locale === "ar";
   const [step, setStep] = useState<Step>(1);
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
@@ -55,6 +70,15 @@ export function QuotePageContent({ locale, dict }: Props) {
     services: [], description: "", budget: "", urgency: "", city: "",
     name: "", phone: "", email: "", preferWhatsApp: true,
   });
+
+  const servicesList = initialServices && initialServices.length > 0
+    ? initialServices.map((s) => ({
+        icon: (s.icon && ICON_MAP[s.icon]) ? ICON_MAP[s.icon] : Layers3,
+        name_ar: s.name_ar || s.name,
+        name_en: s.name_en || s.name,
+        value: s.slug,
+      }))
+    : SERVICES;
 
   const toggleService = (v: string) => {
     setForm(p => ({
@@ -176,7 +200,7 @@ export function QuotePageContent({ locale, dict }: Props) {
                   {isRtl ? "اختر خدمة واحدة أو أكثر" : "Select one or more services"}
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {SERVICES.map((service) => {
+                  {servicesList.map((service) => {
                     const Icon = service.icon;
                     const selected = form.services.includes(service.value);
                     return (

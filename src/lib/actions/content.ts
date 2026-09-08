@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getSql } from "@/lib/db";
 import {
   getFallbackCompany,
   getFallbackCities,
@@ -152,6 +153,28 @@ export async function getProjects(options?: {
     const fallbacks = getFallbackProjects() as Record<string, unknown>[];
     list = fallbacks.slice(offset, offset + limit);
     totalCount = fallbacks.length;
+  } else {
+    // Attach real Cloudflare R2 / media_library cover images for database projects
+    try {
+      const sql = getSql();
+      const covers = await sql`
+        SELECT pi.project_id, COALESCE(m.cdn_url, m.file_url) as cover_url
+        FROM project_images pi
+        JOIN media_library m ON pi.media_id = m.id
+        WHERE pi.is_cover = true;
+      `;
+      const coverMap = new Map<string, string>();
+      for (const c of covers) {
+        coverMap.set(c.project_id, c.cover_url);
+      }
+      for (const p of list) {
+        if (!p.cover_image_url && coverMap.has(p.id as string)) {
+          p.cover_image_url = coverMap.get(p.id as string);
+        }
+      }
+    } catch {
+      // ignore
+    }
   }
 
   const normalized = list.map((p) => ({
@@ -159,7 +182,7 @@ export async function getProjects(options?: {
     slug: p.slug,
     title_ar: p.title_ar,
     title_en: p.title_en,
-    cover_image_url: p.cover_image_url,
+    cover_image_url: p.cover_image_url || "/images/defaults/projects/project-1.webp",
     name: isAr ? p.title_ar : p.title_en || p.title_ar,
     short_description: isAr ? p.description_ar : p.description_en || p.description_ar,
   }));
@@ -184,7 +207,23 @@ export async function getProjectBySlug(slug: string, _locale = "ar") {
     // fallback
   }
 
-  if (!project) {
+  if (project) {
+    try {
+      const sql = getSql();
+      const covers = await sql`
+        SELECT COALESCE(m.cdn_url, m.file_url) as cover_url
+        FROM project_images pi
+        JOIN media_library m ON pi.media_id = m.id
+        WHERE pi.project_id = ${project.id} AND pi.is_cover = true
+        LIMIT 1;
+      `;
+      if (covers.length > 0) {
+        project.cover_image_url = covers[0].cover_url;
+      }
+    } catch {
+      // ignore
+    }
+  } else {
     const fallbacks = getFallbackProjects() as Record<string, unknown>[];
     project = fallbacks.find((p) => p.slug === slug) || fallbacks[0] || null;
   }
@@ -200,7 +239,7 @@ export async function getProjectBySlug(slug: string, _locale = "ar") {
     category_en: project.category_en || "Glass & Aluminum",
     location_ar: project.location_ar || "الرياض - المملكة العربية السعودية",
     location_en: project.location_en || "Riyadh - KSA",
-    year: project.year || "2024",
+    year: project.year || "2025",
     client_ar: project.client_ar || project.client_name || "عميل مميز",
     client_en: project.client_en || project.client_name || "VIP Client",
     cover_image_url: project.cover_image_url || "/images/defaults/projects/project-1.webp",
@@ -663,4 +702,134 @@ export async function getAnalyticsSummary() {
     return { topServices: [], topKeywords: [] };
   }
 }
+
+// ─── Company & Brand Actions ──────────────────────────────────────────
+
+export async function getCompany() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
+  try {
+    const { data: company } = await supabase
+      .from("companies")
+      .select("*")
+      .limit(1)
+      .single();
+
+    if (company) {
+      const { data: contacts } = await supabase
+        .from("company_contacts")
+        .select("*")
+        .eq("company_id", company.id)
+        .order("sort_order", { ascending: true });
+
+      const { data: address } = await supabase
+        .from("company_addresses")
+        .select("*")
+        .eq("company_id", company.id)
+        .limit(1)
+        .single();
+
+      const { data: hours } = await supabase
+        .from("business_hours")
+        .select("*")
+        .eq("company_id", company.id)
+        .order("day_of_week", { ascending: true });
+
+      return {
+        ...company,
+        contacts: contacts || [],
+        address: address || null,
+        business_hours: hours || [],
+      };
+    }
+  } catch (err) {
+    console.warn("Could not fetch company from DB, using fallback:", err);
+  }
+
+  return getFallbackCompany();
+}
+
+export async function getCompanyContacts() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
+  try {
+    const { data } = await supabase
+      .from("company_contacts")
+      .select("*")
+      .order("sort_order", { ascending: true });
+
+    if (data && data.length > 0) {
+      return data;
+    }
+  } catch (err) {
+    console.warn("Error fetching company contacts:", err);
+  }
+  return [];
+}
+
+// ─── Before / After Transformations ───────────────────────────────────
+
+export async function getBeforeAfterItems(locale = "ar") {
+  const isAr = locale === "ar";
+  try {
+    const sql = getSql();
+    const rows = await sql`
+      SELECT 
+        pba.id, pba.project_id, pba.caption_ar, pba.caption_en,
+        bm.file_url as before_url, bm.cdn_url as before_cdn,
+        am.file_url as after_url, am.cdn_url as after_cdn,
+        p.title_ar, p.title_en, p.slug as project_slug
+      FROM project_before_after pba
+      JOIN media_library bm ON pba.before_image_id = bm.id
+      JOIN media_library am ON pba.after_image_id = am.id
+      LEFT JOIN projects p ON pba.project_id = p.id
+      ORDER BY pba.sort_order ASC;
+    `;
+    if (rows && rows.length > 0) {
+      return rows.map((r: any) => ({
+        id: r.id,
+        beforeImage: r.before_cdn || r.before_url,
+        afterImage: r.after_cdn || r.after_url,
+        caption: isAr ? r.caption_ar : r.caption_en || r.caption_ar,
+        projectTitle: isAr ? r.title_ar : r.title_en || r.title_ar,
+        projectSlug: r.project_slug,
+      }));
+    }
+  } catch (err) {
+    console.warn("Error fetching before/after items:", err);
+  }
+
+  return [
+    {
+      id: "demo-1",
+      beforeImage: "/images/defaults/projects/cafe-before.webp",
+      afterImage: "/images/defaults/projects/cafe-after.webp",
+      caption: isAr ? "مقارنة قبل وبعد تركيب واجهات الزجاج والديكور" : "Before and after glass facade execution",
+      projectTitle: isAr ? "كافيه فاخر بالرياض" : "Luxury Cafe in Riyadh",
+      projectSlug: "riyadh-business-tower",
+    },
+  ];
+}
+
+// ─── Advertisements & Hero Banners ────────────────────────────────────
+
+export async function getAdvertisements() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
+  try {
+    const { data } = await supabase
+      .from("advertisements")
+      .select("*")
+      .eq("is_active", true)
+      .order("priority", { ascending: false });
+
+    if (data && data.length > 0) {
+      return data;
+    }
+  } catch (err) {
+    console.warn("Error fetching advertisements:", err);
+  }
+  return [];
+}
+
 

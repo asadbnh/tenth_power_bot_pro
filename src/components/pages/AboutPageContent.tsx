@@ -19,14 +19,14 @@ const VALUES = [
   { icon: Target, title_ar: "الدقة والالتزام", title_en: "Precision & Commitment", desc_ar: "ننجز مشاريعنا في الوقت المحدد وبالمواصفات المتفق عليها", desc_en: "We complete our projects on time and with the agreed specifications" },
   { icon: Eye, title_ar: "الشفافية", title_en: "Transparency", desc_ar: "نؤمن بالشفافية الكاملة مع عملائنا في كل مرحلة", desc_en: "We believe in complete transparency with our clients at every stage" },
 ];
-
+{/*}
 const TEAM = [
   { name_ar: "م. عبدالله الأحمدي", name_en: "Eng. Abdullah Al-Ahmadi", role_ar: "المدير التنفيذي", role_en: "CEO", emoji: "👨‍💼", gradient: "from-blue-500 to-cyan-400" },
   { name_ar: "م. سارة المطيري", name_en: "Eng. Sara Al-Mutairi", role_ar: "مهندسة التصميم", role_en: "Design Engineer", emoji: "👩‍🎨", gradient: "from-rose-500 to-pink-400" },
   { name_ar: "م. خالد الزهراني", name_en: "Eng. Khalid Al-Zahrani", role_ar: "مدير المشاريع", role_en: "Projects Manager", emoji: "👨‍🔧", gradient: "from-amber-500 to-orange-400" },
   { name_ar: "م. نورة العتيبي", name_en: "Eng. Noura Al-Otaibi", role_ar: "مصممة داخلية", role_en: "Interior Designer", emoji: "👩‍💼", gradient: "from-emerald-500 to-teal-400" },
 ];
-
+*/}
 export function AboutPageContent({ locale, dict, initialCompany }: Props) {
   const isRtl = locale === "ar";
   const companyName = initialCompany ? (isRtl ? initialCompany.name_ar : initialCompany.name_en) : dict.about.title;
@@ -124,7 +124,7 @@ export function AboutPageContent({ locale, dict, initialCompany }: Props) {
             })}
           </div>
 
-          {/* Team */}
+          {/* Team 
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10">{isRtl ? dict.about.team : "Our Team"}</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
             {TEAM.map((member, i) => (
@@ -139,7 +139,7 @@ export function AboutPageContent({ locale, dict, initialCompany }: Props) {
                 </div>
               </motion.div>
             ))}
-          </div>
+          </div>*/}
         </div>
       </section>
     </div>

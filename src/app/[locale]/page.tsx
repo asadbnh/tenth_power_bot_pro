@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { getServices, getFaqs } from "@/lib/actions/content";
+import { getServices, getFaqs, getProjects, getBeforeAfterItems } from "@/lib/actions/content";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ServicesShowcase } from "@/components/sections/ServicesShowcase";
 import { CinematicGlassVideoSection } from "@/components/sections/CinematicGlassVideoSection";
@@ -42,11 +42,22 @@ export default async function HomePage({
   const validLocale = locale as Locale;
   const dict = await getDictionary(validLocale);
 
-  // Fetch live services & FAQs from Supabase database
-  const [dbServices, dbFaqs] = await Promise.all([
+  // Fetch live services, FAQs, projects & transformations from Neon DB
+  const [dbServices, dbFaqs, dbProjectsResult, dbBeforeAfter] = await Promise.all([
     getServices(validLocale).catch(() => []),
     getFaqs(validLocale).catch(() => []),
+    getProjects({ locale: validLocale, limit: 6 }).catch(() => ({ data: [], count: 0 })),
+    getBeforeAfterItems(validLocale).catch(() => []),
   ]);
+
+  const heroSlides = (dbProjectsResult.data || []).map((p: any, idx: number) => ({
+    id: p.id || idx,
+    title_ar: p.title_ar || p.name || "",
+    title_en: p.title_en || p.name || "",
+    badge_ar: p.city ? `مشروع في ${p.city}` : "مشروع منفذ",
+    badge_en: p.city ? `Project in ${p.city}` : "Completed Project",
+    src: p.cover_image_url || "/images/defaults/projects/project-1.webp",
+  }));
 
   return (
     <>
@@ -64,10 +75,10 @@ export default async function HomePage({
         }}
       />
 
-      {/* 1. Cinematic Hero */}
-      <HeroSection locale={validLocale} dict={dict} />
+      {/* 1. Cinematic Hero (Fed dynamically from Neon DB Projects & Cloudflare R2) */}
+      <HeroSection locale={validLocale} dict={dict} initialSlides={heroSlides.length > 0 ? heroSlides : undefined} />
 
-      {/* 2. Services Showcase (Fed from Supabase DB) */}
+      {/* 2. Services Showcase (Fed from Neon DB Services) */}
       <ServicesShowcase locale={validLocale} dict={dict} initialServices={dbServices as any[]} />
 
       {/* 3. Animated Statistics 
@@ -76,8 +87,8 @@ export default async function HomePage({
       {/* 4. Cinematic Field Video Section (Workers Installing Glass Facades) */}
       <CinematicGlassVideoSection locale={validLocale} />
 
-      {/* 5. Before & After Transformation Slider */}
-      <BeforeAfterSlider locale={validLocale} />
+      {/* 5. Before & After Transformation Slider (Fed from Neon DB) */}
+      <BeforeAfterSlider locale={validLocale} initialItems={dbBeforeAfter} />
 
       {/* 6. FAQ Section (Fed from Supabase DB) */}
       <FaqAccordion locale={validLocale} dict={dict} initialFaqs={dbFaqs as any[]} />

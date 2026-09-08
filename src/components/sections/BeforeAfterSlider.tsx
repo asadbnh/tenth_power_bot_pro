@@ -4,15 +4,32 @@ import { useState, useRef } from "react";
 import { Sparkles } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
 
-interface Props {
-  locale: Locale;
+export interface BeforeAfterItem {
+  id: string;
+  beforeImage: string;
+  afterImage: string;
+  caption?: string;
+  projectTitle?: string;
 }
 
-export function BeforeAfterSlider({ locale }: Props) {
+interface Props {
+  locale: Locale;
+  initialItems?: BeforeAfterItem[];
+}
+
+export function BeforeAfterSlider({ locale, initialItems }: Props) {
   const isRtl = locale === "ar";
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const item = initialItems && initialItems.length > 0 ? initialItems[0] : {
+    id: "default",
+    beforeImage: "/images/defaults/projects/cafe-before.webp",
+    afterImage: "/images/defaults/projects/cafe-after.webp",
+    caption: isRtl ? "استعراض تفاعلي يوضح التحول قبل وبعد عملية تنفيذ الواجهات والتجهيز الفني في المملكة" : "Interactive slider showcasing technical precision in fit-out & facade projects",
+    projectTitle: isRtl ? "مقارنة التحول المعماري وديكور الواجهات" : "Experience the Architectural Transformation",
+  };
 
   const handleMove = (clientX: number) => {
     if (!containerRef.current) return;
@@ -43,12 +60,12 @@ export function BeforeAfterSlider({ locale }: Props) {
             {isRtl ? "المقارنة الميدانية" : "Before & After Transformation"}
           </span>
           <h2 className="text-xl sm:text-3xl font-extrabold text-text-primary">
-            {isRtl ? "مقارنة التحول المعماري وديكور المقاهي" : "Experience the Architectural Transformation"}
+            {item.projectTitle || (isRtl ? "مقارنة التحول المعماري وديكور الواجهات" : "Experience the Architectural Transformation")}
           </h2>
           <p className="text-text-secondary text-xs sm:text-sm">
-            {isRtl
+            {item.caption || (isRtl
               ? "استعراض تفاعلي يوضح التحول قبل وبعد عملية تنفيذ الديكور والتجهيز الفني في المملكة"
-              : "Interactive slider showcasing technical precision in fit-out & decoration projects"}
+              : "Interactive slider showcasing technical precision in fit-out & decoration projects")}
           </p>
         </div>
 
@@ -67,14 +84,14 @@ export function BeforeAfterSlider({ locale }: Props) {
           {/* AFTER Image (Background) */}
           <div className="absolute inset-0 w-full h-full bg-[#050b18]">
             <img
-              src="/images/defaults/projects/cafe-after.webp"
-              alt="After decoration"
+              src={item.afterImage}
+              alt="After execution"
               className="w-full h-full object-cover pointer-events-none"
             />
             {/* Label Overlay */}
             <div className="absolute bottom-4 right-4 z-10">
               <span className="px-3 py-1 rounded-full bg-emerald-500/90 text-white text-[10px] sm:text-xs font-bold shadow-lg backdrop-blur-sm">
-                {isRtl ? "بعد التنفيذ — ديكور كافي فاخر" : "AFTER — Luxury Cafe Decor"}
+                {isRtl ? "بعد التنفيذ — واجهات زجاجية وتشطيب راقي" : "AFTER — Premium Execution"}
               </span>
             </div>
           </div>
@@ -85,14 +102,14 @@ export function BeforeAfterSlider({ locale }: Props) {
             style={{ clipPath: `polygon(0 0, ${sliderPosition}% 0, ${sliderPosition}% 100%, 0 100%)` }}
           >
             <img
-              src="/images/defaults/projects/cafe-before.webp"
-              alt="Before decoration"
+              src={item.beforeImage}
+              alt="Before execution"
               className="w-full h-full object-cover pointer-events-none"
             />
             {/* Label Overlay */}
             <div className="absolute bottom-4 left-4 z-10">
               <span className="px-3 py-1 rounded-full bg-amber-500/90 text-white text-[10px] sm:text-xs font-bold shadow-lg backdrop-blur-sm">
-                {isRtl ? "قبل التنفيذ — الهيكل الخرساني" : "BEFORE — Concrete Shell"}
+                {isRtl ? "قبل التنفيذ — الموقع الأولي" : "BEFORE — Concrete / Shell"}
               </span>
             </div>
           </div>
