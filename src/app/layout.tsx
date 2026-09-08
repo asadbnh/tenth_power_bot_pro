@@ -1,28 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Cairo, Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Analytics } from "@/components/Analytics";
 import "./globals.css";
-
-/**
- * Arabic font — Cairo: clean, modern, excellent Arabic readability.
- */
-const cairo = Cairo({
-  subsets: ["arabic", "latin"],
-  variable: "--font-primary",
-  display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800"],
-});
-
-/**
- * English font — Inter: professional, versatile, wide support.
- */
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-secondary",
-  display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
