@@ -31,6 +31,7 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 interface FooterProps {
   locale: Locale;
   dict: Dictionary;
+  company?: any;
 }
 
 const SOCIAL_LINKS = [
@@ -44,10 +45,15 @@ const SOCIAL_LINKS = [
  * Premium footer with multi-column layout, SEO-friendly links,
  * contact info, social icons, and newsletter signup.
  */
-export function Footer({ locale, dict }: FooterProps) {
+export function Footer({ locale, dict, company }: FooterProps) {
   const isRtl = locale === "ar";
   const year = new Date().getFullYear();
   const getHref = (path: string) => `/${locale}${path}`;
+
+  const phone = company?.phone_primary || "+966 50 000 0000";
+  const email = company?.email || "info@webtaky.com";
+  const address = (isRtl ? company?.address?.address_line_1_ar : company?.address?.address_line_1_en) ||
+    (isRtl ? "الرياض، المملكة العربية السعودية" : "Riyadh, Saudi Arabia");
 
   return (
     <footer
@@ -79,7 +85,7 @@ export function Footer({ locale, dict }: FooterProps) {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-amber-500 hover:text-slate-950 transition-colors"
+                    className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-colors"
                     aria-label={social.label}
                   >
                     <Icon />
@@ -89,8 +95,8 @@ export function Footer({ locale, dict }: FooterProps) {
             </div>
           </div>
 
-          {/* Links Section: 2 Columns Side-by-Side on Mobile */}
-          <div className="grid grid-cols-2 gap-4 lg:col-span-2 lg:grid-cols-2">
+          {/* Quick Links & Services Container */}
+          <div className="lg:col-span-2 grid grid-cols-2 gap-4 sm:gap-8">
             {/* Column 2: Quick Links */}
             <div>
               <h3 className="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wider mb-2.5">
@@ -153,28 +159,26 @@ export function Footer({ locale, dict }: FooterProps) {
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <span className="text-xs sm:text-sm text-white/70">
-                  {isRtl
-                    ? "الرياض، المملكة العربية السعودية"
-                    : "Riyadh, Saudi Arabia"}
+                  {address}
                 </span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <a
-                  href="tel:+966500000000"
+                  href={`tel:${phone.replace(/\s+/g, "")}`}
                   className="text-xs sm:text-sm text-white/70 hover:text-white transition-colors ltr-only"
                   dir="ltr"
                 >
-                  +966 50 000 0000
+                  {phone}
                 </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <Mail className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <a
-                  href="mailto:info@webtaky.com"
+                  href={`mailto:${email}`}
                   className="text-xs sm:text-sm text-white/70 hover:text-white transition-colors"
                 >
-                  info@webtaky.com
+                  {email}
                 </a>
               </li>
               <li className="flex items-start gap-2.5">
