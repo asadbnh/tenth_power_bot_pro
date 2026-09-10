@@ -66,11 +66,40 @@ export async function handleCommand(msg: TelegramMessage) {
     return;
   }
 
-  const cmd = msg.text?.split(" ")[0].toLowerCase();
+  const rawText = msg.text?.trim() || "";
+  const cmd = rawText.split(" ")[0].toLowerCase();
+
+  // If the admin is in an active wizard/prompt state:
+  const state = getAdminState(userId);
+  if (state && state.step !== "idle") {
+    // Only explicit reset/cancel commands break the wizard
+    if (cmd === "/cancel" || cmd === "/stop" || cmd === "/start") {
+      clearAdminState(userId);
+      if (cmd === "/cancel" || cmd === "/stop") {
+        await sendMessage(userId, "🚫 <b>تم إلغاء العملية والعودة للقائمة الرئيسية.</b>", {
+          reply_markup: Keyboards.mainMenu(),
+        });
+        return;
+      }
+      // if /start, continue down to handleStart
+    } else {
+      // The admin sent a route/path like /contact, /quote, /services/glass-facades or text starting with /
+      // Route it directly as normal text input to the active wizard step!
+      await handleTextMessage(msg);
+      return;
+    }
+  }
 
   switch (cmd) {
     case "/start":
       await handleStart(msg);
+      break;
+    case "/cancel":
+    case "/stop":
+      clearAdminState(userId);
+      await sendMessage(userId, "🚫 <b>تم إلغاء العملية والعودة للقائمة الرئيسية.</b>", {
+        reply_markup: Keyboards.mainMenu(),
+      });
       break;
     case "/help":
     case "/menu":
