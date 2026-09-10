@@ -21,13 +21,13 @@ import {
   handleCategoriesList, handleCategoryDelete, handleCategoryAddPrompt,
   handleArticlesList, handleArticleDetails, handleArticleTogglePublish, handleArticleDelete, handleArticleAiPrompt, handleArticleAiGenerate,
   handleFaqsList, handleFaqDelete, handleFaqAddPrompt,
-  handleAdsList, handleAdToggle, handleAdDelete, handleAdAddPrompt,
+  handleAdsList, handleAdDetails, handleAdToggle, handleAdDelete, handleAdAddPrompt, handleAdEditPrompt,
   handleBeforeAfterList, handleBeforeAfterDelete,
 } from "./content";
 import {
   handleMediaLibraryList, handleMediaDelete, handleMediaUploadPrompt,
   handleGalleryAlbumsList, handleGalleryAlbumItems, handleGalleryAlbumDelete, handleGalleryItemDelete,
-  handlePhotoUpload,
+  handlePhotoUpload, uploadTelegramPhotoToR2,
 } from "./media";
 import {
   handlePendingReviews, handleApprovedReviews, handleReviewApprove, handleReviewReject,
@@ -273,37 +273,115 @@ export async function handleTextMessage(msg: TelegramMessage) {
     return;
   }
 
-  // 3. Advertisement Wizard
+  // 3. Advertisement Creation Wizard
   if (state.step === "awaiting_ad_title") {
-    setAdminState(userId, "awaiting_ad_link", { title_ar: text });
-    await sendMessage(userId, `🔗 أرسل <b>رابط التوجيه أو الواتساب للإعلان</b> (مثال: <code>https://wa.me/966551234567</code> أو <code>/quote</code>):`);
+    setAdminState(userId, "awaiting_ad_subtitle", { title_ar: text });
+    await sendMessage(userId, `📝 <b>(الخطوة 2 من 5) — الوصف الفرعي للإعلان:</b>\n\nأرسل الوصف التوضيحي أو تفاصيل العرض (أو اكتب <code>تخطي</code> للتجاوز):`, {
+      reply_markup: Keyboards.cancelWizard("cnt_ads"),
+    });
     return;
   }
 
-  if (state.step === "awaiting_ad_link") {
+  if (state.step === "awaiting_ad_subtitle") {
+    const subtitle_ar = (text === "تخطي" || text === "-") ? "" : text;
+    setAdminState(userId, "awaiting_ad_route", { ...state.payload, subtitle_ar });
+    await sendMessage(userId, `🔗 <b>(الخطوة 3 من 5) — رابط أو مسار التوجيه:</b>\n\nأرسل مسار التوجيه في الموقع (مثل <code>/services/glass-facades</code> أو <code>/quote</code> أو <code>/contact</code> أو رابط واتساب):`, {
+      reply_markup: Keyboards.cancelWizard("cnt_ads"),
+    });
+    return;
+  }
+
+  if (state.step === "awaiting_ad_route") {
+    const target_route = text.trim();
+    setAdminState(userId, "awaiting_ad_action_title", { ...state.payload, target_route });
+    await sendMessage(userId, `🔘 <b>(الخطوة 4 من 5) — نص زر الإجراء (Action Button):</b>\n\nأرسل النص الظاهر على زر الإعلان (مثال: <code>تواصل معنا الآن</code> أو <code>احجز معاينة</code> أو اكتب <code>تخطي</code> للعنوان الافتراضي):`, {
+      reply_markup: Keyboards.cancelWizard("cnt_ads"),
+    });
+    return;
+  }
+
+  if (state.step === "awaiting_ad_action_title") {
+    const action_title_ar = (text === "تخطي" || text === "-") ? "تواصل معنا الآن" : text.trim();
+    setAdminState(userId, "awaiting_ad_priority", { ...state.payload, action_title_ar });
+    await sendMessage(userId, `🔢 <b>(الخطوة 5 من 5) — أولوية وترتيب العرض:</b>\n\nأرسل رقم الأولوية (مثال: <code>1</code> أو <code>5</code> أو <code>10</code> ليكون في المقدمة، أو اكتب <code>تخطي</code> للقيمة 1):`, {
+      reply_markup: Keyboards.cancelWizard("cnt_ads"),
+    });
+    return;
+  }
+
+  if (state.step === "awaiting_ad_priority") {
+    const priority = text === "تخطي" ? 1 : (parseInt(text, 10) || 1);
+    setAdminState(userId, "awaiting_ad_media", { ...state.payload, priority });
+    await sendMessage(userId, `🖼️ <b>صورة وبانر الإعلان:</b>\n\n📷 <b>أرسل الآن صورة الإعلان مباشرة في الدردشة</b> لرفعها سحابياً وتطبيقها،\nأو أرسل <b>رابط صورة خارجي</b> (أو اكتب <code>تخطي</code> لاستخدام البانر الافتراضي):`, {
+      reply_markup: Keyboards.cancelWizard("cnt_ads"),
+    });
+    return;
+  }
+
+  if (state.step === "awaiting_ad_media") {
     const title_ar = (state.payload?.title_ar as string) || "إعلان جديد";
-    await db.from("advertisements").insert({
+    const subtitle_ar = (state.payload?.subtitle_ar as string) || "";
+    const target_route = (state.payload?.target_route as string) || "/contact";
+    const action_title_ar = (state.payload?.action_title_ar as string) || "تواصل معنا الآن";
+    const priority = (state.payload?.priority as number) || 1;
+    const media_url = (text === "تخطي" || text === "-")
+      ? "/images/defaults/projects/project-1.webp"
+      : text.trim();
+
+    const { data: newAd } = await db.from("advertisements").insert({
       company_id: companyId,
       title_ar,
       title_en: title_ar,
+      subtitle_ar,
       media_type: "image",
-      target_route: text,
+      media_url,
+      target_route,
+      action_title_ar,
       is_active: true,
-      priority: 1,
-    });
+      priority,
+    }).select("id").single();
 
     // Auto publish to Telegram Channel
     await publishAdToChannel({
       title_ar,
-      target_route: text,
+      subtitle_ar,
+      media_url,
+      target_route,
+      action_title_ar,
     });
 
     clearAdminState(userId);
-    await sendMessage(
-      userId,
-      `🎉 <b>تم إنشاء الإعلان ونشره في القناة بنجاح!</b>\n\n📢 <b>العنوان:</b> ${title_ar}\n🔗 <b>الرابط:</b> <code>${text}</code>`,
-      { reply_markup: Keyboards.backToSubmenu("cnt_ads") }
-    );
+    await sendMessage(userId, `🎉 <b>تم إنشاء الإعلان ونشره بنجاح!</b>`);
+    if (newAd?.id) {
+      await handleAdDetails(userId, newAd.id);
+    } else {
+      await handleAdsList(userId);
+    }
+    return;
+  }
+
+  // 3b. Advertisement Field Edit Handlers
+  if (state.step?.startsWith("awaiting_ad_edit_")) {
+    const adId = state.payload?.adId as string;
+    const editField = state.step.replace("awaiting_ad_edit_", "");
+    
+    if (editField === "title") {
+      await db.from("advertisements").update({ title_ar: text, updated_at: new Date().toISOString() }).eq("id", adId);
+    } else if (editField === "sub") {
+      await db.from("advertisements").update({ subtitle_ar: text === "حذف" ? "" : text, updated_at: new Date().toISOString() }).eq("id", adId);
+    } else if (editField === "route") {
+      await db.from("advertisements").update({ target_route: text.trim(), updated_at: new Date().toISOString() }).eq("id", adId);
+    } else if (editField === "btn") {
+      await db.from("advertisements").update({ action_title_ar: text.trim(), updated_at: new Date().toISOString() }).eq("id", adId);
+    } else if (editField === "prio") {
+      await db.from("advertisements").update({ priority: parseInt(text, 10) || 0, updated_at: new Date().toISOString() }).eq("id", adId);
+    } else if (editField === "media") {
+      await db.from("advertisements").update({ media_url: text.trim(), updated_at: new Date().toISOString() }).eq("id", adId);
+    }
+
+    clearAdminState(userId);
+    await sendMessage(userId, `✅ <b>تم تحديث بيانات الإعلان بنجاح.</b>`);
+    await handleAdDetails(userId, adId);
     return;
   }
 
@@ -530,9 +608,16 @@ export async function handleCallback(query: TelegramCallbackQuery) {
   if (data === "faq_add_prompt") return handleFaqAddPrompt(userId);
 
   if (data === "cnt_ads") return handleAdsList(userId, messageId);
+  if (data.startsWith("ad_view:")) return handleAdDetails(userId, data.split(":")[1], messageId);
   if (data.startsWith("ad_toggle:")) return handleAdToggle(userId, data.split(":")[1], messageId);
   if (data.startsWith("ad_delete:")) return handleAdDelete(userId, data.split(":")[1], messageId);
   if (data === "ad_add_prompt") return handleAdAddPrompt(userId);
+  if (data.startsWith("ad_edit_title:")) return handleAdEditPrompt(userId, data.split(":")[1], "title");
+  if (data.startsWith("ad_edit_sub:")) return handleAdEditPrompt(userId, data.split(":")[1], "sub");
+  if (data.startsWith("ad_edit_route:")) return handleAdEditPrompt(userId, data.split(":")[1], "route");
+  if (data.startsWith("ad_edit_btn:")) return handleAdEditPrompt(userId, data.split(":")[1], "btn");
+  if (data.startsWith("ad_edit_prio:")) return handleAdEditPrompt(userId, data.split(":")[1], "prio");
+  if (data.startsWith("ad_edit_media:")) return handleAdEditPrompt(userId, data.split(":")[1], "media");
 
   if (data === "cnt_before_after") return handleBeforeAfterList(userId, messageId);
   if (data.startsWith("ba_delete:")) return handleBeforeAfterDelete(userId, data.split(":")[1], messageId);
@@ -671,5 +756,72 @@ export async function handlePhotoMessage(msg: TelegramMessage) {
     await sendMessage(userId, `شكراً لك! لمعاينة أعمالنا وطلب المقايسة يرجى استخدام القائمة أدناه:`, { reply_markup: Keyboards.visitorMenu() });
     return;
   }
+
+  const state = getAdminState(userId);
+
+  // 1. Photo for Ad Creation Wizard
+  if (state?.step === "awaiting_ad_media") {
+    await sendMessage(userId, `⏳ <b>جاري رفع صورة الإعلان إلى Cloudflare R2...</b>`);
+    const res = await uploadTelegramPhotoToR2(msg, "advertisements");
+    const media_url = res?.url || "/images/defaults/projects/project-1.webp";
+
+    const db = createDbClient();
+    const { data: company } = await db.from("companies").select("id").limit(1).single();
+    const companyId = company?.id || "00000000-0000-0000-0000-000000000001";
+
+    const title_ar = (state.payload?.title_ar as string) || "إعلان جديد";
+    const subtitle_ar = (state.payload?.subtitle_ar as string) || "";
+    const target_route = (state.payload?.target_route as string) || "/contact";
+    const action_title_ar = (state.payload?.action_title_ar as string) || "تواصل معنا الآن";
+    const priority = (state.payload?.priority as number) || 1;
+
+    const { data: newAd } = await db.from("advertisements").insert({
+      company_id: companyId,
+      title_ar,
+      title_en: title_ar,
+      subtitle_ar,
+      media_type: "image",
+      media_url,
+      target_route,
+      action_title_ar,
+      is_active: true,
+      priority,
+    }).select("id").single();
+
+    // Auto publish to Telegram Channel
+    await publishAdToChannel({
+      title_ar,
+      subtitle_ar,
+      media_url,
+      target_route,
+      action_title_ar,
+    });
+
+    clearAdminState(userId);
+    await sendMessage(userId, `🎉 <b>تم رفع الصورة وإنشاء الإعلان بنجاح!</b>`);
+    if (newAd?.id) {
+      await handleAdDetails(userId, newAd.id);
+    } else {
+      await handleAdsList(userId);
+    }
+    return;
+  }
+
+  // 2. Photo for Ad Media Edit
+  if (state?.step === "awaiting_ad_edit_media") {
+    const adId = state.payload?.adId as string;
+    await sendMessage(userId, `⏳ <b>جاري تحديث صورة الإعلان ورفعها إلى Cloudflare R2...</b>`);
+    const res = await uploadTelegramPhotoToR2(msg, "advertisements");
+    if (res?.url) {
+      const db = createDbClient();
+      await db.from("advertisements").update({ media_url: res.url, updated_at: new Date().toISOString() }).eq("id", adId);
+      clearAdminState(userId);
+      await sendMessage(userId, `✅ <b>تم تحديث صورة الإعلان بنجاح.</b>`);
+      await handleAdDetails(userId, adId);
+      return;
+    }
+  }
+
+  // Default: General Media Library upload
   await handlePhotoUpload(msg);
 }

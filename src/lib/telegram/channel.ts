@@ -126,7 +126,9 @@ ${service.short_description_ar ? `📝 <b>نبذة:</b> ${service.short_descript
  */
 export async function publishAdToChannel(ad: {
   title_ar: string;
+  subtitle_ar?: string;
   target_route?: string;
+  action_title_ar?: string;
   media_url?: string;
 }) {
   const channelId = await getChannelTarget();
@@ -134,11 +136,12 @@ export async function publishAdToChannel(ad: {
 
   const siteUrl = getBaseSiteUrl();
   const targetUrl = ad.target_route?.startsWith("http") ? ad.target_route : `${siteUrl}${ad.target_route || ""}`;
+  const actionTitle = ad.action_title_ar || "⚡ الاستفادة من العرض الآن";
 
   const text = `📢 <b>عرض خاص وحصري | مؤسسة القوة العاشرة</b>
 
 ⚡ <b>${ad.title_ar}</b>
-
+${ad.subtitle_ar ? `\n📝 ${ad.subtitle_ar}\n` : ""}
 استفد الآن من أفضل عروض وخصومات مقاولات الزجاج، السيكوريت، والكلادينج بأعلى مواصفات الجودة مع المعاينة المجانية.
 
 📞 <b>للحجز والاستفسار المباشر:</b> <code>0551234567</code>
@@ -148,7 +151,7 @@ export async function publishAdToChannel(ad: {
 
   const keyboard: InlineKeyboard = {
     inline_keyboard: [
-      [{ text: "⚡ الاستفادة من العرض الآن", url: targetUrl }],
+      [{ text: actionTitle, url: targetUrl }],
     ],
   };
 

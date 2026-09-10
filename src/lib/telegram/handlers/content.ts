@@ -208,15 +208,16 @@ export async function handleAdsList(chatId: number, messageId?: number) {
   const db = createDbClient();
   const { data: ads } = await db
     .from("advertisements")
-    .select("id, title_ar, target_route, is_active, priority, media_type")
+    .select("id, title_ar, subtitle_ar, target_route, is_active, priority, media_type, media_url, action_title_ar")
+    .order("priority", { ascending: false })
     .order("created_at", { ascending: false });
 
   if (!ads || ads.length === 0) {
-    const emptyText = "📢 <b>الإعلانات والعروض الترويجية</b>\n\nلا توجد إعلانات مسجلة حالياً.";
+    const emptyText = "📢 <b>الإعلانات والعروض الترويجية</b>\n\nلا توجد إعلانات مسجلة حالياً في قاعدة البيانات.";
     const kb = {
       inline_keyboard: [
         [{ text: "➕ إضافة إعلان أو بانر جديد", callback_data: "ad_add_prompt" }],
-        [{ text: "◀️ رجوع للمحتوى", callback_data: "menu_content" }],
+        [{ text: "◀️ رجوع لقائمة المحتوى", callback_data: "menu_content" }],
       ],
     };
     if (messageId) await editMessage(chatId, messageId, emptyText, kb);
@@ -229,12 +230,13 @@ export async function handleAdsList(chatId: number, messageId?: number) {
 
   (ads as Record<string, any>[]).forEach((ad, idx) => {
     const status = ad.is_active ? "🟢 نشط" : "🔴 متوقف";
-    text += `${idx + 1}. [${status}] <b>${ad.title_ar}</b> (${ad.media_type || "صورة"})\n`;
-    text += `   🔗 التوجيه: <code>${ad.target_route || "/"}</code>\n\n`;
+    text += `${idx + 1}. [${status}] <b>${ad.title_ar}</b> (أولوية: ${ad.priority ?? 0})\n`;
+    if (ad.subtitle_ar) text += `   📝 <i>${ad.subtitle_ar}</i>\n`;
+    text += `   🔗 التوجيه: <code>${ad.target_route || "/contact"}</code> | 🔘 الزر: <code>${ad.action_title_ar || "تواصل معنا"}</code>\n\n`;
 
     inline_keyboard.push([
-      { text: `🔄 تفعيل/تعطيل: ${ad.title_ar.slice(0, 14)}`, callback_data: `ad_toggle:${ad.id}` },
-      { text: `🗑️ حذف`, callback_data: `ad_delete:${ad.id}` },
+      { text: `⚙️ تفاصيل وتعديل: ${ad.title_ar.slice(0, 16)}`, callback_data: `ad_view:${ad.id}` },
+      { text: ad.is_active ? "⏸️ إيقاف" : "▶️ تفعيل", callback_data: `ad_toggle:${ad.id}` },
     ]);
   });
 
@@ -247,19 +249,72 @@ export async function handleAdsList(chatId: number, messageId?: number) {
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
 }
 
+export async function handleAdDetails(chatId: number, id: string, messageId?: number) {
+  const db = createDbClient();
+  const { data: ad } = await db.from("advertisements").select("*").eq("id", id).single();
+  if (!ad) {
+    await sendMessage(chatId, "❌ لم يتم العثور على الإعلان المطلوب.");
+    return;
+  }
+
+  const status = ad.is_active ? "🟢 نشط (يظهر في الموقع والتطبيق)" : "🔴 متوقف (معطل)";
+  const startDate = ad.start_date ? new Date(ad.start_date).toLocaleDateString("ar-SA") : "الآن";
+  const endDate = ad.end_date ? new Date(ad.end_date).toLocaleDateString("ar-SA") : "مستمر (دائم)";
+
+  const text = `📢 <b>بيانات وتفاصيل الإعلان كاملة:</b>
+
+🆔 <b>المعرف:</b> <code>${ad.id}</code>
+📌 <b>العنوان الرئيسي:</b> ${ad.title_ar || "—"}
+📝 <b>الوصف الفرعي:</b> ${ad.subtitle_ar || "—"}
+🎞️ <b>نوع الوسائط:</b> <code>${ad.media_type || "image"}</code>
+🖼️ <b>رابط الميديا:</b> ${ad.media_url ? `<code>${ad.media_url}</code>` : "<i>لا توجد صورة</i>"}
+🔗 <b>مسار التوجيه (Target Route):</b> <code>${ad.target_route || "/contact"}</code>
+🔘 <b>نص زر الإجراء (Action Title):</b> ${ad.action_title_ar || "تواصل معنا الآن"}
+🔢 <b>ترتيب الأولوية (Priority):</b> <code>${ad.priority ?? 0}</code>
+⚡ <b>حالة العرض:</b> ${status}
+📅 <b>تاريخ البدء:</b> ${startDate} | <b>الانتهاء:</b> ${endDate}`;
+
+  const kb = {
+    inline_keyboard: [
+      [
+        { text: ad.is_active ? "⏸️ إيقاف الإعلان" : "▶️ تفعيل الإعلان", callback_data: `ad_toggle:${ad.id}` },
+        { text: "✏️ تعديل العنوان", callback_data: `ad_edit_title:${ad.id}` },
+      ],
+      [
+        { text: "📝 تعديل الوصف الفرعي", callback_data: `ad_edit_sub:${ad.id}` },
+        { text: "🔗 تعديل رابط التوجيه", callback_data: `ad_edit_route:${ad.id}` },
+      ],
+      [
+        { text: "🔘 تعديل نص الزر", callback_data: `ad_edit_btn:${ad.id}` },
+        { text: "🔢 تعديل الأولوية", callback_data: `ad_edit_prio:${ad.id}` },
+      ],
+      [
+        { text: "🖼️ تغيير الصورة / الميديا", callback_data: `ad_edit_media:${ad.id}` },
+        { text: "🗑️ حذف الإعلان", callback_data: `ad_delete:${ad.id}` },
+      ],
+      [
+        { text: "◀️ رجوع لقائمة الإعلانات", callback_data: "cnt_ads" },
+      ],
+    ],
+  };
+
+  if (messageId) await editMessage(chatId, messageId, text, kb);
+  else await sendMessage(chatId, text, { reply_markup: kb });
+}
+
 export async function handleAdToggle(chatId: number, id: string, messageId?: number) {
   const db = createDbClient();
   const { data: ad } = await db.from("advertisements").select("is_active").eq("id", id).single();
   if (ad) {
-    await db.from("advertisements").update({ is_active: !ad.is_active }).eq("id", id);
-    await handleAdsList(chatId, messageId);
+    await db.from("advertisements").update({ is_active: !ad.is_active, updated_at: new Date().toISOString() }).eq("id", id);
+    await handleAdDetails(chatId, id, messageId);
   }
 }
 
 export async function handleAdDelete(chatId: number, id: string, messageId?: number) {
   const db = createDbClient();
   await db.from("advertisements").delete().eq("id", id);
-  await sendMessage(chatId, `🗑️ تم حذف الإعلان.`);
+  await sendMessage(chatId, `🗑️ تم حذف الإعلان بنجاح.`);
   await handleAdsList(chatId, messageId);
 }
 
@@ -267,9 +322,37 @@ export async function handleAdAddPrompt(chatId: number) {
   setAdminState(chatId, "awaiting_ad_title");
   await sendMessage(
     chatId,
-    `📢 <b>إضافة إعلان أو عرض ترويجي — الخطوة 1/2</b>\n\nأرسل الآن <b>عنوان الإعلان</b> (مثال: خصم 20% بمناسبة اليوم الوطني):`,
+    `📢 <b>إضافة إعلان أو عرض ترويجي — (الخطوة 1 من 5)</b>\n\nأرسل الآن <b>العنوان الرئيسي للإعلان</b> (مثال: عروض نهاية العام على واجهات الزجاج):`,
     { reply_markup: Keyboards.cancelWizard("cnt_ads") }
   );
+}
+
+export async function handleAdEditPrompt(chatId: number, id: string, field: "title" | "sub" | "route" | "btn" | "prio" | "media") {
+  const fieldNames: Record<string, string> = {
+    title: "العنوان الرئيسي",
+    sub: "الوصف الفرعي",
+    route: "رابط ومسار التوجيه",
+    btn: "نص زر الإجراء",
+    prio: "ترتيب الأولوية",
+    media: "الصورة / رابط الميديا",
+  };
+
+  setAdminState(chatId, `awaiting_ad_edit_${field}`, { adId: id });
+
+  let prompt = `✏️ <b>تعديل ${fieldNames[field]} للإعلان</b>\n\n`;
+  if (field === "media") {
+    prompt += `📷 <b>أرسل صورة مباشرة في الدردشة</b> لرفعها وتحديث صورة الإعلان، أو أرسل <b>رابط صورة خارجي</b>:`;
+  } else if (field === "prio") {
+    prompt += `🔢 أرسل رقم الأولوية الجديد (مثال: 1 أو 5 أو 10):`;
+  } else if (field === "route") {
+    prompt += `🔗 أرسل الرابط أو المسار الجديد (مثال: <code>/services/glass-facades</code> أو <code>/quote</code> أو رابط خارجي):`;
+  } else if (field === "btn") {
+    prompt += `🔘 أرسل نص الزر الجديد (مثال: <code>احجز موعد معاينة</code> أو <code>تواصل عبر واتساب</code>):`;
+  } else {
+    prompt += `أرسل القيمة الجديدة الآن:`;
+  }
+
+  await sendMessage(chatId, prompt, { reply_markup: Keyboards.cancelWizard(`ad_view:${id}`) });
 }
 
 // ─── Categories Handlers ──────────────────────────────────────────────
