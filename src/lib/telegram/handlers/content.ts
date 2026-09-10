@@ -1,4 +1,4 @@
-import { createDbClient, getSql } from "@/lib/db";
+import { createDbClient } from "@/lib/db";
 import { sendMessage, editMessage, Keyboards } from "../bot";
 import { setAdminState } from "../state";
 
@@ -158,7 +158,6 @@ export async function handleProjectsList(chatId: number, messageId?: number) {
 
 export async function handleProjectDetails(chatId: number, id: string, messageId?: number) {
   const db = createDbClient();
-  const sql = getSql();
 
   const { data: p } = await db.from("projects").select("*").eq("id", id).single();
   if (!p) {
@@ -166,12 +165,13 @@ export async function handleProjectDetails(chatId: number, id: string, messageId
     return;
   }
 
-  // Count attached images & before/after items
-  const images = await sql`SELECT COUNT(*)::int as count FROM project_images WHERE project_id = ${id}`;
-  const imgCount = images[0]?.count ?? 0;
-
-  const baItems = await sql`SELECT COUNT(*)::int as count FROM project_before_after WHERE project_id = ${id}`;
-  const baCount = baItems[0]?.count ?? 0;
+  // Count attached images & before/after items using db.from() — آمن في serverless
+  const [{ count: imgCountRaw }, { count: baCountRaw }] = await Promise.all([
+    db.from("project_images").select("*", { count: "exact", head: true }).eq("project_id", id),
+    db.from("project_before_after").select("*", { count: "exact", head: true }).eq("project_id", id),
+  ]);
+  const imgCount = imgCountRaw ?? 0;
+  const baCount = baCountRaw ?? 0;
 
   const featured = p.is_featured ? "⭐ نعم (يظهر في الرئيسية)" : "لا";
   const active = p.is_active !== false ? "🟢 نشط (معروض)" : "🔴 معطل (مخفي)";
@@ -244,21 +244,32 @@ export async function handleProjectToggleActive(chatId: number, id: string, mess
 }
 
 export async function handleProjectItems(chatId: number, projectId: string, messageId?: number) {
-  const sql = getSql();
-  const { data: project } = await createDbClient().from("projects").select("title_ar").eq("id", projectId).single();
+  const db = createDbClient();
+  const { data: project } = await db.from("projects").select("title_ar").eq("id", projectId).single();
 
-  const items = await sql`
-    SELECT pi.id, pi.project_id, pi.is_cover, pi.sort_order, pi.created_at,
-           m.file_url, m.cdn_url, m.file_name
-    FROM project_images pi
-    JOIN media_library m ON pi.media_id = m.id
-    WHERE pi.project_id = ${projectId}
-    ORDER BY pi.sort_order ASC, pi.created_at DESC;
-  `;
+  // JOIN باستخدام db.from() — آمن في serverless بدل getSql() الخام
+  const { data: items } = await db
+    .from("project_images")
+    .select("id, project_id, is_cover, sort_order, created_at, media_library(file_url, cdn_url, file_name)")
+    .eq("project_id", projectId)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  // تحويل النتائج لنفس الشكل السابق
+  const mappedItems = (items || []).map((pi: any) => ({
+    id: pi.id,
+    project_id: pi.project_id,
+    is_cover: pi.is_cover,
+    sort_order: pi.sort_order,
+    created_at: pi.created_at,
+    file_url: pi.media_library?.file_url,
+    cdn_url: pi.media_library?.cdn_url,
+    file_name: pi.media_library?.file_name,
+  }));
 
   const title = project?.title_ar || "المشروع";
 
-  if (!items || items.length === 0) {
+  if (!mappedItems || mappedItems.length === 0) {
     const emptyText = `📸 <b>صور المشروع: ${title}</b>\n\nلا توجد صور مضافة لهذا المشروع حتى الآن.`;
     const kb = {
       inline_keyboard: [
@@ -271,10 +282,10 @@ export async function handleProjectItems(chatId: number, projectId: string, mess
     return;
   }
 
-  let text = `📸 <b>صور المشروع: ${title} (${items.length}):</b>\n\n`;
+  let text = `📸 <b>صور المشروع: ${title} (${mappedItems.length}):</b>\n\n`;
   const inline_keyboard: any[][] = [];
 
-  items.forEach((it: any, idx: number) => {
+  mappedItems.forEach((it: any, idx: number) => {
     const url = it.cdn_url || it.file_url;
     const coverBadge = it.is_cover ? "⭐ غلاف | " : "";
     text += `${idx + 1}. ${coverBadge}<a href="${url}">صورة رقم ${idx + 1} 🔗</a>\n`;
@@ -295,8 +306,8 @@ export async function handleProjectItems(chatId: number, projectId: string, mess
 }
 
 export async function handleProjectImageDelete(chatId: number, imgId: string, projectId: string, messageId?: number) {
-  const sql = getSql();
-  await sql`DELETE FROM project_images WHERE id = ${imgId}`;
+  const db = createDbClient();
+  await db.from("project_images").delete().eq("id", imgId);
   await sendMessage(chatId, "🗑️ تم حذف الصورة من المشروع بنجاح.");
   await handleProjectItems(chatId, projectId, messageId);
 }
@@ -599,8 +610,9 @@ export async function handleArticleDetails(chatId: number, id: string, messageId
     return;
   }
 
-  const { data: tags } = await db.from("article_tags").select("tag").eq("article_id", id);
-  const tagList = tags?.map((t: any) => `#${t.tag}`).join(" ") || "—";
+  // ✅ الحقل الصحيح في جدول article_tags هو tag_ar وليس tag
+  const { data: tags } = await db.from("article_tags").select("tag_ar").eq("article_id", id);
+  const tagList = tags?.map((t: any) => `#${t.tag_ar}`).join(" ") || "—";
 
   const text = `✍️ <b>تفاصيل المقال</b>
 

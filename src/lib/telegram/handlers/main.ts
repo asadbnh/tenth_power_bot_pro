@@ -1,4 +1,4 @@
-import { getSql, createDbClient } from "@/lib/db";
+import { createDbClient } from "@/lib/db";
 import { sendMessage, editMessage, Keyboards, formatStatsMessage, type TelegramMessage } from "../bot";
 import { clearAdminState } from "../state";
 
@@ -64,28 +64,60 @@ export async function handleHelp(chatId: number) {
 }
 
 export async function handleStats(chatId: number, messageId?: number) {
-  const sql = getSql();
+  const db = createDbClient();
 
   try {
-    const rows = await sql`
-      SELECT 
-        (SELECT COUNT(*)::int FROM quote_requests) AS total_requests,
-        (SELECT COUNT(*)::int FROM quote_requests WHERE status = 'new') AS new_requests,
-        (SELECT COUNT(*)::int FROM appointments) AS total_appointments,
-        (SELECT COUNT(*)::int FROM appointments WHERE status = 'pending') AS pending_appointments,
-        (SELECT COUNT(*)::int FROM messages) AS total_messages,
-        (SELECT COUNT(*)::int FROM messages WHERE is_read = false) AS unread_messages,
-        (SELECT COUNT(*)::int FROM users) AS total_users,
-        (SELECT COUNT(*)::int FROM services) AS total_services,
-        (SELECT COUNT(*)::int FROM projects) AS total_projects,
-        (SELECT COUNT(*)::int FROM articles) AS total_articles,
-        (SELECT COUNT(*)::int FROM testimonials) AS total_reviews,
-        (SELECT COUNT(*)::int FROM testimonials WHERE is_approved = false) AS pending_reviews,
-        (SELECT COUNT(*)::int FROM analytics_events) AS total_views,
-        (SELECT COUNT(*)::int FROM analytics_events WHERE created_at >= CURRENT_DATE) AS today_views;
-    `;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    const r = rows[0] || {};
+    const [
+      { count: total_requests },
+      { count: new_requests },
+      { count: total_appointments },
+      { count: pending_appointments },
+      { count: total_messages },
+      { count: unread_messages },
+      { count: total_users },
+      { count: total_services },
+      { count: total_projects },
+      { count: total_articles },
+      { count: total_reviews },
+      { count: pending_reviews },
+      { count: total_views },
+      { count: today_views },
+    ] = await Promise.all([
+      db.from("quote_requests").select("*", { count: "exact", head: true }),
+      db.from("quote_requests").select("*", { count: "exact", head: true }).eq("status", "new"),
+      db.from("appointments").select("*", { count: "exact", head: true }),
+      db.from("appointments").select("*", { count: "exact", head: true }).eq("status", "pending"),
+      db.from("messages").select("*", { count: "exact", head: true }),
+      db.from("messages").select("*", { count: "exact", head: true }).eq("is_read", false),
+      db.from("users").select("*", { count: "exact", head: true }),
+      db.from("services").select("*", { count: "exact", head: true }),
+      db.from("projects").select("*", { count: "exact", head: true }),
+      db.from("articles").select("*", { count: "exact", head: true }),
+      db.from("testimonials").select("*", { count: "exact", head: true }),
+      db.from("testimonials").select("*", { count: "exact", head: true }).eq("is_approved", false),
+      db.from("analytics_events").select("*", { count: "exact", head: true }),
+      db.from("analytics_events").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
+    ]);
+
+    const r = {
+      total_requests: total_requests ?? 0,
+      new_requests: new_requests ?? 0,
+      total_appointments: total_appointments ?? 0,
+      pending_appointments: pending_appointments ?? 0,
+      total_messages: total_messages ?? 0,
+      unread_messages: unread_messages ?? 0,
+      total_users: total_users ?? 0,
+      total_services: total_services ?? 0,
+      total_projects: total_projects ?? 0,
+      total_articles: total_articles ?? 0,
+      total_reviews: total_reviews ?? 0,
+      pending_reviews: pending_reviews ?? 0,
+      total_views: total_views ?? 0,
+      today_views: today_views ?? 0,
+    };
     const text = formatStatsMessage({
       totalRequests: r.total_requests ?? 0,
       newRequests: r.new_requests ?? 0,

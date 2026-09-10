@@ -319,7 +319,8 @@ export async function uploadTelegramPhotoToR2(
   if (media?.id) {
     await db.from("media_metadata").insert({
       media_id: media.id,
-      alt_text_ar: "صورة مرفوعة عبر بوت تلجرام",
+      alt_ar: "صورة مرفوعة عبر بوت تلجرام",       // ✅ الحقل الصحيح في جدول media_metadata
+      alt_en: "Photo uploaded via Telegram bot",
       caption_ar: msg.caption || "مرفوعات الوسائط",
     });
   }

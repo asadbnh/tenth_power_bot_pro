@@ -1,4 +1,4 @@
-import { createDbClient, getSql } from "@/lib/db";
+import { createDbClient } from "@/lib/db";
 import { sendMessage, Keyboards, type TelegramMessage } from "./bot";
 import { setAdminState, clearAdminState, type AdminState } from "./state";
 import { uploadTelegramPhotoToR2 } from "./handlers/media";
@@ -456,11 +456,17 @@ export async function processGalleryAlbumPhotoWizard(userId: number, msg: Telegr
     await sendMessage(userId, `⏳ <b>جاري رفع الصورة إلى Cloudflare R2 وربطها بالألبوم...</b>`);
     const res = await uploadTelegramPhotoToR2(msg, "gallery");
     if (res?.mediaId && albumId) {
+      // حساب الترتيب الحقيقي بناءً على عدد الصور الموجودة في الألبوم
+      const { count: existingCount } = await db
+        .from("gallery_items")
+        .select("*", { count: "exact", head: true })
+        .eq("album_id", albumId);
+
       const { error } = await db.from("gallery_items").insert({
         album_id: albumId,
         media_id: res.mediaId,
         type: "image",
-        sort_order: 0,
+        sort_order: existingCount ?? 0,
       });
 
       if (error) {
@@ -538,25 +544,38 @@ export async function processGalleryAlbumPhotoWizard(userId: number, msg: Telegr
 
 export async function processProjectPhotoWizard(userId: number, msg: TelegramMessage, state: AdminState) {
   const db = createDbClient();
-  const sql = getSql();
 
   if (state.step === "awaiting_project_photo") {
     const projectId = state.payload?.projectId as string;
     await sendMessage(userId, `⏳ <b>جاري رفع الصورة إلى Cloudflare R2 وإضافتها لمعرض المشروع...</b>`);
     const res = await uploadTelegramPhotoToR2(msg, "projects");
     if (res?.mediaId && projectId) {
-      try {
-        await sql`
-          INSERT INTO project_images (project_id, media_id, sort_order, is_cover)
-          VALUES (${projectId}, ${res.mediaId}, 0, false);
-        `;
-        clearAdminState(userId);
-        await sendMessage(userId, `🎉 <b>تم رفع الصورة وإضافتها للمشروع بنجاح!</b>`);
-        await handleProjectItems(userId, projectId);
-      } catch (err: any) {
-        console.error("[Project Photo Insert Error]:", err);
-        await sendMessage(userId, `❌ <b>حدث خطأ أثناء إضافة الصورة للمشروع:</b>\n<code>${err?.message || "DB error"}</code>`);
+      // حساب الترتيب الحقيقي بناءً على عدد الصور الموجودة
+      const { count: existingCount } = await db
+        .from("project_images")
+        .select("*", { count: "exact", head: true })
+        .eq("project_id", projectId);
+
+      const sortOrder = existingCount ?? 0;
+      const isCover = sortOrder === 0; // أول صورة تصبح غلافاً تلقائياً
+
+      const { error } = await db.from("project_images").insert({
+        project_id: projectId,
+        media_id: res.mediaId,
+        sort_order: sortOrder,
+        is_cover: isCover,
+      });
+
+      if (error) {
+        console.error("[Project Photo Insert Error]:", error);
+        await sendMessage(userId, `❌ <b>حدث خطأ أثناء إضافة الصورة للمشروع:</b>\n<code>${error?.message || "DB error"}</code>`);
+        return true;
       }
+
+      clearAdminState(userId);
+      const coverNote = isCover ? "\n⭐ <b>تم تعيينها كصورة الغلاف الرئيسية للمشروع.</b>" : "";
+      await sendMessage(userId, `🎉 <b>تم رفع الصورة وإضافتها للمشروع بنجاح!</b>${coverNote}`);
+      await handleProjectItems(userId, projectId);
       return true;
     }
   }
@@ -566,7 +585,7 @@ export async function processProjectPhotoWizard(userId: number, msg: TelegramMes
     await sendMessage(userId, `⏳ <b>جاري تحديث صورة غلاف المشروع...</b>`);
     const res = await uploadTelegramPhotoToR2(msg, "projects");
     if (res?.url && projectId) {
-      const { error } = await db.from("projects").update({ cover_image_url: res.url, updated_at: new Date().toISOString() }).eq("id", projectId);
+      const { error } = await db.from("projects").update({ cover_image_url: res.url }).eq("id", projectId);
       if (error) {
         console.error("[Project Cover Update Error]:", error);
         await sendMessage(userId, `❌ <b>حدث خطأ أثناء تحديث غلاف المشروع:</b>\n<code>${error?.message || "DB error"}</code>`);
