@@ -56,6 +56,18 @@ import {
 } from "../channel";
 import { createDbClient, getSql } from "@/lib/db";
 
+export function parseArabicNumber(input: string): number {
+  if (!input) return 0;
+  const arabicDigits = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
+  let clean = input.trim();
+  for (let i = 0; i < 10; i++) {
+    clean = clean.split(arabicDigits[i]).join(i.toString());
+  }
+  clean = clean.replace(/[,\u066B\u066C\sر.سSAR]/g, "");
+  const num = parseFloat(clean);
+  return isNaN(num) ? 0 : num;
+}
+
 // ─── Command Router ───────────────────────────────────────────────────
 
 export async function handleCommand(msg: TelegramMessage) {
@@ -209,7 +221,7 @@ export async function handleTextMessage(msg: TelegramMessage) {
   if (state.step === "awaiting_service_price") {
     const name_ar = (state.payload?.name_ar as string) || "خدمة جديدة";
     const desc_ar = (state.payload?.desc_ar as string) || "";
-    const price = parseFloat(text) || 300;
+    const price = parseArabicNumber(text) || 300;
     const slug = "service-" + Date.now().toString().slice(-6);
 
     const { data: newSrv } = await db.from("services").insert({
@@ -268,12 +280,12 @@ export async function handleTextMessage(msg: TelegramMessage) {
 
   if (state.step === "awaiting_project_value") {
     const title_ar = (state.payload?.title_ar as string) || "مشروع جديد";
-    const client_name = (state.payload?.client_name as string) || "";
+    const client_name = (state.payload?.client_name as string) || "عميل خاص";
     const city = (state.payload?.city as string) || "الرياض";
-    const val = parseFloat(text) || 50000;
+    const val = parseArabicNumber(text) || 50000;
     const slug = "project-" + Date.now().toString().slice(-6);
 
-    const { data: newPrj } = await db.from("projects").insert({
+    const { data: newPrj, error: prjErr } = await db.from("projects").insert({
       company_id: companyId,
       title_ar,
       title_en: title_ar,
@@ -284,7 +296,12 @@ export async function handleTextMessage(msg: TelegramMessage) {
       status: "completed",
       cover_image_url: "https://pub-e9788e46474044d585e2622e2c6ce74d.r2.dev/projects/project-1.webp",
       is_featured: true,
+      is_active: true,
     }).select("id").single();
+
+    if (prjErr) {
+      console.error("[Project Insert Error]:", prjErr);
+    }
 
     // Auto publish to Telegram Channel
     await publishProjectToChannel({
@@ -341,11 +358,13 @@ export async function handleTextMessage(msg: TelegramMessage) {
   }
 
   if (state.step === "awaiting_ad_priority") {
-    const priority = text === "تخطي" ? 1 : (parseInt(text, 10) || 1);
+    const priority = text === "تخطي" ? 1 : (Math.round(parseArabicNumber(text)) || 1);
     setAdminState(userId, "awaiting_ad_media", { ...state.payload, priority });
     await sendMessage(userId, `🖼️ <b>صورة وبانر الإعلان:</b>\n\n📷 <b>أرسل الآن صورة الإعلان مباشرة في الدردشة</b> لرفعها سحابياً وتطبيقها،\nأو أرسل <b>رابط صورة خارجي</b> (أو اكتب <code>تخطي</code> لاستخدام البانر الافتراضي):`, {
       reply_markup: Keyboards.cancelWizard("cnt_ads"),
     });
+    return;
+  }
     return;
   }
 

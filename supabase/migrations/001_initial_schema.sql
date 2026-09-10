@@ -104,6 +104,7 @@ CREATE TABLE IF NOT EXISTS projects (
   start_date DATE,
   end_date DATE,
   status TEXT NOT NULL DEFAULT 'completed',
+  cover_image_url TEXT,
   is_featured BOOLEAN NOT NULL DEFAULT false,
   is_active BOOLEAN NOT NULL DEFAULT true,
   view_count INTEGER NOT NULL DEFAULT 0,
