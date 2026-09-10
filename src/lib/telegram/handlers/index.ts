@@ -26,7 +26,9 @@ import {
 } from "./content";
 import {
   handleMediaLibraryList, handleMediaDelete, handleMediaUploadPrompt,
-  handleGalleryAlbumsList, handleGalleryAlbumItems, handleGalleryAlbumDelete, handleGalleryItemDelete,
+  handleGalleryAlbumsList, handleGalleryAlbumDetails, handleGalleryAlbumToggle, handleGalleryAlbumItems,
+  handleGalleryAlbumAddPrompt, handleGalleryAlbumAddPhotoPrompt, handleGalleryAlbumEditPrompt,
+  handleGalleryAlbumDelete, handleGalleryItemDelete,
   handlePhotoUpload, uploadTelegramPhotoToR2,
 } from "./media";
 import {
@@ -414,6 +416,107 @@ export async function handleTextMessage(msg: TelegramMessage) {
     return;
   }
 
+  // 3c. Gallery Album Creation Wizard & Photo Linking Handlers
+  if (state.step === "awaiting_album_title") {
+    const slug = text.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]+/g, "-").replace(/^-+|-+$/g, "") || `album-${Date.now()}`;
+    setAdminState(userId, "awaiting_album_desc", { title_ar: text, slug });
+    await sendMessage(
+      userId,
+      `📝 <b>(الخطوة 2 من 3) — وصف الألبوم:</b>\n\nأرسل وصفاً توضيحياً لمحتوى الألبوم (أو اكتب <code>تخطي</code> للتجاوز):`,
+      { reply_markup: Keyboards.cancelWizard("med_gallery") }
+    );
+    return;
+  }
+
+  if (state.step === "awaiting_album_desc") {
+    const description_ar = (text === "تخطي" || text === "-") ? "" : text;
+    setAdminState(userId, "awaiting_album_cover", { ...state.payload, description_ar });
+    await sendMessage(
+      userId,
+      `🖼️ <b>(الخطوة 3 من 3) — صورة غلاف الألبوم:</b>\n\n📷 <b>أرسل الآن صورة الغلاف مباشرة في الدردشة</b> لرفعها سحابياً،\nأو أرسل <b>رابط صورة خارجي</b> (أو اكتب <code>تخطي</code> لاستخدام الغلاف الافتراضي):`,
+      { reply_markup: Keyboards.cancelWizard("med_gallery") }
+    );
+    return;
+  }
+
+  if (state.step === "awaiting_album_cover") {
+    const title_ar = (state.payload?.title_ar as string) || "ألبوم جديد";
+    const slug = (state.payload?.slug as string) || `album-${Date.now()}`;
+    const description_ar = (state.payload?.description_ar as string) || "";
+    const cover_image_url = (text === "تخطي" || text === "-")
+      ? "/images/defaults/projects/project-1.webp"
+      : text.trim();
+
+    const { data: newAlbum } = await db.from("gallery_albums").insert({
+      company_id: companyId,
+      title_ar,
+      title_en: title_ar,
+      slug,
+      description_ar,
+      cover_image_url,
+      is_active: true,
+      sort_order: 0,
+    }).select("id").single();
+
+    clearAdminState(userId);
+    await sendMessage(userId, `🎉 <b>تم إنشاء الألبوم بنجاح!</b>`);
+    if (newAlbum?.id) {
+      await handleGalleryAlbumDetails(userId, newAlbum.id);
+    } else {
+      await handleGalleryAlbumsList(userId);
+    }
+    return;
+  }
+
+  if (state.step === "awaiting_album_photo") {
+    const albumId = state.payload?.albumId as string;
+    const media_url = text.trim();
+
+    const { data: media } = await db.from("media_library").insert({
+      company_id: companyId,
+      file_name: `album-photo-${Date.now()}.jpg`,
+      original_name: "رابط خارجي للألبوم",
+      file_url: media_url,
+      cdn_url: media_url,
+      webp_url: media_url,
+      mime_type: "image/jpeg",
+      storage_provider: "external",
+    }).select("id").single();
+
+    if (media?.id && albumId) {
+      await db.from("gallery_items").insert({
+        album_id: albumId,
+        media_id: media.id,
+        type: "image",
+        sort_order: 0,
+      });
+    }
+
+    clearAdminState(userId);
+    await sendMessage(userId, `✅ <b>تمت إضافة الصورة للألبوم بنجاح!</b>`);
+    await handleGalleryAlbumItems(userId, albumId);
+    return;
+  }
+
+  // 3d. Gallery Album Field Edit Handlers
+  if (state.step?.startsWith("awaiting_album_edit_")) {
+    const albumId = state.payload?.albumId as string;
+    const editField = state.step.replace("awaiting_album_edit_", "");
+
+    if (editField === "title") {
+      await db.from("gallery_albums").update({ title_ar: text }).eq("id", albumId);
+    } else if (editField === "desc") {
+      await db.from("gallery_albums").update({ description_ar: text === "حذف" ? "" : text }).eq("id", albumId);
+    } else if (editField === "cover") {
+      await db.from("gallery_albums").update({ cover_image_url: text.trim() }).eq("id", albumId);
+    }
+
+    clearAdminState(userId);
+    await sendMessage(userId, `✅ <b>تم تحديث بيانات الألبوم بنجاح.</b>`);
+    await handleGalleryAlbumDetails(userId, albumId);
+    return;
+  }
+
   // 4. Branch Address Wizard
   if (state.step === "awaiting_address_city") {
     setAdminState(userId, "awaiting_address_street", { city_ar: text });
@@ -651,13 +754,23 @@ export async function handleCallback(query: TelegramCallbackQuery) {
   if (data === "cnt_before_after") return handleBeforeAfterList(userId, messageId);
   if (data.startsWith("ba_delete:")) return handleBeforeAfterDelete(userId, data.split(":")[1], messageId);
 
-  // 4. Media Callbacks
+  // 4. Media & Gallery Callbacks
   if (data === "med_library") return handleMediaLibraryList(userId, messageId);
   if (data.startsWith("med_delete:")) return handleMediaDelete(userId, data.split(":")[1], messageId);
   if (data === "med_upload_prompt") return handleMediaUploadPrompt(userId, messageId);
   if (data === "med_gallery") return handleGalleryAlbumsList(userId, messageId);
+  if (data.startsWith("alb_view:")) return handleGalleryAlbumDetails(userId, data.split(":")[1], messageId);
+  if (data.startsWith("alb_toggle:")) return handleGalleryAlbumToggle(userId, data.split(":")[1], messageId);
+  if (data === "alb_add_prompt") return handleGalleryAlbumAddPrompt(userId);
+  if (data.startsWith("alb_add_photo:")) return handleGalleryAlbumAddPhotoPrompt(userId, data.split(":")[1]);
   if (data.startsWith("alb_items:")) return handleGalleryAlbumItems(userId, data.split(":")[1], messageId);
-  if (data.startsWith("it_delete:")) return handleGalleryItemDelete(userId, data.split(":")[1], messageId);
+  if (data.startsWith("alb_edit_title:")) return handleGalleryAlbumEditPrompt(userId, data.split(":")[1], "title");
+  if (data.startsWith("alb_edit_desc:")) return handleGalleryAlbumEditPrompt(userId, data.split(":")[1], "desc");
+  if (data.startsWith("alb_edit_cover:")) return handleGalleryAlbumEditPrompt(userId, data.split(":")[1], "cover");
+  if (data.startsWith("it_delete:")) {
+    const parts = data.split(":");
+    return handleGalleryItemDelete(userId, parts[1], parts[2], messageId);
+  }
   if (data.startsWith("alb_delete:")) return handleGalleryAlbumDelete(userId, data.split(":")[1], messageId);
 
   // 5. Reviews Callbacks
@@ -847,6 +960,76 @@ export async function handlePhotoMessage(msg: TelegramMessage) {
       clearAdminState(userId);
       await sendMessage(userId, `✅ <b>تم تحديث صورة الإعلان بنجاح.</b>`);
       await handleAdDetails(userId, adId);
+      return;
+    }
+  }
+
+  // 3. Photo for Gallery Album Photos
+  if (state?.step === "awaiting_album_photo") {
+    const albumId = state.payload?.albumId as string;
+    await sendMessage(userId, `⏳ <b>جاري رفع الصورة إلى Cloudflare R2 وربطها بالألبوم...</b>`);
+    const res = await uploadTelegramPhotoToR2(msg, "gallery");
+    if (res?.mediaId && albumId) {
+      const db = createDbClient();
+      await db.from("gallery_items").insert({
+        album_id: albumId,
+        media_id: res.mediaId,
+        type: "image",
+        sort_order: 0,
+      });
+      clearAdminState(userId);
+      await sendMessage(userId, `🎉 <b>تم رفع الصورة وإضافتها للألبوم بنجاح!</b>`);
+      await handleGalleryAlbumItems(userId, albumId);
+      return;
+    }
+  }
+
+  // 4. Photo for Album Cover Creation
+  if (state?.step === "awaiting_album_cover") {
+    await sendMessage(userId, `⏳ <b>جاري رفع صورة غلاف الألبوم إلى Cloudflare R2...</b>`);
+    const res = await uploadTelegramPhotoToR2(msg, "gallery");
+    const cover_image_url = res?.url || "/images/defaults/projects/project-1.webp";
+
+    const db = createDbClient();
+    const { data: company } = await db.from("companies").select("id").limit(1).single();
+    const companyId = company?.id || "00000000-0000-0000-0000-000000000001";
+
+    const title_ar = (state.payload?.title_ar as string) || "ألبوم جديد";
+    const slug = (state.payload?.slug as string) || `album-${Date.now()}`;
+    const description_ar = (state.payload?.description_ar as string) || "";
+
+    const { data: newAlbum } = await db.from("gallery_albums").insert({
+      company_id: companyId,
+      title_ar,
+      title_en: title_ar,
+      slug,
+      description_ar,
+      cover_image_url,
+      is_active: true,
+      sort_order: 0,
+    }).select("id").single();
+
+    clearAdminState(userId);
+    await sendMessage(userId, `🎉 <b>تم إنشاء الألبوم مع صورة الغلاف بنجاح!</b>`);
+    if (newAlbum?.id) {
+      await handleGalleryAlbumDetails(userId, newAlbum.id);
+    } else {
+      await handleGalleryAlbumsList(userId);
+    }
+    return;
+  }
+
+  // 5. Photo for Album Cover Edit
+  if (state?.step === "awaiting_album_edit_cover") {
+    const albumId = state.payload?.albumId as string;
+    await sendMessage(userId, `⏳ <b>جاري تحديث صورة غلاف الألبوم...</b>`);
+    const res = await uploadTelegramPhotoToR2(msg, "gallery");
+    if (res?.url) {
+      const db = createDbClient();
+      await db.from("gallery_albums").update({ cover_image_url: res.url }).eq("id", albumId);
+      clearAdminState(userId);
+      await sendMessage(userId, `✅ <b>تم تحديث غلاف الألبوم بنجاح.</b>`);
+      await handleGalleryAlbumDetails(userId, albumId);
       return;
     }
   }
