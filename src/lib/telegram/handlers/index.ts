@@ -365,8 +365,6 @@ export async function handleTextMessage(msg: TelegramMessage) {
     });
     return;
   }
-    return;
-  }
 
   if (state.step === "awaiting_ad_media") {
     const title_ar = (state.payload?.title_ar as string) || "إعلان جديد";
