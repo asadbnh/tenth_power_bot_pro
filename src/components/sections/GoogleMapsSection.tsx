@@ -5,10 +5,17 @@ import type { Locale } from "@/lib/i18n/config";
 
 interface Props {
   locale: Locale;
+  company?: any;
 }
 
-export function GoogleMapsSection({ locale }: Props) {
+export function GoogleMapsSection({ locale, company }: Props) {
   const isRtl = locale === "ar";
+
+  const address = (isRtl ? (company?.address?.street_ar || company?.address?.address_line_1_ar) : (company?.address?.street_en || company?.address?.address_line_1_en)) ||
+    (isRtl ? "طريق الملك فهد، حي الصحافة، الرياض، المملكة العربية السعودية" : "King Fahd Road, Al Sahafah Dist., Riyadh, Saudi Arabia");
+  
+  const phone = company?.phone_primary || "+966 50 000 0000";
+  const mapEmbedUrl = company?.google_maps_embed_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115967.65487770853!2d46.6752957!3d24.7135517!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03890d489399%3A0xba974d1c98e79fd5!2sRiyadh%20Saudi%20Arabia!5e0!3m2!1sen!2ssa!4v1700000000000!5m2!1sen!2ssa";
 
   return (
     <section className="py-6 sm:py-16 bg-background border-b border-border-light">
@@ -19,7 +26,7 @@ export function GoogleMapsSection({ locale }: Props) {
             {isRtl ? "المقر الرئيسي" : "Headquarters"}
           </span>
           <h2 className="text-xl sm:text-3xl font-extrabold">
-            {isRtl ? "المقر الرئيسي لشركة القوة العاشرة" : "Headquarters in Riyadh"}
+            {isRtl ? (company?.name_ar ? `المقر الرئيسي لـ ${company.name_ar}` : "المقر الرئيسي لشركة القوة العاشرة") : (company?.name_en ? `${company.name_en} Headquarters` : "Headquarters in Riyadh")}
           </h2>
           <p className="text-text-secondary text-xs sm:text-sm">
             {isRtl ? "نرحب بزيارتكم للمقر الرئيسي لمراجعة المخططات الهندسية ونماذج الواجهات" : "Visit our headquarters to review engineering plans and structural facade samples"}
@@ -35,7 +42,7 @@ export function GoogleMapsSection({ locale }: Props) {
               </div>
               <div className="space-y-0.5">
                 <h3 className="font-bold text-xs sm:text-sm">{isRtl ? "العنوان الرئيسي" : "Main Address"}</h3>
-                <p className="text-[11px] sm:text-xs text-text-secondary">{isRtl ? "طريق الملك فهد، حي الصحافة، الرياض، المملكة العربية السعودية" : "King Fahd Road, Al Sahafah Dist., Riyadh, Saudi Arabia"}</p>
+                <p className="text-[11px] sm:text-xs text-text-secondary">{address}</p>
               </div>
             </div>
 
@@ -55,7 +62,9 @@ export function GoogleMapsSection({ locale }: Props) {
               </div>
               <div className="space-y-0.5">
                 <h3 className="font-bold text-xs sm:text-sm">{isRtl ? "التواصل المباشر" : "Direct Contact"}</h3>
-                <p className="text-[11px] sm:text-xs text-text-secondary" dir="ltr">+966 50 000 0000</p>
+                <a href={`tel:${phone.replace(/\s+/g, "")}`} className="text-[11px] sm:text-xs text-text-secondary hover:text-primary-600 block transition-colors" dir="ltr">
+                  {phone}
+                </a>
               </div>
             </div>
           </div>
@@ -63,8 +72,8 @@ export function GoogleMapsSection({ locale }: Props) {
           {/* Embedded Map */}
           <div className="lg:col-span-2 rounded-2xl sm:rounded-3xl overflow-hidden border border-border-light shadow-md min-h-[250px]">
             <iframe
-              title="Riyadh Office Location"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115967.65487770853!2d46.6752957!3d24.7135517!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03890d489399%3A0xba974d1c98e79fd5!2sRiyadh%20Saudi%20Arabia!5e0!3m2!1sen!2ssa!4v1700000000000!5m2!1sen!2ssa"
+              title="Office Location"
+              src={mapEmbedUrl}
               width="100%"
               height="100%"
               style={{ border: 0, minHeight: "260px" }}

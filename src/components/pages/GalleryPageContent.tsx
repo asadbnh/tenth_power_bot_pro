@@ -13,16 +13,17 @@ import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 interface Props {
   locale: Locale;
   dict: Dictionary;
+  initialAlbums?: any[];
   initialItems?: any[];
 }
 
-const ALBUMS = [
-  { id: 1, title_ar: "مشاريع الزجاج", title_en: "Glass Projects", count: 24, image_url: "/images/defaults/services/tempered-glass.webp" },
-  { id: 2, title_ar: "أعمال الألمنيوم", title_en: "Aluminum Works", count: 18, image_url: "/images/defaults/services/aluminum-works.webp" },
-  { id: 3, title_ar: "تصاميم المطابخ", title_en: "Kitchen Designs", count: 32, image_url: "/images/defaults/services/kitchens.webp" },
-  { id: 4, title_ar: "مشاريع الديكور", title_en: "Decoration Projects", count: 41, image_url: "/images/defaults/services/decorations.webp" },
-  { id: 5, title_ar: "الواجهات الزجاجية", title_en: "Glass Facades", count: 15, image_url: "/images/defaults/services/glass-facades.webp" },
-  { id: 6, title_ar: "أبواب ونوافذ", title_en: "Doors & Windows", count: 28, image_url: "/images/defaults/services/doors-windows.webp" },
+const DEFAULT_ALBUMS = [
+  { id: 1, slug: "glass", title_ar: "مشاريع الزجاج", title_en: "Glass Projects", count: 24, image_url: "/images/defaults/services/tempered-glass.webp" },
+  { id: 2, slug: "aluminum", title_ar: "أعمال الألمنيوم", title_en: "Aluminum Works", count: 18, image_url: "/images/defaults/services/aluminum-works.webp" },
+  { id: 3, slug: "kitchens", title_ar: "تصاميم المطابخ", title_en: "Kitchen Designs", count: 32, image_url: "/images/defaults/services/kitchens.webp" },
+  { id: 4, slug: "decor", title_ar: "مشاريع الديكور", title_en: "Decoration Projects", count: 41, image_url: "/images/defaults/services/decorations.webp" },
+  { id: 5, slug: "facades", title_ar: "الواجهات الزجاجية", title_en: "Glass Facades", count: 15, image_url: "/images/defaults/services/glass-facades.webp" },
+  { id: 6, slug: "doors", title_ar: "أبواب ونوافذ", title_en: "Doors & Windows", count: 28, image_url: "/images/defaults/services/doors-windows.webp" },
 ];
 
 const DEFAULT_ITEMS = [
@@ -37,11 +38,12 @@ const DEFAULT_ITEMS = [
   { id: "9", title_ar: "مشروع مقاولات عامة وتجهيزات هندسية", title_en: "General Contracting & Building Engineering", image_url: "/images/defaults/services/contracting.webp", thumbnail_url: "/images/defaults/services/contracting.webp" },
 ];
 
-export function GalleryPageContent({ locale, dict, initialItems }: Props) {
+export function GalleryPageContent({ locale, dict, initialAlbums, initialItems }: Props) {
   const isRtl = locale === "ar";
   const [selectedView, setSelectedView] = useState<"albums" | "grid">("albums");
   const [lightboxItem, setLightboxItem] = useState<string | null>(null);
 
+  const albums = (initialAlbums && initialAlbums.length > 0) ? initialAlbums : DEFAULT_ALBUMS;
   const items = (initialItems && initialItems.length > 0) ? initialItems : DEFAULT_ITEMS;
   const activeLightboxObj = items.find((it) => String(it.id) === String(lightboxItem)) || items[0];
 
@@ -113,8 +115,8 @@ export function GalleryPageContent({ locale, dict, initialItems }: Props) {
           {selectedView === "albums" ? (
             /* Albums View */
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {ALBUMS.map((album, i) => (
-                <motion.div key={album.id}
+              {albums.map((album, i) => (
+                <motion.div key={album.id || i}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}

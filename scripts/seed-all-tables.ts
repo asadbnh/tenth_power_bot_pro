@@ -539,7 +539,6 @@ async function seedAllTables() {
 
   for (let i = 0; i < projectsList.length; i++) {
     const p = projectsList[i];
-    const coverUrl = mediaMap[p.coverImg]?.url || `${R2_PUBLIC_BASE}/projects/${p.coverImg}`;
     const prjRows = await sql`
       INSERT INTO projects (
         company_id, service_id, slug, title_ar, title_en,

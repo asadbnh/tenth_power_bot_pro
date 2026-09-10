@@ -3,26 +3,24 @@
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, FileText, Layers3, FolderOpen, ArrowRight } from "lucide-react";
+import { Search, X, FileText, Layers3, FolderOpen, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { searchDatabase } from "@/lib/actions/content";
 
 interface Props { locale: Locale; dict: Dictionary; }
 
-// Mock search results — real implementation queries /api/search → Supabase full-text
-const ALL_RESULTS = [
-  { type: "service", title_ar: "زجاج سكريت (مقوى)", title_en: "Tempered Glass", url: "/services", icon: Layers3, keywords: ["زجاج", "سكريت", "glass", "tempered"] },
-  { type: "service", title_ar: "واجهات زجاجية", title_en: "Glass Facades", url: "/services", icon: Layers3, keywords: ["واجهات", "زجاجية", "facade", "glass"] },
-  { type: "service", title_ar: "أعمال الألمنيوم", title_en: "Aluminum Works", url: "/services", icon: Layers3, keywords: ["ألمنيوم", "aluminum", "نوافذ"] },
-  { type: "service", title_ar: "مطابخ", title_en: "Kitchens", url: "/services", icon: Layers3, keywords: ["مطبخ", "مطابخ", "kitchen"] },
-  { type: "service", title_ar: "ديكورات", title_en: "Decorations", url: "/services", icon: Layers3, keywords: ["ديكور", "decoration", "تصميم"] },
-  { type: "article", title_ar: "دليل شامل: أنواع الزجاج السكريت", title_en: "Complete Guide: Types of Tempered Glass", url: "/blog/types-of-tempered-glass", icon: FileText, keywords: ["زجاج", "glass", "سكريت", "دليل"] },
-  { type: "article", title_ar: "أبرز ترندات تصميم المطابخ 2024", title_en: "Top Kitchen Design Trends 2024", url: "/blog/kitchen-design-trends-2024", icon: FileText, keywords: ["مطبخ", "تصميم", "kitchen", "design"] },
-  { type: "project", title_ar: "واجهة برج تجاري — الرياض", title_en: "Commercial Tower Facade — Riyadh", url: "/projects", icon: FolderOpen, keywords: ["برج", "واجهة", "الرياض", "tower", "riyadh"] },
-  { type: "project", title_ar: "مطبخ فيلا فاخرة — جدة", title_en: "Luxury Villa Kitchen — Jeddah", url: "/projects", icon: FolderOpen, keywords: ["مطبخ", "فيلا", "جدة", "kitchen", "villa"] },
-];
+interface SearchResultItem {
+  type: "service" | "article" | "project";
+  title: string;
+  title_ar?: string;
+  title_en?: string;
+  excerpt?: string;
+  url: string;
+  icon?: string | null;
+}
 
 function SearchInner({ locale, dict }: Props) {
   const isRtl = locale === "ar";
@@ -32,6 +30,8 @@ function SearchInner({ locale, dict }: Props) {
   const initialQuery = searchParams.get("q") || "";
   const [query, setQuery] = useState(initialQuery);
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
+  const [results, setResults] = useState<SearchResultItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Debounce query
@@ -48,12 +48,37 @@ function SearchInner({ locale, dict }: Props) {
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   }, [debouncedQuery, router, pathname, searchParams]);
 
-  const results = debouncedQuery.trim()
-    ? ALL_RESULTS.filter(r =>
-        r.keywords.some(k => k.includes(debouncedQuery.toLowerCase())) ||
-        (isRtl ? r.title_ar : r.title_en).toLowerCase().includes(debouncedQuery.toLowerCase())
-      )
-    : [];
+  // Live Database Search Execution
+  useEffect(() => {
+    const clean = debouncedQuery.trim();
+    if (!clean) {
+      setResults([]);
+      setIsLoading(false);
+      return;
+    }
+
+    let isMounted = true;
+    setIsLoading(true);
+
+    searchDatabase(clean, locale, 15)
+      .then((res) => {
+        if (isMounted) {
+          setResults(res as SearchResultItem[]);
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error("Live search failed:", err);
+        if (isMounted) {
+          setResults([]);
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [debouncedQuery, locale]);
 
   const typeLabel = (type: string) => {
     if (type === "service") return isRtl ? "خدمة" : "Service";
@@ -65,6 +90,12 @@ function SearchInner({ locale, dict }: Props) {
     if (type === "service") return "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300";
     if (type === "article") return "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300";
     return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300";
+  };
+
+  const getResultIcon = (type: string) => {
+    if (type === "service") return Layers3;
+    if (type === "article") return FileText;
+    return FolderOpen;
   };
 
   return (
@@ -79,7 +110,11 @@ function SearchInner({ locale, dict }: Props) {
 
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
             className="relative">
-            <Search className="absolute top-1/2 -translate-y-1/2 start-5 w-6 h-6 text-white/40 pointer-events-none" />
+            {isLoading ? (
+              <Loader2 className="absolute top-1/2 -translate-y-1/2 start-5 w-6 h-6 text-amber-400 animate-spin pointer-events-none" />
+            ) : (
+              <Search className="absolute top-1/2 -translate-y-1/2 start-5 w-6 h-6 text-white/40 pointer-events-none" />
+            )}
             <input
               ref={inputRef}
               type="search"
@@ -108,6 +143,12 @@ function SearchInner({ locale, dict }: Props) {
                 <Search className="w-12 h-12 mx-auto mb-4 text-text-tertiary" />
                 <p className="text-lg">{dict.search.placeholder}</p>
               </motion.div>
+            ) : isLoading ? (
+              <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="text-center py-16 text-text-secondary">
+                <Loader2 className="w-10 h-10 mx-auto mb-4 text-primary-500 animate-spin" />
+                <p className="text-sm">{isRtl ? "جارٍ البحث في قاعدة البيانات..." : "Searching database..."}</p>
+              </motion.div>
             ) : results.length === 0 ? (
               <motion.div key="no-results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="text-center py-16">
@@ -121,7 +162,7 @@ function SearchInner({ locale, dict }: Props) {
                 </p>
                 <div className="space-y-3">
                   {results.map((result, i) => {
-                    const Icon = result.icon;
+                    const Icon = getResultIcon(result.type);
                     return (
                       <motion.div key={i}
                         initial={{ opacity: 0, y: 10 }}
@@ -134,9 +175,14 @@ function SearchInner({ locale, dict }: Props) {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-semibold text-sm truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                              {isRtl ? result.title_ar : result.title_en}
+                              {result.title}
                             </p>
-                            <span className={cn("inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium", typeColor(result.type))}>
+                            {result.excerpt && (
+                              <p className="text-xs text-text-tertiary line-clamp-1 mt-0.5">
+                                {result.excerpt}
+                              </p>
+                            )}
+                            <span className={cn("inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold", typeColor(result.type))}>
                               {typeLabel(result.type)}
                             </span>
                           </div>

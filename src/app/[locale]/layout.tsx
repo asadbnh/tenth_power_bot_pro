@@ -6,7 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { WhatsAppButton } from "@/components/marketing/WhatsAppButton";
 import { AIChatWidget } from "@/components/marketing/AIChatWidget";
-import { getCompany } from "@/lib/actions/content";
+import { getCompany, getServices } from "@/lib/actions/content";
 
 /**
  * Generate static params for all supported locales.
@@ -83,9 +83,10 @@ export default async function LocaleLayout({
   const validLocale = locale as Locale;
   const dir = getLocaleDirection(validLocale);
   const htmlLang = getLocaleHtmlLang(validLocale);
-  const [dict, company] = await Promise.all([
+  const [dict, company, services] = await Promise.all([
     getDictionary(validLocale),
     getCompany().catch(() => null),
+    getServices(validLocale).catch(() => []),
   ]);
 
   return (
@@ -108,7 +109,7 @@ export default async function LocaleLayout({
       </main>
 
       {/* Footer */}
-      <Footer locale={validLocale} dict={dict} company={company} />
+      <Footer locale={validLocale} dict={dict} company={company} services={services} />
 
       {/* Floating WhatsApp Button */}
       <WhatsAppButton locale={validLocale} phoneNumber={company?.whatsapp_number} />

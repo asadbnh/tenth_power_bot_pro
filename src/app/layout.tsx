@@ -1,7 +1,20 @@
 import type { Metadata, Viewport } from "next";
+import { Cairo, Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Analytics } from "@/components/Analytics";
 import "./globals.css";
+
+const cairo = Cairo({
+  subsets: ["arabic", "latin"],
+  variable: "--font-cairo",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),

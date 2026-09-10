@@ -133,12 +133,13 @@ export function Header({ locale, dict }: HeaderProps) {
           {/* Actions */}
           <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
             {/* Search */}
-            <button
+            <Link
+              href={getLocalizedHref("/search")}
               className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors"
               aria-label={dict.nav.search}
             >
               <Search className="w-4 h-4" />
-            </button>
+            </Link>
 
             {/* Theme Toggle */}
             {mounted && (
@@ -259,6 +260,15 @@ export function Header({ locale, dict }: HeaderProps) {
 
               {/* Mobile Menu Footer */}
               <div className="p-4 border-t border-border space-y-2.5">
+                <Link
+                  href={getLocalizedHref("/search")}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl border border-border text-xs font-semibold text-text-primary hover:bg-surface transition-colors"
+                >
+                  <Search className="w-4 h-4 text-amber-500" />
+                  <span>{dict.nav.search}</span>
+                </Link>
+
                 <Link
                   href={getAlternateHref()}
                   onClick={() => setIsMobileMenuOpen(false)}

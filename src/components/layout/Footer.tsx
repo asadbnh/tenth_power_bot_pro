@@ -32,6 +32,7 @@ interface FooterProps {
   locale: Locale;
   dict: Dictionary;
   company?: any;
+  services?: any[];
 }
 
 const SOCIAL_LINKS = [
@@ -45,15 +46,29 @@ const SOCIAL_LINKS = [
  * Premium footer with multi-column layout, SEO-friendly links,
  * contact info, social icons, and newsletter signup.
  */
-export function Footer({ locale, dict, company }: FooterProps) {
+export function Footer({ locale, dict, company, services }: FooterProps) {
   const isRtl = locale === "ar";
   const year = new Date().getFullYear();
   const getHref = (path: string) => `/${locale}${path}`;
 
   const phone = company?.phone_primary || "+966 50 000 0000";
   const email = company?.email || "info@webtaky.com";
-  const address = (isRtl ? company?.address?.address_line_1_ar : company?.address?.address_line_1_en) ||
+  const address = (isRtl ? (company?.address?.street_ar || company?.address?.address_line_1_ar) : (company?.address?.street_en || company?.address?.address_line_1_en)) ||
     (isRtl ? "الرياض، المملكة العربية السعودية" : "Riyadh, Saudi Arabia");
+
+  const servicesList = (services && services.length > 0)
+    ? services.slice(0, 6).map((s) => ({
+        label: isRtl ? (s.name_ar || s.name) : (s.name_en || s.name_ar || s.name),
+        href: `/services/${s.slug}`,
+      }))
+    : [
+        { label: isRtl ? "زجاج سكريت" : "Tempered Glass", href: "/services" },
+        { label: isRtl ? "واجهات زجاجية" : "Glass Facades", href: "/services" },
+        { label: isRtl ? "ألمنيوم" : "Aluminum", href: "/services" },
+        { label: isRtl ? "مطابخ" : "Kitchens", href: "/services" },
+        { label: isRtl ? "ديكورات" : "Decorations", href: "/services" },
+        { label: isRtl ? "أبواب ونوافذ" : "Doors & Windows", href: "/services" },
+      ];
 
   return (
     <footer
@@ -123,26 +138,19 @@ export function Footer({ locale, dict, company }: FooterProps) {
               </ul>
             </div>
 
-            {/* Column 3: Services */}
+            {/* Column 3: Services (Dynamic from Neon DB) */}
             <div>
               <h3 className="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wider mb-2.5">
                 {dict.footer.ourServices}
               </h3>
               <ul className="space-y-1.5 sm:space-y-2.5">
-                {[
-                  isRtl ? "زجاج سكريت" : "Tempered Glass",
-                  isRtl ? "واجهات زجاجية" : "Glass Facades",
-                  isRtl ? "ألمنيوم" : "Aluminum",
-                  isRtl ? "مطابخ" : "Kitchens",
-                  isRtl ? "ديكورات" : "Decorations",
-                  isRtl ? "أبواب ونوافذ" : "Doors & Windows",
-                ].map((service) => (
-                  <li key={service}>
+                {servicesList.map((service) => (
+                  <li key={service.href || service.label}>
                     <Link
-                      href={getHref("/services")}
-                      className="text-xs sm:text-sm text-white/60 hover:text-white transition-colors"
+                      href={getHref(service.href)}
+                      className="text-xs sm:text-sm text-white/60 hover:text-white transition-colors truncate block"
                     >
-                      {service}
+                      {service.label}
                     </Link>
                   </li>
                 ))}

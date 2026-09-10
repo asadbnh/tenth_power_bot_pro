@@ -8,7 +8,7 @@ import * as path from "path";
  * and generates a complete, clean, well-commented `.env.local` and `.env.example`.
  */
 
-interface EnvDefinition {
+export interface EnvDefinition {
   key: string;
   category: string;
   commentAr: string;
@@ -17,7 +17,7 @@ interface EnvDefinition {
 }
 
 // 1. Defined metadata and categorization for all system environment variables
-const ENV_METADATA: Record<string, { category: string; commentAr: string; defaultValue?: string; autoResolve?: () => string | undefined }> = {
+const ENV_METADATA: Record<string, Omit<EnvDefinition, "key">> = {
   // Application
   NEXT_PUBLIC_APP_URL: {
     category: "1. إعدادات الموقع والتطبيق (Application & Core URLs)",

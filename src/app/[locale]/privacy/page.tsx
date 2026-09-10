@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
+import { getCompany } from "@/lib/actions/content";
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
@@ -11,6 +13,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const isRtl = locale === "ar";
+  const company = await getCompany().catch(() => null);
+  const companyName = isRtl ? (company?.name_ar || "شركة القوة العاشرة") : (company?.name_en || "Tenth Power Co.");
+  const email = company?.email || "info@webtaky.com";
 
   return (
     <div className="pt-[var(--header-height)] min-h-dvh bg-background">
@@ -18,8 +23,8 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
         <h1 className="text-3xl font-extrabold mb-8">{isRtl ? "سياسة الخصوصية" : "Privacy Policy"}</h1>
         <div className="prose prose-gray dark:prose-invert max-w-none space-y-6 text-text-secondary leading-relaxed">
           <p>{isRtl
-            ? "نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. توضح هذه السياسة كيفية جمع معلوماتك واستخدامها وحمايتها."
-            : "We respect your privacy and are committed to protecting your personal data. This policy explains how we collect, use, and protect your information."}</p>
+            ? `في ${companyName}، نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. توضح هذه السياسة كيفية جمع معلوماتك واستخدامها وحمايتها.`
+            : `At ${companyName}, we respect your privacy and are committed to protecting your personal data. This policy explains how we collect, use, and protect your information.`}</p>
           <h2 className="text-xl font-bold text-text-primary">{isRtl ? "المعلومات التي نجمعها" : "Information We Collect"}</h2>
           <p>{isRtl
             ? "نجمع المعلومات التي تقدمها لنا مباشرةً مثل: الاسم، رقم الجوال، البريد الإلكتروني عند تعبئة نماذج التواصل أو طلب عروض الأسعار."
@@ -30,8 +35,8 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
             : "We use information to respond to your inquiries, provide quotes, and improve our services. We will never sell your data to third parties."}</p>
           <h2 className="text-xl font-bold text-text-primary">{isRtl ? "التواصل معنا" : "Contact Us"}</h2>
           <p>{isRtl
-            ? "لأي استفسارات حول هذه السياسة، تواصل معنا على: info@webtaky.com"
-            : "For any questions about this policy, contact us at: info@webtaky.com"}</p>
+            ? `لأي استفسارات حول هذه السياسة، تواصل معنا على: ${email}`
+            : `For any questions about this policy, contact us at: ${email}`}</p>
         </div>
       </div>
     </div>

@@ -349,75 +349,149 @@ export async function getArticleBySlug(slug: string, locale = "ar") {
 
 // ─── Gallery Actions ──────────────────────────────────────────────────
 
-export async function getGalleryItems(options?: { serviceId?: string; limit?: number; page?: number }) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = createAdminClient() as any;
+export async function getGalleryAlbums(locale = "ar") {
+  const isAr = locale === "ar";
+  try {
+    const sql = getSql();
+    const rows = await sql`
+      SELECT 
+        ga.id, ga.slug, ga.title_ar, ga.title_en, ga.description_ar, ga.description_en,
+        COALESCE(ga.cover_image_url, m.cdn_url, m.file_url, '/images/defaults/services/tempered-glass.webp') as image_url,
+        COUNT(gi.id)::int as count
+      FROM gallery_albums ga
+      LEFT JOIN gallery_items gi ON gi.album_id = ga.id
+      LEFT JOIN media_library m ON gi.media_id = m.id
+      WHERE ga.is_active = true
+      GROUP BY ga.id, ga.slug, ga.title_ar, ga.title_en, ga.description_ar, ga.description_en, ga.cover_image_url, ga.sort_order, m.cdn_url, m.file_url
+      ORDER BY ga.sort_order ASC;
+    `;
+    if (rows && rows.length > 0) {
+      return rows.map((a: any) => ({
+        id: a.id,
+        slug: a.slug,
+        title_ar: a.title_ar,
+        title_en: a.title_en || a.title_ar,
+        title: isAr ? a.title_ar : a.title_en || a.title_ar,
+        description: isAr ? a.description_ar : a.description_en || a.description_ar,
+        count: Math.max(a.count || 0, 1),
+        image_url: a.image_url || "/images/defaults/services/tempered-glass.webp",
+      }));
+    }
+  } catch (err) {
+    console.warn("Error fetching gallery albums from DB:", err);
+  }
+
+  return [
+    { id: 1, slug: "glass", title_ar: "مشاريع الزجاج", title_en: "Glass Projects", count: 24, image_url: "/images/defaults/services/tempered-glass.webp" },
+    { id: 2, slug: "aluminum", title_ar: "أعمال الألمنيوم", title_en: "Aluminum Works", count: 18, image_url: "/images/defaults/services/aluminum-works.webp" },
+    { id: 3, slug: "kitchens", title_ar: "تصاميم المطابخ", title_en: "Kitchen Designs", count: 32, image_url: "/images/defaults/services/kitchens.webp" },
+    { id: 4, slug: "decor", title_ar: "مشاريع الديكور", title_en: "Decoration Projects", count: 41, image_url: "/images/defaults/services/decorations.webp" },
+    { id: 5, slug: "facades", title_ar: "الواجهات الزجاجية", title_en: "Glass Facades", count: 15, image_url: "/images/defaults/services/glass-facades.webp" },
+    { id: 6, slug: "doors", title_ar: "أبواب ونوافذ", title_en: "Doors & Windows", count: 28, image_url: "/images/defaults/services/doors-windows.webp" },
+  ];
+}
+
+export async function getGalleryItems(options?: { serviceId?: string; albumId?: string; limit?: number; page?: number }) {
   const limit = options?.limit ?? 24;
   const offset = ((options?.page ?? 1) - 1) * limit;
 
-  let items: Record<string, unknown>[] = [];
-  let totalCount = 0;
-
   try {
-    const { data, count } = await supabase
-      .from("gallery_items")
-      .select("id, album_id, type, sort_order, media_library(file_url, cdn_url)", { count: "exact" })
-      .order("sort_order", { ascending: true })
-      .range(offset, offset + limit - 1);
-
-    if (data && data.length > 0) {
-      items = ((data ?? []) as Record<string, unknown>[]).map((g) => {
-        const media = g.media_library as { file_url?: string; cdn_url?: string } | null;
-        return {
-          id: g.id,
-          image_url: media?.cdn_url || media?.file_url || "/images/defaults/projects/project-1.webp",
-          thumbnail_url: media?.cdn_url || media?.file_url || "/images/defaults/projects/project-1.webp",
-        };
-      });
-      totalCount = count ?? items.length;
+    const sql = getSql();
+    let rows: any[] = [];
+    if (options?.albumId) {
+      rows = await sql`
+        SELECT 
+          gi.id, gi.album_id, gi.type, gi.sort_order,
+          COALESCE(m.cdn_url, m.file_url, '/images/defaults/projects/project-1.webp') as image_url,
+          COALESCE(m.cdn_url, m.file_url, '/images/defaults/projects/project-1.webp') as thumbnail_url,
+          COALESCE(mm.title_ar, 'صورة معمارية') as title_ar,
+          COALESCE(mm.title_en, 'Architectural Photo') as title_en
+        FROM gallery_items gi
+        JOIN media_library m ON gi.media_id = m.id
+        LEFT JOIN media_metadata mm ON mm.media_id = m.id
+        WHERE gi.album_id = ${options.albumId}
+        ORDER BY gi.sort_order ASC
+        LIMIT ${limit} OFFSET ${offset};
+      `;
+    } else {
+      rows = await sql`
+        SELECT 
+          gi.id, gi.album_id, gi.type, gi.sort_order,
+          COALESCE(m.cdn_url, m.file_url, '/images/defaults/projects/project-1.webp') as image_url,
+          COALESCE(m.cdn_url, m.file_url, '/images/defaults/projects/project-1.webp') as thumbnail_url,
+          COALESCE(mm.title_ar, 'صورة معمارية') as title_ar,
+          COALESCE(mm.title_en, 'Architectural Photo') as title_en
+        FROM gallery_items gi
+        JOIN media_library m ON gi.media_id = m.id
+        LEFT JOIN media_metadata mm ON mm.media_id = m.id
+        ORDER BY gi.sort_order ASC
+        LIMIT ${limit} OFFSET ${offset};
+      `;
     }
-  } catch {
-    // fallback
+
+    if (rows && rows.length > 0) {
+      const items = rows.map((r: any) => ({
+        id: r.id,
+        album_id: r.album_id,
+        image_url: r.image_url || "/images/defaults/projects/project-1.webp",
+        thumbnail_url: r.thumbnail_url || r.image_url || "/images/defaults/projects/project-1.webp",
+        title_ar: r.title_ar,
+        title_en: r.title_en,
+      }));
+      return { data: items, count: items.length };
+    }
+  } catch (err) {
+    console.warn("Error fetching gallery items from DB:", err);
   }
 
-  if (items.length === 0) {
-    items = getFallbackGallery() as unknown as Record<string, unknown>[];
-    totalCount = items.length;
-  }
-
-  return { data: items, count: totalCount };
+  const fallbacks = getFallbackGallery() as unknown as Record<string, unknown>[];
+  return { data: fallbacks, count: fallbacks.length };
 }
 
 // ─── Customer Reviews Actions ─────────────────────────────────────────
 
-export async function getApprovedReviews(limit = 10) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = createAdminClient() as any;
-
+export async function getApprovedReviews(limit = 12) {
   let list: Record<string, unknown>[] = [];
+  
   try {
-    const { data } = await supabase
-      .from("customer_reviews")
-      .select(`
+    const sql = getSql();
+    // 1. Try customer_reviews first
+    const reviews = await sql`
+      SELECT 
         id, rating, content_ar, content_en, reviewer_name,
-        is_verified, created_at, services(slug)
-      `)
-      .eq("is_approved", true)
-      .order("created_at", { ascending: false })
-      .limit(limit);
-
-    if (data && data.length > 0) {
-      list = data;
+        is_verified, created_at
+      FROM customer_reviews
+      WHERE is_approved = true
+      ORDER BY created_at DESC
+      LIMIT ${limit};
+    `;
+    if (reviews && reviews.length > 0) {
+      list.push(...reviews);
     }
-  } catch {
-    // fallback
+
+    // 2. Also fetch testimonials table
+    const testimonials = await sql`
+      SELECT 
+        id, rating, content_ar, content_en, client_name as reviewer_name,
+        client_company, client_avatar_url as reviewer_avatar_url,
+        true as is_verified, created_at
+      FROM testimonials
+      WHERE is_approved = true
+      ORDER BY is_featured DESC, created_at DESC
+      LIMIT ${limit};
+    `;
+    if (testimonials && testimonials.length > 0) {
+      list.push(...testimonials);
+    }
+  } catch (err) {
+    console.warn("Error fetching approved reviews:", err);
   }
 
   if (list.length === 0) {
     list = getFallbackTestimonials() as Record<string, unknown>[];
   }
 
-  return list;
+  return list.slice(0, limit);
 }
 
 export async function submitReview(data: {
@@ -831,5 +905,90 @@ export async function getAdvertisements() {
   }
   return [];
 }
+
+// ─── Live Database Search Action ──────────────────────────────────────
+
+export async function searchDatabase(query: string, locale = "ar", limit = 12) {
+  const cleanQ = (query || "").trim();
+  if (cleanQ.length < 2) return [];
+
+  const isAr = locale === "ar";
+  const searchPattern = `%${cleanQ}%`;
+
+  try {
+    const sql = getSql();
+    const [services, articles, projects] = await Promise.all([
+      sql`
+        SELECT id, slug, icon, name_ar, name_en, short_description_ar, short_description_en
+        FROM services
+        WHERE is_active = true AND (
+          name_ar ILIKE ${searchPattern} OR
+          name_en ILIKE ${searchPattern} OR
+          short_description_ar ILIKE ${searchPattern} OR
+          short_description_en ILIKE ${searchPattern}
+        )
+        LIMIT 6;
+      `,
+      sql`
+        SELECT id, slug, title_ar, title_en, excerpt_ar, excerpt_en
+        FROM articles
+        WHERE status = 'published' AND (
+          title_ar ILIKE ${searchPattern} OR
+          title_en ILIKE ${searchPattern} OR
+          excerpt_ar ILIKE ${searchPattern} OR
+          excerpt_en ILIKE ${searchPattern}
+        )
+        LIMIT 6;
+      `,
+      sql`
+        SELECT id, slug, title_ar, title_en, description_ar, description_en, city
+        FROM projects
+        WHERE is_active = true AND (
+          title_ar ILIKE ${searchPattern} OR
+          title_en ILIKE ${searchPattern} OR
+          description_ar ILIKE ${searchPattern} OR
+          city ILIKE ${searchPattern}
+        )
+        LIMIT 6;
+      `,
+    ]);
+
+    const results = [
+      ...services.map((s: any) => ({
+        type: "service" as const,
+        title: isAr ? s.name_ar : s.name_en || s.name_ar,
+        title_ar: s.name_ar,
+        title_en: s.name_en || s.name_ar,
+        excerpt: isAr ? s.short_description_ar : s.short_description_en || s.short_description_ar,
+        url: `/services/${s.slug}`,
+        icon: s.icon,
+      })),
+      ...articles.map((a: any) => ({
+        type: "article" as const,
+        title: isAr ? a.title_ar : a.title_en || a.title_ar,
+        title_ar: a.title_ar,
+        title_en: a.title_en || a.title_ar,
+        excerpt: isAr ? a.excerpt_ar : a.excerpt_en || a.excerpt_ar,
+        url: `/blog/${a.slug}`,
+        icon: null,
+      })),
+      ...projects.map((p: any) => ({
+        type: "project" as const,
+        title: isAr ? p.title_ar : p.title_en || p.title_ar,
+        title_ar: p.title_ar,
+        title_en: p.title_en || p.title_ar,
+        excerpt: isAr ? p.description_ar : p.description_en || p.description_ar,
+        url: `/projects/${p.slug}`,
+        icon: null,
+      })),
+    ].slice(0, limit);
+
+    return results;
+  } catch (err) {
+    console.warn("Database search error:", err);
+    return [];
+  }
+}
+
 
 
