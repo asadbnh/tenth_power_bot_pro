@@ -107,7 +107,8 @@ export async function handleDirectCustomerReviews(chatId: number, messageId?: nu
     text += `   💬 <code>${(r.content_ar || "").slice(0, 70)}...</code>\n\n`;
 
     inline_keyboard.push([
-      { text: `🗑️ حذف التقييم: ${r.reviewer_name?.slice(0, 12) || idx + 1}`, callback_data: `crev_delete:${r.id}` }
+      { text: r.is_approved ? "⏸️ إلغاء الاعتماد" : "✅ اعتماد ونشر", callback_data: `crev_toggle:${r.id}` },
+      { text: `🗑️ حذف`, callback_data: `crev_delete:${r.id}` }
     ]);
   });
 
@@ -115,6 +116,15 @@ export async function handleDirectCustomerReviews(chatId: number, messageId?: nu
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleDirectReviewToggleApprove(chatId: number, id: string, messageId?: number) {
+  const db = createDbClient();
+  const { data: rev } = await db.from("customer_reviews").select("is_approved").eq("id", id).single();
+  if (rev) {
+    await db.from("customer_reviews").update({ is_approved: !rev.is_approved }).eq("id", id);
+    await handleDirectCustomerReviews(chatId, messageId);
+  }
 }
 
 export async function handleDirectReviewDelete(chatId: number, id: string, messageId?: number) {

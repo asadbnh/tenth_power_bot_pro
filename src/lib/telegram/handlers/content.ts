@@ -1,4 +1,4 @@
-import { createDbClient } from "@/lib/db";
+import { createDbClient, getSql } from "@/lib/db";
 import { sendMessage, editMessage, Keyboards } from "../bot";
 import { setAdminState } from "../state";
 
@@ -115,12 +115,12 @@ export async function handleProjectsList(chatId: number, messageId?: number) {
   const db = createDbClient();
   const { data: projects } = await db
     .from("projects")
-    .select("id, title_ar, client_name, city, project_value, status, view_count")
+    .select("id, title_ar, client_name, city, project_value, status, is_featured, is_active, view_count")
     .order("created_at", { ascending: false })
-    .limit(8);
+    .limit(10);
 
   if (!projects || projects.length === 0) {
-    const emptyText = "📁 <b>معرض المشاريع والأعمال</b>\n\nلا توجد مشاريع مسجلة حالياً.";
+    const emptyText = "📁 <b>معرض المشاريع والأعمال</b>\n\nلا توجد مشاريع مسجلة حالياً في قاعدة البيانات.";
     const kb = {
       inline_keyboard: [
         [{ text: "➕ إضافة مشروع جديد", callback_data: "prj_add_prompt" }],
@@ -136,12 +136,14 @@ export async function handleProjectsList(chatId: number, messageId?: number) {
   const inline_keyboard: any[][] = [];
 
   (projects as Record<string, any>[]).forEach((p, idx) => {
-    text += `${idx + 1}. 🏢 <b>${p.title_ar}</b>\n`;
+    const featured = p.is_featured ? "⭐ مميز" : "عادي";
+    const status = p.is_active !== false ? "🟢 نشط" : "🔴 معطل";
+    text += `${idx + 1}. [${status} | ${featured}] 🏢 <b>${p.title_ar}</b>\n`;
     text += `   📍 ${p.city || "الرياض"} | 👤 ${p.client_name || "عميل خاص"}\n`;
     text += `   💰 القيمة: <code>${p.project_value ? Number(p.project_value).toLocaleString("ar-SA") + " ر.س" : "—"}</code>\n\n`;
 
     inline_keyboard.push([
-      { text: `🗑️ حذف المشروع: ${p.title_ar.slice(0, 16)}`, callback_data: `prj_delete:${p.id}` }
+      { text: `⚙️ تفاصيل وتعديل: ${p.title_ar.slice(0, 18)}`, callback_data: `prj_view:${p.id}` },
     ]);
   });
 
@@ -154,10 +156,155 @@ export async function handleProjectsList(chatId: number, messageId?: number) {
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
 }
 
+export async function handleProjectDetails(chatId: number, id: string, messageId?: number) {
+  const db = createDbClient();
+  const sql = getSql();
+
+  const { data: p } = await db.from("projects").select("*").eq("id", id).single();
+  if (!p) {
+    await sendMessage(chatId, "❌ لم يتم العثور على المشروع المطلوب.");
+    return;
+  }
+
+  // Count attached images & before/after items
+  const images = await sql`SELECT COUNT(*)::int as count FROM project_images WHERE project_id = ${id}`;
+  const imgCount = images[0]?.count ?? 0;
+
+  const baItems = await sql`SELECT COUNT(*)::int as count FROM project_before_after WHERE project_id = ${id}`;
+  const baCount = baItems[0]?.count ?? 0;
+
+  const featured = p.is_featured ? "⭐ نعم (يظهر في الرئيسية)" : "لا";
+  const active = p.is_active !== false ? "🟢 نشط (معروض)" : "🔴 معطل (مخفي)";
+
+  const text = `🏢 <b>تفاصيل وبيانات المشروع:</b>
+
+🏷️ <b>الاسم العربي:</b> ${p.title_ar}
+🌐 <b>الاسم الإنجليزي:</b> ${p.title_en || "—"}
+🔗 <b>المعرف (Slug):</b> <code>${p.slug}</code>
+👤 <b>العميل:</b> ${p.client_name || "عميل خاص"}
+📍 <b>المدينة:</b> ${p.city || "الرياض"}
+💰 <b>قيمة المشروع:</b> <code>${p.project_value ? Number(p.project_value).toLocaleString("ar-SA") + " ر.س" : "—"}</code>
+🏗️ <b>حالة التنفيذ:</b> ${p.status || "completed"}
+⭐ <b>مشروع مميز:</b> ${featured}
+🟢 <b>حالة العرض:</b> ${active}
+🖼️ <b>صورة الغلاف:</b> ${p.cover_image_url ? `<a href="${p.cover_image_url}">رابط الغلاف 🔗</a>` : "لا يوجد"}
+📸 <b>معرض صور المشروع:</b> ${imgCount} صورة
+🔄 <b>مقارنات قبل وبعد:</b> ${baCount} مقارنة
+
+📝 <b>الوصف:</b>
+${p.description_ar || "لا يوجد وصف مسجل."}`;
+
+  const inline_keyboard = [
+    [
+      { text: "➕ إضافة صورة للمشروع", callback_data: `prj_add_photo:${p.id}` },
+      { text: `🖼️ استعراض الصور (${imgCount})`, callback_data: `prj_items:${p.id}` },
+    ],
+    [
+      { text: p.is_featured ? "⭐ إزالة من المميز" : "⭐ تعيين كمميز", callback_data: `prj_toggle_feat:${p.id}` },
+      { text: p.is_active !== false ? "⏸️ إيقاف" : "▶️ تفعيل", callback_data: `prj_toggle_act:${p.id}` },
+    ],
+    [
+      { text: "✏️ تعديل الاسم", callback_data: `prj_edit_title:${p.id}` },
+      { text: "📍 تعديل المدينة", callback_data: `prj_edit_city:${p.id}` },
+    ],
+    [
+      { text: "💰 تعديل القيمة", callback_data: `prj_edit_val:${p.id}` },
+      { text: "👤 تعديل العميل", callback_data: `prj_edit_client:${p.id}` },
+    ],
+    [
+      { text: "🖼️ تغيير صورة الغلاف", callback_data: `prj_edit_cover:${p.id}` },
+      { text: "🗑️ حذف المشروع", callback_data: `prj_delete:${p.id}` },
+    ],
+    [
+      { text: "◀️ رجوع لقائمة المشاريع", callback_data: "cnt_projects" },
+    ],
+  ];
+
+  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
+  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleProjectToggleFeatured(chatId: number, id: string, messageId?: number) {
+  const db = createDbClient();
+  const { data: p } = await db.from("projects").select("is_featured").eq("id", id).single();
+  if (p) {
+    await db.from("projects").update({ is_featured: !p.is_featured }).eq("id", id);
+    await handleProjectDetails(chatId, id, messageId);
+  }
+}
+
+export async function handleProjectToggleActive(chatId: number, id: string, messageId?: number) {
+  const db = createDbClient();
+  const { data: p } = await db.from("projects").select("is_active").eq("id", id).single();
+  if (p) {
+    const current = p.is_active !== false;
+    await db.from("projects").update({ is_active: !current }).eq("id", id);
+    await handleProjectDetails(chatId, id, messageId);
+  }
+}
+
+export async function handleProjectItems(chatId: number, projectId: string, messageId?: number) {
+  const sql = getSql();
+  const { data: project } = await createDbClient().from("projects").select("title_ar").eq("id", projectId).single();
+
+  const items = await sql`
+    SELECT pi.id, pi.project_id, pi.is_cover, pi.sort_order, pi.created_at,
+           m.file_url, m.cdn_url, m.file_name
+    FROM project_images pi
+    JOIN media_library m ON pi.media_id = m.id
+    WHERE pi.project_id = ${projectId}
+    ORDER BY pi.sort_order ASC, pi.created_at DESC;
+  `;
+
+  const title = project?.title_ar || "المشروع";
+
+  if (!items || items.length === 0) {
+    const emptyText = `📸 <b>صور المشروع: ${title}</b>\n\nلا توجد صور مضافة لهذا المشروع حتى الآن.`;
+    const kb = {
+      inline_keyboard: [
+        [{ text: "➕ إضافة صورة الآن", callback_data: `prj_add_photo:${projectId}` }],
+        [{ text: "◀️ رجوع لتفاصيل المشروع", callback_data: `prj_view:${projectId}` }],
+      ],
+    };
+    if (messageId) await editMessage(chatId, messageId, emptyText, kb);
+    else await sendMessage(chatId, emptyText, { reply_markup: kb });
+    return;
+  }
+
+  let text = `📸 <b>صور المشروع: ${title} (${items.length}):</b>\n\n`;
+  const inline_keyboard: any[][] = [];
+
+  items.forEach((it: any, idx: number) => {
+    const url = it.cdn_url || it.file_url;
+    const coverBadge = it.is_cover ? "⭐ غلاف | " : "";
+    text += `${idx + 1}. ${coverBadge}<a href="${url}">صورة رقم ${idx + 1} 🔗</a>\n`;
+    inline_keyboard.push([
+      { text: `🗑️ حذف الصورة رقم ${idx + 1}`, callback_data: `prj_img_del:${it.id}:${projectId}` },
+    ]);
+  });
+
+  inline_keyboard.push([
+    { text: "➕ إضافة صورة جديدة للمشروع", callback_data: `prj_add_photo:${projectId}` }
+  ]);
+  inline_keyboard.push([
+    { text: "◀️ رجوع لتفاصيل المشروع", callback_data: `prj_view:${projectId}` }
+  ]);
+
+  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
+  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleProjectImageDelete(chatId: number, imgId: string, projectId: string, messageId?: number) {
+  const sql = getSql();
+  await sql`DELETE FROM project_images WHERE id = ${imgId}`;
+  await sendMessage(chatId, "🗑️ تم حذف الصورة من المشروع بنجاح.");
+  await handleProjectItems(chatId, projectId, messageId);
+}
+
 export async function handleProjectDelete(chatId: number, id: string, messageId?: number) {
   const db = createDbClient();
   await db.from("projects").delete().eq("id", id);
-  await sendMessage(chatId, `🗑️ تم حذف المشروع.`);
+  await sendMessage(chatId, `🗑️ تم حذف المشروع وجميع صوره بنجاح.`);
   await handleProjectsList(chatId, messageId);
 }
 

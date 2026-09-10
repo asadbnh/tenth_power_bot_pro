@@ -17,7 +17,7 @@ import {
 } from "./crm";
 import {
   handleServicesList, handleServiceDetails, handleServiceToggleActive, handleServiceToggleFeatured, handleServiceDelete, handleServiceAddPrompt,
-  handleProjectsList, handleProjectDelete, handleProjectAddPrompt,
+  handleProjectsList, handleProjectDetails, handleProjectToggleFeatured, handleProjectToggleActive, handleProjectItems, handleProjectImageDelete, handleProjectDelete, handleProjectAddPrompt,
   handleCategoriesList, handleCategoryDelete, handleCategoryAddPrompt,
   handleArticlesList, handleArticleDetails, handleArticleTogglePublish, handleArticleDelete, handleArticleAiPrompt, handleArticleAiGenerate,
   handleFaqsList, handleFaqDelete, handleFaqAddPrompt,
@@ -33,7 +33,7 @@ import {
 } from "./media";
 import {
   handlePendingReviews, handleApprovedReviews, handleReviewApprove, handleReviewReject,
-  handleDirectCustomerReviews, handleDirectReviewDelete,
+  handleDirectCustomerReviews, handleDirectReviewToggleApprove, handleDirectReviewDelete,
 } from "./reviews";
 import {
   handleCitiesList, handleCityToggleActive, handleCityDelete, handleCityServicesList,
@@ -54,7 +54,7 @@ import { sendAndroidPushNotification } from "../push";
 import {
   publishProjectToChannel, publishServiceToChannel, publishAdToChannel, publishNotificationToChannel
 } from "../channel";
-import { createDbClient } from "@/lib/db";
+import { createDbClient, getSql } from "@/lib/db";
 
 // ─── Command Router ───────────────────────────────────────────────────
 
@@ -416,7 +416,60 @@ export async function handleTextMessage(msg: TelegramMessage) {
     return;
   }
 
-  // 3c. Gallery Album Creation Wizard & Photo Linking Handlers
+  // 3c. Project Field Edit Handlers
+  if (state.step?.startsWith("awaiting_project_edit_")) {
+    const projectId = state.payload?.projectId as string;
+    const editField = state.step.replace("awaiting_project_edit_", "");
+
+    if (editField === "title") {
+      await db.from("projects").update({ title_ar: text, title_en: text, updated_at: new Date().toISOString() }).eq("id", projectId);
+    } else if (editField === "city") {
+      await db.from("projects").update({ city: text.trim(), updated_at: new Date().toISOString() }).eq("id", projectId);
+    } else if (editField === "client") {
+      await db.from("projects").update({ client_name: text.trim(), updated_at: new Date().toISOString() }).eq("id", projectId);
+    } else if (editField === "val") {
+      await db.from("projects").update({ project_value: parseFloat(text) || 0, updated_at: new Date().toISOString() }).eq("id", projectId);
+    } else if (editField === "desc") {
+      await db.from("projects").update({ description_ar: text, updated_at: new Date().toISOString() }).eq("id", projectId);
+    }
+
+    clearAdminState(userId);
+    await sendMessage(userId, `✅ <b>تم تحديث بيانات المشروع بنجاح.</b>`);
+    await handleProjectDetails(userId, projectId);
+    return;
+  }
+
+  if (state.step === "awaiting_project_photo") {
+    const projectId = state.payload?.projectId as string;
+    const media_url = text.trim();
+
+    const { data: media } = await db.from("media_library").insert({
+      company_id: companyId,
+      file_name: `project-photo-${Date.now()}.jpg`,
+      original_name: "رابط خارجي للمشروع",
+      file_url: media_url,
+      cdn_url: media_url,
+      mime_type: "image/jpeg",
+      file_size: 0,
+      storage_provider: "url",
+      storage_path: "projects/external",
+    }).select("id").single();
+
+    if (media?.id) {
+      const sql = getSql();
+      await sql`
+        INSERT INTO project_images (project_id, media_id, sort_order, is_cover)
+        VALUES (${projectId}, ${media.id}, 0, false);
+      `;
+    }
+
+    clearAdminState(userId);
+    await sendMessage(userId, `🎉 <b>تمت إضافة الصورة لمعرض المشروع بنجاح!</b>`);
+    await handleProjectItems(userId, projectId);
+    return;
+  }
+
+  // 3d. Gallery Album Creation Wizard & Photo Linking Handlers
   if (state.step === "awaiting_album_title") {
     const slug = text.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]+/g, "-").replace(/^-+|-+$/g, "") || `album-${Date.now()}`;
     setAdminState(userId, "awaiting_album_desc", { title_ar: text, slug });
@@ -722,6 +775,56 @@ export async function handleCallback(query: TelegramCallbackQuery) {
   if (data === "srv_add_prompt") return handleServiceAddPrompt(userId);
 
   if (data === "cnt_projects") return handleProjectsList(userId, messageId);
+  if (data.startsWith("prj_view:")) return handleProjectDetails(userId, data.split(":")[1], messageId);
+  if (data.startsWith("prj_toggle_feat:")) return handleProjectToggleFeatured(userId, data.split(":")[1], messageId);
+  if (data.startsWith("prj_toggle_act:")) return handleProjectToggleActive(userId, data.split(":")[1], messageId);
+  if (data.startsWith("prj_items:")) return handleProjectItems(userId, data.split(":")[1], messageId);
+  if (data.startsWith("prj_img_del:")) {
+    const parts = data.split(":");
+    return handleProjectImageDelete(userId, parts[1], parts[2], messageId);
+  }
+  if (data.startsWith("prj_add_photo:")) {
+    const prjId = data.split(":")[1];
+    setAdminState(userId, "awaiting_project_photo", { projectId: prjId });
+    return sendMessage(userId, `📸 <b>إضافة صورة للمشروع:</b>\n\nأرسل الآن الصورة مباشرة في الدردشة لرفعها إلى السحابة وإضافتها لمعرض هذا المشروع (أو أرسل رابط صورة خارجي):`, {
+      reply_markup: Keyboards.cancelWizard(`prj_view:${prjId}`)
+    });
+  }
+  if (data.startsWith("prj_edit_cover:")) {
+    const prjId = data.split(":")[1];
+    setAdminState(userId, "awaiting_project_cover", { projectId: prjId });
+    return sendMessage(userId, `🖼️ <b>تغيير صورة الغلاف للمشروع:</b>\n\nأرسل الآن صورة الغلاف الجديدة لرفعها وتعيينها كغلاف رئيسي للمشروع:`, {
+      reply_markup: Keyboards.cancelWizard(`prj_view:${prjId}`)
+    });
+  }
+  if (data.startsWith("prj_edit_title:")) {
+    const prjId = data.split(":")[1];
+    setAdminState(userId, "awaiting_project_edit_title", { projectId: prjId });
+    return sendMessage(userId, `✏️ <b>تعديل اسم المشروع:</b>\n\nأرسل الاسم الجديد بالعربي:`, {
+      reply_markup: Keyboards.cancelWizard(`prj_view:${prjId}`)
+    });
+  }
+  if (data.startsWith("prj_edit_city:")) {
+    const prjId = data.split(":")[1];
+    setAdminState(userId, "awaiting_project_edit_city", { projectId: prjId });
+    return sendMessage(userId, `📍 <b>تعديل مدينة المشروع:</b>\n\nأرسل اسم المدينة (مثل: الرياض، جدة، الدمام):`, {
+      reply_markup: Keyboards.cancelWizard(`prj_view:${prjId}`)
+    });
+  }
+  if (data.startsWith("prj_edit_client:")) {
+    const prjId = data.split(":")[1];
+    setAdminState(userId, "awaiting_project_edit_client", { projectId: prjId });
+    return sendMessage(userId, `👤 <b>تعديل اسم العميل:</b>\n\nأرسل اسم العميل أو الجهة المالكة:`, {
+      reply_markup: Keyboards.cancelWizard(`prj_view:${prjId}`)
+    });
+  }
+  if (data.startsWith("prj_edit_val:")) {
+    const prjId = data.split(":")[1];
+    setAdminState(userId, "awaiting_project_edit_val", { projectId: prjId });
+    return sendMessage(userId, `💰 <b>تعديل قيمة المشروع:</b>\n\nأرسل القيمة الإجمالية بالريال (أرقام فقط):`, {
+      reply_markup: Keyboards.cancelWizard(`prj_view:${prjId}`)
+    });
+  }
   if (data.startsWith("prj_delete:")) return handleProjectDelete(userId, data.split(":")[1], messageId);
   if (data === "prj_add_prompt") return handleProjectAddPrompt(userId);
 
@@ -780,6 +883,7 @@ export async function handleCallback(query: TelegramCallbackQuery) {
   if (data.startsWith("rev_reject:")) return handleReviewReject(userId, data.split(":")[1], messageId);
   if (data.startsWith("rev_delete:")) return handleReviewReject(userId, data.split(":")[1], messageId);
   if (data === "rev_direct_reviews") return handleDirectCustomerReviews(userId, messageId);
+  if (data.startsWith("crev_toggle:")) return handleDirectReviewToggleApprove(userId, data.split(":")[1], messageId);
   if (data.startsWith("crev_delete:")) return handleDirectReviewDelete(userId, data.split(":")[1], messageId);
 
   // 6. Marketing Callbacks
@@ -1030,6 +1134,39 @@ export async function handlePhotoMessage(msg: TelegramMessage) {
       clearAdminState(userId);
       await sendMessage(userId, `✅ <b>تم تحديث غلاف الألبوم بنجاح.</b>`);
       await handleGalleryAlbumDetails(userId, albumId);
+      return;
+    }
+  }
+
+  // 6. Photo for Project Image Gallery
+  if (state?.step === "awaiting_project_photo") {
+    const projectId = state.payload?.projectId as string;
+    await sendMessage(userId, `⏳ <b>جاري رفع الصورة إلى Cloudflare R2 وإضافتها لمعرض المشروع...</b>`);
+    const res = await uploadTelegramPhotoToR2(msg, "projects");
+    if (res?.mediaId) {
+      const sql = getSql();
+      await sql`
+        INSERT INTO project_images (project_id, media_id, sort_order, is_cover)
+        VALUES (${projectId}, ${res.mediaId}, 0, false);
+      `;
+      clearAdminState(userId);
+      await sendMessage(userId, `🎉 <b>تم رفع الصورة وإضافتها للمشروع بنجاح!</b>`);
+      await handleProjectItems(userId, projectId);
+      return;
+    }
+  }
+
+  // 7. Photo for Project Cover Edit
+  if (state?.step === "awaiting_project_cover") {
+    const projectId = state.payload?.projectId as string;
+    await sendMessage(userId, `⏳ <b>جاري تحديث صورة غلاف المشروع...</b>`);
+    const res = await uploadTelegramPhotoToR2(msg, "projects");
+    if (res?.url) {
+      const db = createDbClient();
+      await db.from("projects").update({ cover_image_url: res.url, updated_at: new Date().toISOString() }).eq("id", projectId);
+      clearAdminState(userId);
+      await sendMessage(userId, `✅ <b>تم تحديث صورة غلاف المشروع بنجاح.</b>`);
+      await handleProjectDetails(userId, projectId);
       return;
     }
   }
