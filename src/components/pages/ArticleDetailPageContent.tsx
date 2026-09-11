@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {
-  Calendar, Clock, User, Share2, ArrowRight, ChevronLeft, BookOpen
+  Calendar, Clock, User, Share2, ArrowRight, ChevronLeft, BookOpen, Tag
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
@@ -98,6 +98,30 @@ export function ArticleDetailPageContent({ slug, locale, dict, initialArticle }:
         <div className="prose prose-lg dark:prose-invert max-w-none text-text-secondary leading-relaxed whitespace-pre-line">
           {content}
         </div>
+
+        {/* Article Tags from DB */}
+        {article.tags && article.tags.length > 0 && (
+          <div className="pt-6 border-t border-border-light space-y-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-text-secondary">
+              <Tag className="w-3.5 h-3.5 text-accent-500" />
+              <span>{isRtl ? "الوسوم والمواضيع ذات الصلة:" : "Related Tags & Topics:"}</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {article.tags.map((t: any, idx: number) => {
+                const tagLabel = isRtl ? (t.tag_ar || t.name) : (t.tag_en || t.tag_ar || t.name);
+                return (
+                  <Link
+                    key={idx}
+                    href={`/${locale}/search?q=${encodeURIComponent(tagLabel)}`}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-surface-elevated hover:bg-amber-500/10 border border-border-light hover:border-amber-500/30 text-xs font-semibold text-text-secondary hover:text-amber-600 dark:hover:text-amber-400 transition-all shadow-sm"
+                  >
+                    <span>#{tagLabel}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Share & CTA */}
         <div className="mt-16 pt-8 border-t border-border-light flex flex-col sm:flex-row items-center justify-between gap-6">

@@ -12,6 +12,7 @@ import {
   Globe,
   Search,
   ChevronDown,
+  Calendar,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -166,6 +167,15 @@ export function Header({ locale, dict }: HeaderProps) {
               <span>{alternateLocale === "ar" ? "العربية" : "English"}</span>
             </Link>
 
+            {/* Appointments Button (Desktop) */}
+            <Link
+              href={getLocalizedHref("/appointments")}
+              className="hidden md:inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold text-text-primary hover:text-amber-500 hover:bg-amber-500/10 border border-border-light transition-all shrink-0 whitespace-nowrap"
+            >
+              <Calendar className="w-3.5 h-3.5 text-amber-500" />
+              <span>{isRtl ? "حجز موعد" : "Book Survey"}</span>
+            </Link>
+
             {/* CTA Button (Desktop) */}
             <Link
               href={getLocalizedHref("/quote")}
@@ -277,6 +287,15 @@ export function Header({ locale, dict }: HeaderProps) {
                 >
                   <Globe className="w-4 h-4 text-amber-500" />
                   <span>{alternateLocale === "ar" ? "اللغة العربية" : "English Language"}</span>
+                </Link>
+
+                <Link
+                  href={getLocalizedHref("/appointments")}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl border border-border-light bg-amber-500/10 text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-colors"
+                >
+                  <Calendar className="w-4 h-4 text-amber-500" />
+                  <span>{isRtl ? "حجز معاينة هندسية مجانية" : "Book Free Site Survey"}</span>
                 </Link>
 
                 <Link

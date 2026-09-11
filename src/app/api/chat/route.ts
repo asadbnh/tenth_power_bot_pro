@@ -9,7 +9,7 @@ import { getFallbackCompany } from "@/lib/fallback-provider";
  */
 export async function POST(request: NextRequest) {
   try {
-    const { messages, locale, previous_interaction_id, interaction_id } = await request.json();
+    const { messages, locale, previous_interaction_id, interaction_id, session_id } = await request.json();
     const isAr = locale === "ar";
     const lastUserMessage = messages?.[messages.length - 1]?.content ?? "";
     const previousId = previous_interaction_id || interaction_id;
@@ -156,6 +156,47 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // 5. Persist Chat Session & Messages to DB for CRM and Bot Dashboard
+    let currentSessionId = session_id;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const supabase = createAdminClient() as any;
+      const { data: comp } = await supabase.from("companies").select("id").limit(1).single();
+      const companyId = comp?.id || "00000000-0000-0000-0000-000000000001";
+
+      if (!currentSessionId) {
+        const { data: sess } = await supabase
+          .from("chat_sessions")
+          .insert({
+            company_id: companyId,
+            status: "active",
+            message_count: 2,
+            context: { locale: locale || "ar" },
+          })
+          .select("id")
+          .single();
+        if (sess?.id) {
+          currentSessionId = sess.id;
+        }
+      } else {
+        await supabase
+          .from("chat_sessions")
+          .update({
+            message_count: messages?.length ? messages.length + 1 : 2,
+          })
+          .eq("id", currentSessionId);
+      }
+
+      if (currentSessionId && lastUserMessage) {
+        await supabase.from("chat_messages").insert([
+          { session_id: currentSessionId, role: "user", content: lastUserMessage },
+          { session_id: currentSessionId, role: "assistant", content: aiResponseText },
+        ]);
+      }
+    } catch (dbChatErr) {
+      console.warn("Could not persist chat session/messages:", dbChatErr);
+    }
+
     // Stream output word by word for fluid UI animation
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
@@ -176,6 +217,10 @@ export async function POST(request: NextRequest) {
 
     if (nextInteractionId) {
       responseHeaders["x-interaction-id"] = nextInteractionId;
+    }
+
+    if (currentSessionId) {
+      responseHeaders["x-session-id"] = currentSessionId;
     }
 
     return new Response(stream, { headers: responseHeaders });

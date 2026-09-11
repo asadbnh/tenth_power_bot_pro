@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { getServices, getFaqs, getProjects, getBeforeAfterItems, getCompany } from "@/lib/actions/content";
+import { getServices, getFaqs, getProjects, getBeforeAfterItems, getCompany, getAdvertisements } from "@/lib/actions/content";
+import { AnnouncementBanner } from "@/components/marketing/AnnouncementBanner";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ServicesShowcase } from "@/components/sections/ServicesShowcase";
 import { CinematicGlassVideoSection } from "@/components/sections/CinematicGlassVideoSection";
@@ -42,13 +43,14 @@ export default async function HomePage({
   const validLocale = locale as Locale;
   const dict = await getDictionary(validLocale);
 
-  // Fetch live services, FAQs, projects & transformations from Neon DB
-  const [dbServices, dbFaqs, dbProjectsResult, dbBeforeAfter, company] = await Promise.all([
+  // Fetch live services, FAQs, projects, transformations & ads from Neon DB
+  const [dbServices, dbFaqs, dbProjectsResult, dbBeforeAfter, company, dbAdvertisements] = await Promise.all([
     getServices(validLocale).catch(() => []),
     getFaqs(validLocale).catch(() => []),
     getProjects({ locale: validLocale, limit: 6 }).catch(() => ({ data: [], count: 0 })),
     getBeforeAfterItems(validLocale).catch(() => []),
     getCompany().catch(() => null),
+    getAdvertisements().catch(() => []),
   ]);
 
   const heroSlides = (dbProjectsResult.data || []).map((p: any, idx: number) => ({
@@ -62,6 +64,9 @@ export default async function HomePage({
 
   return (
     <>
+      {/* Dynamic Announcement & Promotional Offer Banner */}
+      <AnnouncementBanner locale={validLocale} advertisements={dbAdvertisements as any[]} />
+
       {/* JSON-LD Structured Data for Organization */}
       <script
         type="application/ld+json"

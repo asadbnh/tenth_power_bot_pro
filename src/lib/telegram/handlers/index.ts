@@ -17,7 +17,7 @@ import {
 } from "./crm";
 import {
   handleServicesList, handleServiceDetails, handleServiceToggleActive, handleServiceToggleFeatured, handleServiceDelete, handleServiceAddPrompt,
-  handleProjectsList, handleProjectDetails, handleProjectToggleFeatured, handleProjectToggleActive, handleProjectItems, handleProjectImageDelete, handleProjectDelete, handleProjectAddPrompt,
+  handleProjectsList, handleProjectDetails, handleProjectToggleFeatured, handleProjectToggleActive, handleProjectItems, handleProjectImageDelete, handleProjectImageSetCover, handleProjectDelete, handleProjectAddPrompt,
   handleCategoriesList, handleCategoryDelete, handleCategoryAddPrompt,
   handleArticlesList, handleArticleDetails, handleArticleTogglePublish, handleArticleDelete, handleArticleAiPrompt,
   handleFaqsList, handleFaqDelete, handleFaqAddPrompt,
@@ -332,6 +332,10 @@ export async function handleCallback(query: TelegramCallbackQuery) {
   if (data.startsWith("prj_img_del:")) {
     const parts = data.split(":");
     return handleProjectImageDelete(userId, parts[1], parts[2], messageId);
+  }
+  if (data.startsWith("prj_img_cover:")) {
+    const parts = data.split(":");
+    return handleProjectImageSetCover(userId, parts[1], parts[2], messageId);
   }
   if (data.startsWith("prj_add_photo:")) {
     const prjId = data.split(":")[1];

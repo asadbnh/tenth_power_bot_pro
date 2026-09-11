@@ -247,25 +247,41 @@ export async function handleProjectItems(chatId: number, projectId: string, mess
   const db = createDbClient();
   const { data: project } = await db.from("projects").select("title_ar").eq("id", projectId).single();
 
-  // JOIN باستخدام db.from() — آمن في serverless بدل getSql() الخام
   const { data: items } = await db
     .from("project_images")
-    .select("id, project_id, is_cover, sort_order, created_at, media_library(file_url, cdn_url, file_name)")
+    .select("id, project_id, media_id, is_cover, sort_order, created_at")
     .eq("project_id", projectId)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
 
-  // تحويل النتائج لنفس الشكل السابق
-  const mappedItems = (items || []).map((pi: any) => ({
-    id: pi.id,
-    project_id: pi.project_id,
-    is_cover: pi.is_cover,
-    sort_order: pi.sort_order,
-    created_at: pi.created_at,
-    file_url: pi.media_library?.file_url,
-    cdn_url: pi.media_library?.cdn_url,
-    file_name: pi.media_library?.file_name,
-  }));
+  const rawItems = (items || []) as any[];
+  const mediaIds = rawItems.map((pi: any) => pi.media_id).filter(Boolean);
+
+  const mediaMap: Record<string, any> = {};
+  if (mediaIds.length > 0) {
+    const { data: mediaList } = await db
+      .from("media_library")
+      .select("id, file_url, cdn_url, file_name, original_name")
+      .in("id", mediaIds);
+
+    (mediaList || []).forEach((m: any) => {
+      mediaMap[m.id] = m;
+    });
+  }
+
+  const mappedItems = rawItems.map((pi: any) => {
+    const m = mediaMap[pi.media_id];
+    return {
+      id: pi.id,
+      project_id: pi.project_id,
+      is_cover: Boolean(pi.is_cover),
+      sort_order: pi.sort_order,
+      created_at: pi.created_at,
+      file_url: m?.file_url || "",
+      cdn_url: m?.cdn_url || "",
+      file_name: m?.original_name || m?.file_name || "صورة مشروع",
+    };
+  });
 
   const title = project?.title_ar || "المشروع";
 
@@ -287,11 +303,19 @@ export async function handleProjectItems(chatId: number, projectId: string, mess
 
   mappedItems.forEach((it: any, idx: number) => {
     const url = it.cdn_url || it.file_url;
-    const coverBadge = it.is_cover ? "⭐ غلاف | " : "";
+    const coverBadge = it.is_cover ? "⭐ [غلاف رئيسي] | " : "";
     text += `${idx + 1}. ${coverBadge}<a href="${url}">صورة رقم ${idx + 1} 🔗</a>\n`;
-    inline_keyboard.push([
-      { text: `🗑️ حذف الصورة رقم ${idx + 1}`, callback_data: `prj_img_del:${it.id}:${projectId}` },
-    ]);
+
+    const rowButtons: any[] = [
+      { text: `🗑️ حذف الصورة ${idx + 1}`, callback_data: `prj_img_del:${it.id}:${projectId}` },
+    ];
+    if (!it.is_cover) {
+      rowButtons.unshift({
+        text: `⭐ تعيين كغلاف`,
+        callback_data: `prj_img_cover:${it.id}:${projectId}`,
+      });
+    }
+    inline_keyboard.push(rowButtons);
   });
 
   inline_keyboard.push([
@@ -303,6 +327,24 @@ export async function handleProjectItems(chatId: number, projectId: string, mess
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleProjectImageSetCover(chatId: number, imgId: string, projectId: string, messageId?: number) {
+  const db = createDbClient();
+  await db.from("project_images").update({ is_cover: false }).eq("project_id", projectId);
+  await db.from("project_images").update({ is_cover: true }).eq("id", imgId);
+
+  const { data: img } = await db.from("project_images").select("media_id").eq("id", imgId).single();
+  if (img?.media_id) {
+    const { data: media } = await db.from("media_library").select("cdn_url, file_url").eq("id", img.media_id).single();
+    const coverUrl = media?.cdn_url || media?.file_url;
+    if (coverUrl) {
+      await db.from("projects").update({ cover_image_url: coverUrl }).eq("id", projectId);
+    }
+  }
+
+  await sendMessage(chatId, "⭐ <b>تم تعيين الصورة كغلاف رئيسي للمشروع بنجاح!</b>");
+  await handleProjectItems(chatId, projectId, messageId);
 }
 
 export async function handleProjectImageDelete(chatId: number, imgId: string, projectId: string, messageId?: number) {

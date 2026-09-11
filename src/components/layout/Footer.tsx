@@ -35,13 +35,6 @@ interface FooterProps {
   services?: any[];
 }
 
-const SOCIAL_LINKS = [
-  { icon: IconInstagram, href: "#", label: "Instagram" },
-  { icon: IconTwitterX, href: "#", label: "X (Twitter)" },
-  { icon: IconFacebook, href: "#", label: "Facebook" },
-  { icon: IconYoutube, href: "#", label: "YouTube" },
-];
-
 /**
  * Premium footer with multi-column layout, SEO-friendly links,
  * contact info, social icons, and newsletter signup.
@@ -70,6 +63,20 @@ export function Footer({ locale, dict, company, services }: FooterProps) {
         { label: isRtl ? "أبواب ونوافذ" : "Doors & Windows", href: "/services" },
       ];
 
+  // Parse social links dynamically from DB company record
+  let rawLinks = company?.social_links;
+  if (typeof rawLinks === "string") {
+    try { rawLinks = JSON.parse(rawLinks); } catch { rawLinks = {}; }
+  }
+  const socialConfig = (typeof rawLinks === "object" && rawLinks !== null) ? rawLinks : {};
+
+  const dynamicSocialLinks = [
+    { icon: IconInstagram, href: socialConfig.instagram || socialConfig.insta || "https://instagram.com", label: "Instagram" },
+    { icon: IconTwitterX, href: socialConfig.twitter || socialConfig.x || "https://x.com", label: "X (Twitter)" },
+    { icon: IconFacebook, href: socialConfig.facebook || socialConfig.fb || "https://facebook.com", label: "Facebook" },
+    { icon: IconYoutube, href: socialConfig.youtube || socialConfig.yt || "https://youtube.com", label: "YouTube" },
+  ].filter((s) => s.href && s.href !== "#");
+
   return (
     <footer
       className="relative bg-primary-950 text-white overflow-hidden"
@@ -92,7 +99,7 @@ export function Footer({ locale, dict, company, services }: FooterProps) {
             </p>
             {/* Social Links */}
             <div className="flex items-center gap-2 pt-1">
-              {SOCIAL_LINKS.map((social) => {
+              {dynamicSocialLinks.map((social) => {
                 const Icon = social.icon;
                 return (
                   <a

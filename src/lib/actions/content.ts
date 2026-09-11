@@ -41,7 +41,7 @@ export async function getServices(locale = "ar") {
       .select(`
         id, slug, icon, sort_order, is_featured, is_active,
         name_ar, name_en, short_description_ar, short_description_en,
-        full_description_ar, full_description_en, price_from, price_to, cover_image_url
+        full_description_ar, full_description_en, price_from, price_to, price_unit, show_price, rating_avg, review_count, cover_image_url
       `)
       .eq("is_active", true)
       .order("sort_order", { ascending: true });
@@ -207,21 +207,38 @@ export async function getProjectBySlug(slug: string, _locale = "ar") {
     // fallback
   }
 
+  let projectImages: { id: string; url: string; title_ar: string; title_en: string; is_cover: boolean }[] = [];
+
   if (project) {
     try {
       const sql = getSql();
-      const covers = await sql`
-        SELECT COALESCE(m.cdn_url, m.file_url) as cover_url
+      const images = await sql`
+        SELECT 
+          pi.id, pi.is_cover, pi.sort_order,
+          COALESCE(m.cdn_url, m.file_url) as image_url,
+          COALESCE(mm.title_ar, mm.alt_ar, 'صورة معمارية للمشروع') as title_ar,
+          COALESCE(mm.title_en, mm.alt_en, 'Architectural Project Photo') as title_en
         FROM project_images pi
         JOIN media_library m ON pi.media_id = m.id
-        WHERE pi.project_id = ${project.id} AND pi.is_cover = true
-        LIMIT 1;
+        LEFT JOIN media_metadata mm ON mm.media_id = m.id
+        WHERE pi.project_id = ${project.id}
+        ORDER BY pi.is_cover DESC, pi.sort_order ASC;
       `;
-      if (covers.length > 0) {
-        project.cover_image_url = covers[0].cover_url;
+      if (images && images.length > 0) {
+        projectImages = images.map((img: any) => ({
+          id: img.id,
+          url: img.image_url,
+          title_ar: img.title_ar,
+          title_en: img.title_en,
+          is_cover: Boolean(img.is_cover),
+        }));
+        const cover = projectImages.find((img) => img.is_cover) || projectImages[0];
+        if (cover?.url) {
+          project.cover_image_url = cover.url;
+        }
       }
-    } catch {
-      // ignore
+    } catch (err) {
+      console.warn("Could not fetch project images:", err);
     }
   } else {
     const fallbacks = getFallbackProjects() as Record<string, unknown>[];
@@ -237,12 +254,16 @@ export async function getProjectBySlug(slug: string, _locale = "ar") {
     name_en: project.title_en || project.name_en,
     category_ar: project.category_ar || "زجاج وألمنيوم",
     category_en: project.category_en || "Glass & Aluminum",
-    location_ar: project.location_ar || "الرياض - المملكة العربية السعودية",
-    location_en: project.location_en || "Riyadh - KSA",
-    year: project.year || "2025",
+    location_ar: project.location_ar || (project.city ? `${project.city} - المملكة العربية السعودية` : "الرياض - المملكة العربية السعودية"),
+    location_en: project.location_en || (project.city ? `${project.city} - KSA` : "Riyadh - KSA"),
+    year: project.year || (project.created_at ? new Date(project.created_at as string).getFullYear().toString() : "2025"),
     client_ar: project.client_ar || project.client_name || "عميل مميز",
     client_en: project.client_en || project.client_name || "VIP Client",
     cover_image_url: project.cover_image_url || "/images/defaults/projects/project-1.webp",
+    gallery_images: projectImages,
+    project_value: project.project_value || null,
+    status: project.status || "completed",
+    specifications: project.specifications || null,
     description_ar: project.description_ar || "",
     description_en: project.description_en || project.description_ar || "",
     challenges_ar: (project.challenges_ar as string[]) || [],
@@ -320,7 +341,25 @@ export async function getArticleBySlug(slug: string, locale = "ar") {
     // fallback
   }
 
-  if (!article) {
+  let tags: { tag_ar: string; tag_en?: string }[] = [];
+  if (article) {
+    try {
+      const sql = getSql();
+      const dbTags = await sql`
+        SELECT tag_ar, tag_en
+        FROM article_tags
+        WHERE article_id = ${article.id};
+      `;
+      if (dbTags && dbTags.length > 0) {
+        tags = dbTags.map((t: any) => ({
+          tag_ar: t.tag_ar,
+          tag_en: t.tag_en || t.tag_ar,
+        }));
+      }
+    } catch {
+      // ignore
+    }
+  } else {
     const fallbacks = getFallbackArticles() as Record<string, unknown>[];
     article = fallbacks.find((a) => a.slug === slug) || fallbacks[0] || null;
   }
@@ -344,7 +383,39 @@ export async function getArticleBySlug(slug: string, locale = "ar") {
     content: isAr ? (article.content_ar || article.content) : (article.content_en || article.content_ar || article.content),
     featured_image_url: article.cover_image_url || article.featured_image_url,
     cover_image_url: article.cover_image_url || article.featured_image_url,
+    tags: tags.length > 0 ? tags : [
+      { tag_ar: "زجاج سكريت", tag_en: "Tempered Glass" },
+      { tag_ar: "واجهات معمارية", tag_en: "Architectural Facades" },
+      { tag_ar: "ألمنيوم ومقاولات", tag_en: "Aluminum & Contracting" },
+    ],
   };
+}
+
+// ─── Categories Actions ───────────────────────────────────────────────
+
+export async function getCategories(locale = "ar") {
+  const isAr = locale === "ar";
+  try {
+    const sql = getSql();
+    const rows = await sql`
+      SELECT id, name_ar, name_en, slug, sort_order
+      FROM categories
+      WHERE is_active = true
+      ORDER BY sort_order ASC;
+    `;
+    if (rows && rows.length > 0) {
+      return rows.map((c: any) => ({
+        id: c.id,
+        slug: c.slug,
+        name: isAr ? c.name_ar : c.name_en || c.name_ar,
+        name_ar: c.name_ar,
+        name_en: c.name_en,
+      }));
+    }
+  } catch (err) {
+    console.warn("Could not fetch categories from DB:", err);
+  }
+  return [];
 }
 
 // ─── Gallery Actions ──────────────────────────────────────────────────

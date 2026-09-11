@@ -667,11 +667,13 @@ export interface Database {
           media_id: string;
           sort_order: number;
           is_cover: boolean;
+          created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["project_images"]["Row"], "id" | "sort_order" | "is_cover"> & {
+        Insert: Omit<Database["public"]["Tables"]["project_images"]["Row"], "id" | "sort_order" | "is_cover" | "created_at"> & {
           id?: string;
           sort_order?: number;
           is_cover?: boolean;
+          created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["project_images"]["Insert"]>;
       };

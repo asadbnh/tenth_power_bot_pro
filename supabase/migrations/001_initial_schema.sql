@@ -493,7 +493,8 @@ CREATE TABLE IF NOT EXISTS project_images (
   project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
   media_id UUID NOT NULL REFERENCES media_library(id) ON DELETE CASCADE,
   sort_order INTEGER NOT NULL DEFAULT 0,
-  is_cover BOOLEAN NOT NULL DEFAULT false
+  is_cover BOOLEAN NOT NULL DEFAULT false,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- ─── Project Videos ──────────────────────────────────────────────────

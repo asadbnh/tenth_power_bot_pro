@@ -87,16 +87,30 @@ export function ServiceDetailPageContent({ slug, locale, dict, initialService }:
                 {name}
               </h1>
 
+              {service.price_from && (
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-extrabold backdrop-blur-sm">
+                  <span>{isRtl ? "التقدير السعري المبدئي:" : "Starting Price:"}</span>
+                  <span>{Number(service.price_from).toLocaleString(isRtl ? "ar-SA" : "en-US")} {isRtl ? "ريال" : "SAR"}</span>
+                  {service.price_unit && <span>/ {service.price_unit}</span>}
+                </div>
+              )}
+
               <p className="text-base sm:text-lg text-white/70 leading-relaxed">
                 {shortDesc}
               </p>
             </div>
 
             <div className="shrink-0 space-y-3 w-full md:w-auto">
-              <Link href={`/${locale}/quote`}
+              <Link href={`/${locale}/quote?service=${slug}`}
                 className="w-full md:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-accent-500 to-amber-500 text-primary-950 font-extrabold text-base shadow-xl hover:shadow-accent-500/20 hover:scale-[1.02] active:scale-95 transition-all">
                 <Sparkles className="w-5 h-5" />
                 {dict.services.requestQuote}
+              </Link>
+
+              <Link href={`/${locale}/appointments?service=${slug}`}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-xs transition-all">
+                <Clock className="w-4 h-4 text-amber-400" />
+                <span>{isRtl ? "حجز معاينة ورفع مقاسات" : "Book Free Survey"}</span>
               </Link>
 
               <div className="flex items-center justify-center gap-4 text-xs text-white/60">

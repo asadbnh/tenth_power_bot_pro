@@ -222,6 +222,15 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
                     <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-[98%]">
                       {desc}
                     </p>
+
+                    {/* Pricing Badge if provided from DB */}
+                    {(service as any).price_from && (
+                      <div className="mt-2.5 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/10 text-[11px] font-bold text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                        <span>{isRtl ? "يبدأ من" : "From"}</span>
+                        <span>{Number((service as any).price_from).toLocaleString(isRtl ? "ar-SA" : "en-US")} {isRtl ? "ر.س" : "SAR"}</span>
+                        {(service as any).price_unit && <span>/ {(service as any).price_unit}</span>}
+                      </div>
+                    )}
                   </div>
 
                   {/* Explore Button */}

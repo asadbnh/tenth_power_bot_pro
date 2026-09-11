@@ -72,6 +72,7 @@ export function AIChatWidget({ locale }: Props) {
   const [isTyping, setIsTyping] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
   const [interactionId, setInteractionId] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -126,12 +127,18 @@ export function AIChatWidget({ locale }: Props) {
           messages: newMessages.map(m => ({ role: m.role, content: m.content })),
           locale,
           previous_interaction_id: interactionId,
+          session_id: sessionId,
         }),
       });
 
       const newInteractionId = res.headers.get("x-interaction-id");
       if (newInteractionId) {
         setInteractionId(newInteractionId);
+      }
+
+      const newSessionId = res.headers.get("x-session-id");
+      if (newSessionId) {
+        setSessionId(newSessionId);
       }
 
       if (res.ok && res.body) {

@@ -6,7 +6,7 @@
  */
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { notifyNewQuoteRequest, notifyNewMessage } from "@/lib/telegram/notifications";
+import { notifyNewQuoteRequest, notifyNewMessage, notifyNewAppointment } from "@/lib/telegram/notifications";
 
 const FALLBACK_COMPANY_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -202,4 +202,76 @@ export async function trackEvent(data: AnalyticsEventData) {
   });
 
   return { success: true };
+}
+
+// ─── Appointments Form ────────────────────────────────────────────────
+
+export interface AppointmentFormData {
+  name: string;
+  phone: string;
+  email?: string;
+  city?: string;
+  serviceId?: string;
+  serviceName?: string;
+  preferredDate?: string;
+  preferredTime?: string;
+  notes?: string;
+  locale?: string;
+}
+
+export async function submitAppointmentRequest(data: AppointmentFormData) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
+  const companyId = await getDefaultCompanyId(supabase);
+
+  // 1. Upsert Lead User
+  const { data: user } = await supabase
+    .from("users")
+    .upsert(
+      {
+        company_id: companyId,
+        full_name: data.name,
+        phone: data.phone,
+        email: data.email ?? null,
+        city: data.city ?? null,
+        source: "appointment_form",
+        metadata: { locale: data.locale ?? "ar" },
+      },
+      { onConflict: "phone" }
+    )
+    .select("id")
+    .single();
+
+  // 2. Insert Appointment into DB
+  const { data: appointment, error: aptErr } = await supabase
+    .from("appointments")
+    .insert({
+      company_id: companyId,
+      user_id: user?.id ?? null,
+      service_id: data.serviceId || null,
+      status: "pending",
+      preferred_date: data.preferredDate ? new Date(data.preferredDate).toISOString() : null,
+      preferred_time: data.preferredTime ?? null,
+      notes: data.notes ?? null,
+      source: "website",
+    })
+    .select("id")
+    .single();
+
+  if (aptErr) {
+    console.error("Failed to insert appointment:", aptErr);
+    return { success: false, error: "فشل في تسجيل الموعد" };
+  }
+
+  // 3. Fire Real-time Telegram Admin Alert to Admins & CRM
+  notifyNewAppointment({
+    id: appointment?.id || "unknown",
+    userName: data.name,
+    phone: data.phone,
+    serviceName: data.serviceName,
+    preferredDate: data.preferredDate ? `${data.preferredDate} (${data.preferredTime || "صباحاً"})` : undefined,
+    notes: data.notes,
+  }).catch((err) => console.error("Telegram appointment notification error:", err));
+
+  return { success: true, id: appointment?.id };
 }

@@ -173,6 +173,62 @@ export async function processProjectWizard(userId: number, text: string, state: 
     return true;
   }
 
+  if (state.step === "awaiting_project_photo") {
+    const projectId = state.payload?.projectId as string;
+    const media_url = text.trim();
+    if (media_url.startsWith("http://") || media_url.startsWith("https://")) {
+      const { data: media } = await db.from("media_library").insert({
+        company_id: companyId,
+        file_name: `project-photo-${Date.now()}.jpg`,
+        original_name: "رابط خارجي للمشروع",
+        file_url: media_url,
+        cdn_url: media_url,
+        mime_type: "image/jpeg",
+        file_size: 0,
+        storage_provider: "url",
+        storage_path: "projects/external",
+      }).select("id").single();
+
+      if (media?.id && projectId) {
+        const { count: existingCount } = await db
+          .from("project_images")
+          .select("*", { count: "exact", head: true })
+          .eq("project_id", projectId);
+
+        const sortOrder = existingCount ?? 0;
+        const isCover = sortOrder === 0;
+
+        await db.from("project_images").insert({
+          project_id: projectId,
+          media_id: media.id,
+          sort_order: sortOrder,
+          is_cover: isCover,
+        });
+
+        if (isCover) {
+          await db.from("projects").update({ cover_image_url: media_url }).eq("id", projectId);
+        }
+
+        clearAdminState(userId);
+        await sendMessage(userId, `🎉 <b>تمت إضافة رابط الصورة للمشروع بنجاح!</b>`);
+        await handleProjectItems(userId, projectId);
+        return true;
+      }
+    }
+  }
+
+  if (state.step === "awaiting_project_cover") {
+    const projectId = state.payload?.projectId as string;
+    const cover_url = text.trim();
+    if (cover_url.startsWith("http://") || cover_url.startsWith("https://")) {
+      await db.from("projects").update({ cover_image_url: cover_url }).eq("id", projectId);
+      clearAdminState(userId);
+      await sendMessage(userId, `✅ <b>تم تحديث غلاف المشروع بنجاح!</b>`);
+      await handleProjectDetails(userId, projectId);
+      return true;
+    }
+  }
+
   return false;
 }
 
@@ -570,6 +626,10 @@ export async function processProjectPhotoWizard(userId: number, msg: TelegramMes
         console.error("[Project Photo Insert Error]:", error);
         await sendMessage(userId, `❌ <b>حدث خطأ أثناء إضافة الصورة للمشروع:</b>\n<code>${error?.message || "DB error"}</code>`);
         return true;
+      }
+
+      if (isCover && res.url) {
+        await db.from("projects").update({ cover_image_url: res.url }).eq("id", projectId);
       }
 
       clearAdminState(userId);
