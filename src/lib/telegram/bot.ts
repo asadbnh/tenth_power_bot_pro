@@ -106,14 +106,23 @@ export async function answerCallbackQuery(queryId: string, text?: string) {
   });
 }
 
+export function getBaseSiteUrl() {
+  return process.env.NEXT_PUBLIC_SITE_URL || "https://webtaky.com";
+}
+
 export async function sendPhoto(
   chatId: number,
   photo: string,
   options: { caption?: string; reply_markup?: InlineKeyboard } = {}
 ) {
+  let photoUrl = photo;
+  if (photoUrl && photoUrl.startsWith("/")) {
+    photoUrl = `${getBaseSiteUrl()}${photoUrl}`;
+  }
+
   return telegramRequest("sendPhoto", {
     chat_id: chatId,
-    photo,
+    photo: photoUrl,
     caption: options.caption,
     parse_mode: "HTML",
     reply_markup: options.reply_markup,
