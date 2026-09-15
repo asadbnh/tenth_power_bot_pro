@@ -1,43 +1,83 @@
 import { createDbClient } from "@/lib/db";
-import { sendMessage, editMessage, Keyboards, getFile, getTelegramFileUrl, type TelegramMessage } from "../bot";
+import { sendMessage, editMessage, Keyboards, getFile, getTelegramFileUrl, type TelegramMessage, sendPhoto, deleteMessage } from "../bot";
 import { setAdminState } from "../state";
 
 // ─── Media Library Handlers ───────────────────────────────────────────
 
-export async function handleMediaLibraryList(chatId: number, messageId?: number) {
+export async function handleMediaLibraryList(chatId: number, messageId?: number, page: number = 0) {
   const db = createDbClient();
-  const { data: media, count } = await db
+  const PAGE_SIZE = 10;
+
+  const { count } = await db.from("media_library").select("*", { count: "exact", head: true });
+  const totalItems = count || 0;
+  const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+
+  if (page >= totalPages && totalPages > 0) page = totalPages - 1;
+  if (page < 0) page = 0;
+
+  const { data: media } = await db
     .from("media_library")
-    .select("id, file_name, file_url, file_size, width, height, created_at", { count: "exact" })
+    .select("id, file_name, file_url, cdn_url, file_size, width, height, created_at")
     .order("created_at", { ascending: false })
-    .limit(8);
+    .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
 
-  let text = `📁 <b>مكتبة الوسائط والصور (الإجمالي: ${count ?? media?.length ?? 0}):</b>\n\n`;
+  if (!media || media.length === 0) {
+    const text = `📁 <b>مكتبة الوسائط والصور:</b>\n\nلا توجد صور في المكتبة بعد.`;
+    const kb = {
+      inline_keyboard: [
+        [{ text: "📸 كيفية رفع صور جديدة؟", callback_data: "med_upload_prompt" }],
+        [{ text: "◀️ رجوع للوسائط", callback_data: "menu_media" }]
+      ]
+    };
+    if (messageId) await editMessage(chatId, messageId, text, kb);
+    else await sendMessage(chatId, text, { reply_markup: kb });
+    return;
+  }
+
+  if (messageId) {
+    await deleteMessage(chatId, messageId).catch(() => {});
+  }
+
+  for (const m of media) {
+    const url = m.cdn_url || m.file_url;
+    if (!url) continue;
+
+    const caption = `🖼️ <b>${m.file_name}</b>\n📐 ${m.width || 1200}x${m.height || 800} | 💾 ${Math.round((m.file_size || 0) / 1024)} KB`;
+    const kb = {
+      inline_keyboard: [
+        [{ text: `🗑️ حذف الصورة`, callback_data: `med_delete:${m.id}` }]
+      ]
+    };
+    await sendPhoto(chatId, url, { caption, reply_markup: kb }).catch(() => {});
+  }
+
+  const text = `📁 <b>مكتبة الوسائط (${totalItems} صورة)</b>\nصفحة ${page + 1} من ${totalPages}`;
   const inline_keyboard: any[][] = [];
+  
+  const navRow: any[] = [];
+  if (page < totalPages - 1) {
+    navRow.push({ text: "▶️ التالي", callback_data: `med_library:${page + 1}` });
+  }
+  if (page > 0) {
+    navRow.push({ text: "◀️ السابق", callback_data: `med_library:${page - 1}` });
+  }
+  if (navRow.length > 0) {
+    inline_keyboard.push(navRow);
+  }
 
-  (media as Record<string, any>[] || []).forEach((m, idx) => {
-    text += `${idx + 1}. 🖼️ <b>${m.file_name}</b>\n`;
-    text += `   📐 الأبعاد: ${m.width || 1200}x${m.height || 800} | 💾 الحجم: ${Math.round((m.file_size || 0) / 1024)} KB\n\n`;
-
-    inline_keyboard.push([
-      { text: `🗑️ حذف الصورة رقم ${idx + 1}`, callback_data: `med_delete:${m.id}` }
-    ]);
-  });
-
-  inline_keyboard.push([
-    { text: "📸 كيفية رفع صور جديدة؟", callback_data: "med_upload_prompt" }
-  ]);
+  inline_keyboard.push([{ text: "📸 رفع صور جديدة", callback_data: "med_upload_prompt" }]);
   inline_keyboard.push([{ text: "◀️ رجوع للوسائط", callback_data: "menu_media" }]);
 
-  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
-  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+  await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
 }
 
 export async function handleMediaDelete(chatId: number, id: string, messageId?: number) {
   const db = createDbClient();
   await db.from("media_library").delete().eq("id", id);
-  await sendMessage(chatId, `🗑️ تم حذف الصورة من مكتبة الوسائط.`);
-  await handleMediaLibraryList(chatId, messageId);
+  if (messageId) {
+    await deleteMessage(chatId, messageId).catch(() => {});
+  }
+  await sendMessage(chatId, `🗑️ تم حذف الصورة من مكتبة الوسائط بنجاح.`);
 }
 
 export async function handleMediaUploadPrompt(chatId: number, messageId?: number) {
@@ -162,7 +202,7 @@ export async function handleGalleryAlbumToggle(chatId: number, id: string, messa
   }
 }
 
-export async function handleGalleryAlbumItems(chatId: number, albumId: string, messageId?: number) {
+export async function handleGalleryAlbumItems(chatId: number, albumId: string, messageId?: number, page: number = 0) {
   const db = createDbClient();
   const [{ data: album }, { data: items }] = await Promise.all([
     db.from("gallery_albums").select("id, title_ar").eq("id", albumId).single(),
@@ -185,27 +225,57 @@ export async function handleGalleryAlbumItems(chatId: number, albumId: string, m
     return;
   }
 
+  const PAGE_SIZE = 10;
+  const totalItems = items.length;
+  const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+  
+  // Prevent out of bounds
+  if (page >= totalPages) page = totalPages - 1;
+  if (page < 0) page = 0;
+
+  const pagedItems = items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
   // Fetch media details
-  const mediaIds = items.map((it: any) => it.media_id);
+  const mediaIds = pagedItems.map((it: any) => it.media_id);
   const { data: mediaList } = await db.from("media_library").select("id, file_url, cdn_url, original_name, file_name").in("id", mediaIds);
   const mediaMap: Record<string, any> = {};
   (mediaList || []).forEach((m: any) => { mediaMap[m.id] = m; });
 
-  let text = `🖼️ <b>صور ألبوم: ${albumTitle} (${items.length}):</b>\n\n`;
-  const inline_keyboard: any[][] = [];
+  if (messageId) {
+    await deleteMessage(chatId, messageId).catch(() => {});
+  }
 
-  items.forEach((it: any, idx: number) => {
+  for (let loopIdx = 0; loopIdx < pagedItems.length; loopIdx++) {
+    const it = pagedItems[loopIdx];
+    const idx = page * PAGE_SIZE + loopIdx;
     const m = mediaMap[it.media_id];
     const fileName = m?.original_name || m?.file_name || `صورة ${idx + 1}`;
-    const url = m?.cdn_url || m?.file_url || "";
-    text += `${idx + 1}. 📸 <b>${fileName}</b>\n`;
-    if (url) text += `   🔗 <code>${url}</code>\n`;
-    text += "\n";
+    const url = m?.cdn_url || m?.file_url;
+    if (!url) continue;
 
-    inline_keyboard.push([
-      { text: `🗑️ حذف صورة ${idx + 1}`, callback_data: `it_delete:${it.id}:${albumId}` }
-    ]);
-  });
+    const caption = `📸 <b>${fileName}</b>`;
+    const kb = {
+      inline_keyboard: [
+        [{ text: `🗑️ حذف صورة ${idx + 1}`, callback_data: `it_delete:${it.id}:${albumId}:${page}` }]
+      ]
+    };
+    await sendPhoto(chatId, url, { caption, reply_markup: kb }).catch(() => {});
+  }
+
+  const text = `🖼️ <b>صور ألبوم: ${albumTitle} (${totalItems})</b>\nصفحة ${page + 1} من ${totalPages}`;
+  
+  const inline_keyboard: any[][] = [];
+
+  const navRow: any[] = [];
+  if (page < totalPages - 1) {
+    navRow.push({ text: "▶️ التالي", callback_data: `alb_items:${albumId}:${page + 1}` });
+  }
+  if (page > 0) {
+    navRow.push({ text: "◀️ السابق", callback_data: `alb_items:${albumId}:${page - 1}` });
+  }
+  if (navRow.length > 0) {
+    inline_keyboard.push(navRow);
+  }
 
   inline_keyboard.push([
     { text: "➕ إضافة صورة جديدة لهذا الألبوم", callback_data: `alb_add_photo:${albumId}` },
@@ -215,8 +285,7 @@ export async function handleGalleryAlbumItems(chatId: number, albumId: string, m
     { text: "◀️ رجوع للألبومات", callback_data: "med_gallery" },
   ]);
 
-  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
-  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+  await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
 }
 
 export async function handleGalleryAlbumAddPrompt(chatId: number) {
@@ -251,15 +320,13 @@ export async function handleGalleryAlbumEditPrompt(chatId: number, albumId: stri
   );
 }
 
-export async function handleGalleryItemDelete(chatId: number, id: string, albumId?: string, messageId?: number) {
+export async function handleGalleryItemDelete(chatId: number, id: string, _albumId?: string, messageId?: number, _page: number = 0) {
   const db = createDbClient();
   await db.from("gallery_items").delete().eq("id", id);
-  await sendMessage(chatId, `🗑️ تم حذف الصورة من الألبوم بنجاح.`);
-  if (albumId) {
-    await handleGalleryAlbumItems(chatId, albumId, messageId);
-  } else {
-    await handleGalleryAlbumsList(chatId, messageId);
+  if (messageId) {
+    await deleteMessage(chatId, messageId).catch(() => {});
   }
+  await sendMessage(chatId, `🗑️ تم حذف الصورة من الألبوم بنجاح.`);
 }
 
 export async function handleGalleryAlbumDelete(chatId: number, id: string, messageId?: number) {

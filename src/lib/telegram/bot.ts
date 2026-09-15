@@ -106,12 +106,24 @@ export async function answerCallbackQuery(queryId: string, text?: string) {
   });
 }
 
-export async function sendPhoto(chatId: number, photo: string, caption?: string) {
+export async function sendPhoto(
+  chatId: number,
+  photo: string,
+  options: { caption?: string; reply_markup?: InlineKeyboard } = {}
+) {
   return telegramRequest("sendPhoto", {
     chat_id: chatId,
     photo,
-    caption,
+    caption: options.caption,
     parse_mode: "HTML",
+    reply_markup: options.reply_markup,
+  });
+}
+
+export async function deleteMessage(chatId: number, messageId: number) {
+  return telegramRequest("deleteMessage", {
+    chat_id: chatId,
+    message_id: messageId,
   });
 }
 

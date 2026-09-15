@@ -76,7 +76,7 @@ ${project.client_name ? `👤 <b>الجهة/العميل:</b> ${project.client_n
   };
 
   if (project.cover_image_url && !project.cover_image_url.startsWith("/")) {
-    return sendPhoto(channelId as unknown as number, project.cover_image_url, text);
+    return sendPhoto(channelId as unknown as number, project.cover_image_url, { caption: text });
   } else {
     return sendMessage(channelId as unknown as number, text, { reply_markup: keyboard });
   }
@@ -156,7 +156,7 @@ ${ad.subtitle_ar ? `\n📝 ${ad.subtitle_ar}\n` : ""}
   };
 
   if (ad.media_url && !ad.media_url.startsWith("/")) {
-    return sendPhoto(channelId as unknown as number, ad.media_url, text);
+    return sendPhoto(channelId as unknown as number, ad.media_url, { caption: text });
   } else {
     return sendMessage(channelId as unknown as number, text, { reply_markup: keyboard });
   }

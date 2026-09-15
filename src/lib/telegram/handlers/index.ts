@@ -328,14 +328,17 @@ export async function handleCallback(query: TelegramCallbackQuery) {
   if (data.startsWith("prj_view:")) return handleProjectDetails(userId, data.split(":")[1], messageId);
   if (data.startsWith("prj_toggle_feat:")) return handleProjectToggleFeatured(userId, data.split(":")[1], messageId);
   if (data.startsWith("prj_toggle_act:")) return handleProjectToggleActive(userId, data.split(":")[1], messageId);
-  if (data.startsWith("prj_items:")) return handleProjectItems(userId, data.split(":")[1], messageId);
+  if (data.startsWith("prj_items:")) {
+    const parts = data.split(":");
+    return handleProjectItems(userId, parts[1], messageId, parts[2] ? parseInt(parts[2], 10) : 0);
+  }
   if (data.startsWith("prj_img_del:")) {
     const parts = data.split(":");
-    return handleProjectImageDelete(userId, parts[1], parts[2], messageId);
+    return handleProjectImageDelete(userId, parts[1], parts[2], messageId, parts[3] ? parseInt(parts[3], 10) : 0);
   }
   if (data.startsWith("prj_img_cover:")) {
     const parts = data.split(":");
-    return handleProjectImageSetCover(userId, parts[1], parts[2], messageId);
+    return handleProjectImageSetCover(userId, parts[1], parts[2], messageId, parts[3] ? parseInt(parts[3], 10) : 0);
   }
   if (data.startsWith("prj_add_photo:")) {
     const prjId = data.split(":")[1];
@@ -412,7 +415,10 @@ export async function handleCallback(query: TelegramCallbackQuery) {
   if (data.startsWith("ba_delete:")) return handleBeforeAfterDelete(userId, data.split(":")[1], messageId);
 
   // 4. Media & Gallery Callbacks
-  if (data === "med_library") return handleMediaLibraryList(userId, messageId);
+  if (data.startsWith("med_library")) {
+    const parts = data.split(":");
+    return handleMediaLibraryList(userId, messageId, parts[1] ? parseInt(parts[1], 10) : 0);
+  }
   if (data.startsWith("med_delete:")) return handleMediaDelete(userId, data.split(":")[1], messageId);
   if (data === "med_upload_prompt") return handleMediaUploadPrompt(userId, messageId);
   if (data === "med_gallery") return handleGalleryAlbumsList(userId, messageId);
@@ -420,13 +426,16 @@ export async function handleCallback(query: TelegramCallbackQuery) {
   if (data.startsWith("alb_toggle:")) return handleGalleryAlbumToggle(userId, data.split(":")[1], messageId);
   if (data === "alb_add_prompt") return handleGalleryAlbumAddPrompt(userId);
   if (data.startsWith("alb_add_photo:")) return handleGalleryAlbumAddPhotoPrompt(userId, data.split(":")[1]);
-  if (data.startsWith("alb_items:")) return handleGalleryAlbumItems(userId, data.split(":")[1], messageId);
+  if (data.startsWith("alb_items:")) {
+    const parts = data.split(":");
+    return handleGalleryAlbumItems(userId, parts[1], messageId, parts[2] ? parseInt(parts[2], 10) : 0);
+  }
   if (data.startsWith("alb_edit_title:")) return handleGalleryAlbumEditPrompt(userId, data.split(":")[1], "title");
   if (data.startsWith("alb_edit_desc:")) return handleGalleryAlbumEditPrompt(userId, data.split(":")[1], "desc");
   if (data.startsWith("alb_edit_cover:")) return handleGalleryAlbumEditPrompt(userId, data.split(":")[1], "cover");
   if (data.startsWith("it_delete:")) {
     const parts = data.split(":");
-    return handleGalleryItemDelete(userId, parts[1], parts[2], messageId);
+    return handleGalleryItemDelete(userId, parts[1], parts[2], messageId, parts[3] ? parseInt(parts[3], 10) : 0);
   }
   if (data.startsWith("alb_delete:")) return handleGalleryAlbumDelete(userId, data.split(":")[1], messageId);
 

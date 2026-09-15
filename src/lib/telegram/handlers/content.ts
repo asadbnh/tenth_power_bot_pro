@@ -1,5 +1,5 @@
 import { createDbClient } from "@/lib/db";
-import { sendMessage, editMessage, Keyboards } from "../bot";
+import { sendMessage, editMessage, Keyboards, sendPhoto, deleteMessage } from "../bot";
 import { setAdminState } from "../state";
 
 // ─── Services Handlers ────────────────────────────────────────────────
@@ -243,7 +243,7 @@ export async function handleProjectToggleActive(chatId: number, id: string, mess
   }
 }
 
-export async function handleProjectItems(chatId: number, projectId: string, messageId?: number) {
+export async function handleProjectItems(chatId: number, projectId: string, messageId?: number, page: number = 0) {
   const db = createDbClient();
   const { data: project } = await db.from("projects").select("title_ar").eq("id", projectId).single();
 
@@ -255,7 +255,30 @@ export async function handleProjectItems(chatId: number, projectId: string, mess
     .order("created_at", { ascending: false });
 
   const rawItems = (items || []) as any[];
-  const mediaIds = rawItems.map((pi: any) => pi.media_id).filter(Boolean);
+  const title = project?.title_ar || "المشروع";
+
+  if (!rawItems || rawItems.length === 0) {
+    const emptyText = `📸 <b>صور المشروع: ${title}</b>\n\nلا توجد صور مضافة لهذا المشروع حتى الآن.`;
+    const kb = {
+      inline_keyboard: [
+        [{ text: "➕ إضافة صورة الآن", callback_data: `prj_add_photo:${projectId}` }],
+        [{ text: "◀️ رجوع لتفاصيل المشروع", callback_data: `prj_view:${projectId}` }],
+      ],
+    };
+    if (messageId) await editMessage(chatId, messageId, emptyText, kb);
+    else await sendMessage(chatId, emptyText, { reply_markup: kb });
+    return;
+  }
+
+  const PAGE_SIZE = 10;
+  const totalItems = rawItems.length;
+  const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+
+  if (page >= totalPages && totalPages > 0) page = totalPages - 1;
+  if (page < 0) page = 0;
+
+  const pagedItems = rawItems.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const mediaIds = pagedItems.map((pi: any) => pi.media_id).filter(Boolean);
 
   const mediaMap: Record<string, any> = {};
   if (mediaIds.length > 0) {
@@ -269,54 +292,47 @@ export async function handleProjectItems(chatId: number, projectId: string, mess
     });
   }
 
-  const mappedItems = rawItems.map((pi: any) => {
-    const m = mediaMap[pi.media_id];
-    return {
-      id: pi.id,
-      project_id: pi.project_id,
-      is_cover: Boolean(pi.is_cover),
-      sort_order: pi.sort_order,
-      created_at: pi.created_at,
-      file_url: m?.file_url || "",
-      cdn_url: m?.cdn_url || "",
-      file_name: m?.original_name || m?.file_name || "صورة مشروع",
-    };
-  });
-
-  const title = project?.title_ar || "المشروع";
-
-  if (!mappedItems || mappedItems.length === 0) {
-    const emptyText = `📸 <b>صور المشروع: ${title}</b>\n\nلا توجد صور مضافة لهذا المشروع حتى الآن.`;
-    const kb = {
-      inline_keyboard: [
-        [{ text: "➕ إضافة صورة الآن", callback_data: `prj_add_photo:${projectId}` }],
-        [{ text: "◀️ رجوع لتفاصيل المشروع", callback_data: `prj_view:${projectId}` }],
-      ],
-    };
-    if (messageId) await editMessage(chatId, messageId, emptyText, kb);
-    else await sendMessage(chatId, emptyText, { reply_markup: kb });
-    return;
+  if (messageId) {
+    await deleteMessage(chatId, messageId).catch(() => {});
   }
 
-  let text = `📸 <b>صور المشروع: ${title} (${mappedItems.length}):</b>\n\n`;
-  const inline_keyboard: any[][] = [];
+  for (let loopIdx = 0; loopIdx < pagedItems.length; loopIdx++) {
+    const pi = pagedItems[loopIdx];
+    const m = mediaMap[pi.media_id];
+    const url = m?.cdn_url || m?.file_url;
+    if (!url) continue;
 
-  mappedItems.forEach((it: any, idx: number) => {
-    const url = it.cdn_url || it.file_url;
-    const coverBadge = it.is_cover ? "⭐ [غلاف رئيسي] | " : "";
-    text += `${idx + 1}. ${coverBadge}<a href="${url}">صورة رقم ${idx + 1} 🔗</a>\n`;
-
+    const coverBadge = pi.is_cover ? "⭐ [غلاف رئيسي] " : "";
+    const fileName = m?.original_name || m?.file_name || `صورة مشروع`;
+    const caption = `📸 <b>${fileName}</b>\n${coverBadge}`;
+    
     const rowButtons: any[] = [
-      { text: `🗑️ حذف الصورة ${idx + 1}`, callback_data: `prj_img_del:${it.id}:${projectId}` },
+      { text: `🗑️ حذف الصورة`, callback_data: `prj_img_del:${pi.id}:${projectId}:${page}` },
     ];
-    if (!it.is_cover) {
+    if (!pi.is_cover) {
       rowButtons.unshift({
         text: `⭐ تعيين كغلاف`,
-        callback_data: `prj_img_cover:${it.id}:${projectId}`,
+        callback_data: `prj_img_cover:${pi.id}:${projectId}:${page}`,
       });
     }
-    inline_keyboard.push(rowButtons);
-  });
+
+    const kb = { inline_keyboard: [rowButtons] };
+    await sendPhoto(chatId, url, { caption, reply_markup: kb }).catch(() => {});
+  }
+
+  const text = `📸 <b>صور المشروع: ${title} (${totalItems})</b>\nصفحة ${page + 1} من ${totalPages}`;
+  const inline_keyboard: any[][] = [];
+
+  const navRow: any[] = [];
+  if (page < totalPages - 1) {
+    navRow.push({ text: "▶️ التالي", callback_data: `prj_items:${projectId}:${page + 1}` });
+  }
+  if (page > 0) {
+    navRow.push({ text: "◀️ السابق", callback_data: `prj_items:${projectId}:${page - 1}` });
+  }
+  if (navRow.length > 0) {
+    inline_keyboard.push(navRow);
+  }
 
   inline_keyboard.push([
     { text: "➕ إضافة صورة جديدة للمشروع", callback_data: `prj_add_photo:${projectId}` }
@@ -325,11 +341,10 @@ export async function handleProjectItems(chatId: number, projectId: string, mess
     { text: "◀️ رجوع لتفاصيل المشروع", callback_data: `prj_view:${projectId}` }
   ]);
 
-  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
-  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+  await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
 }
 
-export async function handleProjectImageSetCover(chatId: number, imgId: string, projectId: string, messageId?: number) {
+export async function handleProjectImageSetCover(chatId: number, imgId: string, projectId: string, messageId?: number, _page: number = 0) {
   const db = createDbClient();
   await db.from("project_images").update({ is_cover: false }).eq("project_id", projectId);
   await db.from("project_images").update({ is_cover: true }).eq("id", imgId);
@@ -343,15 +358,23 @@ export async function handleProjectImageSetCover(chatId: number, imgId: string, 
     }
   }
 
+  if (messageId) {
+    await deleteMessage(chatId, messageId).catch(() => {});
+  }
   await sendMessage(chatId, "⭐ <b>تم تعيين الصورة كغلاف رئيسي للمشروع بنجاح!</b>");
-  await handleProjectItems(chatId, projectId, messageId);
+  // We can call handleProjectItems or just let them use the navigation if we don't want to re-render the whole page.
+  // The user requested that we delete the message. If we set it as cover, deleting the photo message might be weird.
+  // Actually, setting as cover should just update the state. The user can press "Next" to refresh. 
+  // Let's just leave it as an alert or small message.
 }
 
-export async function handleProjectImageDelete(chatId: number, imgId: string, projectId: string, messageId?: number) {
+export async function handleProjectImageDelete(chatId: number, imgId: string, _projectId: string, messageId?: number, _page: number = 0) {
   const db = createDbClient();
   await db.from("project_images").delete().eq("id", imgId);
+  if (messageId) {
+    await deleteMessage(chatId, messageId).catch(() => {});
+  }
   await sendMessage(chatId, "🗑️ تم حذف الصورة من المشروع بنجاح.");
-  await handleProjectItems(chatId, projectId, messageId);
 }
 
 export async function handleProjectDelete(chatId: number, id: string, messageId?: number) {
