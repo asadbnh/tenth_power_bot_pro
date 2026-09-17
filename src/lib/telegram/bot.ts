@@ -325,11 +325,23 @@ export const Keyboards = {
     ],
   }),
 
-  serviceItemActions: (id: string, isActive: boolean, isFeatured: boolean): InlineKeyboard => ({
+  serviceItemActions: (id: string, isActive: boolean, isFeatured: boolean, imgCount: number = 0): InlineKeyboard => ({
     inline_keyboard: [
+      [
+        { text: "➕ إضافة صورة للخدمة", callback_data: `srv_add_photo:${id}` },
+        { text: `🖼️ صور الخدمة (${imgCount})`, callback_data: `srv_items:${id}` },
+      ],
       [
         { text: isActive ? "🔴 تعطيل الخدمة" : "🟢 تفعيل الخدمة", callback_data: `srv_toggle_active:${id}` },
         { text: isFeatured ? "⭐ إزالة من المميزة" : "⭐ تمييز الخدمة", callback_data: `srv_toggle_featured:${id}` },
+      ],
+      [
+        { text: "✏️ تعديل الاسم", callback_data: `srv_edit_name:${id}` },
+        { text: "💰 تعديل السعر", callback_data: `srv_edit_price:${id}` },
+      ],
+      [
+        { text: "📝 تعديل الوصف", callback_data: `srv_edit_desc:${id}` },
+        { text: "🖼️ تغيير الغلاف", callback_data: `srv_edit_cover:${id}` },
       ],
       [
         { text: "🗑️ حذف الخدمة", callback_data: `srv_delete:${id}` },
@@ -342,6 +354,14 @@ export const Keyboards = {
     inline_keyboard: [
       [
         { text: status === "published" ? "🔴 تحويل لمسودة" : "🟢 نشر المقال", callback_data: `art_toggle_pub:${id}` },
+        { text: "➕ إضافة صورة للمقال", callback_data: `art_add_photo:${id}` },
+      ],
+      [
+        { text: "✏️ تعديل العنوان", callback_data: `art_edit_title:${id}` },
+        { text: "📝 تعديل الملخص", callback_data: `art_edit_excerpt:${id}` },
+      ],
+      [
+        { text: "🖼️ تغيير صورة الغلاف", callback_data: `art_edit_cover:${id}` },
         { text: "🗑️ حذف المقال", callback_data: `art_delete:${id}` },
       ],
       [{ text: "◀️ قائمة المقالات", callback_data: "cnt_articles" }],

@@ -29,11 +29,45 @@ export async function handleCompanyProfile(chatId: number, messageId?: number) {
 
   const inline_keyboard = [
     [{ text: company?.maintenance_mode ? "🟢 فتح الموقع للزوار" : "🔴 إغلاق الموقع (وضع الصيانة)", callback_data: "set_toggle_maint" }],
+    [
+      { text: "📱 تعديل الهاتف", callback_data: "set_edit_phone" },
+      { text: "💬 تعديل الواتساب", callback_data: "set_edit_whatsapp" },
+    ],
+    [
+      { text: "📧 تعديل البريد", callback_data: "set_edit_email" },
+      { text: "🧾 تعديل الرقم الضريبي", callback_data: "set_edit_tax" },
+    ],
+    [
+      { text: "📑 تعديل السجل التجاري", callback_data: "set_edit_cr" },
+    ],
     [{ text: "◀️ رجوع للإعدادات", callback_data: "menu_settings" }]
   ];
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleCompanyProfileEditPrompt(chatId: number, field: "phone" | "whatsapp" | "email" | "tax" | "cr") {
+  const titles = {
+    phone: "رقم الهاتف الرئيسي",
+    whatsapp: "رقم الواتساب",
+    email: "البريد الإلكتروني",
+    tax: "الرقم الضريبي",
+    cr: "رقم السجل التجاري",
+  };
+  const stepMap = {
+    phone: "awaiting_company_phone" as const,
+    whatsapp: "awaiting_company_whatsapp" as const,
+    email: "awaiting_company_email" as const,
+    tax: "awaiting_company_tax" as const,
+    cr: "awaiting_company_cr" as const,
+  };
+  setAdminState(chatId, stepMap[field]);
+  await sendMessage(
+    chatId,
+    `✏️ <b>تعديل ${titles[field]}:</b>\n\nأرسل القيمة الجديدة الآن:`,
+    { reply_markup: Keyboards.cancelWizard("set_profile") }
+  );
 }
 
 export async function handleToggleMaintenance(chatId: number, messageId?: number) {
@@ -111,17 +145,38 @@ export async function handleSocialContacts(chatId: number, messageId?: number) {
     .order("sort_order", { ascending: true });
 
   let text = `🌐 <b>قنوات التواصل والسوشيال ميديا (${contacts?.length ?? 0}):</b>\n\n`;
+  const inline_keyboard: any[][] = [];
+
   (contacts as Record<string, any>[] || []).forEach((c, idx) => {
     text += `${idx + 1}. <b>${c.label_ar || c.type}</b>\n`;
     text += `   🔗 <code>${c.value}</code>\n\n`;
+
+    inline_keyboard.push([
+      { text: `🗑️ حذف: ${c.label_ar || c.type}`, callback_data: `contact_delete:${c.id}` }
+    ]);
   });
 
-  const inline_keyboard = [
-    [{ text: "◀️ رجوع للإعدادات", callback_data: "menu_settings" }]
-  ];
+  inline_keyboard.push([{ text: "➕ إضافة قناة تواصل", callback_data: "contact_add_prompt" }]);
+  inline_keyboard.push([{ text: "◀️ رجوع للإعدادات", callback_data: "menu_settings" }]);
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleContactDelete(chatId: number, id: string, messageId?: number) {
+  const db = createDbClient();
+  await db.from("company_contacts").delete().eq("id", id);
+  await sendMessage(chatId, "🗑️ تم حذف وسيلة التواصل بنجاح.");
+  await handleSocialContacts(chatId, messageId);
+}
+
+export async function handleContactAddPrompt(chatId: number) {
+  setAdminState(chatId, "awaiting_contact_type");
+  await sendMessage(
+    chatId,
+    `🌐 <b>إضافة وسيلة تواصل جديدة — (الخطوة 1 من 2)</b>\n\nأرسل اسم أو نوع وسيلة التواصل (مثال: تويتر، واتساب، تيك توك):`,
+    { reply_markup: Keyboards.cancelWizard("set_social") }
+  );
 }
 
 // ─── Business Hours Handlers ──────────────────────────────────────────
@@ -135,6 +190,7 @@ export async function handleBusinessHours(chatId: number, messageId?: number) {
 
   const daysAr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
   let text = `⏰ <b>ساعات العمل والدوام الرسمي:</b>\n\n`;
+  const inline_keyboard: any[][] = [];
 
   (hours as Record<string, any>[] || []).forEach((h) => {
     const dayName = daysAr[h.day_of_week] || `يوم ${h.day_of_week}`;
@@ -143,14 +199,36 @@ export async function handleBusinessHours(chatId: number, messageId?: number) {
     } else {
       text += `• <b>${dayName}:</b> 🟢 ${h.open_time || "08:00"} - ${h.close_time || "18:00"}\n`;
     }
+
+    inline_keyboard.push([
+      { text: h.is_closed ? `🟢 فتح ${dayName}` : `🔴 إغلاق ${dayName}`, callback_data: `hours_toggle:${h.day_of_week}` },
+      { text: `⏰ تعديل ${dayName}`, callback_data: `hours_edit:${h.day_of_week}` }
+    ]);
   });
 
-  const inline_keyboard = [
-    [{ text: "◀️ رجوع للإعدادات", callback_data: "menu_settings" }]
-  ];
+  inline_keyboard.push([{ text: "◀️ رجوع للإعدادات", callback_data: "menu_settings" }]);
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleBusinessHoursToggle(chatId: number, dayOfWeek: number, messageId?: number) {
+  const db = createDbClient();
+  const { data: h } = await db.from("business_hours").select("is_closed").eq("day_of_week", dayOfWeek).single();
+  if (h) {
+    await db.from("business_hours").update({ is_closed: !h.is_closed }).eq("day_of_week", dayOfWeek);
+    await handleBusinessHours(chatId, messageId);
+  }
+}
+
+export async function handleBusinessHoursEditPrompt(chatId: number, dayOfWeek: number) {
+  const daysAr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+  setAdminState(chatId, "awaiting_hours_time", { dayOfWeek });
+  await sendMessage(
+    chatId,
+    `⏰ <b>تعديل أوقات دوام يوم (${daysAr[dayOfWeek] || dayOfWeek}):</b>\n\nأرسل أوقات البدء والانتهاء بصيغة <code>08:00-18:00</code>:`,
+    { reply_markup: Keyboards.cancelWizard("set_hours") }
+  );
 }
 
 // ─── AI System Prompts Handlers ───────────────────────────────────────
@@ -174,11 +252,21 @@ export async function handleAiPromptSettings(chatId: number, messageId?: number)
 <code>${prompt?.system_prompt_ar || "التوجيه الافتراضي"}</code>`;
 
   const inline_keyboard = [
+    [{ text: "✏️ تعديل التوجيه الهندسي (System Prompt)", callback_data: "ai_prompt_edit" }],
     [{ text: "◀️ رجوع للإعدادات", callback_data: "menu_settings" }]
   ];
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleAiPromptEditPrompt(chatId: number) {
+  setAdminState(chatId, "awaiting_ai_prompt_text");
+  await sendMessage(
+    chatId,
+    `🤖 <b>تعديل التوجيه الهندسي (System Prompt):</b>\n\nأرسل نص التوجيه الهندسي الجديد الذي سيلتزم به الذكاء الاصطناعي عند الرد على الزوار:`,
+    { reply_markup: Keyboards.cancelWizard("set_ai_prompt") }
+  );
 }
 
 // ─── Settings Store Handlers ──────────────────────────────────────────
@@ -194,9 +282,19 @@ export async function handleCompanySettingsStore(chatId: number, messageId?: num
   });
 
   const inline_keyboard = [
+    [{ text: "➕ إضافة أو تحديث مفتاح", callback_data: "setting_store_set" }],
     [{ text: "◀️ رجوع للإعدادات", callback_data: "menu_settings" }]
   ];
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleSettingStorePrompt(chatId: number) {
+  setAdminState(chatId, "awaiting_setting_value");
+  await sendMessage(
+    chatId,
+    `⚙️ <b>إضافة أو تحديث مفتاح في النظام:</b>\n\nأرسل المفتاح والقيمة بصيغة:\n<code>key=value</code>\nمثال:\n<code>site_theme=dark</code>:`,
+    { reply_markup: Keyboards.cancelWizard("set_store") }
+  );
 }

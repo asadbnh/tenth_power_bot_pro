@@ -71,8 +71,8 @@ export async function handleServiceDetails(chatId: number, serviceId: string, me
 📝 <b>الوصف:</b>
 ${s.short_description_ar || s.full_description_ar || "لا يوجد وصف"}`;
 
-  if (messageId) await editMessage(chatId, messageId, text, Keyboards.serviceItemActions(s.id, s.is_active, s.is_featured));
-  else await sendMessage(chatId, text, { reply_markup: Keyboards.serviceItemActions(s.id, s.is_active, s.is_featured) });
+  if (messageId) await editMessage(chatId, messageId, text, Keyboards.serviceItemActions(s.id, s.is_active, s.is_featured, images?.length || 0));
+  else await sendMessage(chatId, text, { reply_markup: Keyboards.serviceItemActions(s.id, s.is_active, s.is_featured, images?.length || 0) });
 }
 
 export async function handleServiceToggleActive(chatId: number, id: string, messageId?: number) {
@@ -107,6 +107,135 @@ export async function handleServiceAddPrompt(chatId: number) {
     `➕ <b>إضافة خدمة جديدة — الخطوة 1/3</b>\n\nأرسل الآن <b>اسم الخدمة بالعربي</b> (مثال: زجاج سكريت ملون فاخر):`,
     { reply_markup: Keyboards.cancelWizard("cnt_services") }
   );
+}
+
+export async function handleServiceItems(chatId: number, serviceId: string, messageId?: number, page: number = 0) {
+  const db = createDbClient();
+  const { data: service } = await db.from("services").select("name_ar").eq("id", serviceId).single();
+
+  const { data: items } = await db
+    .from("service_images")
+    .select("id, service_id, media_id, is_cover, sort_order")
+    .eq("service_id", serviceId)
+    .order("sort_order", { ascending: true });
+
+  const rawItems = (items || []) as any[];
+  const title = service?.name_ar || "الخدمة";
+
+  if (!rawItems || rawItems.length === 0) {
+    const emptyText = `📸 <b>صور الخدمة: ${title}</b>\n\nلا توجد صور مضافة لهذه الخدمة حتى الآن.`;
+    const kb = {
+      inline_keyboard: [
+        [{ text: "➕ إضافة صورة الآن", callback_data: `srv_add_photo:${serviceId}` }],
+        [{ text: "◀️ رجوع لتفاصيل الخدمة", callback_data: `srv_view:${serviceId}` }],
+      ],
+    };
+    if (messageId) await editMessage(chatId, messageId, emptyText, kb);
+    else await sendMessage(chatId, emptyText, { reply_markup: kb });
+    return;
+  }
+
+  const PAGE_SIZE = 10;
+  const totalItems = rawItems.length;
+  const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+
+  if (page >= totalPages && totalPages > 0) page = totalPages - 1;
+  if (page < 0) page = 0;
+
+  const pagedItems = rawItems.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const mediaIds = pagedItems.map((pi: any) => pi.media_id).filter(Boolean);
+
+  const mediaMap: Record<string, any> = {};
+  if (mediaIds.length > 0) {
+    const { data: mediaList } = await db
+      .from("media_library")
+      .select("id, file_url, cdn_url, file_name, original_name")
+      .in("id", mediaIds);
+
+    (mediaList || []).forEach((m: any) => {
+      mediaMap[m.id] = m;
+    });
+  }
+
+  if (messageId) {
+    await deleteMessage(chatId, messageId).catch(() => {});
+  }
+
+  for (let loopIdx = 0; loopIdx < pagedItems.length; loopIdx++) {
+    const pi = pagedItems[loopIdx];
+    const m = mediaMap[pi.media_id];
+    const url = m?.cdn_url || m?.file_url;
+    if (!url) continue;
+
+    const coverBadge = pi.is_cover ? "⭐ [غلاف رئيسي] " : "";
+    const fileName = m?.original_name || m?.file_name || `صورة خدمة`;
+    const caption = `📸 <b>${fileName}</b>\n${coverBadge}`;
+    
+    const rowButtons: any[] = [
+      { text: `🗑️ حذف الصورة`, callback_data: `srv_img_del:${pi.id}:${serviceId}:${page}` },
+    ];
+    if (!pi.is_cover) {
+      rowButtons.unshift({
+        text: `⭐ تعيين كغلاف`,
+        callback_data: `srv_img_cover:${pi.id}:${serviceId}:${page}`,
+      });
+    }
+
+    const kb = { inline_keyboard: [rowButtons] };
+    await sendPhoto(chatId, url, { caption, reply_markup: kb }).catch(() => {});
+  }
+
+  const text = `📸 <b>صور الخدمة: ${title} (${totalItems})</b>\nصفحة ${page + 1} من ${totalPages}`;
+  const inline_keyboard: any[][] = [];
+
+  const navRow: any[] = [];
+  if (page < totalPages - 1) {
+    navRow.push({ text: "▶️ التالي", callback_data: `srv_items:${serviceId}:${page + 1}` });
+  }
+  if (page > 0) {
+    navRow.push({ text: "◀️ السابق", callback_data: `srv_items:${serviceId}:${page - 1}` });
+  }
+  if (navRow.length > 0) {
+    inline_keyboard.push(navRow);
+  }
+
+  inline_keyboard.push([
+    { text: "➕ إضافة صورة جديدة للخدمة", callback_data: `srv_add_photo:${serviceId}` }
+  ]);
+  inline_keyboard.push([
+    { text: "◀️ رجوع لتفاصيل الخدمة", callback_data: `srv_view:${serviceId}` }
+  ]);
+
+  await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleServiceImageSetCover(chatId: number, imgId: string, serviceId: string, messageId?: number, _page: number = 0) {
+  const db = createDbClient();
+  await db.from("service_images").update({ is_cover: false }).eq("service_id", serviceId);
+  await db.from("service_images").update({ is_cover: true }).eq("id", imgId);
+
+  const { data: img } = await db.from("service_images").select("media_id").eq("id", imgId).single();
+  if (img?.media_id) {
+    const { data: media } = await db.from("media_library").select("cdn_url, file_url").eq("id", img.media_id).single();
+    const coverUrl = media?.cdn_url || media?.file_url;
+    if (coverUrl) {
+      await db.from("services").update({ cover_image_url: coverUrl }).eq("id", serviceId);
+    }
+  }
+
+  if (messageId) {
+    await deleteMessage(chatId, messageId).catch(() => {});
+  }
+  await sendMessage(chatId, "⭐ <b>تم تعيين الصورة كغلاف رئيسي للخدمة بنجاح!</b>");
+}
+
+export async function handleServiceImageDelete(chatId: number, imgId: string, _serviceId: string, messageId?: number, _page: number = 0) {
+  const db = createDbClient();
+  await db.from("service_images").delete().eq("id", imgId);
+  if (messageId) {
+    await deleteMessage(chatId, messageId).catch(() => {});
+  }
+  await sendMessage(chatId, "🗑️ تم حذف الصورة من الخدمة بنجاح.");
 }
 
 // ─── Projects Handlers ────────────────────────────────────────────────
@@ -165,13 +294,15 @@ export async function handleProjectDetails(chatId: number, id: string, messageId
     return;
   }
 
-  // Count attached images & before/after items using db.from() — آمن في serverless
-  const [{ count: imgCountRaw }, { count: baCountRaw }] = await Promise.all([
+  // Count attached images, before/after items, and videos using db.from()
+  const [{ count: imgCountRaw }, { count: baCountRaw }, { count: vidCountRaw }] = await Promise.all([
     db.from("project_images").select("*", { count: "exact", head: true }).eq("project_id", id),
     db.from("project_before_after").select("*", { count: "exact", head: true }).eq("project_id", id),
+    db.from("project_videos").select("*", { count: "exact", head: true }).eq("project_id", id),
   ]);
   const imgCount = imgCountRaw ?? 0;
   const baCount = baCountRaw ?? 0;
+  const vidCount = vidCountRaw ?? 0;
 
   const featured = p.is_featured ? "⭐ نعم (يظهر في الرئيسية)" : "لا";
   const active = p.is_active !== false ? "🟢 نشط (معروض)" : "🔴 معطل (مخفي)";
@@ -189,6 +320,7 @@ export async function handleProjectDetails(chatId: number, id: string, messageId
 🟢 <b>حالة العرض:</b> ${active}
 🖼️ <b>صورة الغلاف:</b> ${p.cover_image_url ? `<a href="${p.cover_image_url}">رابط الغلاف 🔗</a>` : "لا يوجد"}
 📸 <b>معرض صور المشروع:</b> ${imgCount} صورة
+🎬 <b>فيديوهات المشروع:</b> ${vidCount} فيديو
 🔄 <b>مقارنات قبل وبعد:</b> ${baCount} مقارنة
 
 📝 <b>الوصف:</b>
@@ -198,6 +330,10 @@ ${p.description_ar || "لا يوجد وصف مسجل."}`;
     [
       { text: "➕ إضافة صورة للمشروع", callback_data: `prj_add_photo:${p.id}` },
       { text: `🖼️ استعراض الصور (${imgCount})`, callback_data: `prj_items:${p.id}` },
+    ],
+    [
+      { text: "➕ إضافة فيديو", callback_data: `prj_add_video:${p.id}` },
+      { text: `🎬 الفيديوهات (${vidCount})`, callback_data: `prj_videos:${p.id}` },
     ],
     [
       { text: p.is_featured ? "⭐ إزالة من المميز" : "⭐ تعيين كمميز", callback_data: `prj_toggle_feat:${p.id}` },
@@ -222,6 +358,48 @@ ${p.description_ar || "لا يوجد وصف مسجل."}`;
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleProjectVideosList(chatId: number, projectId: string, messageId?: number) {
+  const db = createDbClient();
+  const [{ data: project }, { data: videos }] = await Promise.all([
+    db.from("projects").select("title_ar").eq("id", projectId).single(),
+    db.from("project_videos").select("*").eq("project_id", projectId).order("sort_order", { ascending: true })
+  ]);
+
+  const pTitle = project?.title_ar || "المشروع";
+  let text = `🎬 <b>فيديوهات المشروع: ${pTitle} (${videos?.length || 0})</b>\n\n`;
+  const inline_keyboard: any[][] = [];
+
+  (videos || []).forEach((v: any, idx: number) => {
+    text += `${idx + 1}. 🎥 <b>${v.title_ar || "فيديو المشروع"}</b>\n`;
+    text += `   🔗 <code>${v.video_url}</code>\n\n`;
+
+    inline_keyboard.push([
+      { text: `🗑️ حذف الفيديو رقم ${idx + 1}`, callback_data: `prj_vid_del:${v.id}:${projectId}` }
+    ]);
+  });
+
+  if (!videos || videos.length === 0) {
+    text += `<i>لا توجد مقاطع فيديو مضافة لهذا المشروع حتى الآن.</i>\n\n`;
+  }
+
+  inline_keyboard.push([
+    { text: "➕ إضافة فيديو جديد", callback_data: `prj_add_video:${projectId}` }
+  ]);
+  inline_keyboard.push([
+    { text: "◀️ رجوع لتفاصيل المشروع", callback_data: `prj_view:${projectId}` }
+  ]);
+
+  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
+  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleProjectVideoDelete(chatId: number, videoId: string, projectId: string, messageId?: number) {
+  const db = createDbClient();
+  await db.from("project_videos").delete().eq("id", videoId);
+  await sendMessage(chatId, "🗑️ تم حذف الفيديو بنجاح.");
+  await handleProjectVideosList(chatId, projectId, messageId);
 }
 
 export async function handleProjectToggleFeatured(chatId: number, id: string, messageId?: number) {
@@ -412,6 +590,7 @@ export async function handleBeforeAfterList(chatId: number, messageId?: number) 
     ]);
   });
 
+  inline_keyboard.push([{ text: "➕ إضافة مقارنة قبل وبعد جديدة", callback_data: "ba_add_prompt" }]);
   inline_keyboard.push([{ text: "◀️ رجوع للمحتوى", callback_data: "menu_content" }]);
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
@@ -423,6 +602,15 @@ export async function handleBeforeAfterDelete(chatId: number, id: string, messag
   await db.from("project_before_after").delete().eq("id", id);
   await sendMessage(chatId, `🗑️ تم حذف عنصر المقارنة.`);
   await handleBeforeAfterList(chatId, messageId);
+}
+
+export async function handleBeforeAfterAddPrompt(chatId: number) {
+  setAdminState(chatId, "awaiting_ba_caption");
+  await sendMessage(
+    chatId,
+    `🔄 <b>إضافة مقارنة قبل وبعد جديدة — (الخطوة 1 من 3)</b>\n\nأرسل الآن <b>عنوان أو وصف المقارنة</b> (مثال: تجديد واجهة برج الأعمال القديمة إلى زجاج ذكي):`,
+    { reply_markup: Keyboards.cancelWizard("cnt_before_after") }
+  );
 }
 
 // ─── Advertisements Handlers ──────────────────────────────────────────
@@ -591,9 +779,12 @@ export async function handleCategoriesList(chatId: number, messageId?: number) {
   const inline_keyboard: any[][] = [];
 
   (cats as Record<string, any>[] || []).forEach((c, idx) => {
-    text += `${idx + 1}. 📂 <b>${c.name_ar}</b> (Slug: <code>${c.slug}</code>)\n`;
+    const status = c.is_active !== false ? "🟢 مفعل" : "🔴 معطل";
+    text += `${idx + 1}. [${status}] 📂 <b>${c.name_ar}</b> (Slug: <code>${c.slug}</code>)\n`;
     inline_keyboard.push([
-      { text: `🗑️ حذف التصنيف: ${c.name_ar}`, callback_data: `cat_delete:${c.id}` }
+      { text: c.is_active !== false ? "⏸️ تعطيل" : "▶️ تفعيل", callback_data: `cat_toggle:${c.id}` },
+      { text: `✏️ تعديل`, callback_data: `cat_edit:${c.id}` },
+      { text: `🗑️ حذف`, callback_data: `cat_delete:${c.id}` }
     ]);
   });
 
@@ -604,6 +795,23 @@ export async function handleCategoriesList(chatId: number, messageId?: number) {
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleCategoryToggleActive(chatId: number, id: string, messageId?: number) {
+  const db = createDbClient();
+  const { data: cat } = await db.from("categories").select("is_active").eq("id", id).single();
+  if (cat) {
+    const current = cat.is_active !== false;
+    await db.from("categories").update({ is_active: !current }).eq("id", id);
+    await handleCategoriesList(chatId, messageId);
+  }
+}
+
+export async function handleCategoryEditPrompt(chatId: number, id: string) {
+  setAdminState(chatId, "awaiting_category_edit_name", { catId: id });
+  await sendMessage(chatId, `✏️ <b>تعديل اسم التصنيف:</b>\n\nأرسل الاسم الجديد للتصنيف:`, {
+    reply_markup: Keyboards.cancelWizard("cnt_categories")
+  });
 }
 
 export async function handleCategoryDelete(chatId: number, id: string, messageId?: number) {
@@ -659,7 +867,8 @@ export async function handleArticlesList(chatId: number, messageId?: number) {
   });
 
   inline_keyboard.push([
-    { text: "🤖 توليد مقال فوري بالذكاء الاصطناعي", callback_data: "cnt_ai_article" }
+    { text: "✍️ كتابة مقال يدوياً", callback_data: "art_add_manual" },
+    { text: "🤖 توليد بالذكاء الاصطناعي", callback_data: "cnt_ai_article" }
   ]);
   inline_keyboard.push([{ text: "◀️ رجوع لقائمة المحتوى", callback_data: "menu_content" }]);
 
@@ -669,12 +878,17 @@ export async function handleArticlesList(chatId: number, messageId?: number) {
 
 export async function handleArticleDetails(chatId: number, id: string, messageId?: number) {
   const db = createDbClient();
-  const { data: a } = await db.from("articles").select("*").eq("id", id).single();
+  const [{ data: a }, { count: artImagesCountRaw }] = await Promise.all([
+    db.from("articles").select("*").eq("id", id).single(),
+    db.from("article_images").select("*", { count: "exact", head: true }).eq("article_id", id)
+  ]);
+
   if (!a) {
     await sendMessage(chatId, "❌ لم يتم العثور على المقال.");
     return;
   }
 
+  const artImagesCount = artImagesCountRaw ?? 0;
   // ✅ الحقل الصحيح في جدول article_tags هو tag_ar وليس tag
   const { data: tags } = await db.from("article_tags").select("tag_ar").eq("article_id", id);
   const tagList = tags?.map((t: any) => `#${t.tag_ar}`).join(" ") || "—";
@@ -685,6 +899,7 @@ export async function handleArticleDetails(chatId: number, id: string, messageId
 🔗 <b>الرابط:</b> <code>/blog/${a.slug}</code>
 📊 <b>الحالة:</b> <b>${a.status}</b>
 🏷️ <b>الوسوم:</b> ${tagList}
+🖼️ <b>الصور الإضافية:</b> ${artImagesCount} صورة
 ⏱️ <b>وقت القراءة:</b> ${a.read_time_minutes || 3} دقائق
 👁️ <b>المشاهدات:</b> ${a.view_count || 0}
 
@@ -717,6 +932,15 @@ export async function handleArticleAiPrompt(chatId: number) {
   await sendMessage(
     chatId,
     `🤖 <b>توليد مقال احترافي بالذكاء الاصطناعي (Gemini AI)</b>\n\nأرسل الآن <b>عنوان أو موضوع المقال</b> (مثال: أحدث تصاميم واجهات الزجاج الذكي للفلل والمباني الحديثة):`,
+    { reply_markup: Keyboards.cancelWizard("cnt_articles") }
+  );
+}
+
+export async function handleArticleManualAddPrompt(chatId: number) {
+  setAdminState(chatId, "awaiting_article_manual_title");
+  await sendMessage(
+    chatId,
+    `✍️ <b>كتابة مقال جديد يدوياً — (الخطوة 1 من 3)</b>\n\nأرسل الآن <b>عنوان المقال</b>:`,
     { reply_markup: Keyboards.cancelWizard("cnt_articles") }
   );
 }
@@ -779,10 +1003,11 @@ export async function handleArticleAiGenerate(chatId: number, topic: string) {
     published_at: new Date().toISOString(),
   }).select("id").single();
 
+  // ✅ تصحيح أسماء الحقول وفق جدول article_tags
   if (art?.id) {
     await db.from("article_tags").insert([
-      { article_id: art.id, tag: "مقاولات" },
-      { article_id: art.id, tag: "زجاج_سكريت" },
+      { article_id: art.id, tag_ar: "مقاولات", slug: "muqawalat" },
+      { article_id: art.id, tag_ar: "زجاج سيكوريت", slug: "securit-glass" },
     ]);
   }
 
@@ -807,11 +1032,15 @@ export async function handleFaqsList(chatId: number, messageId?: number) {
   const inline_keyboard: any[][] = [];
 
   (faqs as Record<string, any>[] || []).forEach((f, idx) => {
-    text += `${idx + 1}. ❓ <b>${f.question_ar}</b>\n`;
+    const status = f.is_active !== false ? "🟢" : "🔴";
+    text += `${idx + 1}. [${status}] ❓ <b>${f.question_ar}</b>\n`;
     text += `   💡 <i>${(f.answer_ar || "").slice(0, 70)}...</i>\n\n`;
 
     inline_keyboard.push([
-      { text: `🗑️ حذف السؤال رقم ${idx + 1}`, callback_data: `faq_delete:${f.id}` }
+      { text: f.is_active !== false ? "⏸️ تعطيل" : "▶️ تفعيل", callback_data: `faq_toggle:${f.id}` },
+      { text: `✏️ السؤال`, callback_data: `faq_edit_q:${f.id}` },
+      { text: `💡 الجواب`, callback_data: `faq_edit_a:${f.id}` },
+      { text: `🗑️ حذف`, callback_data: `faq_delete:${f.id}` },
     ]);
   });
 
@@ -822,6 +1051,23 @@ export async function handleFaqsList(chatId: number, messageId?: number) {
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
   else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleFaqToggleActive(chatId: number, id: string, messageId?: number) {
+  const db = createDbClient();
+  const { data: faq } = await db.from("faqs").select("is_active").eq("id", id).single();
+  if (faq) {
+    const current = faq.is_active !== false;
+    await db.from("faqs").update({ is_active: !current }).eq("id", id);
+    await handleFaqsList(chatId, messageId);
+  }
+}
+
+export async function handleFaqEditPrompt(chatId: number, id: string, field: "q" | "a") {
+  setAdminState(chatId, field === "q" ? "awaiting_faq_edit_q" : "awaiting_faq_edit_a", { faqId: id });
+  await sendMessage(chatId, `✏️ <b>تعديل ${field === "q" ? "نص السؤال" : "نص الإجابة"}:</b>\n\nأرسل النص الجديد الآن:`, {
+    reply_markup: Keyboards.cancelWizard("cnt_faqs")
+  });
 }
 
 export async function handleFaqDelete(chatId: number, id: string, messageId?: number) {

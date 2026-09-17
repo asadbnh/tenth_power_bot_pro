@@ -17,12 +17,14 @@ import {
 } from "./crm";
 import {
   handleServicesList, handleServiceDetails, handleServiceToggleActive, handleServiceToggleFeatured, handleServiceDelete, handleServiceAddPrompt,
+  handleServiceItems, handleServiceImageDelete, handleServiceImageSetCover,
   handleProjectsList, handleProjectDetails, handleProjectToggleFeatured, handleProjectToggleActive, handleProjectItems, handleProjectImageDelete, handleProjectImageSetCover, handleProjectDelete, handleProjectAddPrompt,
-  handleCategoriesList, handleCategoryDelete, handleCategoryAddPrompt,
-  handleArticlesList, handleArticleDetails, handleArticleTogglePublish, handleArticleDelete, handleArticleAiPrompt,
-  handleFaqsList, handleFaqDelete, handleFaqAddPrompt,
+  handleProjectVideosList, handleProjectVideoDelete,
+  handleCategoriesList, handleCategoryDelete, handleCategoryAddPrompt, handleCategoryToggleActive, handleCategoryEditPrompt,
+  handleArticlesList, handleArticleDetails, handleArticleTogglePublish, handleArticleDelete, handleArticleAiPrompt, handleArticleManualAddPrompt,
+  handleFaqsList, handleFaqDelete, handleFaqAddPrompt, handleFaqToggleActive, handleFaqEditPrompt,
   handleAdsList, handleAdDetails, handleAdToggle, handleAdDelete, handleAdAddPrompt, handleAdEditPrompt,
-  handleBeforeAfterList, handleBeforeAfterDelete,
+  handleBeforeAfterList, handleBeforeAfterDelete, handleBeforeAfterAddPrompt,
 } from "./content";
 import {
   handleMediaLibraryList, handleMediaDelete, handleMediaUploadPrompt,
@@ -37,12 +39,13 @@ import {
 } from "./reviews";
 import {
   handleCitiesList, handleCityToggleActive, handleCityDelete, handleCityServicesList,
+  handleCityAddPrompt, handleCityEditDescPrompt,
   handleKeywordsReport, handleAnalyticsReport,
   handleSeoList, handleRebuildSearchIndex,
 } from "./marketing";
 import {
-  handleCompanyProfile, handleToggleMaintenance, handleSocialContacts,
-  handleBusinessHours, handleAiPromptSettings, handleCompanySettingsStore,
+  handleCompanyProfile, handleCompanyProfileEditPrompt, handleToggleMaintenance, handleSocialContacts, handleContactAddPrompt, handleContactDelete,
+  handleBusinessHours, handleBusinessHoursToggle, handleBusinessHoursEditPrompt, handleAiPromptSettings, handleAiPromptEditPrompt, handleCompanySettingsStore, handleSettingStorePrompt,
   handleCompanyAddressesList, handleCompanyAddressDelete, handleCompanyAddressAddPrompt,
 } from "./settings";
 import {
@@ -63,6 +66,9 @@ import {
   processGalleryAlbumTextWizard,
   processGalleryAlbumPhotoWizard,
   processProjectPhotoWizard,
+  processServicePhotoWizard,
+  processBeforeAfterPhotoWizard,
+  processArticlePhotoWizard,
   processFieldEditWizard,
   processMiscWizards,
 } from "../wizards";
@@ -240,6 +246,9 @@ export async function handlePhotoMessage(msg: TelegramMessage) {
   if (await processAdvertisementPhotoWizard(userId, msg, state)) return;
   if (await processGalleryAlbumPhotoWizard(userId, msg, state, companyId)) return;
   if (await processProjectPhotoWizard(userId, msg, state)) return;
+  if (await processServicePhotoWizard(userId, msg, state)) return;
+  if (await processBeforeAfterPhotoWizard(userId, msg, state)) return;
+  if (await processArticlePhotoWizard(userId, msg, state)) return;
 
   // Default: General Media Library upload
   await handlePhotoUpload(msg);
@@ -323,6 +332,53 @@ export async function handleCallback(query: TelegramCallbackQuery) {
   if (data.startsWith("srv_toggle_featured:")) return handleServiceToggleFeatured(userId, data.split(":")[1], messageId);
   if (data.startsWith("srv_delete:")) return handleServiceDelete(userId, data.split(":")[1], messageId);
   if (data === "srv_add_prompt") return handleServiceAddPrompt(userId);
+  if (data.startsWith("srv_items:")) {
+    const parts = data.split(":");
+    return handleServiceItems(userId, parts[1], messageId, parts[2] ? parseInt(parts[2], 10) : 0);
+  }
+  if (data.startsWith("srv_img_del:")) {
+    const parts = data.split(":");
+    return handleServiceImageDelete(userId, parts[1], parts[2], messageId, parts[3] ? parseInt(parts[3], 10) : 0);
+  }
+  if (data.startsWith("srv_img_cover:")) {
+    const parts = data.split(":");
+    return handleServiceImageSetCover(userId, parts[1], parts[2], messageId, parts[3] ? parseInt(parts[3], 10) : 0);
+  }
+  if (data.startsWith("srv_add_photo:")) {
+    const srvId = data.split(":")[1];
+    setAdminState(userId, "awaiting_service_photo", { serviceId: srvId });
+    return sendMessage(userId, `📸 <b>إضافة صورة للخدمة:</b>\n\nأرسل الآن الصورة مباشرة في الدردشة لرفعها إلى السحابة وإضافتها لمعرض هذه الخدمة:`, {
+      reply_markup: Keyboards.cancelWizard(`srv_view:${srvId}`)
+    });
+  }
+  if (data.startsWith("srv_edit_cover:")) {
+    const srvId = data.split(":")[1];
+    setAdminState(userId, "awaiting_service_edit_cover", { serviceId: srvId });
+    return sendMessage(userId, `🖼️ <b>تغيير صورة غلاف الخدمة:</b>\n\nأرسل الآن صورة الغلاف أو رابط الصورة لتعيينها كغلاف رئيسي للخدمة:`, {
+      reply_markup: Keyboards.cancelWizard(`srv_view:${srvId}`)
+    });
+  }
+  if (data.startsWith("srv_edit_name:")) {
+    const srvId = data.split(":")[1];
+    setAdminState(userId, "awaiting_service_edit_name", { serviceId: srvId });
+    return sendMessage(userId, `✏️ <b>تعديل اسم الخدمة:</b>\n\nأرسل الاسم الجديد:`, {
+      reply_markup: Keyboards.cancelWizard(`srv_view:${srvId}`)
+    });
+  }
+  if (data.startsWith("srv_edit_price:")) {
+    const srvId = data.split(":")[1];
+    setAdminState(userId, "awaiting_service_edit_price", { serviceId: srvId });
+    return sendMessage(userId, `💰 <b>تعديل سعر المتر للخدمة:</b>\n\nأرسل السعر الجديد بالريال (أرقام فقط):`, {
+      reply_markup: Keyboards.cancelWizard(`srv_view:${srvId}`)
+    });
+  }
+  if (data.startsWith("srv_edit_desc:")) {
+    const srvId = data.split(":")[1];
+    setAdminState(userId, "awaiting_service_edit_desc", { serviceId: srvId });
+    return sendMessage(userId, `📝 <b>تعديل وصف الخدمة:</b>\n\nأرسل الوصف الجديد:`, {
+      reply_markup: Keyboards.cancelWizard(`srv_view:${srvId}`)
+    });
+  }
 
   if (data === "cnt_projects") return handleProjectsList(userId, messageId);
   if (data.startsWith("prj_view:")) return handleProjectDetails(userId, data.split(":")[1], messageId);
@@ -382,20 +438,69 @@ export async function handleCallback(query: TelegramCallbackQuery) {
       reply_markup: Keyboards.cancelWizard(`prj_view:${prjId}`)
     });
   }
+  if (data.startsWith("prj_videos:")) {
+    const prjId = data.split(":")[1];
+    return handleProjectVideosList(userId, prjId, messageId);
+  }
+  if (data.startsWith("prj_add_video:")) {
+    const prjId = data.split(":")[1];
+    setAdminState(userId, "awaiting_project_video_url", { projectId: prjId });
+    return sendMessage(userId, `🎥 <b>إضافة فيديو للمشروع:</b>\n\nأرسل رابط الفيديو (مثال: رابط يوتيوب أو رابط mp4 سحابي):`, {
+      reply_markup: Keyboards.cancelWizard(`prj_view:${prjId}`)
+    });
+  }
+  if (data.startsWith("prj_vid_del:")) {
+    const parts = data.split(":");
+    return handleProjectVideoDelete(userId, parts[1], parts[2], messageId);
+  }
   if (data.startsWith("prj_delete:")) return handleProjectDelete(userId, data.split(":")[1], messageId);
   if (data === "prj_add_prompt") return handleProjectAddPrompt(userId);
 
   if (data === "cnt_categories") return handleCategoriesList(userId, messageId);
+  if (data.startsWith("cat_toggle:")) return handleCategoryToggleActive(userId, data.split(":")[1], messageId);
+  if (data.startsWith("cat_edit:")) return handleCategoryEditPrompt(userId, data.split(":")[1]);
   if (data.startsWith("cat_delete:")) return handleCategoryDelete(userId, data.split(":")[1], messageId);
   if (data === "cat_add_prompt") return handleCategoryAddPrompt(userId);
 
   if (data === "cnt_articles") return handleArticlesList(userId, messageId);
+  if (data === "art_add_manual") return handleArticleManualAddPrompt(userId);
   if (data.startsWith("art_view:")) return handleArticleDetails(userId, data.split(":")[1], messageId);
   if (data.startsWith("art_toggle_pub:")) return handleArticleTogglePublish(userId, data.split(":")[1], messageId);
   if (data.startsWith("art_delete:")) return handleArticleDelete(userId, data.split(":")[1], messageId);
+  if (data.startsWith("art_add_photo:")) {
+    const artId = data.split(":")[1];
+    setAdminState(userId, "awaiting_article_photo", { articleId: artId });
+    return sendMessage(userId, `📸 <b>إضافة صورة للمقال:</b>\n\nأرسل الآن الصورة مباشرة في الدردشة لرفعها وإضافتها لمعرض هذا المقال:`, {
+      reply_markup: Keyboards.cancelWizard(`art_view:${artId}`)
+    });
+  }
+  if (data.startsWith("art_edit_cover:")) {
+    const artId = data.split(":")[1];
+    setAdminState(userId, "awaiting_article_edit_cover", { articleId: artId });
+    return sendMessage(userId, `🖼️ <b>تغيير صورة غلاف المقال:</b>\n\nأرسل الآن صورة الغلاف أو رابط الصورة:`, {
+      reply_markup: Keyboards.cancelWizard(`art_view:${artId}`)
+    });
+  }
+  if (data.startsWith("art_edit_title:")) {
+    const artId = data.split(":")[1];
+    setAdminState(userId, "awaiting_article_edit_title", { articleId: artId });
+    return sendMessage(userId, `✏️ <b>تعديل عنوان المقال:</b>\n\nأرسل العنوان الجديد:`, {
+      reply_markup: Keyboards.cancelWizard(`art_view:${artId}`)
+    });
+  }
+  if (data.startsWith("art_edit_excerpt:")) {
+    const artId = data.split(":")[1];
+    setAdminState(userId, "awaiting_article_edit_excerpt", { articleId: artId });
+    return sendMessage(userId, `📝 <b>تعديل موجز المقال:</b>\n\nأرسل الموجز الجديد:`, {
+      reply_markup: Keyboards.cancelWizard(`art_view:${artId}`)
+    });
+  }
   if (data === "cnt_ai_article") return handleArticleAiPrompt(userId);
 
   if (data === "cnt_faqs") return handleFaqsList(userId, messageId);
+  if (data.startsWith("faq_toggle:")) return handleFaqToggleActive(userId, data.split(":")[1], messageId);
+  if (data.startsWith("faq_edit_q:")) return handleFaqEditPrompt(userId, data.split(":")[1], "q");
+  if (data.startsWith("faq_edit_a:")) return handleFaqEditPrompt(userId, data.split(":")[1], "a");
   if (data.startsWith("faq_delete:")) return handleFaqDelete(userId, data.split(":")[1], messageId);
   if (data === "faq_add_prompt") return handleFaqAddPrompt(userId);
 
@@ -412,6 +517,7 @@ export async function handleCallback(query: TelegramCallbackQuery) {
   if (data.startsWith("ad_edit_media:")) return handleAdEditPrompt(userId, data.split(":")[1], "media");
 
   if (data === "cnt_before_after") return handleBeforeAfterList(userId, messageId);
+  if (data === "ba_add_prompt" || data.startsWith("ba_add_prompt")) return handleBeforeAfterAddPrompt(userId);
   if (data.startsWith("ba_delete:")) return handleBeforeAfterDelete(userId, data.split(":")[1], messageId);
 
   // 4. Media & Gallery Callbacks
@@ -451,7 +557,9 @@ export async function handleCallback(query: TelegramCallbackQuery) {
 
   // 6. Marketing Callbacks
   if (data === "mkt_cities") return handleCitiesList(userId, messageId);
+  if (data === "city_add_prompt") return handleCityAddPrompt(userId);
   if (data.startsWith("city_toggle:")) return handleCityToggleActive(userId, data.split(":")[1], messageId);
+  if (data.startsWith("city_edit_desc:")) return handleCityEditDescPrompt(userId, data.split(":")[1]);
   if (data.startsWith("city_delete:")) return handleCityDelete(userId, data.split(":")[1], messageId);
   if (data === "mkt_city_services") return handleCityServicesList(userId, messageId);
   if (data === "mkt_seo") return handleSeoList(userId, messageId);
@@ -461,14 +569,25 @@ export async function handleCallback(query: TelegramCallbackQuery) {
 
   // 7. Settings Callbacks
   if (data === "set_profile") return handleCompanyProfile(userId, messageId);
+  if (data === "set_edit_phone") return handleCompanyProfileEditPrompt(userId, "phone");
+  if (data === "set_edit_whatsapp") return handleCompanyProfileEditPrompt(userId, "whatsapp");
+  if (data === "set_edit_email") return handleCompanyProfileEditPrompt(userId, "email");
+  if (data === "set_edit_tax") return handleCompanyProfileEditPrompt(userId, "tax");
+  if (data === "set_edit_cr") return handleCompanyProfileEditPrompt(userId, "cr");
   if (data === "set_toggle_maint") return handleToggleMaintenance(userId, messageId);
   if (data === "set_addresses") return handleCompanyAddressesList(userId, messageId);
   if (data.startsWith("addr_delete:")) return handleCompanyAddressDelete(userId, data.split(":")[1], messageId);
   if (data === "addr_add_prompt") return handleCompanyAddressAddPrompt(userId);
   if (data === "set_social") return handleSocialContacts(userId, messageId);
+  if (data === "contact_add_prompt") return handleContactAddPrompt(userId);
+  if (data.startsWith("contact_delete:")) return handleContactDelete(userId, data.split(":")[1], messageId);
   if (data === "set_hours") return handleBusinessHours(userId, messageId);
+  if (data.startsWith("hours_toggle:")) return handleBusinessHoursToggle(userId, parseInt(data.split(":")[1], 10), messageId);
+  if (data.startsWith("hours_edit:")) return handleBusinessHoursEditPrompt(userId, parseInt(data.split(":")[1], 10));
   if (data === "set_ai_prompt") return handleAiPromptSettings(userId, messageId);
+  if (data === "ai_prompt_edit") return handleAiPromptEditPrompt(userId);
   if (data === "set_store") return handleCompanySettingsStore(userId, messageId);
+  if (data === "setting_store_set") return handleSettingStorePrompt(userId);
 
   // 8. System & Push Notifications Callbacks
   if (data === "push_broadcast_prompt") return handleBroadcastPushPrompt(userId);

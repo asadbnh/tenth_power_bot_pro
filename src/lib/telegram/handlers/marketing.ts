@@ -19,10 +19,12 @@ export async function handleCitiesList(chatId: number, messageId?: number) {
 
     inline_keyboard.push([
       { text: `🔄 تفعيل/تعطيل: ${c.city_name_ar}`, callback_data: `city_toggle:${c.id}` },
+      { text: `✏️ تعديل الوصف`, callback_data: `city_edit_desc:${c.id}` },
       { text: `🗑️ حذف`, callback_data: `city_delete:${c.id}` },
     ]);
   });
 
+  inline_keyboard.push([{ text: "➕ إضافة مدينة جديدة", callback_data: "city_add_prompt" }]);
   inline_keyboard.push([{ text: "◀️ رجوع للتسويق", callback_data: "menu_marketing" }]);
 
   if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
@@ -43,6 +45,28 @@ export async function handleCityDelete(chatId: number, id: string, messageId?: n
   await db.from("city_pages").delete().eq("id", id);
   await sendMessage(chatId, `🗑️ تم حذف صفحة المدينة.`);
   await handleCitiesList(chatId, messageId);
+}
+
+export async function handleCityAddPrompt(chatId: number) {
+  const { setAdminState } = await import("../state");
+  const { Keyboards } = await import("../bot");
+  setAdminState(chatId, "awaiting_city_name");
+  await sendMessage(
+    chatId,
+    `📍 <b>إضافة صفحة مدينة جديدة لـ Local SEO — (الخطوة 1 من 3)</b>\n\nأرسل الآن <b>اسم المدينة بالعربي</b> (مثال: الخبر، أبها، مكة المكرمة):`,
+    { reply_markup: Keyboards.cancelWizard("mkt_cities") }
+  );
+}
+
+export async function handleCityEditDescPrompt(chatId: number, id: string) {
+  const { setAdminState } = await import("../state");
+  const { Keyboards } = await import("../bot");
+  setAdminState(chatId, "awaiting_city_edit_desc", { cityId: id });
+  await sendMessage(
+    chatId,
+    `✏️ <b>تعديل وصف وخدمات المدينة:</b>\n\nأرسل الوصف الترويجي الجديد للمدينة:`,
+    { reply_markup: Keyboards.cancelWizard("mkt_cities") }
+  );
 }
 
 export async function handleCityServicesList(chatId: number, messageId?: number) {
