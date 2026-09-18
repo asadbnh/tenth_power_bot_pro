@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { ServiceDetailPageContent } from "@/components/pages/ServiceDetailPageContent";
-import { getServiceBySlug, getServices } from "@/lib/actions/content";
+import { getServiceBySlug, getServices, getSeoMetadata } from "@/lib/actions/content";
 import { getFallbackServices } from "@/lib/fallback-provider";
 
 export async function generateStaticParams() {
@@ -24,21 +24,45 @@ export async function generateMetadata({
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
 
   const serviceName = service ? (isAr ? service.name_ar || service.name : service.name_en || service.name) : slug.replace(/-/g, " ");
-  const title = isAr
+  const defaultTitle = isAr
     ? `خدمة ${serviceName} | WebTaky`
     : `${serviceName} Service | WebTaky`;
-  const description = String(service?.short_description || service?.description || (isAr
+  const defaultDescription = String(service?.short_description || service?.description || (isAr
     ? `تعرف على تفاصيل ومواصفات وتكلفة تنفيذ ${serviceName} من مؤسسة القوة العاشرة WebTaky`
     : `Explore specifications, features and installation details for ${serviceName} by WebTaky`));
+  const defaultImage = String(service?.cover_image_url || "/images/defaults/services/tempered-glass.webp");
+
+  // ─── Try to override with seo_metadata from DB ─────────────────────────────
+  let seoMeta: Record<string, unknown> | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const serviceId = (service as any)?.id;
+  if (serviceId) {
+    seoMeta = await getSeoMetadata("service", String(serviceId), locale).catch(() => null);
+  }
+
+  const title = String(seoMeta?.meta_title || defaultTitle);
+  const description = String(seoMeta?.meta_description || defaultDescription);
+  const ogImage = String(seoMeta?.og_image_url || defaultImage);
 
   return {
     title,
     description,
     alternates: {
-      canonical: `${appUrl}/${locale}/services/${slug}`,
+      canonical: String(seoMeta?.canonical_url || `${appUrl}/${locale}/services/${slug}`),
       languages: { ar: `${appUrl}/ar/services/${slug}`, en: `${appUrl}/en/services/${slug}` },
     },
-    openGraph: { title, description, images: [String(service?.cover_image_url || "/images/defaults/services/tempered-glass.webp")] },
+    openGraph: {
+      title: String(seoMeta?.og_title || title),
+      description: String(seoMeta?.og_description || description),
+      images: [ogImage],
+      type: (seoMeta?.og_type as any) || "website",
+    },
+    twitter: {
+      card: (seoMeta?.twitter_card as any) || "summary_large_image",
+      title: String(seoMeta?.twitter_title || title),
+      description: String(seoMeta?.twitter_description || description),
+      images: [String(seoMeta?.twitter_image_url || ogImage)],
+    },
   };
 }
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { ArticleDetailPageContent } from "@/components/pages/ArticleDetailPageContent";
-import { getArticleBySlug, getArticles } from "@/lib/actions/content";
+import { getArticleBySlug, getArticles, getSeoMetadata } from "@/lib/actions/content";
 import { getFallbackArticles } from "@/lib/fallback-provider";
 
 export async function generateStaticParams() {
@@ -24,21 +24,45 @@ export async function generateMetadata({
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
 
   const titleText = article ? (isAr ? article.title_ar || article.title : article.title_en || article.title) : slug.replace(/-/g, " ");
-  const title = isAr
+  const defaultTitle = isAr
     ? `${titleText} | مدونة WebTaky`
     : `${titleText} | WebTaky Blog`;
-  const description = String(article?.excerpt_ar || article?.excerpt_en || article?.excerpt || (isAr
+  const defaultDescription = String(article?.excerpt_ar || article?.excerpt_en || article?.excerpt || (isAr
     ? `اقرأ مقال ${titleText} واكتشف أفضل النصائح والمعلومات الهندسية والمعمارية`
     : `Read article ${titleText} and discover architectural tips and insights`));
+  const defaultImage = String(article?.cover_image_url || "/images/defaults/projects/project-1.webp");
+
+  // ─── Try to override with seo_metadata from DB ─────────────────────────────
+  let seoMeta: Record<string, unknown> | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const articleId = (article as any)?.id;
+  if (articleId) {
+    seoMeta = await getSeoMetadata("article", String(articleId), locale).catch(() => null);
+  }
+
+  const title = String(seoMeta?.meta_title || defaultTitle);
+  const description = String(seoMeta?.meta_description || defaultDescription);
+  const ogImage = String(seoMeta?.og_image_url || defaultImage);
 
   return {
     title,
     description,
     alternates: {
-      canonical: `${appUrl}/${locale}/blog/${slug}`,
+      canonical: String(seoMeta?.canonical_url || `${appUrl}/${locale}/blog/${slug}`),
       languages: { ar: `${appUrl}/ar/blog/${slug}`, en: `${appUrl}/en/blog/${slug}` },
     },
-    openGraph: { title, description, images: [String(article?.cover_image_url || "/images/defaults/projects/project-1.webp")] },
+    openGraph: {
+      title: String(seoMeta?.og_title || title),
+      description: String(seoMeta?.og_description || description),
+      images: [ogImage],
+      type: "article",
+    },
+    twitter: {
+      card: (seoMeta?.twitter_card as any) || "summary_large_image",
+      title: String(seoMeta?.twitter_title || title),
+      description: String(seoMeta?.twitter_description || description),
+      images: [String(seoMeta?.twitter_image_url || ogImage)],
+    },
   };
 }
 

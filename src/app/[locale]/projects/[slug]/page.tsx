@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { ProjectDetailPageContent } from "@/components/pages/ProjectDetailPageContent";
-import { getProjectBySlug, getProjects } from "@/lib/actions/content";
+import { getProjectBySlug, getProjects, getSeoMetadata } from "@/lib/actions/content";
 import { getFallbackProjects } from "@/lib/fallback-provider";
 
 export async function generateStaticParams() {
@@ -24,21 +24,45 @@ export async function generateMetadata({
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
 
   const projectName = project ? (isAr ? project.name_ar : project.name_en) : slug.replace(/-/g, " ");
-  const title = isAr
+  const defaultTitle = isAr
     ? `مشروع ${projectName} | WebTaky`
     : `Project ${projectName} | WebTaky`;
-  const description = String(project?.description_ar || project?.description_en || (isAr
+  const defaultDescription = String(project?.description_ar || project?.description_en || (isAr
     ? `استعرض تفاصيل ومراحل تنفيذ مشروع ${projectName} من تنفيذ مؤسسة القوة العاشرة WebTaky`
     : `Explore execution stages and specs of project ${projectName} by WebTaky`));
+  const defaultImage = String(project?.cover_image_url || "/images/defaults/projects/project-1.webp");
+
+  // ─── Try to override with seo_metadata from DB ─────────────────────────────
+  let seoMeta: Record<string, unknown> | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const projectId = (project as any)?.id;
+  if (projectId) {
+    seoMeta = await getSeoMetadata("project", String(projectId), locale).catch(() => null);
+  }
+
+  const title = String(seoMeta?.meta_title || defaultTitle);
+  const description = String(seoMeta?.meta_description || defaultDescription);
+  const ogImage = String(seoMeta?.og_image_url || defaultImage);
 
   return {
     title,
     description,
     alternates: {
-      canonical: `${appUrl}/${locale}/projects/${slug}`,
+      canonical: String(seoMeta?.canonical_url || `${appUrl}/${locale}/projects/${slug}`),
       languages: { ar: `${appUrl}/ar/projects/${slug}`, en: `${appUrl}/en/projects/${slug}` },
     },
-    openGraph: { title, description, images: [String(project?.cover_image_url || "/images/defaults/projects/project-1.webp")] },
+    openGraph: {
+      title: String(seoMeta?.og_title || title),
+      description: String(seoMeta?.og_description || description),
+      images: [ogImage],
+      type: (seoMeta?.og_type as any) || "website",
+    },
+    twitter: {
+      card: (seoMeta?.twitter_card as any) || "summary_large_image",
+      title: String(seoMeta?.twitter_title || title),
+      description: String(seoMeta?.twitter_description || description),
+      images: [String(seoMeta?.twitter_image_url || ogImage)],
+    },
   };
 }
 

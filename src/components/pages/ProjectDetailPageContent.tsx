@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   MapPin, Calendar, CheckCircle2, ArrowRight,
-  Building2, ChevronLeft, Images, ShieldCheck, Maximize2, X
+  Building2, ChevronLeft, Images, ShieldCheck, Maximize2, X, PlayCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
@@ -55,6 +55,9 @@ export function ProjectDetailPageContent({ slug, locale, dict, initialProject }:
       : initialCover
       ? [{ id: "cover", url: initialCover, title_ar: name, title_en: name, is_cover: true }]
       : [];
+
+  const projectVideos: { id: string; video_url: string; thumbnail_url: string | null; title_ar: string | null; title_en: string | null }[] =
+    (project.project_videos as any[]) || [];
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -160,6 +163,62 @@ export function ProjectDetailPageContent({ slug, locale, dict, initialProject }:
             </div>
           )}
         </div>
+
+        {/* ─── Project Videos Section from project_videos DB ─────────────────── */}
+        {projectVideos.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-xl font-extrabold text-text-primary">
+              <PlayCircle className="w-6 h-6 text-accent-500" />
+              <h2>{isRtl ? `فيديوهات المشروع (${projectVideos.length})` : `Project Videos (${projectVideos.length})`}</h2>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {projectVideos.map((vid) => {
+                const isYouTube = /youtube\.com|youtu\.be/.test(vid.video_url);
+                const isVimeo = /vimeo\.com/.test(vid.video_url);
+                const videoTitle = isRtl ? (vid.title_ar || "فيديو مشروع") : (vid.title_en || vid.title_ar || "Project Video");
+
+                // Build embeddable URL
+                let embedUrl = vid.video_url;
+                if (isYouTube) {
+                  const ytId = vid.video_url.match(/(?:v=|youtu\.be\/)([\w-]{11})/)?.[1];
+                  if (ytId) embedUrl = `https://www.youtube.com/embed/${ytId}?rel=0`;
+                } else if (isVimeo) {
+                  const vimeoId = vid.video_url.match(/vimeo\.com\/(\d+)/)?.[1];
+                  if (vimeoId) embedUrl = `https://player.vimeo.com/video/${vimeoId}`;
+                }
+
+                return (
+                  <div key={vid.id} className="rounded-2xl overflow-hidden border border-border-light shadow-sm bg-surface-elevated">
+                    {isYouTube || isVimeo ? (
+                      <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                        <iframe
+                          src={embedUrl}
+                          title={videoTitle}
+                          className="absolute inset-0 w-full h-full"
+                          allowFullScreen
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          loading="lazy"
+                        />
+                      </div>
+                    ) : (
+                      <video
+                        src={vid.video_url}
+                        controls
+                        poster={vid.thumbnail_url || undefined}
+                        className="w-full h-48 object-cover"
+                      />
+                    )}
+                    {videoTitle && (
+                      <div className="px-4 py-2.5">
+                        <p className="text-sm font-semibold text-text-primary">{videoTitle}</p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="grid md:grid-cols-3 gap-8">
           <div className="md:col-span-2 space-y-6">

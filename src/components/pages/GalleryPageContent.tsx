@@ -43,8 +43,11 @@ export function GalleryPageContent({ locale, dict, initialAlbums, initialItems }
   const [selectedView, setSelectedView] = useState<"albums" | "grid">("albums");
   const [lightboxItem, setLightboxItem] = useState<string | null>(null);
 
-  const albums = (initialAlbums && initialAlbums.length > 0) ? initialAlbums : DEFAULT_ALBUMS;
-  const items = (initialItems && initialItems.length > 0) ? initialItems : DEFAULT_ITEMS;
+  // Deduplicate by id to prevent React "duplicate key" warnings from DB JOINs
+  const rawAlbums = (initialAlbums && initialAlbums.length > 0) ? initialAlbums : DEFAULT_ALBUMS;
+  const rawItems = (initialItems && initialItems.length > 0) ? initialItems : DEFAULT_ITEMS;
+  const albums = Array.from(new Map(rawAlbums.map((a) => [String(a.id), a])).values());
+  const items = Array.from(new Map(rawItems.map((it) => [String(it.id), it])).values());
   const activeLightboxObj = items.find((it) => String(it.id) === String(lightboxItem)) || items[0];
 
   return (

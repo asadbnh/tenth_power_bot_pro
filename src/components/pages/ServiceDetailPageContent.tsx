@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   CheckCircle2, ArrowRight, Phone, ShieldCheck, Clock, Award,
-  Sparkles, Layers3, Building2, RectangleHorizontal, PaintBucket, ChevronLeft
+  Sparkles, Layers3, Building2, RectangleHorizontal, PaintBucket, ChevronLeft,
+  Images, Maximize2, X, ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
@@ -27,6 +29,8 @@ const iconMap: Record<string, React.ElementType> = {
 
 export function ServiceDetailPageContent({ slug, locale, dict, initialService }: Props) {
   const isRtl = locale === "ar";
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const service = initialService || {
     slug,
@@ -55,6 +59,9 @@ export function ServiceDetailPageContent({ slug, locale, dict, initialService }:
   const specs = service.specs || [];
   const faqs = service.faqs || [];
   const coverImage = service.cover_image_url;
+  const galleryImages: { id: string; url: string; is_cover: boolean; sort_order: number }[] =
+    (service.gallery_images as any[]) || [];
+  const currentGalleryImage = galleryImages[activeImageIndex]?.url || coverImage;
 
   const rawIcon = service.icon;
   const IconComponent = typeof rawIcon === "string" && iconMap[rawIcon] ? iconMap[rawIcon] : (typeof rawIcon === "function" ? rawIcon : Layers3);
@@ -124,18 +131,62 @@ export function ServiceDetailPageContent({ slug, locale, dict, initialService }:
 
       {/* Main Content & Sidebar */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
-        {/* Service Showcase Canvas Banner */}
-        <div className="rounded-3xl overflow-hidden shadow-2xl border border-border-light">
-          {coverImage ? (
-            <img src={coverImage} alt={name} className="w-full h-80 object-cover" />
-          ) : (
-            <AnimatedCanvasBanner 
-              aspectRatio="wide"
-              title={name}
-              subtitle={shortDesc}
-              badge={isRtl ? "مواصفات وإطارات هندسية معتمدة" : "Certified Architectural Specs"}
-              icon={<IconComponent className="w-5 h-5" />}
-            />
+        {/* Service Showcase: cover + gallery strip from service_images */}
+        <div className="space-y-4">
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-border-light group bg-black/20">
+            {currentGalleryImage ? (
+              <div className="relative w-full h-72 sm:h-80 overflow-hidden">
+                <img
+                  src={currentGalleryImage}
+                  alt={name}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                {galleryImages.length > 0 && (
+                  <button
+                    onClick={() => setLightboxOpen(true)}
+                    className="absolute bottom-4 end-4 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white text-xs font-bold transition-all shadow-lg"
+                    aria-label={isRtl ? "تكبير الصورة" : "Enlarge photo"}
+                  >
+                    <Maximize2 className="w-4 h-4" />
+                    <span>{isRtl ? "عرض بحجم كامل" : "Full View"}</span>
+                  </button>
+                )}
+              </div>
+            ) : (
+              <AnimatedCanvasBanner
+                aspectRatio="wide"
+                title={name}
+                subtitle={shortDesc}
+                badge={isRtl ? "مواصفات وإطارات هندسية معتمدة" : "Certified Architectural Specs"}
+                icon={<IconComponent className="w-5 h-5" />}
+              />
+            )}
+          </div>
+
+          {/* Gallery thumbnails strip from service_images DB */}
+          {galleryImages.length > 1 && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-text-secondary">
+                <Images className="w-4 h-4 text-accent-500" />
+                <span>{isRtl ? `معرض صور الخدمة (${galleryImages.length} صور):` : `Service Gallery (${galleryImages.length} photos):`}</span>
+              </div>
+              <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-thin">
+                {galleryImages.map((img, idx) => (
+                  <button
+                    key={img.id || idx}
+                    onClick={() => setActiveImageIndex(idx)}
+                    className={cn(
+                      "relative shrink-0 w-20 h-16 sm:w-24 sm:h-20 rounded-xl overflow-hidden border-2 transition-all",
+                      activeImageIndex === idx
+                        ? "border-accent-500 scale-105 shadow-md shadow-accent-500/20"
+                        : "border-border-light hover:border-text-tertiary opacity-70 hover:opacity-100"
+                    )}
+                  >
+                    <img src={img.url} alt={`${name} - ${idx + 1}`} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
         </div>
         <div className="grid md:grid-cols-3 gap-10">
@@ -226,6 +277,45 @@ export function ServiceDetailPageContent({ slug, locale, dict, initialService }:
           </div>
         </div>
       </div>
+
+      {/* Lightbox Modal for service_images */}
+      {lightboxOpen && currentGalleryImage && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={() => setLightboxOpen(false)}
+        >
+          <button
+            onClick={() => setLightboxOpen(false)}
+            className="absolute top-6 end-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            aria-label={isRtl ? "إغلاق" : "Close"}
+          >
+            <X className="w-6 h-6" />
+          </button>
+          {galleryImages.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); setActiveImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length); }}
+                className="absolute start-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                aria-label={isRtl ? "السابق" : "Previous"}
+              >
+                <ChevronRight className={cn("w-6 h-6", !isRtl && "rotate-180")} />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); setActiveImageIndex((prev) => (prev + 1) % galleryImages.length); }}
+                className="absolute end-16 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                aria-label={isRtl ? "التالي" : "Next"}
+              >
+                <ChevronRight className={cn("w-6 h-6", isRtl && "rotate-180")} />
+              </button>
+            </>
+          )}
+          <div className="max-w-5xl max-h-[90vh] overflow-hidden rounded-2xl" onClick={(e) => e.stopPropagation()}>
+            <img src={currentGalleryImage} alt={name} className="w-full h-auto max-h-[85vh] object-contain" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

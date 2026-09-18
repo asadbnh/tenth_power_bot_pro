@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {
-  Calendar, Clock, User, Share2, ArrowRight, ChevronLeft, BookOpen, Tag
+  Calendar, Clock, User, Share2, ArrowRight, ChevronLeft, BookOpen, Tag, Images
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
@@ -40,6 +40,8 @@ export function ArticleDetailPageContent({ slug, locale, dict, initialArticle }:
   const readTime = article.read_time_minutes || article.readTime || 5;
   const date = article.published_at ? new Date(article.published_at).toLocaleDateString(isRtl ? "ar-SA" : "en-US") : "2026";
   const coverImage = article.cover_image_url || article.featured_image_url;
+  const articleImages: { id: string; url: string; context: string | null }[] =
+    (article.article_images as any[]) || [];
 
   return (
     <div className="pt-[var(--header-height)] min-h-dvh bg-gradient-to-b from-background to-surface">
@@ -123,7 +125,31 @@ export function ArticleDetailPageContent({ slug, locale, dict, initialArticle }:
           </div>
         )}
 
-        {/* Share & CTA */}
+        {/* Article Images Gallery from article_images DB */}
+        {articleImages.length > 0 && (
+          <div className="pt-6 border-t border-border-light space-y-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-text-secondary">
+              <Images className="w-3.5 h-3.5 text-accent-500" />
+              <span>{isRtl ? `صور المقال (${articleImages.length}):` : `Article Photos (${articleImages.length}):`}</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {articleImages.map((img) => (
+                <div key={img.id} className="rounded-2xl overflow-hidden border border-border-light shadow-sm group">
+                  <img
+                    src={img.url}
+                    alt={img.context || title}
+                    className="w-full h-36 object-cover transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  {img.context && (
+                    <p className="px-3 py-2 text-xs text-text-tertiary truncate">{img.context}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="mt-16 pt-8 border-t border-border-light flex flex-col sm:flex-row items-center justify-between gap-6">
           <Link href={`/${locale}/quote`}
             className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-primary-600 text-white font-bold text-sm hover:bg-primary-700 active:scale-95 transition-all">

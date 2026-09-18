@@ -91,6 +91,36 @@ export async function getServiceBySlug(slug: string, locale = "ar") {
 
   if (!service) return null;
 
+  // ─── Fetch service_images from DB ─────────────────────────────────
+  let serviceImages: { id: string; url: string; is_cover: boolean; sort_order: number }[] = [];
+  try {
+    const sql = getSql();
+    const images = await sql`
+      SELECT
+        si.id, si.is_cover, si.sort_order,
+        COALESCE(m.cdn_url, m.file_url) AS image_url
+      FROM service_images si
+      JOIN media_library m ON si.media_id = m.id
+      WHERE si.service_id = ${service.id as string}
+      ORDER BY si.is_cover DESC, si.sort_order ASC;
+    `;
+    if (images && images.length > 0) {
+      serviceImages = images.map((img: any) => ({
+        id: img.id,
+        url: img.image_url,
+        is_cover: Boolean(img.is_cover),
+        sort_order: img.sort_order,
+      }));
+      // Override cover_image_url with DB cover if not already set
+      const cover = serviceImages.find((img) => img.is_cover) || serviceImages[0];
+      if (cover?.url && !service.cover_image_url) {
+        service.cover_image_url = cover.url;
+      }
+    }
+  } catch (err) {
+    console.warn("Could not fetch service_images:", err);
+  }
+
   return {
     ...service,
     slug: service.slug,
@@ -103,6 +133,7 @@ export async function getServiceBySlug(slug: string, locale = "ar") {
     features: isAr ? service.features_ar : service.features_en || service.features_ar || [],
     specs: service.specs || [],
     faqs: service.faqs || [],
+    gallery_images: serviceImages,
   };
 }
 
@@ -208,6 +239,7 @@ export async function getProjectBySlug(slug: string, _locale = "ar") {
   }
 
   let projectImages: { id: string; url: string; title_ar: string; title_en: string; is_cover: boolean }[] = [];
+  let projectVideos: { id: string; video_url: string; thumbnail_url: string | null; title_ar: string | null; title_en: string | null; duration_seconds: number | null; sort_order: number }[] = [];
 
   if (project) {
     try {
@@ -240,6 +272,30 @@ export async function getProjectBySlug(slug: string, _locale = "ar") {
     } catch (err) {
       console.warn("Could not fetch project images:", err);
     }
+
+    // ─── Fetch project_videos from DB ────────────────────────────────
+    try {
+      const sql = getSql();
+      const videos = await sql`
+        SELECT id, video_url, thumbnail_url, title_ar, title_en, duration_seconds, sort_order
+        FROM project_videos
+        WHERE project_id = ${project.id as string}
+        ORDER BY sort_order ASC;
+      `;
+      if (videos && videos.length > 0) {
+        projectVideos = videos.map((v: any) => ({
+          id: v.id,
+          video_url: v.video_url,
+          thumbnail_url: v.thumbnail_url || null,
+          title_ar: v.title_ar || null,
+          title_en: v.title_en || null,
+          duration_seconds: v.duration_seconds || null,
+          sort_order: v.sort_order,
+        }));
+      }
+    } catch (err) {
+      console.warn("Could not fetch project_videos:", err);
+    }
   } else {
     const fallbacks = getFallbackProjects() as Record<string, unknown>[];
     project = fallbacks.find((p) => p.slug === slug) || fallbacks[0] || null;
@@ -261,6 +317,7 @@ export async function getProjectBySlug(slug: string, _locale = "ar") {
     client_en: project.client_en || project.client_name || "VIP Client",
     cover_image_url: project.cover_image_url || "/images/defaults/projects/project-1.webp",
     gallery_images: projectImages,
+    project_videos: projectVideos,
     project_value: project.project_value || null,
     status: project.status || "completed",
     specifications: project.specifications || null,
@@ -342,6 +399,8 @@ export async function getArticleBySlug(slug: string, locale = "ar") {
   }
 
   let tags: { tag_ar: string; tag_en?: string }[] = [];
+  let articleImages: { id: string; url: string; context: string | null }[] = [];
+
   if (article) {
     try {
       const sql = getSql();
@@ -358,6 +417,29 @@ export async function getArticleBySlug(slug: string, locale = "ar") {
       }
     } catch {
       // ignore
+    }
+
+    // ─── Fetch article_images from DB ────────────────────────────────
+    try {
+      const sql = getSql();
+      const dbImages = await sql`
+        SELECT
+          ai.id, ai.context,
+          COALESCE(m.cdn_url, m.file_url) AS image_url
+        FROM article_images ai
+        JOIN media_library m ON ai.media_id = m.id
+        WHERE ai.article_id = ${article.id as string}
+        ORDER BY ai.id ASC;
+      `;
+      if (dbImages && dbImages.length > 0) {
+        articleImages = dbImages.map((img: any) => ({
+          id: img.id,
+          url: img.image_url,
+          context: img.context || null,
+        }));
+      }
+    } catch (err) {
+      console.warn("Could not fetch article_images:", err);
     }
   } else {
     const fallbacks = getFallbackArticles() as Record<string, unknown>[];
@@ -383,6 +465,7 @@ export async function getArticleBySlug(slug: string, locale = "ar") {
     content: isAr ? (article.content_ar || article.content) : (article.content_en || article.content_ar || article.content),
     featured_image_url: article.cover_image_url || article.featured_image_url,
     cover_image_url: article.cover_image_url || article.featured_image_url,
+    article_images: articleImages,
     tags: tags.length > 0 ? tags : [
       { tag_ar: "زجاج سكريت", tag_en: "Tempered Glass" },
       { tag_ar: "واجهات معمارية", tag_en: "Architectural Facades" },
@@ -425,15 +508,25 @@ export async function getGalleryAlbums(locale = "ar") {
   try {
     const sql = getSql();
     const rows = await sql`
-      SELECT 
+      SELECT
         ga.id, ga.slug, ga.title_ar, ga.title_en, ga.description_ar, ga.description_en,
-        COALESCE(ga.cover_image_url, m.cdn_url, m.file_url, '/images/defaults/services/tempered-glass.webp') as image_url,
-        COUNT(gi.id)::int as count
+        COUNT(DISTINCT gi.id)::int AS count,
+        COALESCE(
+          ga.cover_image_url,
+          (
+            SELECT COALESCE(m2.cdn_url, m2.file_url)
+            FROM gallery_items gi2
+            JOIN media_library m2 ON gi2.media_id = m2.id
+            WHERE gi2.album_id = ga.id
+            ORDER BY gi2.sort_order ASC
+            LIMIT 1
+          ),
+          '/images/defaults/services/tempered-glass.webp'
+        ) AS image_url
       FROM gallery_albums ga
       LEFT JOIN gallery_items gi ON gi.album_id = ga.id
-      LEFT JOIN media_library m ON gi.media_id = m.id
       WHERE ga.is_active = true
-      GROUP BY ga.id, ga.slug, ga.title_ar, ga.title_en, ga.description_ar, ga.description_en, ga.cover_image_url, ga.sort_order, m.cdn_url, m.file_url
+      GROUP BY ga.id, ga.slug, ga.title_ar, ga.title_en, ga.description_ar, ga.description_en, ga.cover_image_url, ga.sort_order
       ORDER BY ga.sort_order ASC;
     `;
     if (rows && rows.length > 0) {
@@ -1060,6 +1153,59 @@ export async function searchDatabase(query: string, locale = "ar", limit = 12) {
     return [];
   }
 }
+// ─── SEO Metadata Action ──────────────────────────────────────────────
 
+/**
+ * Fetch dynamic SEO metadata for any entity (service, project, article, city_page).
+ * Falls back gracefully to null if no record exists.
+ */
+export async function getSeoMetadata(
+  entityType: "service" | "project" | "article" | "city_page",
+  entityId: string,
+  locale = "ar"
+) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
+  try {
+    const { data } = await supabase
+      .from("seo_metadata")
+      .select(
+        "meta_title, meta_description, meta_keywords, canonical_url, og_title, og_description, og_image_url, og_type, twitter_card, twitter_title, twitter_description, twitter_image_url, structured_data"
+      )
+      .eq("entity_type", entityType)
+      .eq("entity_id", entityId)
+      .eq("locale", locale)
+      .limit(1)
+      .single();
+    return data || null;
+  } catch {
+    return null;
+  }
+}
 
+// ─── Company Settings Action ──────────────────────────────────────────
+
+/**
+ * Read a single key from company_settings table.
+ * Returns the JSONB value or null if not found.
+ */
+export async function getCompanySetting(key: string): Promise<unknown> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
+  try {
+    const { data: comp } = await supabase.from("companies").select("id").limit(1).single();
+    if (!comp?.id) return null;
+
+    const { data } = await supabase
+      .from("company_settings")
+      .select("value")
+      .eq("company_id", comp.id)
+      .eq("key", key)
+      .limit(1)
+      .single();
+    return data?.value ?? null;
+  } catch {
+    return null;
+  }
+}
 
