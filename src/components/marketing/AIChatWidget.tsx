@@ -137,7 +137,7 @@ export function AIChatWidget({ locale }: Props) {
             id: "greeting",
             role: "assistant",
             content: isRtl
-              ? "أهلاً بك في مؤسسة **القوة العاشرة** للمقاولات العامة والواجهات المعمارية. يسعدني مساعدتك في استفساراتك الهندسية وتثمين مشروعك:\n\n•"
+              ? "أهلاً بك في مؤسسة **القوة العاشرة** للمقاولات العامة والواجهات المعمارية. يسعدني مساعدتك في استفساراتك الهندسية وتثمين مشروعك.."
               : "Welcome to **Tenth Power** General Contracting & Facades. How can our technical assistant help with your engineering project today?\n\n•",
             timestamp: new Date(),
           },
@@ -265,7 +265,7 @@ export function AIChatWidget({ locale }: Props) {
           id: "greeting",
           role: "assistant",
           content: isRtl
-            ? "أهلاً بك في مؤسسة **القوة العاشرة** للمقاولات العامة والواجهات المعمارية. يسعدني مساعدتك في استفساراتك الهندسية وتثمين مشروعك:\n\n•"
+            ? "أهلاً بك في مؤسسة **القوة العاشرة** للمقاولات العامة والواجهات المعمارية. يسعدني مساعدتك في استفساراتك الهندسية وتثمين مشروعك.."
             : "Welcome to **Tenth Power** General Contracting & Facades. How can our technical assistant help with your engineering project today?\n\n•)",
           timestamp: new Date(),
         },
