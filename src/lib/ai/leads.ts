@@ -81,6 +81,7 @@ export async function processChatLead({
   const name = extractName(text);
 
   try {
+    const supabase = createAdminClient() as any;
     const companyId = "00000000-0000-0000-0000-000000000001";
 
     // 1. Check if lead already captured for this session to avoid duplicate spamming
