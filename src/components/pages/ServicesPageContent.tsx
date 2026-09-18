@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
@@ -13,6 +14,7 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 import { SmartFallbackImage } from "@/components/ui/SmartFallbackImage";
 import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
+import { SkeletonServiceCard } from "@/components/ui/Skeleton";
 
 interface Props {
   locale: Locale;
@@ -27,6 +29,8 @@ const iconMap: Record<string, LucideIcon> = {
 export function ServicesPageContent({ locale, dict, initialServices }: Props) {
   const isRtl = locale === "ar";
   const services = (initialServices && initialServices.length > 0) ? initialServices : [];
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => { const t = setTimeout(() => setIsLoading(false), 350); return () => clearTimeout(t); }, []);
 
   return (
     <div className="pt-[var(--header-height)]">
@@ -82,7 +86,9 @@ export function ServicesPageContent({ locale, dict, initialServices }: Props) {
       <section className="py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {services.map((service, index) => {
+            {isLoading
+              ? Array.from({ length: 6 }).map((_, i) => <SkeletonServiceCard key={i} />)
+              : services.map((service, index) => {
               const Icon = (service.icon && typeof service.icon === "string" && iconMap[service.icon])
                 ? iconMap[service.icon]
                 : (typeof service.icon === "function" ? service.icon : Layers3);

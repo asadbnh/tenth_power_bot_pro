@@ -157,7 +157,7 @@ export function Header({ locale, dict }: HeaderProps) {
               </button>
             )}
 
-            {/* Language Switcher (Desktop / Tablet) */}
+            {/* Language Switcher (Desktop / Tablet)
             <Link
               href={getAlternateHref()}
               className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-text-secondary hover:text-text-primary hover:bg-surface-elevated border border-border-light transition-all shrink-0 whitespace-nowrap"
@@ -165,16 +165,16 @@ export function Header({ locale, dict }: HeaderProps) {
             >
               <Globe className="w-3.5 h-3.5 text-amber-500" />
               <span>{alternateLocale === "ar" ? "العربية" : "English"}</span>
-            </Link>
+            </Link> */}
 
-            {/* Appointments Button (Desktop) */}
+            {/* Appointments Button (Desktop) 
             <Link
               href={getLocalizedHref("/appointments")}
               className="hidden md:inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold text-text-primary hover:text-amber-500 hover:bg-amber-500/10 border border-border-light transition-all shrink-0 whitespace-nowrap"
             >
               <Calendar className="w-3.5 h-3.5 text-amber-500" />
               <span>{isRtl ? "حجز موعد" : "Book Survey"}</span>
-            </Link>
+            </Link>*/}
 
             {/* CTA Button (Desktop) */}
             <Link

@@ -1,5 +1,4 @@
 "use server";
-
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSql } from "@/lib/db";
@@ -556,47 +555,57 @@ export async function getGalleryAlbums(locale = "ar") {
 }
 
 export async function getGalleryItems(options?: { serviceId?: string; albumId?: string; limit?: number; page?: number }) {
-  const limit = options?.limit ?? 24;
+  const limit = options?.limit ?? 100;
   const offset = ((options?.page ?? 1) - 1) * limit;
 
   try {
     const sql = getSql();
     let rows: any[] = [];
+
     if (options?.albumId) {
+      // جلب صور ألبوم محدد
       rows = await sql`
         SELECT 
-          gi.id, gi.album_id, gi.type, gi.sort_order,
+          COALESCE(gi.id, m.id) as id,
+          gi.album_id,
           COALESCE(m.cdn_url, m.file_url, '/images/defaults/projects/project-1.webp') as image_url,
-          COALESCE(m.cdn_url, m.file_url, '/images/defaults/projects/project-1.webp') as thumbnail_url,
-          COALESCE(mm.title_ar, 'صورة معمارية') as title_ar,
-          COALESCE(mm.title_en, 'Architectural Photo') as title_en
-        FROM gallery_items gi
-        JOIN media_library m ON gi.media_id = m.id
+          COALESCE(m.webp_url, m.cdn_url, m.file_url, '/images/defaults/projects/project-1.webp') as thumbnail_url,
+          COALESCE(mm.title_ar, m.file_name, 'صورة معمارية') as title_ar,
+          COALESCE(mm.title_en, m.file_name, 'Architectural Photo') as title_en
+        FROM media_library m
+        JOIN gallery_items gi ON gi.media_id = m.id
         LEFT JOIN media_metadata mm ON mm.media_id = m.id
         WHERE gi.album_id = ${options.albumId}
-        ORDER BY gi.sort_order ASC
+          AND (m.cdn_url IS NOT NULL OR m.file_url IS NOT NULL)
+        ORDER BY gi.sort_order ASC, m.created_at DESC
         LIMIT ${limit} OFFSET ${offset};
       `;
     } else {
+      // ── جلب مباشر وشامل من media_library (نفس طريقة سيرفر التطبيق api_server) ──
+      // يسحب 100% من جميع الصور المرفوعة تلقائياً (عبر البوت، لوحة التحكم، السيرفر، إلخ)
+      // ولا يتطلب إطلاقاً أي تدخل يدوي أو تشغيل npm run link:gallery في الاستضافة!
       rows = await sql`
         SELECT 
-          gi.id, gi.album_id, gi.type, gi.sort_order,
+          COALESCE(gi.id, m.id) as id,
+          gi.album_id,
           COALESCE(m.cdn_url, m.file_url, '/images/defaults/projects/project-1.webp') as image_url,
-          COALESCE(m.cdn_url, m.file_url, '/images/defaults/projects/project-1.webp') as thumbnail_url,
-          COALESCE(mm.title_ar, 'صورة معمارية') as title_ar,
-          COALESCE(mm.title_en, 'Architectural Photo') as title_en
-        FROM gallery_items gi
-        JOIN media_library m ON gi.media_id = m.id
+          COALESCE(m.webp_url, m.cdn_url, m.file_url, '/images/defaults/projects/project-1.webp') as thumbnail_url,
+          COALESCE(mm.title_ar, m.file_name, 'صورة معمارية') as title_ar,
+          COALESCE(mm.title_en, m.file_name, 'Architectural Photo') as title_en
+        FROM media_library m
+        LEFT JOIN gallery_items gi ON gi.media_id = m.id
         LEFT JOIN media_metadata mm ON mm.media_id = m.id
-        ORDER BY gi.sort_order ASC
+        WHERE (m.cdn_url IS NOT NULL OR m.file_url IS NOT NULL)
+          AND (m.mime_type LIKE 'image/%' OR m.file_name ~* '\\.(jpg|jpeg|png|webp|avif)$')
+        ORDER BY m.created_at DESC
         LIMIT ${limit} OFFSET ${offset};
       `;
     }
 
     if (rows && rows.length > 0) {
       const items = rows.map((r: any) => ({
-        id: r.id,
-        album_id: r.album_id,
+        id: String(r.id),
+        album_id: r.album_id ? String(r.album_id) : null,
         image_url: r.image_url || "/images/defaults/projects/project-1.webp",
         thumbnail_url: r.thumbnail_url || r.image_url || "/images/defaults/projects/project-1.webp",
         title_ar: r.title_ar,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ZoomIn } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,7 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 import { SmartFallbackImage } from "@/components/ui/SmartFallbackImage";
 import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
+import { SkeletonGalleryAlbums, SkeletonGalleryCard } from "@/components/ui/Skeleton";
 
 interface Props {
   locale: Locale;
@@ -42,6 +43,15 @@ export function GalleryPageContent({ locale, dict, initialAlbums, initialItems }
   const isRtl = locale === "ar";
   const [selectedView, setSelectedView] = useState<"albums" | "grid">("albums");
   const [lightboxItem, setLightboxItem] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate async hydration — skeleton shows on first paint then fades out
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 350);
+    return () => clearTimeout(t);
+  }, []);
+
+  const [selectedAlbumId, setSelectedAlbumId] = useState<string | null>(null);
 
   // Deduplicate by id to prevent React "duplicate key" warnings from DB JOINs
   const rawAlbums = (initialAlbums && initialAlbums.length > 0) ? initialAlbums : DEFAULT_ALBUMS;
@@ -49,6 +59,12 @@ export function GalleryPageContent({ locale, dict, initialAlbums, initialItems }
   const albums = Array.from(new Map(rawAlbums.map((a) => [String(a.id), a])).values());
   const items = Array.from(new Map(rawItems.map((it) => [String(it.id), it])).values());
   const activeLightboxObj = items.find((it) => String(it.id) === String(lightboxItem)) || items[0];
+
+  const visibleItems = selectedAlbumId
+    ? items.filter((it) => String(it.album_id) === String(selectedAlbumId))
+    : items;
+
+  const displayItems = visibleItems.length > 0 ? visibleItems : items;
 
   return (
     <div className="pt-[var(--header-height)]">
@@ -102,20 +118,37 @@ export function GalleryPageContent({ locale, dict, initialAlbums, initialItems }
 
       {/* View Toggle */}
       <div className="bg-background border-b border-border-light">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex gap-2">
-          {(["albums", "grid"] as const).map((view) => (
-            <button key={view} onClick={() => setSelectedView(view)}
-              className={cn("px-4 py-1.5 rounded-lg text-sm font-medium transition-all",
-                selectedView === view ? "bg-primary-600 text-white" : "text-text-secondary hover:bg-surface")}>
-              {view === "albums" ? (isRtl ? "الألبومات" : "Albums") : (isRtl ? "عرض الشبكة" : "Grid View")}
-            </button>
-          ))}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+          <div className="flex gap-2">
+            {(["albums", "grid"] as const).map((view) => (
+              <button key={view} onClick={() => setSelectedView(view)}
+                className={cn("px-4 py-1.5 rounded-lg text-sm font-medium transition-all",
+                  selectedView === view ? "bg-primary-600 text-white shadow-sm" : "text-text-secondary hover:bg-surface")}>
+                {view === "albums" ? (isRtl ? "الألبومات" : "Albums") : (isRtl ? "عرض الشبكة" : "Grid View")}
+              </button>
+            ))}
+          </div>
+
+          <span className="text-xs text-text-muted font-medium">
+            {isRtl ? `إجمالي الصور: ${items.length}` : `Total Photos: ${items.length}`}
+          </span>
         </div>
       </div>
 
       <div className="py-12 sm:py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {selectedView === "albums" ? (
+          {isLoading ? (
+            /* Skeleton Grid — shown while hydrating */
+            selectedView === "albums" ? (
+              <SkeletonGalleryAlbums count={6} />
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: 9 }).map((_, i) => (
+                  <SkeletonGalleryCard key={i} className="h-64" />
+                ))}
+              </div>
+            )
+          ) : selectedView === "albums" ? (
             /* Albums View */
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {albums.map((album, i) => (
@@ -124,7 +157,10 @@ export function GalleryPageContent({ locale, dict, initialAlbums, initialItems }
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.07 }}
-                  onClick={() => setSelectedView("grid")}
+                  onClick={() => {
+                    setSelectedAlbumId(String(album.id));
+                    setSelectedView("grid");
+                  }}
                   className="group cursor-pointer rounded-2xl overflow-hidden border border-border-light hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-xl transition-all duration-300">
                   <div className="h-48 relative overflow-hidden bg-surface">
                     <SmartFallbackImage 
@@ -146,29 +182,59 @@ export function GalleryPageContent({ locale, dict, initialAlbums, initialItems }
               ))}
             </div>
           ) : (
-            /* Grid View with Lightbox */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {items.map((item, i) => (
-                <motion.div key={item.id || i}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: i * 0.03 }}
-                  onClick={() => setLightboxItem(String(item.id))}
-                  className="group relative h-64 rounded-2xl overflow-hidden cursor-pointer bg-surface border border-border-light hover:shadow-xl transition-all duration-300">
-                  <SmartFallbackImage 
-                    src={item.image_url || item.thumbnail_url}
-                    alt={isRtl ? item.title_ar : item.title_en}
-                    aspectRatio="auto"
-                    title={(isRtl ? item.title_ar : item.title_en) || (isRtl ? "صورة معمارية" : "Architectural Photo")}
-                    badge={isRtl ? "معرض الصور" : "Gallery Photo"}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                    <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                </motion.div>
-              ))}
+            /* Grid View with Lightbox & Album Filter Pills */
+            <div className="space-y-8">
+              {/* Filter Pills */}
+              <div className="flex flex-wrap items-center gap-2 pb-2">
+                <button
+                  onClick={() => setSelectedAlbumId(null)}
+                  className={cn(
+                    "px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all",
+                    selectedAlbumId === null
+                      ? "bg-primary-600 text-white shadow-md"
+                      : "bg-surface text-text-secondary border border-border-light hover:bg-surface-elevated"
+                  )}>
+                  {isRtl ? `الكل (${items.length})` : `All (${items.length})`}
+                </button>
+                {albums.map((album) => (
+                  <button
+                    key={album.id}
+                    onClick={() => setSelectedAlbumId(String(album.id))}
+                    className={cn(
+                      "px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all",
+                      selectedAlbumId === String(album.id)
+                        ? "bg-primary-600 text-white shadow-md"
+                        : "bg-surface text-text-secondary border border-border-light hover:bg-surface-elevated"
+                    )}>
+                    {isRtl ? album.title_ar : album.title_en}
+                  </button>
+                ))}
+              </div>
+
+              {/* Photos Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {displayItems.map((item, i) => (
+                  <motion.div key={item.id || i}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: i * 0.03 }}
+                    onClick={() => setLightboxItem(String(item.id))}
+                    className="group relative h-64 rounded-2xl overflow-hidden cursor-pointer bg-surface border border-border-light hover:shadow-xl transition-all duration-300">
+                    <SmartFallbackImage 
+                      src={item.image_url || item.thumbnail_url}
+                      alt={isRtl ? item.title_ar : item.title_en}
+                      aspectRatio="auto"
+                      title={(isRtl ? item.title_ar : item.title_en) || (isRtl ? "صورة معمارية" : "Architectural Photo")}
+                      badge={isRtl ? "معرض الصور" : "Gallery Photo"}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                      <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           )}
         </div>

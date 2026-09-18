@@ -340,7 +340,8 @@ export async function handleGalleryAlbumDelete(chatId: number, id: string, messa
 
 export async function uploadTelegramPhotoToR2(
   msg: TelegramMessage,
-  targetFolder: "services" | "projects" | "gallery" | "advertisements" | "uploads" = "uploads"
+  targetFolder: "services" | "projects" | "gallery" | "advertisements" | "uploads" = "uploads",
+  albumId?: string // ألبوم محدد (اختياري، يُحدَّد تلقائياً إذا لم يُذكر)
 ): Promise<{ url: string; webpUrl: string; mediaId?: string; width?: number; height?: number; fileSize?: number } | null> {
   if (!msg.photo || msg.photo.length === 0) return null;
   const largestPhoto = msg.photo[msg.photo.length - 1];
@@ -386,10 +387,57 @@ export async function uploadTelegramPhotoToR2(
   if (media?.id) {
     await db.from("media_metadata").insert({
       media_id: media.id,
-      alt_ar: "صورة مرفوعة عبر بوت تلجرام",       // ✅ الحقل الصحيح في جدول media_metadata
+      alt_ar: "صورة مرفوعة عبر بوت تلجرام",
       alt_en: "Photo uploaded via Telegram bot",
       caption_ar: msg.caption || "مرفوعات الوسائط",
     });
+
+    // ── ربط تلقائي بألبوم المعرض فور الرفع ─────────────────────────────
+    // هذا يضمن ظهور الصورة في موقع الويب بدون أي تدخل يدوي
+    try {
+      let targetAlbumId = albumId;
+
+      if (!targetAlbumId) {
+        // اختر أول ألبوم نشط (بالترتيب) — توزيع دائري بحسب عدد الصور
+        const { data: albums } = await db
+          .from("gallery_albums")
+          .select("id, slug")
+          .eq("is_active", true)
+          .order("sort_order", { ascending: true });
+
+        if (albums && albums.length > 0) {
+          // اختر الألبوم الأقل عدداً من الصور
+          const counts = await Promise.all(
+            albums.map(async (a: any) => {
+              const { count } = await db
+                .from("gallery_items")
+                .select("*", { count: "exact", head: true })
+                .eq("album_id", a.id);
+              return { id: a.id, count: count || 0 };
+            })
+          );
+          counts.sort((a, b) => a.count - b.count);
+          targetAlbumId = counts[0].id;
+        }
+      }
+
+      if (targetAlbumId) {
+        const { count: maxOrder } = await db
+          .from("gallery_items")
+          .select("*", { count: "exact", head: true })
+          .eq("album_id", targetAlbumId);
+
+        await db.from("gallery_items").insert({
+          album_id: targetAlbumId,
+          media_id: media.id,
+          type: "image",
+          sort_order: (maxOrder || 0),
+        });
+      }
+    } catch (linkErr) {
+      // عدم ربط الصورة بألبوم لا يوقف العملية
+      console.warn("[Gallery Auto-Link] Could not link photo to album:", linkErr);
+    }
   }
 
   return {

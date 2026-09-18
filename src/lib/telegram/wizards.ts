@@ -2,6 +2,7 @@ import { createDbClient } from "@/lib/db";
 import { sendMessage, Keyboards, type TelegramMessage } from "./bot";
 import { setAdminState, clearAdminState, type AdminState } from "./state";
 import { uploadTelegramPhotoToR2 } from "./handlers/media";
+import { invalidatePromptCache } from "@/lib/ai";
 import {
   handleAdDetails, handleAdsList, handleProjectDetails, handleProjectItems,
   handleServiceDetails, handleServiceItems, handleCategoriesList, handleFaqsList,
@@ -518,31 +519,18 @@ export async function processGalleryAlbumPhotoWizard(userId: number, msg: Telegr
 
   if (state.step === "awaiting_album_photo") {
     const albumId = state.payload?.albumId as string;
-    await sendMessage(userId, `⏳ <b>جاري رفع الصورة إلى Cloudflare R2 وربطها بالألبوم...</b>`);
-    const res = await uploadTelegramPhotoToR2(msg, "gallery");
-    if (res?.mediaId && albumId) {
-      // حساب الترتيب الحقيقي بناءً على عدد الصور الموجودة في الألبوم
-      const { count: existingCount } = await db
-        .from("gallery_items")
-        .select("*", { count: "exact", head: true })
-        .eq("album_id", albumId);
+    await sendMessage(userId, `⏳ <b>جاري رفع الصورة إلى Cloudflare R2 وربطها بالألبوم تلقائياً...</b>`);
 
-      const { error } = await db.from("gallery_items").insert({
-        album_id: albumId,
-        media_id: res.mediaId,
-        type: "image",
-        sort_order: existingCount ?? 0,
-      });
+    // نمرر albumId مباشرة → uploadTelegramPhotoToR2 يربطها تلقائياً بالألبوم
+    const res = await uploadTelegramPhotoToR2(msg, "gallery", albumId);
 
-      if (error) {
-        console.error("[Gallery Item Insert Error]:", error);
-        await sendMessage(userId, `❌ <b>حدث خطأ أثناء ربط الصورة بالألبوم:</b>\n<code>${error?.message || "DB error"}</code>`);
-        return true;
-      }
-
+    if (res?.mediaId) {
       clearAdminState(userId);
-      await sendMessage(userId, `🎉 <b>تم رفع الصورة وإضافتها للألبوم بنجاح!</b>`);
-      await handleGalleryAlbumItems(userId, albumId);
+      await sendMessage(userId, `🎉 <b>تم رفع الصورة وإضافتها للألبوم بنجاح! ✅</b>`);
+      if (albumId) await handleGalleryAlbumItems(userId, albumId);
+      return true;
+    } else {
+      await sendMessage(userId, `❌ <b>تعذر رفع الصورة. حاول مجدداً.</b>`);
       return true;
     }
   }
@@ -1343,6 +1331,7 @@ export async function processMiscWizards(userId: number, text: string, state: Ad
     if (error) {
       await sendMessage(userId, `❌ <b>حدث خطأ أثناء تحديث التوجيه:</b>\n<code>${error.message}</code>`);
     } else {
+      invalidatePromptCache();
       await sendMessage(userId, `✅ <b>تم تحديث التوجيه البرمجي للذكاء الاصطناعي بنجاح!</b>`);
       await handleAiPromptSettings(userId);
     }

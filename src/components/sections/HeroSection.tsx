@@ -197,7 +197,7 @@ export function HeroSection({ locale, dict, initialSlides }: HeroSectionProps) {
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span className="text-xs sm:text-sm font-bold tracking-wide text-amber-400">
                 {isRtl
-                  ? "شركة القوة العاشرة للمقاولات العامة والواجهات المعمارية"
+                  ? "مؤسسة القوة العاشرة للمقاولات العامة والواجهات المعمارية"
                   : "Tenth Power General Contracting & Facades"}
               </span>
             </motion.div>

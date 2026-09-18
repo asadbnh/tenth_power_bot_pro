@@ -1,6 +1,7 @@
 import { createDbClient } from "@/lib/db";
 import { sendMessage, editMessage, Keyboards, sendPhoto, deleteMessage } from "../bot";
 import { setAdminState } from "../state";
+import { generateArticleWithGemini } from "@/lib/ai";
 
 // ─── Services Handlers ────────────────────────────────────────────────
 
@@ -952,34 +953,15 @@ export async function handleArticleAiGenerate(chatId: number, topic: string) {
   const { data: company } = await db.from("companies").select("id").limit(1).single();
   const companyId = company?.id || "00000000-0000-0000-0000-000000000001";
 
-  const apiKey = process.env.GOOGLE_AI_API_KEY;
-  const model = process.env.GEMINI_MODEL || "gemini-1.5-flash";
-
   let title = `دليل شامل عن ${topic} — القوة العاشرة`;
   let excerpt = `تعرف على أهم النصائح والمواصفات الفنية المتعلقة بـ ${topic} وكيفية اختيار الخامات الأنسب لمشروعك مع الضمان.`;
   let content = `<h3>مقدمة عن ${topic}</h3><p>تعتبر أعمال الزجاج والألمنيوم من أهم العناصر في تصميم المباني الحديثة والواجهات المعمارية.</p><h3>المميزات والمواصفات</h3><ul><li>زجاج سكريت مقوى مقاوم للصدمات.</li><li>قطاعات ألمنيوم معزولة حرارياً.</li><li>ضمان شامل 10 سنوات.</li></ul>`;
 
-  if (apiKey && apiKey !== "your_gemini_api_key") {
-    try {
-      const prompt = `أنت كاتب مقالات SEO محترف لشركة مقاولات وزجاج ألمنيوم (القوة العاشرة). اكتب مقالاً غنياً عن: "${topic}". أعد الناتج فقط كـ JSON:\n{"title":"العنوان المحسن لـ SEO","excerpt":"ملخص المقال","content":"المحتوى بتنسيق HTML (<h3>, <p>, <ul>, <li>)"}`;
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json", maxOutputTokens: 2000 } }),
-      });
-      if (res.ok) {
-        const raw = await res.json();
-        const jsonText = raw.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (jsonText) {
-          const parsed = JSON.parse(jsonText);
-          if (parsed.title) title = parsed.title;
-          if (parsed.excerpt) excerpt = parsed.excerpt;
-          if (parsed.content) content = parsed.content;
-        }
-      }
-    } catch (e) {
-      console.error("Gemini AI telegram article generation error:", e);
-    }
+  const aiArticle = await generateArticleWithGemini(topic, "ar");
+  if (aiArticle) {
+    if (aiArticle.title) title = aiArticle.title;
+    if (aiArticle.excerpt) excerpt = aiArticle.excerpt;
+    if (aiArticle.content) content = aiArticle.content;
   }
 
   const slug = topic

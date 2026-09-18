@@ -1,10 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logError, logInfo } from "@/lib/logger";
+import { generateArticleWithGemini } from "@/lib/ai";
 
 /**
  * POST /api/articles/generate
- * Generates structured SEO-optimized articles using Google Gemini API
+ * Generates structured SEO-optimized articles using Google Gemini API with multi-key failover
  * and saves them to Supabase with status = 'review' for Telegram Admin approval.
  */
 export async function POST(request: NextRequest) {
@@ -14,64 +15,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Topic is required" }, { status: 400 });
     }
 
-    const apiKey = process.env.GOOGLE_AI_API_KEY;
-    const model = process.env.GEMINI_MODEL || "gemini-1.5-flash";
     const isAr = locale === "ar";
 
-    let generatedJson: {
-      title: string;
-      excerpt: string;
-      content: string;
-      keywords: string[];
-      faq: { question: string; answer: string }[];
-    } | null = null;
+    // 1. Generate structured article with multi-key failover
+    let generatedJson = await generateArticleWithGemini(topic, locale);
 
-    if (apiKey && apiKey !== "your_gemini_api_key") {
-      try {
-        const prompt = `أنت خبير كاتب مقالات SEO محترف لشركة مقاولات وزجاج ألمنيوم متخصصة (الشركة: شركة القوة العاشرة لزجاج WebTaky).
-اكتب مقالاً مفصلاً وشاملاً ومحسناً لمحركات البحث Google عن الموضوع التالي: "${topic}".
-
-يجب أن تعيد الناتج فقط كـ JSON بالبنية التالية دون أي كود غريب أو markdown wrapping:
-{
-  "title": "عنوان المقال المحسن لـ SEO مع الكلمة المفتاحية الرئيسية",
-  "excerpt": "ملخص مشوق ومختصر للمقال بين 150 إلى 200 حرف",
-  "content": "محتوى المقال الكامل مقسم إلى فقرات وعناوين رئيسية وفرعية بتنسيق HTML نقي (<h3>, <p>, <ul>, <li>)",
-  "keywords": ["كلمة 1", "كلمة 2", "كلمة 3", "كلمة 4"],
-  "faq": [
-    {"question": "سؤال شائع 1؟", "answer": "إجابة شاملة 1"},
-    {"question": "سؤال شائع 2؟", "answer": "إجابة شاملة 2"}
-  ]
-}`;
-
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ role: "user", parts: [{ text: prompt }] }],
-              generationConfig: {
-                responseMimeType: "application/json",
-                maxOutputTokens: 2000,
-                temperature: 0.7,
-              },
-            }),
-          }
-        );
-
-        if (res.ok) {
-          const raw = await res.json();
-          const text = raw.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text) {
-            generatedJson = JSON.parse(text);
-          }
-        }
-      } catch (err) {
-        logError("Gemini article generation failed:", err);
-      }
-    }
-
-    // Fallback template if AI generation fails or API key missing
+    // Fallback template if all keys fail or offline
     if (!generatedJson) {
       generatedJson = {
         title: isAr ? `دليل شامل عن ${topic} — القوة العاشرة` : `Comprehensive Guide to ${topic}`,

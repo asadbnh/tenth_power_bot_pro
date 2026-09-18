@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Clock, ArrowRight } from "lucide-react";
@@ -8,6 +9,7 @@ import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { SmartFallbackImage } from "@/components/ui/SmartFallbackImage";
 import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
+import { SkeletonArticleCard } from "@/components/ui/Skeleton";
 
 interface Props {
   locale: Locale;
@@ -19,6 +21,8 @@ export function BlogPageContent({ locale, dict, initialArticles }: Props) {
   const isRtl = locale === "ar";
   const articles = (initialArticles && initialArticles.length > 0) ? initialArticles : [];
   const [featured, ...rest] = articles;
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => { const t = setTimeout(() => setIsLoading(false), 350); return () => clearTimeout(t); }, []);
 
   return (
     <div className="pt-[var(--header-height)]">
@@ -118,7 +122,11 @@ export function BlogPageContent({ locale, dict, initialArticles }: Props) {
           )}
 
           {/* Rest Grid */}
-          {rest.length > 0 && (
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {Array.from({ length: 6 }).map((_, i) => <SkeletonArticleCard key={i} />)}
+            </div>
+          ) : rest.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {rest.map((article, i) => {
                 const title = isRtl ? (article.title_ar || article.title) : (article.title_en || article.title);

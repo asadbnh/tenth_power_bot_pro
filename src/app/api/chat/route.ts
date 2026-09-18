@@ -1,165 +1,105 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getFallbackCompany } from "@/lib/fallback-provider";
+import { chatWithGemini, processChatLead } from "@/lib/ai";
 
 /**
  * POST /api/chat
- * High-performance AI Chat endpoint supporting Google Gemini 3.5 Interactions API (v1beta/interactions)
- * with session continuity (previous_interaction_id), system instructions, and graceful fallback.
+ * High-performance AI Chat endpoint supporting Google Gemini Stateful Multi-turn Interactions API
+ * with session continuity (previous_interaction_id), multi-key failover, in-memory prompt caching,
+ * automated lead capture, and instant Telegram alerts to admins.
  */
 export async function POST(request: NextRequest) {
   try {
     const { messages, locale, previous_interaction_id, interaction_id, session_id } = await request.json();
     const isAr = locale === "ar";
     const lastUserMessage = messages?.[messages.length - 1]?.content ?? "";
-    const previousId = previous_interaction_id || interaction_id;
+    const previousId = previous_interaction_id || interaction_id || null;
     const company = getFallbackCompany();
 
-    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY;
-    const model = process.env.GEMINI_MODEL || "gemini-3.5-flash";
-
     let aiResponseText = "";
-    let nextInteractionId: string | null = null;
+    let nextInteractionId: string | null = previousId;
 
-    // 1. Fetch System Prompt dynamically from Supabase ai_prompts table
-    let systemPrompt = "";
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const supabase = createAdminClient() as any;
-      const { data: promptRow } = await supabase
-        .from("ai_prompts")
-        .select("system_prompt_ar, system_prompt_en")
-        .eq("prompt_type", "chat")
-        .eq("is_active", true)
-        .limit(1)
-        .single();
+    // 1. Detect and process contact requests (Lead Generation -> DB + Telegram Notification)
+    let leadCaptured = false;
+    let leadPhone = "";
+    let leadName = "";
 
-      if (promptRow) {
-        systemPrompt = isAr
-          ? promptRow.system_prompt_ar || promptRow.system_prompt_en
-          : promptRow.system_prompt_en || promptRow.system_prompt_ar;
-      }
-    } catch {
-      // fallback if DB query fails
-    }
-
-    if (!systemPrompt) {
-      systemPrompt = isAr
-        ? `أنت المساعد الذكي المعماري لـ ${company.name_ar}. أجب باحترافية عن الزجاج السيكوريت، الواجهات الزجاجية، قطاعات الألمنيوم، والمقاولات، وانصح العميل بطلب عرض سعر مجاني.`
-        : `You are the architectural AI Assistant for ${company.name_en}. Answer professionally about securit glass, facades, aluminum, and contracting, and suggest requesting a free quote.`;
-    }
-
-    // 2. Strategy A: Try Google Gemini Interactions API (v1beta/interactions)
-    if (apiKey && apiKey !== "AIzaSyCr0yaaE8_v6Mxs0QIxJ1mqnUscaNiePPY") {
+    if (lastUserMessage) {
       try {
-        const interactionPayload: Record<string, unknown> = {
-          model,
-          input: lastUserMessage,
-          system_instruction: systemPrompt,
-        };
+        const leadResult = await processChatLead({
+          text: lastUserMessage,
+          chatHistory: messages || [],
+          sessionId: session_id,
+          locale: locale || "ar",
+        });
 
-        if (previousId) {
-          interactionPayload.previous_interaction_id = previousId;
+        if (leadResult.captured && leadResult.phone) {
+          leadCaptured = true;
+          leadPhone = leadResult.phone;
+          leadName = leadResult.name || "";
         }
-
-        const interactionsRes = await fetch(
-          "https://generativelanguage.googleapis.com/v1beta/interactions",
-          {
-            method: "POST",
-            headers: {
-              "x-goog-api-key": apiKey,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(interactionPayload),
-          }
-        );
-
-        if (interactionsRes.ok) {
-          const data = await interactionsRes.json();
-          // Extract response text and interaction_id
-          const textCandidate =
-            data.outputs?.[0]?.text ||
-            data.text ||
-            data.content ||
-            data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-          if (textCandidate) {
-            aiResponseText = textCandidate;
-            nextInteractionId = data.interaction_id || data.id || previousId || null;
-          }
-        } else {
-          console.warn("Gemini Interactions API status:", interactionsRes.status);
-        }
-      } catch (interactionsErr) {
-        console.error("Gemini Interactions API error:", interactionsErr);
-      }
-
-      // 3. Strategy B: Fallback to generateContent API if Interactions API fails
-      if (!aiResponseText) {
-        try {
-          const contentsHistory = (messages || []).map((m: { role: string; content: string }) => ({
-            role: m.role === "assistant" ? "model" : "user",
-            parts: [{ text: m.content }],
-          }));
-
-          const fallbackRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                systemInstruction: {
-                  parts: [{ text: systemPrompt }],
-                },
-                contents: contentsHistory.length > 0 ? contentsHistory : [
-                  {
-                    role: "user",
-                    parts: [{ text: lastUserMessage }],
-                  },
-                ],
-                generationConfig: {
-                  maxOutputTokens: 400,
-                  temperature: 0.7,
-                },
-              }),
-            }
-          );
-
-          if (fallbackRes.ok) {
-            const data = await fallbackRes.json();
-            const candidateText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (candidateText) {
-              aiResponseText = candidateText;
-            }
-          }
-        } catch (genErr) {
-          console.error("Gemini generateContent error:", genErr);
-        }
+      } catch (leadErr) {
+        console.warn("[Chat Route] Lead capture error:", leadErr);
       }
     }
 
-    // 4. Strategy C: Local Smart Business Fallback if offline or quota exceeded
+    // 2. Call Google Gemini via our robust multi-turn / multi-key engine
+    if (lastUserMessage) {
+      try {
+        // If lead was just captured, provide a system instruction hint
+        const promptOverrideNote = leadCaptured
+          ? isAr
+            ? `العميل أرسل بياناته الآن (الاسم: ${leadName}، الجوال: ${leadPhone}). تم حفظ الطلب في النظام وإرسال إشعار فوري لمهندسينا. اشكر العميل وأكد له أن المهندس المختص سيتواصل معه عبر الهاتف أو الواتساب في أقرب وقت لمناقشة تفاصيل مشروعه.`
+            : `Client just provided contact info (Name: ${leadName}, Phone: ${leadPhone}). Details were forwarded to the engineering team. Thank the client and assure them an engineer will contact them promptly.`
+          : undefined;
+
+        const aiResult = await chatWithGemini({
+          input: lastUserMessage,
+          messages: messages || [],
+          previousInteractionId: previousId,
+          locale: locale || "ar",
+          systemPromptOverride: promptOverrideNote,
+        });
+
+        if (aiResult?.text) {
+          aiResponseText = aiResult.text;
+          nextInteractionId = aiResult.interactionId || previousId;
+        }
+      } catch (geminiErr) {
+        console.error("[Chat Route] Error calling Gemini engine:", geminiErr);
+      }
+    }
+
+    // 3. Smart Business Fallback if all keys exhausted or offline
     if (!aiResponseText) {
       const lower = lastUserMessage.toLowerCase();
-      if (/price|سعر|تكلفة|كم/.test(lower)) {
+      if (leadCaptured) {
         aiResponseText = isAr
-          ? `تعتمد التقديرات على المواصفات الفنية، سماكة الخامات، والمساحة الإجمالية للمشروع. يرجى تقديم طلب دراسة مشروع للحصول على تقدير مالي معتمد من القسم الهندسي.`
-          : `Project estimates depend on engineering specifications, material thickness, and project area. Please submit a project inquiry for an official engineering estimate.`;
+          ? `شكراً لك أخي الكريم! تم استلام بياناتك بنجاح (${leadPhone}) وإرسال إشعار فوري للفريق الهندسي والإداري، وسيقوم مهندسنا المختص بالاتصال بك في أقرب وقت ممكن بإذن الله.`
+          : `Thank you! Your contact details (${leadPhone}) have been received and forwarded to our engineering team. An engineer will contact you shortly.`;
+      } else if (/price|سعر|تكلفة|كم/.test(lower)) {
+        aiResponseText = isAr
+          ? `تعتمد التقديرات على المواصفات الفنية، سماكة الخامات، والمساحة الإجمالية للمشروع. يمكنك [طلب عرض سعر مجاني](/quote) للحصول على دراسة مالية وفنية معتمدة.`
+          : `Project estimates depend on engineering specs, material thickness, and area. You can [Request a Free Quote](/quote) for an official estimate.`;
       } else if (/glass|زجاج|سكريت|واجهة/.test(lower)) {
         aiResponseText = isAr
-          ? `تنفذ ${company.name_ar} أنظمة زجاج السيكوريت المقوى، الواجهات الزجاجية الهيكلية (Curtain Wall & Spider Systems)، وأنظمة الألمنيوم وفق كود البناء السعودي مع الاعتماد الهندسي.`
-          : `${company.name_en} executes tempered glass, structural glazing systems (Curtain Wall & Spider), and aluminum works in compliance with Saudi Building Code standards.`;
+          ? `تنفذ ${company.name_ar} [أنظمة زجاج السيكوريت](/services/tempered-glass) و[الواجهات الزجاجية الهيكلية والكرتن وول](/services/glass-facades) وفق كود البناء السعودي مع ضمان ممتد حتى 10 سنوات.`
+          : `${company.name_en} executes [Tempered Glass Systems](/services/tempered-glass) and [Structural Facades & Curtain Walls](/services/glass-facades) compliant with SBC standards and up to 10-year warranty.`;
+      } else if (/تواصل|اتصل|كلمني|رقم|phone|call/.test(lower)) {
+        aiResponseText = isAr
+          ? `يسعدنا جداً التواصل معكم! فضلاً أرسل **اسمك الكريم ورقم جوالك**، وسيتم إرسال إشعار فوري لمهندسينا والتواصل معك في أسرع وقت. كما يمكنك زيارة [صفحة تواصل معنا](/contact).`
+          : `We would be happy to contact you! Please share your **name and phone number**, and our engineering team will call you shortly. You can also visit [Contact Us](/contact).`;
       } else {
         aiResponseText = isAr
-          ? `أهلاً بك في ${company.name_ar}. أنا المساعد الهندسي الذكي للرد على استفساراتك الفنية حول الواجهات المعمارية، الألمنيوم، والمقاولات العامة.`
-          : `Welcome to ${company.name_en}. I am the engineering AI assistant available to support your technical inquiries on facades and general contracting.`;
+          ? `أهلاً بك في ${company.name_ar}. أنا المساعد الهندسي الذكي للإجابة عن استفساراتكم حول [المشاريع المنفذة](/projects) و[خدمات الزجاج والألمنيوم](/services). كيف يمكنني مساعدتك؟`
+          : `Welcome to ${company.name_en}. I am the AI Engineering Assistant here to assist with [Executed Projects](/projects) and [Glass & Aluminum Services](/services). How can I assist you?`;
       }
     }
 
-    // 5. Persist Chat Session & Messages to DB for CRM and Bot Dashboard
+    // 4. Persist Chat Session & Messages to DB for CRM and Analytics
     let currentSessionId = session_id;
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const supabase = createAdminClient() as any;
       const { data: comp } = await supabase.from("companies").select("id").limit(1).single();
       const companyId = comp?.id || "00000000-0000-0000-0000-000000000001";
@@ -171,10 +111,16 @@ export async function POST(request: NextRequest) {
             company_id: companyId,
             status: "active",
             message_count: 2,
-            context: { locale: locale || "ar" },
+            context: {
+              locale: locale || "ar",
+              last_interaction_id: nextInteractionId,
+              lead_captured: leadCaptured,
+              lead_phone: leadPhone || null,
+            },
           })
           .select("id")
           .single();
+
         if (sess?.id) {
           currentSessionId = sess.id;
         }
@@ -183,6 +129,12 @@ export async function POST(request: NextRequest) {
           .from("chat_sessions")
           .update({
             message_count: messages?.length ? messages.length + 1 : 2,
+            context: {
+              locale: locale || "ar",
+              last_interaction_id: nextInteractionId,
+              lead_captured: leadCaptured,
+              lead_phone: leadPhone || null,
+            },
           })
           .eq("id", currentSessionId);
       }
@@ -194,17 +146,17 @@ export async function POST(request: NextRequest) {
         ]);
       }
     } catch (dbChatErr) {
-      console.warn("Could not persist chat session/messages:", dbChatErr);
+      console.warn("[Chat Route] Could not persist chat session/messages:", dbChatErr);
     }
 
-    // Stream output word by word for fluid UI animation
+    // 5. Stream output word by word for fluid UI animation
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
         const words = aiResponseText.split(" ");
         for (const word of words) {
           controller.enqueue(encoder.encode(word + " "));
-          await new Promise((r) => setTimeout(r, 25));
+          await new Promise((r) => setTimeout(r, 18));
         }
         controller.close();
       },
@@ -223,9 +175,13 @@ export async function POST(request: NextRequest) {
       responseHeaders["x-session-id"] = currentSessionId;
     }
 
+    if (leadCaptured) {
+      responseHeaders["x-lead-captured"] = "true";
+    }
+
     return new Response(stream, { headers: responseHeaders });
   } catch (error) {
-    console.error("Chat API error:", error);
+    console.error("[Chat Route] Critical API error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

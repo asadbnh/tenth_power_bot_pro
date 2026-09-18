@@ -497,6 +497,21 @@ p {
   animation: shimmer 2s infinite;
 }
 
+/* Skeleton shimmer — used by Skeleton.tsx components site-wide */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.04);
+}
+.skeleton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-200%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
 .animate-pulse-glow {
   animation: pulseGlow 2s infinite;
 }

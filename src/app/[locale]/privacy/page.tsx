@@ -14,7 +14,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
   const { locale } = await params;
   const isRtl = locale === "ar";
   const company = await getCompany().catch(() => null);
-  const companyName = isRtl ? (company?.name_ar || "شركة القوة العاشرة") : (company?.name_en || "Tenth Power Co.");
+  const companyName = isRtl ? (company?.name_ar || "مؤسسة القوة العاشرة") : (company?.name_en || "Tenth Power Co.");
   const email = company?.email || "info@webtaky.com";
 
   return (

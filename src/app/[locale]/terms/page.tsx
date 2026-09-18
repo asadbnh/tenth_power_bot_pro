@@ -14,7 +14,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params;
   const isRtl = locale === "ar";
   const company = await getCompany().catch(() => null);
-  const companyName = isRtl ? (company?.name_ar || "شركة القوة العاشرة") : (company?.name_en || "Tenth Power Co.");
+  const companyName = isRtl ? (company?.name_ar || "مؤسسة القوة العاشرة") : (company?.name_en || "Tenth Power Co.");
 
   return (
     <div className="pt-[var(--header-height)] min-h-dvh bg-background">

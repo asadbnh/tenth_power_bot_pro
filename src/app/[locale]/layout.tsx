@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { unstable_cache } from "next/cache";
 import type { Metadata } from "next";
 import { i18nConfig, getLocaleDirection, getLocaleHtmlLang, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -7,6 +8,19 @@ import { Footer } from "@/components/layout/Footer";
 import { WhatsAppButton } from "@/components/marketing/WhatsAppButton";
 import { AIChatWidget } from "@/components/marketing/AIChatWidget";
 import { getCompany, getServices } from "@/lib/actions/content";
+
+// Cache layout-level DB calls for 1 hour — prevents repeated DB queries on every page navigation
+const getCachedCompany = unstable_cache(
+  async () => getCompany().catch(() => null),
+  ["layout-company"],
+  { revalidate: 3600, tags: ["company"] }
+);
+
+const getCachedServices = unstable_cache(
+  async (locale: string) => getServices(locale as Locale).catch(() => []),
+  ["layout-services"],
+  { revalidate: 3600, tags: ["services"] }
+);
 
 /**
  * Generate static params for all supported locales.
@@ -85,8 +99,8 @@ export default async function LocaleLayout({
   const htmlLang = getLocaleHtmlLang(validLocale);
   const [dict, company, services] = await Promise.all([
     getDictionary(validLocale),
-    getCompany().catch(() => null),
-    getServices(validLocale).catch(() => []),
+    getCachedCompany(),
+    getCachedServices(validLocale),
   ]);
 
   return (

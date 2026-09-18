@@ -65,6 +65,13 @@ export async function notifyNewUserLead(data: {
   await broadcastToAdmins(text, { reply_markup: Keyboards.backToMenu() });
 }
 
+export async function notifyNewAiChatLead(data: {
+  id: string; name: string; phone: string; city?: string; summary: string; sessionId?: string;
+}) {
+  const text = `🤖 <b>طلب تواصل فوري عبر المساعد الذكي!</b>\n\n👤 <b>الاسم:</b> ${data.name}\n📱 <b>الجوال:</b> <code>${data.phone}</code>\n${data.city ? `📍 <b>المدينة:</b> ${data.city}\n` : ""}💬 <b>تفاصيل المحادثة والطلب:</b>\n${data.summary}\n\n🌐 <b>المصدر:</b> المساعد الذكي (AI Chat)\n🆔 <b>رقم الرسالة:</b> <code>${data.id}</code>`;
+  await broadcastToAdmins(text, { reply_markup: Keyboards.messageActions(data.id, false) });
+}
+
 export async function notifyAuditSecurityAlert(data: {
   action: string; actorType: string; entityType: string; ipAddress?: string;
 }) {

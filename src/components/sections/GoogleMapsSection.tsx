@@ -13,7 +13,7 @@ export function GoogleMapsSection({ locale, company }: Props) {
 
   const address = (isRtl ? (company?.address?.street_ar || company?.address?.address_line_1_ar) : (company?.address?.street_en || company?.address?.address_line_1_en)) ||
     (isRtl ? "طريق الملك فهد، حي الصحافة، الرياض، المملكة العربية السعودية" : "King Fahd Road, Al Sahafah Dist., Riyadh, Saudi Arabia");
-  
+
   const phone = company?.phone_primary || "+966 50 000 0000";
   const mapEmbedUrl = company?.google_maps_embed_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115967.65487770853!2d46.6752957!3d24.7135517!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03890d489399%3A0xba974d1c98e79fd5!2sRiyadh%20Saudi%20Arabia!5e0!3m2!1sen!2ssa!4v1700000000000!5m2!1sen!2ssa";
 
@@ -26,7 +26,7 @@ export function GoogleMapsSection({ locale, company }: Props) {
             {isRtl ? "المقر الرئيسي" : "Headquarters"}
           </span>
           <h2 className="text-xl sm:text-3xl font-extrabold">
-            {isRtl ? (company?.name_ar ? `المقر الرئيسي لـ ${company.name_ar}` : "المقر الرئيسي لشركة القوة العاشرة") : (company?.name_en ? `${company.name_en} Headquarters` : "Headquarters in Riyadh")}
+            {isRtl ? (company?.name_ar ? `المقر الرئيسي لـ ${company.name_ar}` : "المقر الرئيسي لمؤسسة القوة العاشرة") : (company?.name_en ? `${company.name_en} Headquarters` : "Headquarters in Riyadh")}
           </h2>
           <p className="text-text-secondary text-xs sm:text-sm">
             {isRtl ? "نرحب بزيارتكم للمقر الرئيسي لمراجعة المخططات الهندسية ونماذج الواجهات" : "Visit our headquarters to review engineering plans and structural facade samples"}

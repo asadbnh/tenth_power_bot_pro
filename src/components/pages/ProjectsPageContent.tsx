@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { MapPin, Calendar, Eye, Filter, Building2 } from "lucide-react";
@@ -9,6 +9,7 @@ import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { SmartFallbackImage } from "@/components/ui/SmartFallbackImage";
 import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
+import { SkeletonProjectCard } from "@/components/ui/Skeleton";
 
 interface Props {
   locale: Locale;
@@ -22,6 +23,8 @@ const FILTERS_EN = ["All", "Glass", "Aluminum", "Kitchens", "Decorations", "Cont
 export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
   const isRtl = locale === "ar";
   const [activeFilter, setActiveFilter] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => { const t = setTimeout(() => setIsLoading(false), 350); return () => clearTimeout(t); }, []);
 
   const projects = (initialProjects && initialProjects.length > 0) ? initialProjects : [];
 
@@ -103,7 +106,9 @@ export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
 
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project, i) => {
+            {isLoading
+              ? Array.from({ length: 6 }).map((_, i) => <SkeletonProjectCard key={i} />)
+              : projects.map((project, i) => {
               const title = isRtl ? (project.name_ar || project.title_ar || project.name) : (project.name_en || project.title_en || project.name_ar || project.name);
               const cat = isRtl ? (project.category_ar || project.category) : (project.category_en || project.category_ar || project.category || "Project");
               const city = isRtl ? (project.location_ar || project.city || "الرياض") : (project.location_en || project.city || "Riyadh");
