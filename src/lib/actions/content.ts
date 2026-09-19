@@ -1,5 +1,5 @@
 "use server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, unstable_cache } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSql } from "@/lib/db";
 import {
@@ -952,41 +952,49 @@ export async function getAnalyticsSummary() {
 
 // ─── Company & Brand Actions ──────────────────────────────────────────
 
-export async function getCompany() {
+async function fetchCompanyFromDb() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
   try {
-    const { data: company } = await supabase
+    const { data: company, error: compErr } = await supabase
       .from("companies")
       .select("*")
       .limit(1)
       .single();
 
+    if (compErr) {
+      console.warn("Could not fetch company from DB:", compErr);
+    }
+
     if (company) {
-      const { data: contacts } = await supabase
-        .from("company_contacts")
-        .select("*")
-        .eq("company_id", company.id)
-        .order("sort_order", { ascending: true });
-
-      const { data: address } = await supabase
-        .from("company_addresses")
-        .select("*")
-        .eq("company_id", company.id)
-        .limit(1)
-        .single();
-
-      const { data: hours } = await supabase
-        .from("business_hours")
-        .select("*")
-        .eq("company_id", company.id)
-        .order("day_of_week", { ascending: true });
+      // Parallelize child queries to eliminate sequential DB latency waterfalls!
+      const [contactsRes, addressRes, hoursRes] = await Promise.all([
+        supabase
+          .from("company_contacts")
+          .select("*")
+          .eq("company_id", company.id)
+          .order("sort_order", { ascending: true })
+          .catch(() => ({ data: [] })),
+        supabase
+          .from("company_addresses")
+          .select("*")
+          .eq("company_id", company.id)
+          .limit(1)
+          .single()
+          .catch(() => ({ data: null })),
+        supabase
+          .from("business_hours")
+          .select("*")
+          .eq("company_id", company.id)
+          .order("day_of_week", { ascending: true })
+          .catch(() => ({ data: [] })),
+      ]);
 
       return {
         ...company,
-        contacts: contacts || [],
-        address: address || null,
-        business_hours: hours || [],
+        contacts: contactsRes?.data || [],
+        address: addressRes?.data || null,
+        business_hours: hoursRes?.data || [],
       };
     }
   } catch (err) {
@@ -994,6 +1002,21 @@ export async function getCompany() {
   }
 
   return getFallbackCompany();
+}
+
+const getCachedCompanyData = unstable_cache(
+  fetchCompanyFromDb,
+  ["global-company-data"],
+  { revalidate: 60, tags: ["company"] }
+);
+
+export async function getCompany() {
+  try {
+    return await getCachedCompanyData();
+  } catch (err) {
+    console.warn("Error getting cached company, using fallback:", err);
+    return getFallbackCompany();
+  }
 }
 
 export async function getCompanyContacts() {

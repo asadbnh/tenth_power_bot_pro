@@ -17,7 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const dict = await getDictionary(locale as Locale);
-  const company = await getCompany();
+  const [dict, company] = await Promise.all([
+    getDictionary(locale as Locale),
+    getCompany(),
+  ]);
   return <ContactPageContent locale={locale as Locale} dict={dict} company={company} />;
 }
