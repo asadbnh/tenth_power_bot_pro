@@ -281,22 +281,29 @@ export const Keyboards = {
     ],
   }),
 
-  quoteActions: (id: string): InlineKeyboard => ({
-    inline_keyboard: [
-      [
-        { text: "📞 تم الاتصال", callback_data: `q_status:${id}:contacted` },
-        { text: "💰 تم التسعير", callback_data: `q_status:${id}:quoted` },
-      ],
-      [
-        { text: "🏆 تم التعاقد", callback_data: `q_status:${id}:won` },
-        { text: "❌ ملغي/خسارة", callback_data: `q_status:${id}:lost` },
-      ],
-      [
-        { text: "🗑️ حذف الطلب", callback_data: `q_delete:${id}` },
-        { text: "◀️ عودة", callback_data: "crm_quotes" },
-      ],
-    ],
-  }),
+  quoteActions: (id: string, phone?: string): InlineKeyboard => {
+    const rows: InlineKeyboardButton[][] = [];
+    if (phone) {
+      const cleanPhone = phone.replace(/[^0-9]/g, "");
+      const waPhone = cleanPhone.startsWith("05") ? "966" + cleanPhone.substring(1) : cleanPhone;
+      rows.push([
+        { text: "💬 مراسلة واتساب فورية", url: `https://wa.me/${waPhone}` },
+      ]);
+    }
+    rows.push([
+      { text: "📞 تم الاتصال", callback_data: `q_status:${id}:contacted` },
+      { text: "💰 تم التسعير", callback_data: `q_status:${id}:quoted` },
+    ]);
+    rows.push([
+      { text: "🏆 تم التعاقد", callback_data: `q_status:${id}:won` },
+      { text: "❌ ملغي/خسارة", callback_data: `q_status:${id}:lost` },
+    ]);
+    rows.push([
+      { text: "📋 تفاصيل الطلب", callback_data: `q_view:${id}` },
+      { text: "🗑️ حذف الطلب", callback_data: `q_delete:${id}` },
+    ]);
+    return { inline_keyboard: rows };
+  },
 
   appointmentActions: (id: string): InlineKeyboard => ({
     inline_keyboard: [
@@ -436,21 +443,35 @@ export const Keyboards = {
 
 export function formatQuoteAlert(data: {
   name: string; phone: string; services: string[];
-  city: string; budget: string; urgency: string; description: string; id: string;
+  city: string; budget?: string; urgency: string; description: string; id: string;
 }) {
-  return `🔔 <b>طلب عرض سعر جديد!</b>
+  const budgetText = (data.budget && data.budget !== "00" && data.budget !== "غير محدد")
+    ? data.budget
+    : "غير محددة (افتراضي 00)";
 
-👤 <b>الاسم:</b> ${data.name}
-📱 <b>الجوال:</b> <code>${data.phone}</code>
-🛠️ <b>الخدمات:</b> ${data.services.join(", ")}
+  const cleanPhone = data.phone.replace(/[^0-9]/g, "");
+  const waPhone = cleanPhone.startsWith("05") ? "966" + cleanPhone.substring(1) : cleanPhone;
+  const nowStr = new Date().toLocaleString("ar-SA", { timeZone: "Asia/Riyadh" });
+
+  return `🚨 <b>إشعار فوري: طلب عرض سعر جديد من الموقع!</b>
+━━━━━━━━━━━━━━━━━━
+👤 <b>اسم العميل:</b> ${data.name}
+📱 <b>رقم الجوال:</b> <code>${data.phone}</code>
+💬 <b>واتساب العميل:</b> <a href="https://wa.me/${waPhone}">اضغط هنا لفتح المحادثة</a>
 📍 <b>المدينة:</b> ${data.city}
-💰 <b>الميزانية:</b> ${data.budget}
-⚡ <b>الأولوية:</b> ${data.urgency}
+⚡ <b>مستوى الاستعجال:</b> ${data.urgency}
+💰 <b>الميزانية:</b> ${budgetText}
 
-📝 <b>التفاصيل:</b>
+🛠️ <b>الخدمات المطلوبة:</b>
+${data.services.map((s) => `  • ${s}`).join("\n")}
+
+📝 <b>تفاصيل ووصف المشروع:</b>
 ${data.description}
 
-🆔 <b>رقم الطلب:</b> <code>${data.id}</code>`;
+📅 <b>التوقيت:</b> ${nowStr}
+🆔 <b>رقم الطلب في النظام:</b> <code>${data.id}</code>
+━━━━━━━━━━━━━━━━━━
+⚡ <i>تم إرسال هذا التنبيه فوراً إلى هاتفك لتتمكن من متابعة العميل والاتفاق معه مباشرة.</i>`;
 }
 
 export function formatMessageAlert(data: {

@@ -28,14 +28,21 @@ async function getAdminChatIds(): Promise<number[]> {
 
 async function broadcastToAdmins(text: string, options?: Parameters<typeof sendMessage>[2]) {
   const adminIds = await getAdminChatIds();
+  if (adminIds.length === 0) {
+    console.warn("⚠️ [Telegram Notification] No admin chat IDs found.");
+    return;
+  }
   await Promise.allSettled(adminIds.map((chatId) => sendMessage(chatId, text, options)));
+  console.log(`[Telegram Alert] Broadcast to ${adminIds.length} admins complete.`);
 }
 
 export async function notifyNewQuoteRequest(data: {
   id: string; name: string; phone: string; services: string[];
-  city: string; budget: string; urgency: string; description: string;
+  city: string; budget?: string; urgency: string; description: string;
 }) {
-  await broadcastToAdmins(formatQuoteAlert(data), { reply_markup: Keyboards.quoteActions(data.id) });
+  await broadcastToAdmins(formatQuoteAlert(data), {
+    reply_markup: Keyboards.quoteActions(data.id, data.phone),
+  });
 }
 
 export async function notifyNewMessage(data: {

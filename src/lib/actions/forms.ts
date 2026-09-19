@@ -26,7 +26,7 @@ async function getDefaultCompanyId(supabase: any): Promise<string> {
 interface QuoteFormData {
   services: string[];
   description: string;
-  budget: string;
+  budget?: string;
   urgency: string;
   city: string;
   name: string;
@@ -78,7 +78,7 @@ export async function submitQuoteRequest(data: QuoteFormData) {
       company_id: companyId,
       user_id: user.id,
       description: `الخدمات المطلوبة: ${data.services.join(", ")}\n\nتفاصيل إضافية: ${data.description}`,
-      budget_range: data.budget,
+      budget_range: data.budget || "00",
       city: data.city,
       urgency: data.urgency,
       status: "new",
@@ -91,17 +91,21 @@ export async function submitQuoteRequest(data: QuoteFormData) {
     return { success: false, error: "فشل في حفظ الطلب" };
   }
 
-  // 3. Fire Real-time Telegram Admin Alert
-  notifyNewQuoteRequest({
-    id: quote.id,
-    name: data.name,
-    phone: data.phone,
-    services: data.services,
-    city: data.city,
-    budget: data.budget,
-    urgency: data.urgency,
-    description: data.description,
-  }).catch((err) => console.error("Telegram notification error:", err));
+  // 3. Fire Real-time Telegram Admin Alert (Awaited for guaranteed instant push)
+  try {
+    await notifyNewQuoteRequest({
+      id: quote.id,
+      name: data.name,
+      phone: data.phone,
+      services: data.services,
+      city: data.city,
+      budget: data.budget || "00",
+      urgency: data.urgency,
+      description: data.description,
+    });
+  } catch (err) {
+    console.error("Telegram notification error in submitQuoteRequest:", err);
+  }
 
   return { success: true, id: quote.id };
 }

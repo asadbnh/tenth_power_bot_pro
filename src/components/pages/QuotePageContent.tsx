@@ -39,8 +39,7 @@ const SERVICES = [
   { icon: Wrench, name_ar: "صيانة", name_en: "Maintenance", value: "maintenance" },
 ];
 
-const BUDGETS_AR = ["أقل من 5,000 ر.س", "5,000 – 20,000 ر.س", "20,000 – 100,000 ر.س", "100,000 – 500,000 ر.س", "أكثر من 500,000 ر.س"];
-const BUDGETS_EN = ["Less than SAR 5,000", "SAR 5,000 – 20,000", "SAR 20,000 – 100,000", "SAR 100,000 – 500,000", "More than SAR 500,000"];
+
 
 const URGENCY_AR = ["عادي (أكثر من شهر)", "متوسط (2-4 أسابيع)", "عاجل (أسبوع أو أقل)", "فوري (خلال أيام)"];
 const URGENCY_EN = ["Normal (more than a month)", "Medium (2-4 weeks)", "Urgent (1 week or less)", "Immediate (within days)"];
@@ -67,7 +66,7 @@ export function QuotePageContent({ locale, dict, initialServices }: Props) {
   const [step, setStep] = useState<Step>(1);
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
   const [form, setForm] = useState<FormData>({
-    services: [], description: "", budget: "", urgency: "", city: "",
+    services: [], description: "", budget: "00", urgency: "", city: "",
     name: "", phone: "", email: "", preferWhatsApp: true,
   });
 
@@ -89,7 +88,7 @@ export function QuotePageContent({ locale, dict, initialServices }: Props) {
 
   const canNext = () => {
     if (step === 1) return form.services.length > 0;
-    if (step === 2) return form.description.trim().length > 10 && form.budget && form.urgency && form.city;
+    if (step === 2) return form.description.trim().length > 10 && form.urgency && form.city;
     if (step === 3) return form.name.trim() && form.phone.trim();
     return true;
   };
@@ -105,7 +104,7 @@ export function QuotePageContent({ locale, dict, initialServices }: Props) {
       const res = await submitQuoteRequest({
         services: form.services,
         description: form.description,
-        budget: form.budget,
+        budget: form.budget || "00",
         urgency: form.urgency,
         city: form.city,
         name: form.name,
@@ -232,30 +231,20 @@ export function QuotePageContent({ locale, dict, initialServices }: Props) {
                     className="w-full px-4 py-3 rounded-xl border border-border-light bg-background focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm resize-none transition-all" />
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">{dict.quote.budget} <span className="text-rose-500">*</span></label>
-                    <select value={form.budget} onChange={e => setForm(p => ({ ...p, budget: e.target.value }))}
-                      className="w-full px-4 py-3 rounded-xl border border-border-light bg-background focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition-all">
-                      <option value="">{isRtl ? "اختر الميزانية" : "Select budget"}</option>
-                      {(isRtl ? BUDGETS_AR : BUDGETS_EN).map((b) => <option key={b} value={b}>{b}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">{dict.quote.urgency} <span className="text-rose-500">*</span></label>
-                    <select value={form.urgency} onChange={e => setForm(p => ({ ...p, urgency: e.target.value }))}
-                      className="w-full px-4 py-3 rounded-xl border border-border-light bg-background focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition-all">
-                      <option value="">{isRtl ? "اختر مستوى الاستعجال" : "Select urgency"}</option>
-                      {(isRtl ? URGENCY_AR : URGENCY_EN).map((u) => <option key={u} value={u}>{u}</option>)}
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">{dict.quote.urgency} <span className="text-rose-500">*</span></label>
+                  <select value={form.urgency} onChange={e => setForm(p => ({ ...p, urgency: e.target.value }))}
+                    className="w-full px-4 py-3 rounded-xl border border-border-light bg-background focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 text-sm transition-all">
+                    <option value="">{isRtl ? "اختر مستوى الاستعجال" : "Select urgency"}</option>
+                    {(isRtl ? URGENCY_AR : URGENCY_EN).map((u) => <option key={u} value={u}>{u}</option>)}
+                  </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">{dict.quote.city} <span className="text-rose-500">*</span></label>
                   <div className="flex flex-wrap gap-2">
                     {(isRtl ? CITIES_AR : CITIES_EN).map((city) => (
-                      <button key={city} onClick={() => setForm(p => ({ ...p, city }))}
+                      <button key={city} type="button" onClick={() => setForm(p => ({ ...p, city }))}
                         className={cn("px-3 py-1.5 rounded-full text-sm font-medium border transition-all",
                           form.city === city ? "bg-primary-600 text-white border-primary-600" : "border-border-light hover:border-primary-300 text-text-secondary")}>
                         {city}
@@ -302,9 +291,9 @@ export function QuotePageContent({ locale, dict, initialServices }: Props) {
                 <p className="text-sm text-text-secondary mb-4">{isRtl ? "راجع تفاصيل طلبك قبل الإرسال" : "Review your request details before submitting"}</p>
 
                 {[
-                  { label: isRtl ? "الخدمات" : "Services", value: form.services.map(s => SERVICES.find(sv => sv.value === s)?.[isRtl ? "name_ar" : "name_en"]).join("، ") },
+                  { label: isRtl ? "الخدمات" : "Services", value: form.services.map(s => servicesList.find(sv => sv.value === s)?.[isRtl ? "name_ar" : "name_en"] || s).join("، ") },
                   { label: dict.quote.description, value: form.description },
-                  { label: dict.quote.budget, value: form.budget },
+                  ...(form.budget && form.budget !== "00" ? [{ label: dict.quote.budget, value: form.budget }] : []),
                   { label: dict.quote.urgency, value: form.urgency },
                   { label: dict.quote.city, value: form.city },
                   { label: isRtl ? "الاسم" : "Name", value: form.name },
