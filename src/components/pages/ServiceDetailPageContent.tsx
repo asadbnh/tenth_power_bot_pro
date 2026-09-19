@@ -68,10 +68,17 @@ export function ServiceDetailPageContent({ slug, locale, dict, initialService }:
 
   return (
     <div className="pt-[var(--header-height)] min-h-dvh bg-gradient-to-b from-background to-surface">
-      {/* Hero Section */}
-      <section className="relative py-16 sm:py-24 bg-gradient-to-br from-primary-950 via-[#0c1445] to-primary-900 overflow-hidden text-white">
-        <div className="absolute inset-0 opacity-[0.05]"
-          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+      {/* Architectural Hero Section */}
+      <section className="relative py-16 sm:py-24 bg-[#070d1e] overflow-hidden text-white border-b border-amber-500/15">
+        <div 
+          className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          style={{ 
+            backgroundImage: "linear-gradient(rgba(212,175,55,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.25) 1px, transparent 1px)", 
+            backgroundSize: "44px 44px" 
+          }} 
+        />
+        <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[22rem] bg-gradient-to-r from-amber-500/15 via-blue-600/10 to-transparent rounded-full blur-[110px] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/85 via-transparent to-[#070d1e] pointer-events-none" />
         
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
@@ -80,17 +87,23 @@ export function ServiceDetailPageContent({ slug, locale, dict, initialService }:
             <ChevronLeft className={cn("w-3 h-3", !isRtl && "rotate-180")} />
             <Link href={`/${locale}/services`} className="hover:text-white transition-colors">{dict.services.title}</Link>
             <ChevronLeft className={cn("w-3 h-3", !isRtl && "rotate-180")} />
-            <span className="text-white font-medium">{name}</span>
+            <span className="text-amber-300 font-medium">{name}</span>
           </div>
 
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-4 max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-xs font-semibold text-primary-200 backdrop-blur-md">
-                <IconComponent className="w-4 h-4" />
-                <span>{isRtl ? "خدمة متخصصة وضمان شامل" : "Specialized Service & Full Warranty"}</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-xs font-bold text-amber-300 backdrop-blur-md">
+                  <IconComponent className="w-4 h-4 text-amber-400" />
+                  <span>{isRtl ? "خدمة معمارية معتمدة" : "Certified Architectural Service"}</span>
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-white/80 border border-white/15">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  {isRtl ? "كود البناء السعودي SBC" : "SBC Compliant"}
+                </span>
               </div>
 
-              <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight">
+              <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight text-white">
                 {name}
               </h1>
 
@@ -102,14 +115,14 @@ export function ServiceDetailPageContent({ slug, locale, dict, initialService }:
                 </div>
               )}
 
-              <p className="text-base sm:text-lg text-white/70 leading-relaxed">
+              <p className="text-base sm:text-lg text-slate-300 leading-relaxed">
                 {shortDesc}
               </p>
             </div>
 
             <div className="shrink-0 space-y-3 w-full md:w-auto">
               <Link href={`/${locale}/quote?service=${slug}`}
-                className="w-full md:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-accent-500 to-amber-500 text-primary-950 font-extrabold text-base shadow-xl hover:shadow-accent-500/20 hover:scale-[1.02] active:scale-95 transition-all">
+                className="w-full md:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 text-primary-950 font-extrabold text-base shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
                 <Sparkles className="w-5 h-5" />
                 {dict.services.requestQuote}
               </Link>
@@ -117,12 +130,12 @@ export function ServiceDetailPageContent({ slug, locale, dict, initialService }:
               <Link href={`/${locale}/appointments?service=${slug}`}
                 className="w-full inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-xs transition-all">
                 <Clock className="w-4 h-4 text-amber-400" />
-                <span>{isRtl ? "حجز معاينة ورفع مقاسات" : "Book Free Survey"}</span>
+                <span>{isRtl ? "حجز معاينة ورفع مساحي مجاني" : "Book Free Site Survey"}</span>
               </Link>
 
-              <div className="flex items-center justify-center gap-4 text-xs text-white/60">
-                <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-accent-400" /> {isRtl ? "ضمان 10 سنوات" : "10-Year Warranty"}</span>
-                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-accent-400" /> {isRtl ? "معاينة مجانية" : "Free Measurement"}</span>
+              <div className="flex items-center justify-center gap-4 text-xs text-slate-400">
+                <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-amber-400" /> {isRtl ? "ضمان 10 سنوات" : "10-Year Warranty"}</span>
+                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-amber-400" /> {isRtl ? "معاينة مجانية" : "Free Measurement"}</span>
               </div>
             </div>
           </div>
@@ -260,17 +273,30 @@ export function ServiceDetailPageContent({ slug, locale, dict, initialService }:
                 </div>
               )}
 
-              <div className="pt-4 border-t border-border-light space-y-3">
-                <Link href={`/${locale}/quote`}
-                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary-600 text-white font-bold text-sm hover:bg-primary-700 active:scale-95 transition-all">
-                  {dict.services.requestQuote}
+              <div className="pt-4 border-t border-border-light space-y-2.5">
+                <Link 
+                  href={`/${locale}/quote?service=${slug}`}
+                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-primary-950 font-extrabold text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-md shadow-amber-500/20"
+                >
+                  <span>{dict.services.requestQuote}</span>
                   <ArrowRight className={cn("w-4 h-4", isRtl && "rotate-180")} />
                 </Link>
 
-                <a href="tel:+966500000000"
-                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-surface text-text-primary border border-border-light font-semibold text-xs hover:bg-surface-elevated transition-all">
-                  <Phone className="w-3.5 h-3.5 text-primary-500" />
-                  {isRtl ? "اتصل بمهندس الموقع" : "Call Site Engineer"}
+                <a 
+                  href={`https://wa.me/966532438253?text=${encodeURIComponent(isRtl ? `السلام عليكم، أود الاستفسار عن خدمة (${name}) وحجز موعد معاينة هندسية بالرياض.` : `Hello, I'd like to inquire about service (${name}).`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 font-bold text-xs transition-all"
+                >
+                  <span>{isRtl ? "استفسر عبر الواتساب فوراً" : "WhatsApp Direct"}</span>
+                </a>
+
+                <a 
+                  href="tel:+966532438253"
+                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-surface text-text-primary border border-border-light font-semibold text-xs hover:bg-surface-elevated transition-all"
+                >
+                  <Phone className="w-3.5 h-3.5 text-amber-500" />
+                  <span>{isRtl ? "اتصال بمهندس المبيعات" : "Call Sales Engineer"}</span>
                 </a>
               </div>
             </div>

@@ -85,61 +85,126 @@ export function AboutPageContent({ locale, dict, initialCompany }: Props) {
    
 
       {/* Mission & Vision */}
-      <section className="py-16 sm:py-20 bg-background">
+      <section className="py-16 sm:py-24 bg-background">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8 mb-16">
             {[
-              { icon: Target, title: isRtl ? dict.about.mission : "Our Mission", color: "from-blue-500 to-cyan-400",
-                text: isRtl ? "تقديم حلول متكاملة وعالية الجودة في مجالات الزجاج والألمنيوم والمقاولات، بأسعار تنافسية وفريق عمل متخصص يسعى دائماً لتجاوز توقعات العملاء." : "Delivering comprehensive, high-quality solutions in glass, aluminum, and contracting, with competitive pricing and a specialized team that always strives to exceed client expectations." },
-              { icon: Eye, title: isRtl ? dict.about.vision : "Our Vision", color: "from-amber-500 to-orange-400",
-                text: isRtl ? "أن نكون الشركة الأولى والأكثر ثقة في مجالنا على مستوى المملكة العربية السعودية، من خلال الابتكار المستمر وتبني أحدث التقنيات." : "To be the leading and most trusted company in our field across Saudi Arabia, through continuous innovation and adopting the latest technologies." },
+              {
+                icon: Target,
+                title: isRtl ? dict.about.mission : "Our Mission",
+                text: isRtl
+                  ? "تقديم حلول هندسية متكاملة وفائقة الدقة في مجالات الواجهات الزجاجية، أنظمة الكرتن وول، والألمنيوم المعزول، مع الالتزام التام بكود البناء السعودي SBC وتجاوز توقعات كبار المطورين والملاك."
+                  : "Delivering integrated and highly precise engineering solutions in glass facades, curtain wall systems, and thermal-break aluminum, with full adherence to the Saudi Building Code (SBC).",
+              },
+              {
+                icon: Eye,
+                title: isRtl ? dict.about.vision : "Our Vision",
+                text: isRtl
+                  ? "أن نكون الكيان الهندسي الأول والأكثر موثوقية في المقاولات التخصصية للواجهات المعمارية والزجاج بالمملكة، عبر تبني أحدث الأنظمة العالمية ومواكبة النهضة العمرانية لرؤية 2030."
+                  : "To be the premier and most trusted specialized contracting firm for architectural facades and glass across Saudi Arabia, supporting the Kingdom's Vision 2030.",
+              },
             ].map((item, i) => {
               const Icon = item.icon;
               return (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }}
-                  className="rounded-2xl border border-border-light bg-surface-elevated p-8">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-5 shadow-md`}>
-                    <Icon className="w-6 h-6 text-white" />
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.15 }}
+                  className="rounded-3xl border border-border-light bg-surface-elevated p-8 shadow-xl hover:border-amber-500/40 transition-colors"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-[#0b172e] border border-amber-500/30 flex items-center justify-center mb-6 shadow-md">
+                    <Icon className="w-7 h-7 text-amber-400" />
                   </div>
-                  <h2 className="text-xl font-bold mb-3">{item.title}</h2>
-                  <p className="text-text-secondary leading-relaxed">{item.text}</p>
+                  <h2 className="text-xl sm:text-2xl font-bold mb-3 text-foreground">{item.title}</h2>
+                  <p className="text-text-secondary leading-relaxed text-sm sm:text-base">{item.text}</p>
                 </motion.div>
               );
             })}
           </div>
 
-          {/* Values */}
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10">{isRtl ? dict.about.values : "Our Values"}</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-20">
+          {/* Core Engineering Divisions */}
+          <div className="mb-20">
+            <div className="text-center mb-12">
+              <span className="inline-block text-xs sm:text-sm font-bold text-amber-500 mb-2 uppercase tracking-widest">
+                — {isRtl ? "الأقسام الهندسية التخصصية" : "SPECIALIZED DIVISIONS"} —
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-foreground">
+                {isRtl ? "قدراتنا التنفيذية في المشاريع" : "Our Engineering Capabilities"}
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                {
+                  num: "01",
+                  title_ar: "قسم الواجهات والكرتن وول",
+                  title_en: "Curtain Walls & Facades",
+                  desc_ar: "واجهات استركشر وسبايدر بأعلى مواصفات مقاومة الرياح والعزل الحراري.",
+                  desc_en: "Structural & spider glazing engineered for high wind resistance and thermal insulation.",
+                },
+                {
+                  num: "02",
+                  title_ar: "قسم الزجاج السيكوريت",
+                  title_en: "Tempered Securit Glass",
+                  desc_ar: "أبواب سحاب ومفصلي، قواطع مكاتب عازلة للصوت، وكبائن شاور نانو ضد التكلس.",
+                  desc_en: "Sliding & swing doors, acoustic partitions, and anti-limescale shower cabins.",
+                },
+                {
+                  num: "03",
+                  title_ar: "قسم الألمنيوم المعزول",
+                  title_en: "Thermal-Break Aluminum",
+                  desc_ar: "قطاعات ألمنيوم ثقيلة معزولة حرارياً للنوافذ والأبواب المعتمدة لكود SBC.",
+                  desc_en: "Heavy-duty thermal-break profiles for SBC-compliant windows and doors.",
+                },
+                {
+                  num: "04",
+                  title_ar: "قسم المعاينة والرفع المساحي",
+                  title_en: "Field Survey & Estimation",
+                  desc_ar: "مهندسون وفنيون للمعاينة ورفع المقاسات وإعداد المخططات التنفيذية مجاناً بالرياض.",
+                  desc_en: "Specialized engineering survey, accurate site measurement, and free estimation in Riyadh.",
+                },
+              ].map((div, i) => (
+                <div
+                  key={i}
+                  className="p-6 rounded-2xl border border-border-light bg-surface-elevated hover:border-amber-500/50 transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <span className="text-2xl font-black text-amber-500/80 font-mono mb-3 block">{div.num}</span>
+                    <h3 className="text-base font-bold mb-2 text-foreground">{isRtl ? div.title_ar : div.title_en}</h3>
+                    <p className="text-xs text-text-secondary leading-relaxed">{isRtl ? div.desc_ar : div.desc_en}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Corporate Values */}
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10 text-foreground">
+            {isRtl ? dict.about.values : "Our Values"}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {VALUES.map((v, i) => {
               const Icon = v.icon;
               return (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 + i * 0.1 }}
-                  className="text-center p-6 rounded-2xl border border-border-light bg-surface-elevated hover:border-primary-200 dark:hover:border-primary-800 transition-colors">
-                  <Icon className="w-8 h-8 mx-auto mb-3 text-primary-600 dark:text-primary-400" />
-                  <h3 className="font-bold mb-2">{isRtl ? v.title_ar : v.title_en}</h3>
-                  <p className="text-sm text-text-secondary">{isRtl ? v.desc_ar : v.desc_en}</p>
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 + i * 0.1 }}
+                  className="text-center p-6 rounded-2xl border border-border-light bg-surface-elevated hover:border-amber-500/40 transition-colors"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
+                    <Icon className="w-6 h-6 text-amber-500" />
+                  </div>
+                  <h3 className="font-bold mb-2 text-foreground">{isRtl ? v.title_ar : v.title_en}</h3>
+                  <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">{isRtl ? v.desc_ar : v.desc_en}</p>
                 </motion.div>
               );
             })}
           </div>
-
-          {/* Team 
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10">{isRtl ? dict.about.team : "Our Team"}</h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-            {TEAM.map((member, i) => (
-              <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.5 + i * 0.08 }}
-                className="text-center rounded-2xl overflow-hidden border border-border-light bg-surface-elevated">
-                <div className={`h-28 bg-gradient-to-br ${member.gradient} flex items-center justify-center text-4xl`}>
-                  {member.emoji}
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-sm mb-1">{isRtl ? member.name_ar : member.name_en}</h3>
-                  <p className="text-xs text-text-secondary">{isRtl ? member.role_ar : member.role_en}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>*/}
         </div>
       </section>
     </div>

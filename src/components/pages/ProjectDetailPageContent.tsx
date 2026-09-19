@@ -65,38 +65,58 @@ export function ProjectDetailPageContent({ slug, locale, dict, initialProject }:
 
   return (
     <div className="pt-[var(--header-height)] min-h-dvh bg-gradient-to-b from-background to-surface">
-      {/* Hero */}
-      <section className="relative py-16 sm:py-24 bg-gradient-to-br from-primary-950 via-[#0c1445] to-primary-900 overflow-hidden text-white">
+      {/* Architectural Hero */}
+      <section className="relative py-16 sm:py-24 bg-[#070d1e] overflow-hidden text-white border-b border-amber-500/15">
+        <div 
+          className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          style={{ 
+            backgroundImage: "linear-gradient(rgba(212,175,55,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.25) 1px, transparent 1px)", 
+            backgroundSize: "44px 44px" 
+          }} 
+        />
+        <div className="absolute top-1/3 end-1/4 w-[32rem] h-[32rem] bg-amber-500/10 rounded-full blur-[110px] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/80 via-transparent to-[#070d1e] pointer-events-none" />
+        
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 text-xs text-white/60 mb-6">
             <Link href={`/${locale}`} className="hover:text-white transition-colors">{isRtl ? "الرئيسية" : "Home"}</Link>
             <ChevronLeft className={cn("w-3 h-3", !isRtl && "rotate-180")} />
             <Link href={`/${locale}/projects`} className="hover:text-white transition-colors">{dict.projects.title}</Link>
             <ChevronLeft className={cn("w-3 h-3", !isRtl && "rotate-180")} />
-            <span className="text-white font-medium">{name}</span>
+            <span className="text-amber-300 font-medium">{name}</span>
           </div>
 
           <div className="space-y-4">
-            {category && (
-              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-xs font-semibold text-primary-200 backdrop-blur-md">
-                <Building2 className="w-3.5 h-3.5" />
-                {category}
+            <div className="flex flex-wrap items-center gap-2.5">
+              {category && (
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-xs font-bold text-amber-300 backdrop-blur-md">
+                  <Building2 className="w-3.5 h-3.5 text-amber-400" />
+                  {category}
+                </span>
+              )}
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-white/80 border border-white/15">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                {isRtl ? "كود البناء السعودي SBC" : "SBC Compliant"}
               </span>
-            )}
-            <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-white/80 border border-white/15">
+                {isRtl ? "ضمان 10 سنوات" : "10-Year Warranty"}
+              </span>
+            </div>
+
+            <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight text-white">
               {name}
             </h1>
             
-            <div className="flex flex-wrap gap-6 text-xs sm:text-sm text-white/80 pt-2">
+            <div className="flex flex-wrap gap-6 text-xs sm:text-sm text-slate-300 pt-2">
               {location && (
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-accent-400" />
+                  <MapPin className="w-4 h-4 text-amber-400" />
                   <span>{location}</span>
                 </div>
               )}
               {project.year && (
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-accent-400" />
+                  <Calendar className="w-4 h-4 text-amber-400" />
                   <span>{project.year}</span>
                 </div>
               )}
@@ -320,15 +340,28 @@ export function ProjectDetailPageContent({ slug, locale, dict, initialProject }:
             </div>
             
             <div className="space-y-2.5 pt-2">
-              <Link href={`/${locale}/quote`}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary-600 text-white font-bold text-sm hover:bg-primary-700 active:scale-95 transition-all shadow-md">
-                {isRtl ? "طلب دراسة مشروع مماثل" : "Request Similar Project"}
+              <Link 
+                href={`/${locale}/quote?project=${slug}`}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-primary-950 font-extrabold text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-md shadow-amber-500/20"
+              >
+                <span>{isRtl ? "طلب دراسة مشروع مماثل" : "Request Similar Project"}</span>
                 <ArrowRight className={cn("w-4 h-4", isRtl && "rotate-180")} />
               </Link>
 
-              <Link href={`/${locale}/appointments`}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-surface hover:bg-surface-elevated text-text-primary border border-border-light font-semibold text-xs transition-all">
-                <Calendar className="w-4 h-4 text-accent-500" />
+              <a 
+                href={`https://wa.me/966532438253?text=${encodeURIComponent(isRtl ? `السلام عليكم ورحمة الله، أود الاستفسار عن تفاصيل تنفيذ مشروع (${name}) وإمكانية عمل دراسة ومعاينة لمشروع مماثل.` : `Hello, I'd like to inquire about project (${name}).`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 font-bold text-xs transition-all"
+              >
+                <span>{isRtl ? "استفسر عبر الواتساب فوراً" : "WhatsApp Inquiry"}</span>
+              </a>
+
+              <Link 
+                href={`/${locale}/appointments?project=${slug}`}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-surface hover:bg-surface-elevated text-text-primary border border-border-light font-semibold text-xs transition-all"
+              >
+                <Calendar className="w-4 h-4 text-amber-500" />
                 <span>{isRtl ? "حجز معاينة هندسية مجانية" : "Book Free Site Survey"}</span>
               </Link>
             </div>

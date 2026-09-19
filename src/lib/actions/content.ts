@@ -79,7 +79,7 @@ export async function getServices(locale = "ar") {
   }
 }
 
-export async function getServiceBySlug(slug: string, locale = "ar") {
+async function fetchServiceBySlugFromDb(slug: string, locale = "ar") {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
   const isAr = locale === "ar";
@@ -148,6 +148,20 @@ export async function getServiceBySlug(slug: string, locale = "ar") {
     faqs: service.faqs || [],
     gallery_images: serviceImages,
   };
+}
+
+const getCachedServiceBySlug = unstable_cache(
+  async (slug: string, locale: string) => fetchServiceBySlugFromDb(slug, locale),
+  ["global-service-by-slug"],
+  { revalidate: 60, tags: ["services"] }
+);
+
+export async function getServiceBySlug(slug: string, locale = "ar") {
+  try {
+    return await getCachedServiceBySlug(slug, locale);
+  } catch {
+    return fetchServiceBySlugFromDb(slug, locale);
+  }
 }
 
 // ─── Projects Actions ──────────────────────────────────────────────────
@@ -261,7 +275,7 @@ export async function getProjects(options?: {
   }
 }
 
-export async function getProjectBySlug(slug: string, _locale = "ar") {
+async function fetchProjectBySlugFromDb(slug: string, _locale = "ar") {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
 
@@ -368,6 +382,20 @@ export async function getProjectBySlug(slug: string, _locale = "ar") {
     results_ar: (project.results_ar as string[]) || [],
     results_en: (project.results_en as string[]) || [],
   };
+}
+
+const getCachedProjectBySlug = unstable_cache(
+  async (slug: string, locale: string) => fetchProjectBySlugFromDb(slug, locale),
+  ["global-project-by-slug"],
+  { revalidate: 60, tags: ["projects"] }
+);
+
+export async function getProjectBySlug(slug: string, locale = "ar") {
+  try {
+    return await getCachedProjectBySlug(slug, locale);
+  } catch {
+    return fetchProjectBySlugFromDb(slug, locale);
+  }
 }
 
 // ─── Articles Actions ──────────────────────────────────────────────────
@@ -874,7 +902,7 @@ export async function getCityPagesList(locale = "ar") {
   }));
 }
 
-export async function getCityPageBySlug(slug: string, locale = "ar") {
+async function fetchCityPageBySlugFromDb(slug: string, locale = "ar") {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
   const isAr = locale === "ar";
@@ -928,7 +956,21 @@ export async function getCityPageBySlug(slug: string, locale = "ar") {
   };
 }
 
-export async function getCityServicePageBySlug(citySlug: string, serviceSlug: string, locale = "ar") {
+const getCachedCityPageBySlug = unstable_cache(
+  async (slug: string, locale: string) => fetchCityPageBySlugFromDb(slug, locale),
+  ["global-city-page-by-slug"],
+  { revalidate: 60, tags: ["cities"] }
+);
+
+export async function getCityPageBySlug(slug: string, locale = "ar") {
+  try {
+    return await getCachedCityPageBySlug(slug, locale);
+  } catch {
+    return fetchCityPageBySlugFromDb(slug, locale);
+  }
+}
+
+async function fetchCityServicePageBySlugFromDb(citySlug: string, serviceSlug: string, locale = "ar") {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
   const isAr = locale === "ar";
@@ -976,6 +1018,21 @@ export async function getCityServicePageBySlug(citySlug: string, serviceSlug: st
     regionName: isAr ? cityPage.region_ar : cityPage.region_en || cityPage.region_ar,
     customContent: (isAr ? service.full_description_ar : service.full_description_en) || service.short_description_ar,
   };
+}
+
+const getCachedCityServicePageBySlug = unstable_cache(
+  async (citySlug: string, serviceSlug: string, locale: string) =>
+    fetchCityServicePageBySlugFromDb(citySlug, serviceSlug, locale),
+  ["global-city-service-page-by-slug"],
+  { revalidate: 60, tags: ["cities", "services"] }
+);
+
+export async function getCityServicePageBySlug(citySlug: string, serviceSlug: string, locale = "ar") {
+  try {
+    return await getCachedCityServicePageBySlug(citySlug, serviceSlug, locale);
+  } catch {
+    return fetchCityServicePageBySlugFromDb(citySlug, serviceSlug, locale);
+  }
 }
 
 // ─── Analytics Dashboard Actions ───────────────────────────────────────

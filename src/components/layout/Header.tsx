@@ -167,19 +167,19 @@ export function Header({ locale, dict }: HeaderProps) {
               <span>{alternateLocale === "ar" ? "العربية" : "English"}</span>
             </Link> */}
 
-            {/* Appointments Button (Desktop) 
+            {/* Appointments Button (Desktop) */}
             <Link
               href={getLocalizedHref("/appointments")}
-              className="hidden md:inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold text-text-primary hover:text-amber-500 hover:bg-amber-500/10 border border-border-light transition-all shrink-0 whitespace-nowrap"
+              className="hidden md:inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-amber-500 hover:text-amber-300 hover:bg-amber-500/10 border border-amber-500/30 transition-all shrink-0 whitespace-nowrap"
             >
-              <Calendar className="w-3.5 h-3.5 text-amber-500" />
-              <span>{isRtl ? "حجز موعد" : "Book Survey"}</span>
-            </Link>*/}
+              <Calendar className="w-3.5 h-3.5 text-amber-400" />
+              <span>{isRtl ? "معاينة مجانية بالرياض" : "Free Survey"}</span>
+            </Link>
 
             {/* CTA Button (Desktop) */}
             <Link
               href={getLocalizedHref("/quote")}
-              className="hidden sm:inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-primary-950 shadow-sm hover:scale-[1.02] active:scale-95 transition-all shrink-0 whitespace-nowrap"
+              className="hidden sm:inline-flex items-center justify-center gap-1 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-primary-950 shadow-sm hover:scale-[1.02] active:scale-95 transition-all shrink-0 whitespace-nowrap"
             >
               {dict.nav.quote}
             </Link>
