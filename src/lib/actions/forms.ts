@@ -61,7 +61,7 @@ export async function submitQuoteRequest(data: QuoteFormData) {
         utm_campaign: data.utm_campaign ?? null,
         metadata: { locale: data.locale ?? "ar" },
       },
-      { onConflict: "phone" }
+      { onConflict: "company_id,phone" }
     )
     .select("id")
     .single();
@@ -134,7 +134,7 @@ export async function submitContactForm(data: ContactFormData) {
         source: "contact_form",
         metadata: { locale: data.locale ?? "ar" },
       },
-      { onConflict: "phone" }
+      { onConflict: "company_id,phone" }
     )
     .select("id")
     .single();
@@ -237,7 +237,7 @@ export async function submitAppointmentRequest(data: AppointmentFormData) {
         source: "appointment_form",
         metadata: { locale: data.locale ?? "ar" },
       },
-      { onConflict: "phone" }
+      { onConflict: "company_id,phone" }
     )
     .select("id")
     .single();

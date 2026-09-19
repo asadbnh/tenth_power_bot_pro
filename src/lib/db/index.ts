@@ -336,8 +336,12 @@ export class QueryBuilder<T = Record<string, unknown>> implements PromiseLike<{ 
         }
 
         const colsEscaped = cols.map((c) => `"${c}"`).join(", ");
-        const conflictTarget = this.upsertConflict
-          ? this.upsertConflict.split(",").map((c) => `"${c.trim()}"`).join(", ")
+        let rawConflict = this.upsertConflict;
+        if (this.tableName === "users" && rawConflict === "phone") {
+          rawConflict = "company_id,phone";
+        }
+        const conflictTarget = rawConflict
+          ? rawConflict.split(",").map((c) => `"${c.trim()}"`).join(", ")
           : `"id"`;
 
         const updateSet = cols

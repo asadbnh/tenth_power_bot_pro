@@ -82,7 +82,11 @@ export async function processChatLead({
 
   try {
     const supabase = createAdminClient() as any;
-    const companyId = "00000000-0000-0000-0000-000000000001";
+    let companyId = "00d8d3a7-fa3b-4dd5-bf05-8081a6fc1089";
+    try {
+      const { data: comp } = await supabase.from("companies").select("id").limit(1);
+      if (Array.isArray(comp) && comp[0]?.id) companyId = comp[0].id;
+    } catch {}
 
     // 1. Check if lead already captured for this session to avoid duplicate spamming
     if (sessionId) {
@@ -118,7 +122,7 @@ export async function processChatLead({
             captured_at: new Date().toISOString(),
           },
         },
-        { onConflict: "phone" }
+        { onConflict: "company_id,phone" }
       )
       .select("id")
       .single();
