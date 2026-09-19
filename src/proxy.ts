@@ -70,20 +70,19 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Detect locale from cookie or default to primary Arabic (ar)
-  const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
-  
-  let detectedLocale = DEFAULT_LOCALE; // Always "ar" as primary/default
-  
-  if (cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale)) {
-    detectedLocale = cookieLocale;
-  }
-
-  // Redirect to locale-prefixed path
+  // Arabic is ALWAYS the default — ignore cookies, Accept-Language, and everything else.
+  // English is deprecated. Redirect every path-less request to /ar.
   const newUrl = request.nextUrl.clone();
-  newUrl.pathname = `/${detectedLocale}${pathname}`;
-  
-  return NextResponse.redirect(newUrl);
+  newUrl.pathname = `/${DEFAULT_LOCALE}${pathname}`;
+
+  const response = NextResponse.redirect(newUrl);
+  // Override any existing NEXT_LOCALE cookie to ar so future requests stay Arabic
+  response.cookies.set("NEXT_LOCALE", DEFAULT_LOCALE, {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365, // 1 year
+    sameSite: "lax",
+  });
+  return response;
 }
 
 export const config = {
