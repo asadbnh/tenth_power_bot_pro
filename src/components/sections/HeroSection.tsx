@@ -7,8 +7,10 @@ import {
   Sparkles,
   ArrowRight,
   Building2,
-  Bot,
-  ChevronDown,
+  ShieldCheck,
+  Award,
+  Ruler,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -37,57 +39,55 @@ interface HeroSectionProps {
 const HERO_SLIDES: HeroSlideItem[] = [
   {
     id: 1,
-    title_ar: "برج الأعمال الحديث — واجهات زجاجية هيكلية",
-    title_en: "Modern Business Tower — Structural Glazing Facade",
-    badge_ar: "زجاج سيكوريت 12مم دبل",
-    badge_en: "12mm Double Tempered",
+    title_ar: "واجهات زجاجية هيكلية (Structural Glazing) — برج الأعمال، العليا",
+    title_en: "Structural Glazing Facade — Business Tower, Olaya",
+    badge_ar: "سيكوريت دبل 24مم عازل حراري",
+    badge_en: "24mm Double Tempered",
     src: "/images/defaults/projects/project-1.webp",
   },
   {
     id: 2,
-    title_ar: "فيلا سكنية فاخرة — حي الملقا بالرياض",
-    title_en: "Luxury Modern Villa — Al Malqa District",
-    badge_ar: "عزل حراري وضوضاء 100%",
-    badge_en: "100% Thermal & Noise Proof",
-    src: "/images/defaults/services/luxury-facade.webp",
-  },
-  {
-    id: 3,
-    title_ar: "مجمع النخيل التجاري — واجهات زجاج ونظام سبايدر",
-    title_en: "Al-Nakheel Commercial Complex — Spider Facades",
-    badge_ar: "إكسسوارات استانلس ستيل 316",
+    title_ar: "واجهات كرتن وول وسبايدر — مجمع تجاري، طريق الملك فهد",
+    title_en: "Curtain Wall & Spider Systems — King Fahd Road",
+    badge_ar: "إكسسوارات ستانلس 316 معتمدة",
     badge_en: "Stainless 316 Hardware",
     src: "/images/defaults/services/glass-facades.webp",
   },
   {
+    id: 3,
+    title_ar: "قواطع مكاتب زجاجية وأبواب سيكوريت — حي الملقا بالرياض",
+    title_en: "Glass Partitions & Securit Doors — Al Malqa District",
+    badge_ar: "عزل صوتي تام 100% سوفت كلوز",
+    badge_en: "100% Soundproof Soft-Close",
+    src: "/images/defaults/services/luxury-facade.webp",
+  },
+  {
     id: 4,
-    title_ar: "مشاريع الألمنيوم والواجهات — كرتن وول",
-    title_en: "Thermal-Break Aluminum & Curtain Wall Works",
-    badge_ar: "مواصفات SBC معتمدة",
+    title_ar: "أعمال الألمنيوم المعزول والكلادينج — مجمع سكني فاخر",
+    title_en: "Thermal-Break Aluminum & Cladding — Luxury Complex",
+    badge_ar: "كود البناء السعودي SBC معتمد",
     badge_en: "SBC Saudi Building Code",
     src: "/images/defaults/services/aluminum-works.webp",
   },
 ];
 
 /**
- * Premium Cinematic Hero Section
- * Inspired by high-end luxury architectural & product launches.
+ * Premium Cinematic Hero Section — Architectural & Facade Engineering Authority
  * GPU-accelerated, SEO-friendly, fully responsive, and conversion-optimized.
  */
-export function HeroSection({ locale, dict, initialSlides }: HeroSectionProps) {
+export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [aiPrompt, setAiPrompt] = useState("");
   const [activeSlide, setActiveSlide] = useState(0);
   const isRtl = locale === "ar";
 
   const slides = initialSlides && initialSlides.length > 0 ? initialSlides : HERO_SLIDES;
 
-  // Automatic periodic slide change every 4.5 seconds
+  // Automatic periodic slide change every 5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % slides.length);
-    }, 4500);
+    }, 5000);
     return () => clearInterval(timer);
   }, [slides.length]);
 
@@ -116,17 +116,6 @@ export function HeroSection({ locale, dict, initialSlides }: HeroSectionProps) {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  const handleAiSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!aiPrompt.trim()) return;
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(
-        new CustomEvent("open-ai-chat", { detail: { prompt: aiPrompt } })
-      );
-      setAiPrompt("");
-    }
-  };
-
   return (
     <section
       ref={sectionRef}
@@ -139,10 +128,8 @@ export function HeroSection({ locale, dict, initialSlides }: HeroSectionProps) {
         className="absolute inset-0 z-0 pointer-events-none"
         style={{ y: backgroundY }}
       >
-        {/* Optional JSON Background Video / Image (Clear, vivid & contrast-enhanced) */}
         <PageHeroBackground pageKey="home" overlayOpacity={0.65} />
 
-        {/* Subtle Animated Blueprint Canvas Grid */}
         <AnimatedCanvasBanner
           aspectRatio="auto"
           showDetailedGrid={true}
@@ -171,18 +158,17 @@ export function HeroSection({ locale, dict, initialSlides }: HeroSectionProps) {
           transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        {/* Dark Vignette Gradient for Perfect Text & Button Contrast */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#070d1e] via-[#070d1e]/30 to-[#070d1e]/60" />
       </motion.div>
 
       {/* ── 2. Hero Content Container ─────────────────────────────────── */}
       <motion.div
-        className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 sm:pt-10"
+        className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-10"
         style={{ opacity: contentOpacity, y: contentY }}
       >
-        <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-          {/* Left Column: Typography & CTAs */}
-          <div className="lg:col-span-7 space-y-3 sm:space-y-6 text-center lg:text-start">
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+          {/* Left Column: Typography, CTAs & Architectural Trust Strip */}
+          <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-start">
             {/* Royal Badge */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -236,73 +222,87 @@ export function HeroSection({ locale, dict, initialSlides }: HeroSectionProps) {
               className="text-xs sm:text-base lg:text-lg !text-slate-200 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal"
               style={{ color: "#e2e8f0" }}
             >
-              {dict.hero.subtitle ||
-                (isRtl
-                  ? "تطبيق أعلى المعايير الفنية والمواصفات المعمارية المعتمدة في تصميم وتوريد وتنفيذ الزجاج السيكوريت، الألمنيوم، وأنظمة المباني الحديثة."
-                  : "Applying top architectural specifications and building standards in securit glass, structural facades, aluminum, and contracting.")}
+              {isRtl
+                ? "تنفيذ وتوريد الزجاج السيكوريت، واجهات الاستركشر والكرتن وول، قطاعات الألمنيوم المعزولة حرارياً، وكبائن الشاور الفاخرة بأعلى معايير كود البناء السعودي SBC."
+                : "Fabrication and installation of securit glass, curtain walls, thermal-break aluminum, and luxury architectural partitions according to Saudi Building Code SBC."}
             </motion.p>
 
-            {/* CTAs Action Bar: 2 Columns Side-by-Side on Mobile */}
+            {/* CTAs Action Bar */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="grid grid-cols-2 sm:flex sm:flex-row items-center justify-center lg:justify-start gap-2.5 pt-1"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg mx-auto lg:mx-0 pt-1"
             >
               <Link
                 href={`/${locale}/quote`}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-primary-950 font-bold text-xs sm:text-base shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all duration-300"
+                className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-primary-950 font-bold text-sm sm:text-base shadow-xl shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all duration-300"
               >
-                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-950 shrink-0" />
-                <span className="truncate">{dict.hero.ctaSecondary || (isRtl ? "طلب دراسة مشروع" : "Project Inquiry")}</span>
-                <ArrowRight className={cn("w-3.5 h-3.5 hidden sm:inline", isRtl && "rotate-180")} />
+                <Ruler className="w-4 h-4 text-primary-950 shrink-0" />
+                <span>{isRtl ? "طلب معاينة ورفع مساحي مجاني" : "Request Free Site Survey"}</span>
+                <ArrowRight className={cn("w-4 h-4", isRtl && "rotate-180")} />
               </Link>
 
               <Link
-                href={`/${locale}/services`}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-base border border-white/20 backdrop-blur-md hover:scale-[1.02] active:scale-95 transition-all duration-300"
+                href={`/${locale}/projects`}
+                className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm sm:text-base border border-white/20 backdrop-blur-md hover:scale-[1.02] active:scale-95 transition-all duration-300"
                 style={{ color: "#ffffff" }}
               >
-                <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
-                <span className="truncate">{isRtl ? "خدماتنا الهندسية" : "Services"}</span>
+                <Building2 className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>{isRtl ? "استعراض المشاريع المنفذة" : "View Completed Projects"}</span>
               </Link>
             </motion.div>
 
-            {/* AI Engineering Assistant Search Input */}
-            <motion.form
-              onSubmit={handleAiSubmit}
+            {/* Architectural Trust & Authority Badges Matrix */}
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.9 }}
-              className="pt-1 max-w-xl mx-auto lg:mx-0"
+              className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 text-start"
             >
-              <div className="relative flex items-center p-1 rounded-xl bg-[#0b172e]/90 border border-amber-500/30 backdrop-blur-xl shadow-xl focus-within:border-amber-400 transition-all">
-                <div className="flex items-center gap-1.5 px-2.5 text-amber-400">
-                  <Bot className="w-4 h-4 shrink-0" />
+              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur-md">
+                <div className="flex items-center gap-1.5 text-amber-400 mb-1">
+                  <ShieldCheck className="w-4 h-4 shrink-0" />
+                  <span className="text-xs font-bold">{isRtl ? "10 سنوات" : "10 Years"}</span>
                 </div>
-                <input
-                  type="text"
-                  value={aiPrompt}
-                  onChange={(e) => setAiPrompt(e.target.value)}
-                  placeholder={
-                    isRtl
-                      ? "استعلام فني عن مواصفات الواجهات والمقاولات..."
-                      : "Technical inquiry on facades & engineering specs..."
-                  }
-                  className="w-full bg-transparent text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none px-1 py-1.5"
-                  style={{ color: "#ffffff" }}
-                />
-                <button
-                  type="submit"
-                  className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-primary-950 font-bold text-xs shrink-0 transition-colors shadow-sm"
-                >
-                  {isRtl ? "استعلام" : "Inquire"}
-                </button>
+                <p className="text-[11px] text-slate-300 leading-tight">
+                  {isRtl ? "ضمان شامل معتمد على التركيب والعوازل" : "Warranty on Installation & Seals"}
+                </p>
               </div>
-            </motion.form>
+
+              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur-md">
+                <div className="flex items-center gap-1.5 text-amber-400 mb-1">
+                  <Award className="w-4 h-4 shrink-0" />
+                  <span className="text-xs font-bold">{isRtl ? "كود SBC" : "SBC Code"}</span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-tight">
+                  {isRtl ? "مطابقة تامة لكود البناء السعودي" : "Saudi Building Code Compliant"}
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur-md">
+                <div className="flex items-center gap-1.5 text-amber-400 mb-1">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span className="text-xs font-bold">{isRtl ? "+450 مشروع" : "+450 Projects"}</span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-tight">
+                  {isRtl ? "منفذة بنجاح بالرياض والمنطقة الوسطى" : "Executed Across Riyadh"}
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur-md">
+                <div className="flex items-center gap-1.5 text-amber-400 mb-1">
+                  <Ruler className="w-4 h-4 shrink-0" />
+                  <span className="text-xs font-bold">{isRtl ? "رفع مساحي" : "Surveying"}</span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-tight">
+                  {isRtl ? "معاينة هندسية ميدانية فورية مجانية" : "Free On-Site Measurements"}
+                </p>
+              </div>
+            </motion.div>
           </div>
 
-          {/* Right Column: 3D Image Showcase Slideshow Carousel & Floating Badges */}
+          {/* Right Column: 3D Image Showcase Slideshow Carousel & Controls */}
           <div className="lg:col-span-5 relative flex justify-center">
             {/* Main Interactive Rotating Image Showcase Frame */}
             <motion.div
@@ -316,7 +316,7 @@ export function HeroSection({ locale, dict, initialSlides }: HeroSectionProps) {
               className="relative w-full max-w-md rounded-2xl overflow-hidden border border-white/20 bg-[#0b172e]/95 backdrop-blur-2xl shadow-2xl flex flex-col group"
             >
               {/* Image Frame Container */}
-              <div className="relative h-44 sm:h-64 w-full overflow-hidden bg-[#070d1e]">
+              <div className="relative h-48 sm:h-64 w-full overflow-hidden bg-[#070d1e]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentSlide.id}
@@ -335,90 +335,59 @@ export function HeroSection({ locale, dict, initialSlides }: HeroSectionProps) {
                   </motion.div>
                 </AnimatePresence>
 
-                {/* Dark Vignette Overlay for Title Contrast */}
+                {/* Dark Vignette Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
 
                 {/* Top Badge Overlay */}
                 <div className="absolute top-2.5 start-2.5 end-2.5 flex items-center justify-between z-10">
-                  <span className="bg-amber-500 text-slate-950 font-bold shadow-sm backdrop-blur-md text-[11px] px-2 py-0.5 rounded-full">
+                  <span className="bg-amber-500 text-slate-950 font-bold shadow-sm backdrop-blur-md text-[11px] px-2.5 py-0.5 rounded-full">
                     {isRtl ? currentSlide.badge_ar : currentSlide.badge_en}
                   </span>
-                  <div className="w-6 h-6 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-amber-400 border border-white/20 text-[10px] font-bold">
-                    0{activeSlide + 1}
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setActiveSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+                      aria-label="Previous Slide"
+                      className="w-7 h-7 rounded-full bg-black/60 hover:bg-amber-500 hover:text-slate-950 text-white transition-colors flex items-center justify-center border border-white/20"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveSlide((prev) => (prev + 1) % slides.length)}
+                      aria-label="Next Slide"
+                      className="w-7 h-7 rounded-full bg-black/60 hover:bg-amber-500 hover:text-slate-950 text-white transition-colors flex items-center justify-center border border-white/20"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
 
-                {/* Manual Navigation Arrow Buttons */}
-                <button
-                  onClick={() => setActiveSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1))}
-                  className="absolute top-1/2 start-2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-md border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity z-20"
-                  aria-label="Previous Slide"
-                >
-                  <ChevronRight className={cn("w-3.5 h-3.5", !isRtl && "rotate-180")} />
-                </button>
-                <button
-                  onClick={() => setActiveSlide((prev) => (prev + 1) % slides.length)}
-                  className="absolute top-1/2 end-2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-md border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity z-20"
-                  aria-label="Next Slide"
-                >
-                  <ChevronLeft className={cn("w-3.5 h-3.5", !isRtl && "rotate-180")} />
-                </button>
+                {/* Bottom Title on Image */}
+                <div className="absolute bottom-2.5 start-3 end-3 z-10">
+                  <p className="text-xs sm:text-sm font-bold text-white drop-shadow-md line-clamp-1">
+                    {isRtl ? currentSlide.title_ar : currentSlide.title_en}
+                  </p>
+                </div>
               </div>
 
-              {/* Bottom Project Description & Progress Indicator */}
-              <div className="p-3 sm:p-4 bg-[#070d1e] space-y-1.5 border-t border-white/10">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-xs sm:text-sm !text-white line-clamp-1" style={{ color: "#ffffff" }}>
-                    {isRtl ? currentSlide.title_ar : currentSlide.title_en}
-                  </h3>
-                </div>
-
-                {/* Dots Progress Indicators */}
-                <div className="flex items-center justify-between pt-0.5">
-                  <div className="flex items-center gap-1">
-                    {slides.map((slide, idx) => (
-                      <button
-                        key={slide.id}
-                        onClick={() => setActiveSlide(idx)}
-                        className={cn(
-                          "h-1 rounded-full transition-all duration-500",
-                          activeSlide === idx
-                            ? "w-4 bg-amber-400 shadow-md shadow-amber-400/40"
-                            : "w-1 bg-white/30 hover:bg-white/50"
-                        )}
-                        aria-label={`Slide ${idx + 1}`}
-                      />
-                    ))}
-                  </div>
-                </div>
+              {/* Bottom Quick Spec Bar */}
+              <div className="p-3 bg-[#081329] border-t border-white/10 flex items-center justify-between text-xs">
+                <span className="text-slate-300 font-medium flex items-center gap-1.5">
+                  <Building2 className="w-3.5 h-3.5 text-amber-400" />
+                  {isRtl ? "موقع التنفيذ: الرياض والمملكة" : "Location: Riyadh & KSA"}
+                </span>
+                <Link
+                  href={`/${locale}/projects`}
+                  className="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1 transition-colors"
+                >
+                  <span>{isRtl ? "تفاصيل المشروع" : "Details"}</span>
+                  <ArrowRight className={cn("w-3 h-3", isRtl && "rotate-180")} />
+                </Link>
               </div>
             </motion.div>
           </div>
         </div>
-      </motion.div>
-
-      {/* ── 4. Scroll Down Indicator ─────────────────────────────────── */}
-      <motion.div
-        className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4 }}
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="flex flex-col items-center gap-1.5 text-slate-400 hover:text-amber-400 transition-colors cursor-pointer"
-          onClick={() => {
-            if (typeof window !== "undefined") {
-              window.scrollTo({ top: window.innerHeight * 0.9, behavior: "smooth" });
-            }
-          }}
-        >
-          <span className="text-xs font-semibold tracking-wider uppercase">
-            {isRtl ? "استكشف المزيد" : "Scroll Down"}
-          </span>
-          <ChevronDown className="w-4 h-4 text-amber-400 animate-pulse" />
-        </motion.div>
       </motion.div>
     </section>
   );

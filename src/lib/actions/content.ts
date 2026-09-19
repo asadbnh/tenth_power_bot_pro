@@ -28,7 +28,7 @@ async function getDefaultCompanyId(supabase: any): Promise<string> {
 
 // ─── Services Actions ──────────────────────────────────────────────────
 
-export async function getServices(locale = "ar") {
+async function fetchServicesFromDb(locale = "ar") {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
   const isAr = locale === "ar";
@@ -63,6 +63,20 @@ export async function getServices(locale = "ar") {
     short_description: isAr ? s.short_description_ar : s.short_description_en || s.short_description_ar,
     description: isAr ? s.full_description_ar : s.full_description_en || s.full_description_ar,
   }));
+}
+
+const getCachedServices = unstable_cache(
+  async (locale: string) => fetchServicesFromDb(locale),
+  ["global-services-data"],
+  { revalidate: 60, tags: ["services"] }
+);
+
+export async function getServices(locale = "ar") {
+  try {
+    return await getCachedServices(locale);
+  } catch {
+    return fetchServicesFromDb(locale);
+  }
 }
 
 export async function getServiceBySlug(slug: string, locale = "ar") {
@@ -138,7 +152,7 @@ export async function getServiceBySlug(slug: string, locale = "ar") {
 
 // ─── Projects Actions ──────────────────────────────────────────────────
 
-export async function getProjects(options?: {
+async function fetchProjectsFromDb(options?: {
   locale?: string;
   serviceSlug?: string;
   city?: string;
@@ -218,6 +232,33 @@ export async function getProjects(options?: {
   }));
 
   return { data: normalized, count: totalCount };
+}
+
+const getCachedProjectsData = unstable_cache(
+  async (locale: string, limit: number, page: number, city?: string, serviceSlug?: string) =>
+    fetchProjectsFromDb({ locale, limit, page, city, serviceSlug }),
+  ["global-projects-data"],
+  { revalidate: 60, tags: ["projects"] }
+);
+
+export async function getProjects(options?: {
+  locale?: string;
+  serviceSlug?: string;
+  city?: string;
+  limit?: number;
+  page?: number;
+}) {
+  try {
+    return await getCachedProjectsData(
+      options?.locale ?? "ar",
+      options?.limit ?? 12,
+      options?.page ?? 1,
+      options?.city,
+      options?.serviceSlug
+    );
+  } catch {
+    return fetchProjectsFromDb(options);
+  }
 }
 
 export async function getProjectBySlug(slug: string, _locale = "ar") {
@@ -331,7 +372,7 @@ export async function getProjectBySlug(slug: string, _locale = "ar") {
 
 // ─── Articles Actions ──────────────────────────────────────────────────
 
-export async function getArticles(options?: { locale?: string; limit?: number; page?: number }) {
+async function fetchArticlesFromDb(options?: { locale?: string; limit?: number; page?: number }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
   const locale = options?.locale ?? "ar";
@@ -377,6 +418,25 @@ export async function getArticles(options?: { locale?: string; limit?: number; p
   }));
 
   return { data: normalized, count: totalCount };
+}
+
+const getCachedArticlesData = unstable_cache(
+  async (locale: string, limit: number, page: number) =>
+    fetchArticlesFromDb({ locale, limit, page }),
+  ["global-articles-data"],
+  { revalidate: 60, tags: ["articles"] }
+);
+
+export async function getArticles(options?: { locale?: string; limit?: number; page?: number }) {
+  try {
+    return await getCachedArticlesData(
+      options?.locale ?? "ar",
+      options?.limit ?? 9,
+      options?.page ?? 1
+    );
+  } catch {
+    return fetchArticlesFromDb(options);
+  }
 }
 
 export async function getArticleBySlug(slug: string, locale = "ar") {
@@ -502,7 +562,7 @@ export async function getCategories(locale = "ar") {
 
 // ─── Gallery Actions ──────────────────────────────────────────────────
 
-export async function getGalleryAlbums(locale = "ar") {
+async function fetchGalleryAlbumsFromDb(locale = "ar") {
   const isAr = locale === "ar";
   try {
     const sql = getSql();
@@ -552,6 +612,20 @@ export async function getGalleryAlbums(locale = "ar") {
     { id: 5, slug: "facades", title_ar: "الواجهات الزجاجية", title_en: "Glass Facades", count: 15, image_url: "/images/defaults/services/glass-facades.webp" },
     { id: 6, slug: "doors", title_ar: "أبواب ونوافذ", title_en: "Doors & Windows", count: 28, image_url: "/images/defaults/services/doors-windows.webp" },
   ];
+}
+
+const getCachedGalleryAlbumsData = unstable_cache(
+  async (locale: string) => fetchGalleryAlbumsFromDb(locale),
+  ["global-gallery-albums-data"],
+  { revalidate: 60, tags: ["gallery"] }
+);
+
+export async function getGalleryAlbums(locale = "ar") {
+  try {
+    return await getCachedGalleryAlbumsData(locale);
+  } catch {
+    return fetchGalleryAlbumsFromDb(locale);
+  }
 }
 
 export async function getGalleryItems(options?: { serviceId?: string; albumId?: string; limit?: number; page?: number }) {
@@ -705,7 +779,7 @@ export async function submitReview(data: {
 
 // ─── FAQs Actions ─────────────────────────────────────────────────────
 
-export async function getFaqs(locale = "ar") {
+async function fetchFaqsFromDb(locale = "ar") {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
   const isAr = locale === "ar";
@@ -736,20 +810,25 @@ export async function getFaqs(locale = "ar") {
   }));
 }
 
+const getCachedFaqsData = unstable_cache(
+  async (locale: string) => fetchFaqsFromDb(locale),
+  ["global-faqs-data"],
+  { revalidate: 60, tags: ["faqs"] }
+);
+
+export async function getFaqs(locale = "ar") {
+  try {
+    return await getCachedFaqsData(locale);
+  } catch {
+    return fetchFaqsFromDb(locale);
+  }
+}
+
 // ─── Site & Company Settings Actions ──────────────────────────────────
 
 export async function getSiteSettings() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const supabase = createAdminClient() as any;
+  const company = await getCompany();
   const fallback = getFallbackCompany();
-
-  let company: Record<string, unknown> | null = null;
-  try {
-    const { data } = await supabase.from("companies").select("*").limit(1).single();
-    company = data;
-  } catch {
-    company = null;
-  }
 
   return {
     site_name_ar: company?.name_ar || fallback.name_ar,
@@ -1043,7 +1122,9 @@ export async function getCompanyContacts() {
 
 // ─── Before / After Transformations ───────────────────────────────────
 
-export async function getBeforeAfterItems(locale = "ar") {
+// ─── Before / After Transformations ───────────────────────────────────
+
+async function fetchBeforeAfterFromDb(locale = "ar") {
   const isAr = locale === "ar";
   try {
     const sql = getSql();
@@ -1085,9 +1166,23 @@ export async function getBeforeAfterItems(locale = "ar") {
   ];
 }
 
+const getCachedBeforeAfterData = unstable_cache(
+  async (locale: string) => fetchBeforeAfterFromDb(locale),
+  ["global-before-after-data"],
+  { revalidate: 60, tags: ["before-after"] }
+);
+
+export async function getBeforeAfterItems(locale = "ar") {
+  try {
+    return await getCachedBeforeAfterData(locale);
+  } catch {
+    return fetchBeforeAfterFromDb(locale);
+  }
+}
+
 // ─── Advertisements & Hero Banners ────────────────────────────────────
 
-export async function getAdvertisements() {
+async function fetchAdvertisementsFromDb() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createAdminClient() as any;
   try {
@@ -1104,6 +1199,20 @@ export async function getAdvertisements() {
     console.warn("Error fetching advertisements:", err);
   }
   return [];
+}
+
+const getCachedAdvertisementsData = unstable_cache(
+  async () => fetchAdvertisementsFromDb(),
+  ["global-advertisements-data"],
+  { revalidate: 60, tags: ["advertisements"] }
+);
+
+export async function getAdvertisements() {
+  try {
+    return await getCachedAdvertisementsData();
+  } catch {
+    return fetchAdvertisementsFromDb();
+  }
 }
 
 // ─── Live Database Search Action ──────────────────────────────────────
