@@ -55,8 +55,8 @@ export function ContactPageContent({ locale, dict, company }: Props) {
     {
       icon: Phone,
       label: dict.contact.info.phone,
-      value: company?.phone_primary || "+966 50 000 0000",
-      href: `tel:${(company?.phone_primary || "+966500000000").replace(/\s+/g, "")}`,
+      value: company?.phone_primary || "+966 53 243 8253",
+      href: `tel:${(company?.phone_primary || "+966532438253").replace(/\s+/g, "")}`,
     },
     {
       icon: Mail,
@@ -73,19 +73,50 @@ export function ContactPageContent({ locale, dict, company }: Props) {
 
   return (
     <div className="pt-[var(--header-height)]">
-      {/* Hero */}
-      <section className="relative py-16 sm:py-20 bg-gradient-to-br from-primary-950 via-[#0c1445] to-primary-900 overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-5xl font-extrabold text-white mb-4">{dict.contact.title}</motion.h1>
+      {/* Architectural Contact Hero */}
+      <section className="relative pt-8 pb-12 sm:pt-12 sm:pb-16 bg-[#070d1e] overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[16rem] bg-gradient-to-r from-amber-500/10 via-blue-600/10 to-amber-400/5 rounded-full blur-[80px]" />
+          <div className="absolute inset-0 opacity-[0.03]"
+            style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/85 via-transparent to-[#070d1e]" />
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3 sm:space-y-4">
+          <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
+            <a href={`/${locale}`} className="hover:text-white transition-colors">
+              {isRtl ? "الرئيسية" : "Home"}
+            </a>
+            <span className="text-slate-600">/</span>
+            <span className="text-amber-400/90 font-medium">{dict.contact.title}</span>
+          </div>
+
+          <motion.h1 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            className="text-3xl sm:text-5xl font-black text-white leading-tight">
+            {isRtl ? (
+              <>
+                تواصل مع{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                  فريقنا الهندسي
+                </span>
+              </>
+            ) : (
+              <>
+                Contact Our{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                  Engineering Team
+                </span>
+              </>
+            )}
+          </motion.h1>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            className="text-lg text-white/60">{dict.contact.subtitle}</motion.p>
+            className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed">
+            {dict.contact.subtitle}
+          </motion.p>
         </div>
       </section>
 
-      <section className="py-16 sm:py-20 bg-background">
+      <section className="py-12 sm:py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-5 gap-10">
 
@@ -116,7 +147,7 @@ export function ContactPageContent({ locale, dict, company }: Props) {
               </div>
 
               {/* WhatsApp quick contact */}
-              <a href={`https://wa.me/${(company?.whatsapp_number || "966500000000").replace(/[^0-9]/g, "")}?text=${encodeURIComponent(isRtl ? "مرحباً، أريد التواصل معكم" : "Hello, I would like to contact you")}`}
+              <a href={`https://wa.me/${(company?.whatsapp_number || "966532438253").replace(/[^0-9]/g, "")}?text=${encodeURIComponent(isRtl ? "مرحباً، أريد التواصل معكم" : "Hello, I would like to contact you")}`}
                 target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl bg-[#25D366] text-white font-semibold hover:bg-[#20BD5A] transition-colors shadow-md hover:shadow-lg">
                 <MessageSquare className="w-5 h-5" />
@@ -126,8 +157,9 @@ export function ContactPageContent({ locale, dict, company }: Props) {
               {/* All Database Social & Communication Channels */}
               {socialChannels.length > 0 && (
                 <div className="rounded-2xl border border-border-light bg-surface-elevated p-5 space-y-3">
-                  <h3 className="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2">
-                    {isRtl ? "🌐 قنوات التواصل والسوشيال ميديا" : "🌐 Social & Communication Channels"}
+                  <h3 className="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-amber-400" />
+                    {isRtl ? "قنوات التواصل والمتابعة المباشرة" : "Verified Social & Communication Channels"}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {socialChannels.map((channel) => {

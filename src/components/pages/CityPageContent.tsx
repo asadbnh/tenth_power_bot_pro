@@ -45,7 +45,7 @@ export function CityPageContent({ locale, city, cityData, initialServices }: Pro
       addressRegion: regionName,
       addressCountry: "SA",
     },
-    telephone: "+966500000000",
+    telephone: "+966532438253",
     url: `${process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app"}/${locale}/cities/${city}`,
     priceRange: "$$",
     areaServed: cityName,
@@ -57,63 +57,76 @@ export function CityPageContent({ locale, city, cityData, initialServices }: Pro
       {/* JSON-LD */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      {/* Cinematic City Coverage Hero */}
-      <section className="relative py-20 sm:py-28 bg-[#070d1e] overflow-hidden">
-        {/* Regional Ambient Spotlight */}
+      {/* Architectural City Coverage Hero */}
+      <section className="relative pt-8 pb-12 sm:pt-12 sm:pb-16 bg-[#070d1e] overflow-hidden">
+        {/* Layered Regional Atmosphere */}
         <div className="absolute inset-0 z-0 pointer-events-none">
-          <PageHeroBackground pageKey="cities" />
-          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[25rem] bg-gradient-to-r from-blue-600/20 via-amber-500/15 to-purple-600/20 rounded-full blur-[100px]" />
+          <PageHeroBackground pageKey="cities" overlayOpacity={0.78} />
+          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[36rem] h-[18rem] bg-gradient-to-r from-blue-600/15 via-amber-500/10 to-blue-600/10 rounded-full blur-[90px]" />
           <div className="absolute inset-0 opacity-[0.03]"
-            style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/80 via-transparent to-[#070d1e]" />
+            style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "36px 36px" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/85 via-[#070d1e]/75 to-[#070d1e]" />
         </div>
 
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full royal-badge shadow-xl backdrop-blur-xl border border-amber-500/30">
-            <MapPin className="w-4 h-4 text-amber-400" />
-            <span className="text-xs sm:text-sm font-bold text-white">
-              {isRtl ? `تغطية شاملة ومباشرة — ${cityName} (${regionName})` : `Full Local Coverage — ${cityName} (${regionName})`}
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4 sm:space-y-5">
+          {/* Breadcrumbs Navigation */}
+          <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
+            <Link href={`/${locale}`} className="hover:text-white transition-colors">
+              {isRtl ? "الرئيسية" : "Home"}
+            </Link>
+            <span className="text-slate-600">/</span>
+            <span className="text-slate-300">
+              {isRtl ? "المناطق والمدن" : "Regions & Cities"}
+            </span>
+            <span className="text-slate-600">/</span>
+            <span className="text-amber-400/90 font-medium">{cityName}</span>
+          </div>
+
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4 }}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-[#D4AF37]/30 shadow-sm">
+            <MapPin className="w-3.5 h-3.5 text-amber-400" />
+            <span className="text-xs font-semibold text-amber-200/90 tracking-wide">
+              {isRtl ? `تغطية ميدانية شاملة — ${cityName} (${regionName})` : `Full Field Coverage — ${cityName} (${regionName})`}
             </span>
           </motion.div>
 
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7 }}
-            className="text-4xl sm:text-6xl font-extrabold text-white leading-tight">
+          <motion.h1 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5 }}
+            className="text-3xl sm:text-5xl font-black text-white leading-tight tracking-tight">
             {isRtl ? (
               <>
                 خدمات الزجاج والألمنيوم والواجهات في{" "}
-                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
                   {cityName}
                 </span>
               </>
             ) : (
               <>
-                Premier Glass & Facade Solutions in{" "}
-                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                Glass, Facades & Aluminum Solutions in{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
                   {cityName}
                 </span>
               </>
             )}
           </motion.h1>
 
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.7 }}
-            className="text-base sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 0.5 }}
+            className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {isRtl
               ? `نوفر أفضل خدمات تصنيع وتوريد وتركيب الزجاج السيكوريت، الواجهات المعمارية، الألمنيوم، والمقاولات في ${cityName} مع معاينة هندسية مجانية وضمان 10 سنوات.`
               : `Certified installation of securit glass, curtain walls, and aluminum systems in ${cityName} with free engineering survey and 10-year warranty.`}
           </motion.p>
           
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <Link href={`/${locale}/quote`}
-              className="inline-flex items-center gap-2 px-7 py-4 rounded-xl bg-accent-500 hover:bg-accent-400 text-primary-950 font-bold text-sm shadow-lg hover:shadow-accent-500/20 transition-all">
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#E5C378] to-[#C99E32] text-primary-950 font-bold text-sm shadow-md hover:brightness-105 active:scale-95 transition-all">
               {isRtl ? "اطلب عرض سعر مجاني" : "Request Free Quote"}
               <ArrowRight className={cn("w-4 h-4", isRtl && "rotate-180")} />
             </Link>
-            <a href="tel:+966500000000"
-              className="inline-flex items-center gap-2 px-7 py-4 rounded-xl bg-white/10 border border-white/20 text-white font-semibold text-sm hover:bg-white/20 transition-colors">
-              <Phone className="w-4 h-4" />
-              +966 50 000 0000
+            <a href="tel:+966532438253"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 border border-white/20 text-white font-semibold text-sm hover:bg-white/20 transition-colors">
+              <Phone className="w-4 h-4 text-amber-400" />
+              <span dir="ltr">+966 53 243 8253</span>
             </a>
           </motion.div>
         </div>

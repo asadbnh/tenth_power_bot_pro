@@ -103,26 +103,46 @@ export function AppointmentPageContent({
         </div>
 
         {/* Hero Banner Header */}
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-primary-950 via-[#0c1445] to-primary-900 text-white p-8 sm:p-12 mb-10 shadow-2xl border border-white/10">
-          <div className="relative z-10 max-w-2xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-xs font-bold text-accent-300 backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5 text-accent-400" />
+        <div className="relative rounded-3xl overflow-hidden bg-[#070d1e] text-white p-7 sm:p-10 mb-8 shadow-2xl border border-white/10">
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-1/2 end-10 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-amber-500/10 to-blue-600/10 rounded-full blur-3xl" />
+            <div className="absolute inset-0 opacity-[0.03]"
+              style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+          </div>
+
+          <div className="relative z-10 max-w-2xl space-y-3.5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-amber-500/30 text-xs font-semibold text-amber-200 backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>{isRtl ? "خدمة ميدانية معتمدة — مجاناً 100%" : "Certified Field Survey — 100% Free"}</span>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-extrabold leading-tight">
-              {isRtl ? "احجز موعد معاينة ورفع مقاسات هندسية" : "Schedule a Site Measurement & Consultation"}
+            <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight">
+              {isRtl ? (
+                <>
+                  احجز موعد معاينة و{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                    رفع مقاسات هندسية
+                  </span>
+                </>
+              ) : (
+                <>
+                  Schedule a Site Measurement &{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                    Consultation
+                  </span>
+                </>
+              )}
             </h1>
 
-            <p className="text-sm sm:text-base text-white/75 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               {isRtl
                 ? "يقوم مهندس مختص من مؤسسة القوة العاشرة بزيارة موقع مشروعك لمعاينة المواصفات الفنية، ورفع المقاسات الدقيقة، وتقديم أفضل التوصيات التنفيذية."
                 : "A certified engineer from Tenth Power will visit your site to review technical specs, measure dimensions, and provide tailored execution recommendations."}
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-2 text-xs text-white/80">
-              <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-accent-400" /> {isRtl ? "اعتماد كود البناء السعودي" : "SBC Code Compliance"}</span>
-              <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-accent-400" /> {isRtl ? "التزام دقيق بالمواعيد" : "Punctual Scheduling"}</span>
+            <div className="flex flex-wrap gap-4 pt-1 text-xs text-slate-300">
+              <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-amber-400" /> {isRtl ? "اعتماد كود البناء السعودي SBC" : "SBC Code Compliance"}</span>
+              <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-amber-400" /> {isRtl ? "التزام دقيق بمواعيد الحضور" : "Punctual Scheduling"}</span>
             </div>
           </div>
         </div>

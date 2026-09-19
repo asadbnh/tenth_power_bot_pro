@@ -70,16 +70,13 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Detect locale from Accept-Language header or cookie
+  // Detect locale from cookie or default to primary Arabic (ar)
   const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
-  const acceptLanguage = request.headers.get("accept-language") || "";
   
-  let detectedLocale = DEFAULT_LOCALE;
+  let detectedLocale = DEFAULT_LOCALE; // Always "ar" as primary/default
   
   if (cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale)) {
     detectedLocale = cookieLocale;
-  } else if (acceptLanguage.includes("en")) {
-    detectedLocale = "en";
   }
 
   // Redirect to locale-prefixed path

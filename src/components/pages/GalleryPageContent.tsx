@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ZoomIn, ChevronRight, ChevronLeft, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { X, ZoomIn, ChevronRight, ChevronLeft, Sparkles, Camera, ShieldCheck, CheckCircle2, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -39,7 +40,7 @@ const DEFAULT_ITEMS = [
   { id: "9", title_ar: "قواطع زجاجية ذكية Smart Glass قابلة للتحكم في الشفافية", title_en: "Smart Privacy Switchable Glass Partitions", image_url: "/images/defaults/services/tempered-glass.webp", album_id: "2" },
 ];
 
-export function GalleryPageContent({ locale, dict, initialAlbums, initialItems }: Props) {
+export function GalleryPageContent({ locale, dict: _dict, initialAlbums, initialItems }: Props) {
   const isRtl = locale === "ar";
   const [selectedView, setSelectedView] = useState<"albums" | "grid">("grid");
   const [activeLightboxIndex, setActiveLightboxIndex] = useState<number | null>(null);
@@ -66,52 +67,63 @@ export function GalleryPageContent({ locale, dict, initialAlbums, initialItems }
 
   return (
     <div className="pt-[var(--header-height)]">
-      {/* Cinematic Gallery Hero */}
-      <section className="relative py-20 sm:py-28 bg-[#070d1e] overflow-hidden border-b border-amber-500/10">
+      {/* Architectural Gallery Hero */}
+      <section className="relative pt-8 pb-12 sm:pt-12 sm:pb-16 bg-[#070d1e] overflow-hidden">
         <div className="absolute inset-0 z-0 pointer-events-none">
-          <PageHeroBackground pageKey="gallery" />
-          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[44rem] h-[24rem] bg-gradient-to-r from-amber-500/15 via-blue-600/10 to-transparent rounded-full blur-[110px]" />
+          <PageHeroBackground pageKey="gallery" overlayOpacity={0.78} />
+          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[38rem] h-[20rem] bg-gradient-to-r from-amber-500/15 via-blue-600/10 to-amber-400/10 rounded-full blur-[100px]" />
           <div 
-            className="absolute inset-0 opacity-[0.04]"
+            className="absolute inset-0 opacity-[0.03]"
             style={{ 
               backgroundImage: "linear-gradient(rgba(212,175,55,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.25) 1px, transparent 1px)", 
-              backgroundSize: "48px 48px" 
+              backgroundSize: "36px 36px" 
             }} 
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/85 via-transparent to-[#070d1e]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/85 via-[#070d1e]/75 to-[#070d1e]" />
         </div>
 
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4 sm:space-y-5">
+          {/* Breadcrumbs Navigation */}
+          <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
+            <Link href={`/${locale}`} className="hover:text-white transition-colors">
+              {isRtl ? "الرئيسية" : "Home"}
+            </Link>
+            <ChevronLeft className={cn("w-3 h-3 text-slate-500", !isRtl && "rotate-180")} />
+            <span className="text-amber-400/90 font-medium">
+              {isRtl ? "معرض الأعمال والوسائط" : "Media & Project Gallery"}
+            </span>
+          </div>
+
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }} 
+            initial={{ opacity: 0, scale: 0.95 }} 
             animate={{ opacity: 1, scale: 1 }} 
             transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full royal-badge shadow-2xl backdrop-blur-xl border border-amber-500/30"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-[#D4AF37]/30 shadow-sm"
           >
-            <ZoomIn className="w-4 h-4 text-amber-400" />
-            <span className="text-xs sm:text-sm font-bold text-amber-200">
-              {isRtl ? "ألبوم الصور المعمارية عالية الدقة • مؤسسة القوة العاشرة" : "High-Definition Architectural Portfolio • Tenth Power"}
+            <Camera className="w-3.5 h-3.5 text-amber-400" />
+            <span className="text-xs font-semibold text-amber-200/90 tracking-wide">
+              {isRtl ? "ألبوم التوثيق الميداني عالي الدقة (4K) • مشاريع معتمدة" : "High-Definition Architectural Portfolio • Verified Projects"}
             </span>
           </motion.div>
 
           <motion.h1 
-            initial={{ opacity: 0, y: 16 }} 
+            initial={{ opacity: 0, y: 15 }} 
             animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.1, duration: 0.6 }}
-            className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight"
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="text-3xl sm:text-5xl font-black text-white leading-tight tracking-tight"
           >
             {isRtl ? (
               <>
-                معرض التفاصيل{" "}
-                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
-                  البصرية والهندسية المنفذة
+                معرض التفاصيل البصرية و{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                  الهندسة المعمارية المنفذة
                 </span>
               </>
             ) : (
               <>
-                Visual Architectural{" "}
-                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
-                  Execution Gallery
+                Visual Architectural &{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                  Engineering Portfolio
                 </span>
               </>
             )}
@@ -120,13 +132,29 @@ export function GalleryPageContent({ locale, dict, initialAlbums, initialItems }
           <motion.p 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-sm sm:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed"
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed"
           >
-            {dict.gallery.subtitle || (isRtl
-              ? "استكشف أحدث لقطات التنفيذ الميدانية لأعمال الزجاج السيكوريت، واجهات الاستركشر، فواصل المكاتب، وكبائن الشاور المنفذة بالرياض والمملكة."
-              : "High-definition photo gallery of structural glazing, securit partitions, and custom aluminum installations across Saudi Arabia.")}
+            {isRtl
+              ? "استكشف لقطات التنفيذ الميدانية لأعمال الزجاج السيكوريت، واجهات الاستركشر، فواصل المكاتب وكبائن الشاور المنفذة بالمملكة."
+              : "High-definition photo gallery of structural glazing, securit partitions, and custom aluminum installations across Saudi Arabia."}
           </motion.p>
+
+          {/* Technical Trust & Media Stats Matrix */}
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs text-slate-300">
+              <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              {isRtl ? "توثيق فوتوغرافي معتمد من مواقع العمل" : "Verified Field Photography"}
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs text-slate-300">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              {isRtl ? "مشاريع سكنية وتجارية موثقة" : "Residential & Commercial"}
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs text-slate-300">
+              <Layers className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              {isRtl ? "تفاصيل دقيقة للقطاعات والملحقات" : "Detailed Profile Close-ups"}
+            </span>
+          </div>
         </div>
       </section>
 

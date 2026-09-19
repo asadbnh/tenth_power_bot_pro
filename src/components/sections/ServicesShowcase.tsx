@@ -48,7 +48,7 @@ const DEMO_SERVICES: ServiceItem[] = [
     name_en: "Tempered Securit Glass & Doors",
     desc_ar: "توريد وتركيب زجاج سيكوريت عالي المقاومة للصدمات بسماكات 10-12 مم للأبواب والواجهات والمداخل مع أنظمة هيدروليك إيطالية.",
     desc_en: "High-impact tempered securit glass (10-12mm) for doors, entrances, and storefronts with Italian hydraulic fittings.",
-    cover_image_url: "/images/defaults/services/luxury-partitions.png",
+    cover_image_url: "/images/defaults/services/luxury-partitions.webp",
   },
   {
     slug: "glass-facades",
@@ -57,7 +57,7 @@ const DEMO_SERVICES: ServiceItem[] = [
     name_en: "Structural Glazing & Curtain Walls",
     desc_ar: "تصميم وتنفيذ واجهات المباني الزجاجية الهيكلية وأنظمة الكرتن وول والسبايدر بأعلى معدلات عزل حراري ومقاومة للرياح.",
     desc_en: "Structural glass facades, curtain walls, and spider fittings engineered for thermal insulation and wind loads.",
-    cover_image_url: "/images/defaults/services/luxury-facade.png",
+    cover_image_url: "/images/defaults/services/luxury-facade.webp",
   },
   {
     slug: "aluminum",
@@ -66,7 +66,7 @@ const DEMO_SERVICES: ServiceItem[] = [
     name_en: "Thermal-Break Aluminum & Windows",
     desc_ar: "تصنيع وتركيب قطاعات الألمنيوم المعزولة حرارياً للنوافذ والأبواب والواجهات بأحدث التقنيات المطابقة لكود البناء السعودي SBC.",
     desc_en: "Fabrication of thermal-break aluminum profiles for windows and doors meeting Saudi Building Code standards.",
-    cover_image_url: "/images/defaults/services/luxury-sliding-doors.png",
+    cover_image_url: "/images/defaults/services/luxury-sliding-doors.webp",
   },
   {
     slug: "office-partitions",
@@ -75,7 +75,7 @@ const DEMO_SERVICES: ServiceItem[] = [
     name_en: "Soundproof Glass Office Partitions",
     desc_ar: "فواصل زجاجية عازلة للصوت تمنح المكاتب والشركات بيئة عمل راقية مع أبواب سحاب أو مفصلي بنظام إغلاق ناعم (Soft-Close).",
     desc_en: "Soundproof acoustic glass partitions providing luxury corporate aesthetics with soft-close sliding and swing doors.",
-    cover_image_url: "/images/defaults/services/luxury-kitchen.png",
+    cover_image_url: "/images/defaults/services/luxury-kitchen.webp",
   },
   {
     slug: "shower-cabins",

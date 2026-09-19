@@ -268,14 +268,18 @@ export async function submitAppointmentRequest(data: AppointmentFormData) {
   }
 
   // 3. Fire Real-time Telegram Admin Alert to Admins & CRM
-  notifyNewAppointment({
-    id: appointment?.id || "unknown",
-    userName: data.name,
-    phone: data.phone,
-    serviceName: data.serviceName,
-    preferredDate: data.preferredDate ? `${data.preferredDate} (${data.preferredTime || "صباحاً"})` : undefined,
-    notes: data.notes,
-  }).catch((err) => console.error("Telegram appointment notification error:", err));
+  try {
+    await notifyNewAppointment({
+      id: appointment?.id || "unknown",
+      userName: data.name,
+      phone: data.phone,
+      serviceName: data.serviceName,
+      preferredDate: data.preferredDate ? `${data.preferredDate} (${data.preferredTime || "صباحاً"})` : undefined,
+      notes: data.notes,
+    });
+  } catch (err) {
+    console.error("Telegram appointment notification error:", err);
+  }
 
   return { success: true, id: appointment?.id };
 }

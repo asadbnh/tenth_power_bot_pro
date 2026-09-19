@@ -100,20 +100,41 @@ function SearchInner({ locale, dict }: Props) {
 
   return (
     <div className="pt-[var(--header-height)]">
-      {/* Search Hero */}
-      <section className="relative py-16 sm:py-24 bg-gradient-to-br from-primary-950 via-[#0c1445] to-primary-900 overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-        <div className="relative max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="text-3xl sm:text-4xl font-extrabold text-white text-center mb-8">{dict.search.title}</motion.h1>
+      {/* Architectural Search Hero */}
+      <section className="relative pt-8 pb-12 sm:pt-12 sm:pb-16 bg-[#070d1e] overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[16rem] bg-gradient-to-r from-amber-500/10 via-blue-600/10 to-amber-400/5 rounded-full blur-[80px]" />
+          <div className="absolute inset-0 opacity-[0.03]"
+            style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/85 via-transparent to-[#070d1e]" />
+        </div>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+        <div className="relative max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
+          <motion.h1 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
+            className="text-2xl sm:text-4xl font-black text-white text-center leading-tight">
+            {isRtl ? (
+              <>
+                البحث في{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                  المشاريع والخدمات
+                </span>
+              </>
+            ) : (
+              <>
+                Search{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                  Services & Projects
+                </span>
+              </>
+            )}
+          </motion.h1>
+
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             className="relative">
             {isLoading ? (
-              <Loader2 className="absolute top-1/2 -translate-y-1/2 start-5 w-6 h-6 text-amber-400 animate-spin pointer-events-none" />
+              <Loader2 className="absolute top-1/2 -translate-y-1/2 start-5 w-5 h-5 text-amber-400 animate-spin pointer-events-none" />
             ) : (
-              <Search className="absolute top-1/2 -translate-y-1/2 start-5 w-6 h-6 text-white/40 pointer-events-none" />
+              <Search className="absolute top-1/2 -translate-y-1/2 start-5 w-5 h-5 text-white/50 pointer-events-none" />
             )}
             <input
               ref={inputRef}
@@ -122,7 +143,7 @@ function SearchInner({ locale, dict }: Props) {
               onChange={e => setQuery(e.target.value)}
               placeholder={dict.search.placeholder}
               autoFocus
-              className="w-full ps-14 pe-12 py-5 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder:text-white/40 text-lg focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
+              className="w-full ps-14 pe-12 py-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder:text-white/50 text-base focus:outline-none focus:ring-2 focus:ring-amber-400 transition-all shadow-lg"
             />
             {query && (
               <button onClick={() => setQuery("")} className="absolute top-1/2 -translate-y-1/2 end-4 text-white/50 hover:text-white transition-colors">
@@ -147,7 +168,7 @@ function SearchInner({ locale, dict }: Props) {
               <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="text-center py-16 text-text-secondary">
                 <Loader2 className="w-10 h-10 mx-auto mb-4 text-primary-500 animate-spin" />
-                <p className="text-sm">{isRtl ? "جارٍ البحث في قاعدة البيانات..." : "Searching database..."}</p>
+                <p className="text-sm">{isRtl ? "جارٍ البحث..." : "Searching database..."}</p>
               </motion.div>
             ) : results.length === 0 ? (
               <motion.div key="no-results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
