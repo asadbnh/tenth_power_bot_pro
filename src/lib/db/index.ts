@@ -416,6 +416,16 @@ export class QueryBuilder<T = Record<string, unknown>> implements PromiseLike<{ 
   ): Promise<TResult1 | TResult2> {
     return this.execute().then(onfulfilled, onrejected);
   }
+
+  catch<TResult = never>(
+    onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null
+  ): Promise<{ data: any; count?: number | null; error: Error | null } | TResult> {
+    return this.execute().catch(onrejected);
+  }
+
+  finally(onfinally?: (() => void) | null): Promise<{ data: any; count?: number | null; error: Error | null }> {
+    return this.execute().finally(onfinally);
+  }
 }
 
 export function createDbClient() {

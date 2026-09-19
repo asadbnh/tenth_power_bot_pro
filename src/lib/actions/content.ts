@@ -973,21 +973,18 @@ async function fetchCompanyFromDb() {
           .from("company_contacts")
           .select("*")
           .eq("company_id", company.id)
-          .order("sort_order", { ascending: true })
-          .catch(() => ({ data: [] })),
+          .order("sort_order", { ascending: true }),
         supabase
           .from("company_addresses")
           .select("*")
           .eq("company_id", company.id)
           .limit(1)
-          .single()
-          .catch(() => ({ data: null })),
+          .single(),
         supabase
           .from("business_hours")
           .select("*")
           .eq("company_id", company.id)
-          .order("day_of_week", { ascending: true })
-          .catch(() => ({ data: [] })),
+          .order("day_of_week", { ascending: true }),
       ]);
 
       return {
@@ -1004,8 +1001,15 @@ async function fetchCompanyFromDb() {
   return getFallbackCompany();
 }
 
+async function fetchCompanySafe() {
+  const timeoutPromise = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error("Neon DB timeout (4000ms)")), 4000)
+  );
+  return Promise.race([fetchCompanyFromDb(), timeoutPromise]);
+}
+
 const getCachedCompanyData = unstable_cache(
-  fetchCompanyFromDb,
+  fetchCompanySafe,
   ["global-company-data"],
   { revalidate: 60, tags: ["company"] }
 );
