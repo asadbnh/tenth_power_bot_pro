@@ -9,11 +9,11 @@ import { WhatsAppButton } from "@/components/marketing/WhatsAppButton";
 import { AIChatWidget } from "@/components/marketing/AIChatWidget";
 import { getCompany, getServices } from "@/lib/actions/content";
 
-// Cache layout-level DB calls for 1 hour — prevents repeated DB queries on every page navigation
+// Cache layout-level DB calls (revalidate every 60 seconds)
 const getCachedCompany = unstable_cache(
   async () => getCompany().catch(() => null),
   ["layout-company"],
-  { revalidate: 3600, tags: ["company"] }
+  { revalidate: 60, tags: ["company"] }
 );
 
 const getCachedServices = unstable_cache(

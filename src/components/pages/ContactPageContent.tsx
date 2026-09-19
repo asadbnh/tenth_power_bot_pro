@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Clock, MessageSquare, Send, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { resolveSocialChannels } from "@/components/ui/SocialIcons";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -17,6 +18,7 @@ export function ContactPageContent({ locale, dict, company }: Props) {
   const isRtl = locale === "ar";
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
+  const socialChannels = resolveSocialChannels(company, isRtl);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -120,6 +122,38 @@ export function ContactPageContent({ locale, dict, company }: Props) {
                 <MessageSquare className="w-5 h-5" />
                 {isRtl ? "تواصل عبر واتساب" : "Chat on WhatsApp"}
               </a>
+
+              {/* All Database Social & Communication Channels */}
+              {socialChannels.length > 0 && (
+                <div className="rounded-2xl border border-border-light bg-surface-elevated p-5 space-y-3">
+                  <h3 className="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2">
+                    {isRtl ? "🌐 قنوات التواصل والسوشيال ميديا" : "🌐 Social & Communication Channels"}
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {socialChannels.map((channel) => {
+                      const Icon = channel.icon;
+                      return (
+                        <a
+                          key={channel.key}
+                          href={channel.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={cn(
+                            "flex items-center gap-2.5 p-2.5 rounded-xl border transition-all duration-200 text-xs font-semibold hover:shadow-xs",
+                            channel.bgLight,
+                            channel.colorHover
+                          )}
+                        >
+                          <span className="w-6 h-6 rounded-lg bg-background/80 flex items-center justify-center shrink-0 shadow-2xs">
+                            <Icon />
+                          </span>
+                          <span className="truncate">{channel.label}</span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Map embed placeholder */}
               <div className="rounded-2xl overflow-hidden border border-border-light h-48 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 flex items-center justify-center">
