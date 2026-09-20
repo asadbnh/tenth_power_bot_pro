@@ -55,7 +55,7 @@ export function WhatsAppButton({
   return (
     <div
       className={cn(
-        "fixed bottom-6 z-40 no-print",
+        "hidden sm:block fixed bottom-6 z-40 no-print",
         isRtl ? "start-6" : "end-6"
       )}
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}

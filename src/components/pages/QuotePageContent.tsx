@@ -154,27 +154,27 @@ export function QuotePageContent({ locale, dict, initialServices }: Props) {
   return (
     <div className="pt-[var(--header-height)] min-h-dvh bg-gradient-to-b from-background to-surface">
       {/* Header */}
-      <div className="py-10 px-4 text-center">
+      <div className="py-6 sm:py-10 px-4 text-center">
         <motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          className="text-2xl sm:text-4xl font-extrabold mb-2">{dict.quote.title}</motion.h1>
-        <p className="text-text-secondary text-sm sm:text-base">{dict.quote.subtitle}</p>
+          className="text-2xl sm:text-4xl font-extrabold mb-1.5">{dict.quote.title}</motion.h1>
+        <p className="text-text-secondary text-xs sm:text-base">{dict.quote.subtitle}</p>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div className="max-w-2xl mx-auto px-3.5 sm:px-6 lg:px-8 pb-16 sm:pb-20">
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-10 relative">
-          <div className="absolute top-5 start-0 end-0 h-0.5 bg-border-light" />
-          <div className="absolute top-5 start-0 h-0.5 bg-primary-500 transition-all duration-500"
+        <div className="flex items-center justify-between mb-8 sm:mb-10 relative">
+          <div className="absolute top-4 sm:top-5 start-0 end-0 h-0.5 bg-border-light" />
+          <div className="absolute top-4 sm:top-5 start-0 h-0.5 bg-primary-500 transition-all duration-500"
             style={{ width: `${((step - 1) / 3) * 100}%` }} />
           {STEPS.map((s, i) => (
-            <div key={i} className="relative z-10 flex flex-col items-center gap-2">
+            <div key={i} className="relative z-10 flex flex-col items-center gap-1.5 sm:gap-2">
               <div className={cn(
-                "w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold transition-all duration-300",
+                "w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 flex items-center justify-center text-xs sm:text-sm font-bold transition-all duration-300",
                 i + 1 < step ? "bg-primary-600 border-primary-600 text-white"
                   : i + 1 === step ? "bg-background border-primary-600 text-primary-600"
                     : "bg-background border-border text-text-tertiary"
               )}>
-                {i + 1 < step ? <CheckCircle2 className="w-5 h-5" /> : i + 1}
+                {i + 1 < step ? <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> : i + 1}
               </div>
               <span className={cn("text-xs font-medium hidden sm:block", i + 1 === step ? "text-primary-600 dark:text-primary-400" : "text-text-tertiary")}>
                 {s.label}
@@ -190,7 +190,7 @@ export function QuotePageContent({ locale, dict, initialServices }: Props) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: isRtl ? 20 : -20 }}
             transition={{ duration: 0.3 }}
-            className="rounded-3xl border border-border-light bg-surface-elevated p-6 sm:p-8 shadow-sm">
+            className="rounded-2xl sm:rounded-3xl border border-border-light bg-surface-elevated p-4 sm:p-8 shadow-sm">
 
             {step === 1 && (
               <div>

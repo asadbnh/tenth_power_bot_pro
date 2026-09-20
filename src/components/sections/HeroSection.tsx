@@ -120,7 +120,7 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
     <section
       ref={sectionRef}
       id="hero"
-      className="relative min-h-dvh flex items-center justify-center pt-[var(--header-height)] pb-16 overflow-hidden bg-[#070d1e] select-none"
+      className="relative flex items-center justify-center pt-[calc(var(--header-height)+0.5rem)] sm:pt-[var(--header-height)] pb-10 sm:pb-16 sm:min-h-dvh overflow-hidden bg-[#070d1e] select-none"
       aria-label={isRtl ? "القسم الرئيسي للشركة" : "Main Hero Section"}
     >
       {/* ── 1. Architectural Canvas Backdrop ──────────────────────────── */}
@@ -138,7 +138,7 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
 
         {/* Ambient Radial Lighting Orbs */}
         <motion.div
-          className="absolute top-1/4 start-1/6 w-[34rem] h-[34rem] rounded-full opacity-20 filter blur-[90px]"
+          className="absolute top-1/4 start-1/6 w-72 sm:w-[34rem] h-72 sm:h-[34rem] rounded-full opacity-20 filter blur-[50px] sm:blur-[90px]"
           style={{
             background: "radial-gradient(circle, rgba(10,29,55,0.9) 0%, rgba(59,130,246,0.3) 60%, transparent 100%)",
             x: mousePos.x * 0.4,
@@ -148,7 +148,7 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
           transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute bottom-1/4 end-1/6 w-[30rem] h-[30rem] rounded-full opacity-15 filter blur-[80px]"
+          className="absolute bottom-1/4 end-1/6 w-64 sm:w-[30rem] h-64 sm:h-[30rem] rounded-full opacity-15 filter blur-[40px] sm:blur-[80px]"
           style={{
             background: "radial-gradient(circle, rgba(212,175,55,0.4) 0%, rgba(245,158,11,0.2) 60%, transparent 100%)",
             x: mousePos.x * -0.4,
@@ -163,25 +163,25 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
 
       {/* ── 2. Hero Content Container ─────────────────────────────────── */}
       <motion.div
-        className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-10"
+        className="relative z-10 w-full max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 pt-2 sm:pt-10"
         style={{ opacity: contentOpacity, y: contentY }}
       >
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+        <div className="grid lg:grid-cols-12 gap-6 lg:gap-10 items-center">
           {/* Left Column: Typography, CTAs & Architectural Trust Strip */}
-          <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-start">
+          <div className="lg:col-span-7 space-y-3.5 sm:space-y-6 text-center lg:text-start">
             {/* Royal Badge */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0b172e] text-amber-400 shadow-md backdrop-blur-xl border border-amber-500/40"
+              className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-[#0b172e] text-amber-400 shadow-md backdrop-blur-xl border border-amber-500/40"
             >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
               </span>
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-xs sm:text-sm font-bold tracking-wide text-amber-400">
+              <span className="text-[11px] sm:text-sm font-bold tracking-wide text-amber-400">
                 {isRtl
                   ? "مؤسسة القوة العاشرة للمقاولات العامة والواجهات المعمارية"
                   : "Tenth Power General Contracting & Facades"}
@@ -193,7 +193,7 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="text-2xl sm:text-4xl lg:text-6xl font-extrabold !text-white leading-snug sm:leading-[1.15] tracking-tight"
+              className="text-xl sm:text-4xl lg:text-6xl font-extrabold !text-white leading-snug sm:leading-[1.15] tracking-tight"
               style={{ color: "#ffffff" }}
             >
               {isRtl ? (
@@ -232,11 +232,11 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg mx-auto lg:mx-0 pt-1"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-lg mx-auto lg:mx-0 pt-1"
             >
               <Link
                 href={`/${locale}/quote`}
-                className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-primary-950 font-bold text-sm sm:text-base shadow-xl shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all duration-300"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-primary-950 font-bold text-sm sm:text-base shadow-xl shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all duration-300"
               >
                 <Ruler className="w-4 h-4 text-primary-950 shrink-0" />
                 <span>{isRtl ? "طلب معاينة ورفع مساحي مجاني" : "Request Free Site Survey"}</span>
@@ -245,7 +245,7 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
 
               <Link
                 href={`/${locale}/projects`}
-                className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm sm:text-base border border-white/20 backdrop-blur-md hover:scale-[1.02] active:scale-95 transition-all duration-300"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm sm:text-base border border-white/20 backdrop-blur-md hover:scale-[1.02] active:scale-95 transition-all duration-300"
                 style={{ color: "#ffffff" }}
               >
                 <Building2 className="w-4 h-4 text-amber-400 shrink-0" />
@@ -258,44 +258,44 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.9 }}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 text-start"
+              className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 pt-1 sm:pt-2 text-start"
             >
-              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur-md">
-                <div className="flex items-center gap-1.5 text-amber-400 mb-1">
-                  <ShieldCheck className="w-4 h-4 shrink-0" />
-                  <span className="text-xs font-bold">{isRtl ? "10 سنوات" : "10 Years"}</span>
+              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md">
+                <div className="flex items-center gap-1.5 text-amber-400 mb-0.5 sm:mb-1">
+                  <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "10 سنوات" : "10 Years"}</span>
                 </div>
-                <p className="text-[11px] text-slate-300 leading-tight">
+                <p className="text-[10px] sm:text-[11px] text-slate-300 leading-tight">
                   {isRtl ? "ضمان شامل معتمد على التركيب والعوازل" : "Warranty on Installation & Seals"}
                 </p>
               </div>
 
-              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur-md">
-                <div className="flex items-center gap-1.5 text-amber-400 mb-1">
-                  <Award className="w-4 h-4 shrink-0" />
-                  <span className="text-xs font-bold">{isRtl ? "كود SBC" : "SBC Code"}</span>
+              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md">
+                <div className="flex items-center gap-1.5 text-amber-400 mb-0.5 sm:mb-1">
+                  <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "كود SBC" : "SBC Code"}</span>
                 </div>
-                <p className="text-[11px] text-slate-300 leading-tight">
+                <p className="text-[10px] sm:text-[11px] text-slate-300 leading-tight">
                   {isRtl ? "مطابقة تامة لكود البناء السعودي" : "Saudi Building Code Compliant"}
                 </p>
               </div>
 
-              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur-md">
-                <div className="flex items-center gap-1.5 text-amber-400 mb-1">
-                  <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span className="text-xs font-bold">{isRtl ? "+450 مشروع" : "+450 Projects"}</span>
+              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md">
+                <div className="flex items-center gap-1.5 text-amber-400 mb-0.5 sm:mb-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "+450 مشروع" : "+450 Projects"}</span>
                 </div>
-                <p className="text-[11px] text-slate-300 leading-tight">
+                <p className="text-[10px] sm:text-[11px] text-slate-300 leading-tight">
                   {isRtl ? "منفذة بنجاح بالرياض والمنطقة الوسطى" : "Executed Across Riyadh"}
                 </p>
               </div>
 
-              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur-md">
-                <div className="flex items-center gap-1.5 text-amber-400 mb-1">
-                  <Ruler className="w-4 h-4 shrink-0" />
-                  <span className="text-xs font-bold">{isRtl ? "رفع مساحي" : "Surveying"}</span>
+              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md">
+                <div className="flex items-center gap-1.5 text-amber-400 mb-0.5 sm:mb-1">
+                  <Ruler className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "رفع مساحي" : "Surveying"}</span>
                 </div>
-                <p className="text-[11px] text-slate-300 leading-tight">
+                <p className="text-[10px] sm:text-[11px] text-slate-300 leading-tight">
                   {isRtl ? "معاينة هندسية ميدانية فورية مجانية" : "Free On-Site Measurements"}
                 </p>
               </div>

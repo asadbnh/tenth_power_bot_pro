@@ -5,6 +5,7 @@ import { i18nConfig, getLocaleDirection, getLocaleHtmlLang, type Locale } from "
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { MobileBottomBar } from "@/components/layout/MobileBottomBar";
 import { WhatsAppButton } from "@/components/marketing/WhatsAppButton";
 import { AIChatWidget } from "@/components/marketing/AIChatWidget";
 import { getCompany, getServices } from "@/lib/actions/content";
@@ -118,14 +119,21 @@ export default async function LocaleLayout({
       <Header locale={validLocale} dict={dict} />
 
       {/* Main Content */}
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="flex-1 pb-14 sm:pb-0">
         {children}
       </main>
 
       {/* Footer */}
       <Footer locale={validLocale} dict={dict} company={company} services={services} />
 
-      {/* Floating WhatsApp Button */}
+      {/* Mobile Sticky Bottom Action Bar (App-like mobile experience) */}
+      <MobileBottomBar
+        locale={validLocale}
+        phone={company?.phone_primary}
+        whatsappNumber={company?.whatsapp_number}
+      />
+
+      {/* Floating WhatsApp Button (Desktop & Tablet) */}
       <WhatsAppButton locale={validLocale} phoneNumber={company?.whatsapp_number} />
 
       {/* AI Chat Widget */}

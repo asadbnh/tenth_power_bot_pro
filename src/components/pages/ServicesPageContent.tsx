@@ -101,7 +101,7 @@ export function ServicesPageContent({ locale, dict, initialServices }: Props) {
   return (
     <div className="pt-[var(--header-height)]">
       {/* Cinematic Services Hero */}
-      <section className="relative py-20 sm:py-28 bg-[#070d1e] overflow-hidden border-b border-amber-500/10">
+      <section className="relative pt-8 pb-12 sm:pt-14 sm:pb-20 bg-[#070d1e] overflow-hidden border-b border-amber-500/10">
         <div className="absolute inset-0 z-0 pointer-events-none">
           <PageHeroBackground pageKey="services" />
           <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[44rem] h-[26rem] bg-gradient-to-r from-amber-500/15 via-blue-600/10 to-transparent rounded-full blur-[110px]" />
@@ -239,7 +239,7 @@ export function ServicesPageContent({ locale, dict, initialServices }: Props) {
                       </div>
                     </div>
 
-                    <div className="p-6 sm:p-7 space-y-5 flex-1 flex flex-col justify-between">
+                    <div className="p-4 sm:p-7 space-y-4 sm:space-y-5 flex-1 flex flex-col justify-between">
                       <div className="space-y-3">
                         <h3 className="text-xl font-extrabold text-text-primary group-hover:text-amber-500 transition-colors leading-snug">
                           {name}

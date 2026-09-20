@@ -79,7 +79,7 @@ export function BeforeAfterSlider({ locale, initialItems }: Props) {
           onTouchStart={() => setIsDragging(true)}
           onTouchEnd={() => setIsDragging(false)}
           onTouchMove={handleTouchMove}
-          className="relative aspect-[16/9] max-w-4xl mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl border border-border-light select-none cursor-ew-resize"
+          className="relative aspect-[4/3] sm:aspect-[16/9] max-w-4xl mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl border border-border-light select-none cursor-ew-resize touch-none"
         >
           {/* AFTER Image (Background) */}
           <div className="absolute inset-0 w-full h-full bg-[#050b18]">
@@ -89,9 +89,9 @@ export function BeforeAfterSlider({ locale, initialItems }: Props) {
               className="w-full h-full object-cover pointer-events-none"
             />
             {/* Label Overlay */}
-            <div className="absolute bottom-4 right-4 z-10">
-              <span className="px-3 py-1 rounded-full bg-emerald-500/90 text-white text-[10px] sm:text-xs font-bold shadow-lg backdrop-blur-sm">
-                {isRtl ? "بعد التنفيذ — واجهات زجاجية وتشطيب راقي" : "AFTER — Premium Execution"}
+            <div className="absolute bottom-2.5 sm:bottom-4 end-2.5 sm:end-4 z-10">
+              <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/90 text-white text-[9px] sm:text-xs font-bold shadow-lg backdrop-blur-sm">
+                {isRtl ? "بعد التنفيذ — تشطيب راقي" : "AFTER — Premium Execution"}
               </span>
             </div>
           </div>
@@ -107,8 +107,8 @@ export function BeforeAfterSlider({ locale, initialItems }: Props) {
               className="w-full h-full object-cover pointer-events-none"
             />
             {/* Label Overlay */}
-            <div className="absolute bottom-4 left-4 z-10">
-              <span className="px-3 py-1 rounded-full bg-amber-500/90 text-white text-[10px] sm:text-xs font-bold shadow-lg backdrop-blur-sm">
+            <div className="absolute bottom-2.5 sm:bottom-4 start-2.5 sm:start-4 z-10">
+              <span className="px-2.5 sm:px-3 py-1 rounded-full bg-amber-500/90 text-white text-[9px] sm:text-xs font-bold shadow-lg backdrop-blur-sm">
                 {isRtl ? "قبل التنفيذ — الموقع الأولي" : "BEFORE — Concrete / Shell"}
               </span>
             </div>
@@ -119,7 +119,7 @@ export function BeforeAfterSlider({ locale, initialItems }: Props) {
             className="absolute top-0 bottom-0 w-0.5 bg-white/80 shadow-2xl cursor-ew-resize flex items-center justify-center z-20 pointer-events-none"
             style={{ left: `${sliderPosition}%` }}
           >
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white text-primary-950 font-bold shadow-2xl border-2 border-amber-500 flex items-center justify-center text-sm pointer-events-auto transform -translate-x-1/2">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white text-primary-950 font-bold shadow-2xl border-2 border-amber-500 flex items-center justify-center text-xs sm:text-sm pointer-events-auto transform -translate-x-1/2">
               ↔
             </div>
           </div>

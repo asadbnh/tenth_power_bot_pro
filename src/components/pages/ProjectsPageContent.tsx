@@ -80,7 +80,7 @@ export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
   return (
     <div className="pt-[var(--header-height)]">
       {/* Cinematic Architectural Hero */}
-      <section className="relative py-20 sm:py-28 bg-[#070d1e] overflow-hidden border-b border-amber-500/10">
+      <section className="relative pt-8 pb-12 sm:pt-14 sm:pb-20 bg-[#070d1e] overflow-hidden border-b border-amber-500/10">
         {/* Subtle Architectural Grid & Gold Ambient Glow */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <PageHeroBackground pageKey="projects" />
@@ -178,8 +178,8 @@ export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           
           {/* Interactive Filter Strip */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 border-b border-border-light pb-6">
-            <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 border-b border-border-light pb-4 sm:pb-6">
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth w-full md:w-auto pb-2 md:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
               <span className="text-xs font-bold text-text-tertiary me-2 flex items-center gap-1 shrink-0">
                 <Filter className="w-3.5 h-3.5 text-amber-500" />
                 {isRtl ? "التصنيف الهندسي:" : "Filter:"}
@@ -211,7 +211,7 @@ export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
           </div>
 
           {/* Projects Architectural Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
             {isLoading ? (
               Array.from({ length: 6 }).map((_, i) => <SkeletonProjectCard key={i} />)
             ) : filteredProjects.length === 0 ? (

@@ -190,11 +190,11 @@ export function GalleryPageContent({ locale, dict: _dict, initialAlbums, initial
           
           {/* Filter Pills (Shown in Grid View) */}
           {selectedView === "grid" && (
-            <div className="flex flex-wrap items-center gap-2 pb-2">
+            <div className="flex overflow-x-auto no-scrollbar scroll-smooth items-center gap-2 pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
               <button
                 onClick={() => setSelectedAlbumId(null)}
                 className={cn(
-                  "px-4 py-1.5 rounded-xl text-xs font-bold transition-all",
+                  "px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 whitespace-nowrap",
                   selectedAlbumId === null
                     ? "bg-gradient-to-r from-amber-500 to-amber-600 text-primary-950 shadow-md shadow-amber-500/20"
                     : "bg-surface-elevated text-text-secondary border border-border-light hover:text-text-primary"
@@ -209,7 +209,7 @@ export function GalleryPageContent({ locale, dict: _dict, initialAlbums, initial
                     key={album.id}
                     onClick={() => setSelectedAlbumId(String(album.id))}
                     className={cn(
-                      "px-4 py-1.5 rounded-xl text-xs font-bold transition-all",
+                      "px-3.5 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 whitespace-nowrap",
                       isSelected
                         ? "bg-gradient-to-r from-amber-500 to-amber-600 text-primary-950 shadow-md shadow-amber-500/20"
                         : "bg-surface-elevated text-text-secondary border border-border-light hover:text-text-primary"

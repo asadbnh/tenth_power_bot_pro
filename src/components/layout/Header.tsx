@@ -13,6 +13,8 @@ import {
   Search,
   ChevronDown,
   Calendar,
+  Phone,
+  MessageCircle,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -218,10 +220,10 @@ export function Header({ locale, dict }: HeaderProps) {
 
             {/* Menu Panel */}
             <motion.nav
-              initial={{ x: isRtl ? "-100%" : "100%" }}
+              initial={{ x: "100%" }}
               animate={{ x: 0 }}
-              exit={{ x: isRtl ? "-100%" : "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 280 }}
               className={cn(
                 "absolute top-0 bottom-0 w-[85%] max-w-sm bg-background shadow-2xl",
                 "flex flex-col safe-top",
@@ -230,7 +232,10 @@ export function Header({ locale, dict }: HeaderProps) {
             >
               {/* Mobile Menu Header */}
               <div className="flex items-center justify-between p-4 border-b border-border">
-                <span className="text-base font-bold text-text-primary">{dict.meta.siteName}</span>
+                <div className="flex items-center gap-2">
+                  <CompanyLogo size={24} className="shrink-0" />
+                  <span className="text-sm font-bold text-text-primary">{dict.meta.siteName}</span>
+                </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-2 rounded-lg hover:bg-surface text-text-secondary hover:text-text-primary"
@@ -241,19 +246,19 @@ export function Header({ locale, dict }: HeaderProps) {
               </div>
 
               {/* Mobile Nav Links */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-1">
+              <div className="flex-1 overflow-y-auto p-3 space-y-1">
                 {NAV_ITEMS.map((item, index) => (
                   <motion.div
                     key={item.key}
-                    initial={{ opacity: 0, x: isRtl ? -20 : 20 }}
+                    initial={{ opacity: 0, x: isRtl ? 15 : -15 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
+                    transition={{ delay: index * 0.04 }}
                   >
                     <Link
                       href={getLocalizedHref(item.href)}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={cn(
-                        "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors",
+                        "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors",
                         isActive(item.href)
                           ? "bg-amber-500/10 text-amber-500 dark:bg-amber-500/20 font-bold"
                           : "text-text-secondary hover:bg-surface hover:text-text-primary"
@@ -269,39 +274,62 @@ export function Header({ locale, dict }: HeaderProps) {
               </div>
 
               {/* Mobile Menu Footer */}
-              <div className="p-4 border-t border-border space-y-2.5">
-                <Link
-                  href={getLocalizedHref("/search")}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl border border-border text-xs font-semibold text-text-primary hover:bg-surface transition-colors"
-                >
-                  <Search className="w-4 h-4 text-amber-500" />
-                  <span>{dict.nav.search}</span>
-                </Link>
+              <div className="p-3.5 border-t border-border space-y-2 safe-bottom">
+                {/* Direct Call & WhatsApp Row */}
+                <div className="grid grid-cols-2 gap-2">
+                  <a
+                    href="tel:+966532438253"
+                    className="flex items-center justify-center gap-1.5 px-2.5 py-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-500 text-xs font-bold hover:bg-amber-500/20 transition-colors"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                    <span>{isRtl ? "اتصال فوري" : "Call"}</span>
+                  </a>
 
-                <Link
-                  href={getAlternateHref()}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl border border-border text-xs font-semibold text-text-primary hover:bg-surface transition-colors"
-                  hrefLang={alternateLocale}
-                >
-                  <Globe className="w-4 h-4 text-amber-500" />
-                  <span>{alternateLocale === "ar" ? "اللغة العربية" : "English Language"}</span>
-                </Link>
+                  <a
+                    href="https://wa.me/966532438253?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%AE%D8%AF%D9%85%D8%A7%D8%AA%20%D9%85%D8%A4%D8%B3%D8%B3%D8%A9%20%D8%A7%D9%84%D9%82%D9%88%D8%A9%20%D8%A7%D9%84%D8%B9%D8%A7%D8%B4%D8%B1%D8%A9"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 px-2.5 py-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-colors"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>{isRtl ? "واتساب" : "WhatsApp"}</span>
+                  </a>
+                </div>
 
                 <Link
                   href={getLocalizedHref("/appointments")}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl border border-border-light bg-amber-500/10 text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-colors"
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl border border-amber-500/40 bg-gradient-to-r from-amber-500/15 to-yellow-500/10 text-xs font-bold text-amber-400 hover:bg-amber-500/20 transition-colors"
                 >
-                  <Calendar className="w-4 h-4 text-amber-500" />
+                  <Calendar className="w-4 h-4 text-amber-400" />
                   <span>{isRtl ? "حجز معاينة هندسية مجانية" : "Book Free Site Survey"}</span>
                 </Link>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    href={getLocalizedHref("/search")}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-border text-xs font-semibold text-text-primary hover:bg-surface transition-colors"
+                  >
+                    <Search className="w-3.5 h-3.5 text-amber-500" />
+                    <span>{dict.nav.search}</span>
+                  </Link>
+
+                  <Link
+                    href={getAlternateHref()}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-border text-xs font-semibold text-text-primary hover:bg-surface transition-colors"
+                    hrefLang={alternateLocale}
+                  >
+                    <Globe className="w-3.5 h-3.5 text-amber-500" />
+                    <span>{alternateLocale === "ar" ? "العربية" : "English"}</span>
+                  </Link>
+                </div>
 
                 <Link
                   href={getLocalizedHref("/quote")}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-primary-950 font-bold text-sm hover:brightness-105 transition-all shadow-md"
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-primary-950 font-bold text-sm hover:brightness-105 transition-all shadow-md"
                 >
                   {dict.nav.quote}
                 </Link>

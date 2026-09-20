@@ -122,7 +122,7 @@ export function BlogPageContent({ locale, dict, initialArticles }: Props) {
                 />
               </div>
 
-              <div className="p-8 flex flex-col justify-between space-y-6">
+              <div className="p-4 sm:p-8 flex flex-col justify-between space-y-4 sm:space-y-6">
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 text-xs">
                     <span className="px-3 py-1 rounded-full bg-primary-100 dark:bg-primary-950 text-primary-700 dark:text-primary-300 font-bold">
@@ -186,7 +186,7 @@ export function BlogPageContent({ locale, dict, initialArticles }: Props) {
                         />
                       </div>
 
-                      <div className="p-6 space-y-3">
+                      <div className="p-4 sm:p-6 space-y-2.5 sm:space-y-3">
                         <div className="flex items-center gap-1.5 text-xs text-text-tertiary">
                           <Clock className="w-3.5 h-3.5" />
                           <span>{readTime} {isRtl ? "دقائق" : "min"}</span>
@@ -202,7 +202,7 @@ export function BlogPageContent({ locale, dict, initialArticles }: Props) {
                       </div>
                     </Link>
 
-                    <div className="px-6 pb-6 pt-2">
+                    <div className="px-4 pb-4 sm:px-6 sm:pb-6 pt-1 sm:pt-2">
                       <Link href={`/${locale}/blog/${article.slug}`}
                         className="inline-flex items-center gap-2 text-xs font-bold text-primary-600 dark:text-primary-400 hover:gap-3 transition-all">
                         <span>{dict.blog.readMore}</span>
