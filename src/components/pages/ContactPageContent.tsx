@@ -123,7 +123,7 @@ export function ContactPageContent({ locale, dict, company }: Props) {
             {/* Contact Info */}
             <motion.div initial={{ opacity: 0, x: isRtl ? 20 : -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
               className="lg:col-span-2 space-y-5">
-              <div className="rounded-2xl border border-border-light bg-surface-elevated p-6 space-y-5">
+              <div className="rounded-2xl border border-border-light bg-surface-elevated p-4 sm:p-6 space-y-4 sm:space-y-5">
                 {INFO.map((item, i) => {
                   const Icon = item.icon;
                   return (
@@ -199,7 +199,7 @@ export function ContactPageContent({ locale, dict, company }: Props) {
             {/* Contact Form */}
             <motion.div initial={{ opacity: 0, x: isRtl ? -20 : 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}
               className="lg:col-span-3">
-              <div className="rounded-2xl border border-border-light bg-surface-elevated p-8">
+              <div className="rounded-2xl border border-border-light bg-surface-elevated p-4 sm:p-8">
                 {status === "sent" ? (
                   <div className="text-center py-12">
                     <CheckCircle2 className="w-16 h-16 mx-auto text-emerald-500 mb-4" />

@@ -103,20 +103,20 @@ export function AppointmentPageContent({
         </div>
 
         {/* Hero Banner Header */}
-        <div className="relative rounded-3xl overflow-hidden bg-[#070d1e] text-white p-7 sm:p-10 mb-8 shadow-2xl border border-white/10">
+        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#070d1e] text-white p-5 sm:p-10 mb-6 sm:mb-8 shadow-2xl border border-white/10">
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-1/2 end-10 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-amber-500/10 to-blue-600/10 rounded-full blur-3xl" />
             <div className="absolute inset-0 opacity-[0.03]"
               style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
           </div>
 
-          <div className="relative z-10 max-w-2xl space-y-3.5">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-amber-500/30 text-xs font-semibold text-amber-200 backdrop-blur-md">
+          <div className="relative z-10 max-w-2xl space-y-3 sm:space-y-3.5">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-white/5 border border-amber-500/30 text-xs font-semibold text-amber-200 backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>{isRtl ? "خدمة ميدانية معتمدة — مجاناً 100%" : "Certified Field Survey — 100% Free"}</span>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight">
+            <h1 className="text-xl sm:text-4xl font-black text-white leading-tight">
               {isRtl ? (
                 <>
                   احجز موعد معاينة و{" "}
@@ -140,7 +140,7 @@ export function AppointmentPageContent({
                 : "A certified engineer from Tenth Power will visit your site to review technical specs, measure dimensions, and provide tailored execution recommendations."}
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-1 text-xs text-slate-300">
+            <div className="flex flex-wrap gap-3 sm:gap-4 pt-1 text-[11px] sm:text-xs text-slate-300">
               <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-amber-400" /> {isRtl ? "اعتماد كود البناء السعودي SBC" : "SBC Code Compliance"}</span>
               <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-amber-400" /> {isRtl ? "التزام دقيق بمواعيد الحضور" : "Punctual Scheduling"}</span>
             </div>
@@ -149,19 +149,19 @@ export function AppointmentPageContent({
 
         {/* Success Card */}
         {status === "success" ? (
-          <div className="bg-surface-elevated rounded-3xl border border-emerald-500/30 p-8 sm:p-12 text-center space-y-6 shadow-xl">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-10 h-10" />
+          <div className="bg-surface-elevated rounded-2xl sm:rounded-3xl border border-emerald-500/30 p-6 sm:p-12 text-center space-y-5 sm:space-y-6 shadow-xl">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10" />
             </div>
-            <h2 className="text-2xl font-extrabold text-text-primary">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-text-primary">
               {isRtl ? "تم تأكيد تسجيل طلب الموعد بنجاح!" : "Appointment Request Received!"}
             </h2>
-            <p className="text-sm sm:text-base text-text-secondary max-w-md mx-auto leading-relaxed">
+            <p className="text-xs sm:text-base text-text-secondary max-w-md mx-auto leading-relaxed">
               {isRtl
                 ? `شكراً لك ${formData.name}. تم إرسال تفاصيل الموعد مباشرة للقسم الهندسي، وسيتواصل معك مهندس الموقع هاتفياً لتأكيد ساعة الزيارة الميدانية.`
                 : `Thank you ${formData.name}. Your appointment details have been dispatched to our engineering team. We will contact you shortly to confirm the visit.`}
             </p>
-            <div className="pt-4 flex items-center justify-center gap-4">
+            <div className="pt-3 sm:pt-4 flex items-center justify-center gap-4">
               <Link
                 href={`/${locale}`}
                 className="px-6 py-3 rounded-xl bg-primary-600 text-white font-bold text-sm hover:bg-primary-700 transition-all shadow-md"
@@ -174,7 +174,7 @@ export function AppointmentPageContent({
           /* Form Card */
           <form
             onSubmit={handleSubmit}
-            className="bg-surface-elevated rounded-3xl border border-border-light p-6 sm:p-10 shadow-xl space-y-8"
+            className="bg-surface-elevated rounded-2xl sm:rounded-3xl border border-border-light p-4 sm:p-10 shadow-xl space-y-6 sm:space-y-8"
           >
             {status === "error" && errorMessage && (
               <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs sm:text-sm flex items-center gap-3">
@@ -189,7 +189,7 @@ export function AppointmentPageContent({
                 <span>{isRtl ? "بيانات العميل والموقع" : "Client & Location Information"}</span>
               </h2>
 
-              <div className="grid sm:grid-cols-2 gap-5">
+              <div className="grid sm:grid-cols-2 gap-3.5 sm:gap-5">
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-text-secondary">
                     {isRtl ? "الاسم الكريم *" : "Full Name *"}
@@ -270,7 +270,7 @@ export function AppointmentPageContent({
                 <span>{isRtl ? "تحديد موعد الزيارة المفضل" : "Preferred Appointment Schedule"}</span>
               </h2>
 
-              <div className="grid sm:grid-cols-2 gap-5">
+              <div className="grid sm:grid-cols-2 gap-3.5 sm:gap-5">
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-text-secondary">
                     {isRtl ? "التاريخ المفضل للمعاينة" : "Preferred Date"}

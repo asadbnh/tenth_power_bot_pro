@@ -23,10 +23,28 @@ export function getSql() {
   return cachedSql;
 }
 
+const QUERY_TIMEOUT_MS = 6000;
+
 async function runQuery(query: string, params: unknown[] = []): Promise<any[]> {
   const sqlClient = getSql();
-  const res = await sqlClient.query(query, params as any[]);
-  return (res as any)?.rows ?? res;
+  let timer: NodeJS.Timeout | null = null;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      const err = new Error(`Neon DB query timeout (${QUERY_TIMEOUT_MS}ms)`);
+      (err as any).isTimeout = true;
+      reject(err);
+    }, QUERY_TIMEOUT_MS);
+  });
+
+  try {
+    const res = await Promise.race([
+      sqlClient.query(query, params as any[]),
+      timeoutPromise,
+    ]);
+    return (res as any)?.rows ?? res;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 }
 
 // ─── Fluent Query Builder for PostgreSQL / Neon ───────────────────────
@@ -393,7 +411,18 @@ export class QueryBuilder<T = Record<string, unknown>> implements PromiseLike<{ 
 
       return { data: null, error: null };
     } catch (err: any) {
-      console.error(`[Neon DB Error] in ${this.tableName}:`, err);
+      const isConnectionTimeout =
+        err?.isTimeout ||
+        err?.code === "UND_ERR_CONNECT_TIMEOUT" ||
+        err?.sourceError?.code === "UND_ERR_CONNECT_TIMEOUT" ||
+        err?.message?.includes("fetch failed") ||
+        err?.message?.includes("timeout");
+
+      if (isConnectionTimeout) {
+        console.warn(`[Neon DB Info] Query on table "${this.tableName}" timed out or slow connection. Serving fallback data.`);
+      } else {
+        console.error(`[Neon DB Error] in ${this.tableName}:`, err?.message || err);
+      }
       return { data: null, count: 0, error: err };
     }
   }

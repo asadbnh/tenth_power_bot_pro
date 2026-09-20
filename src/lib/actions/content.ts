@@ -16,6 +16,21 @@ import {
 const FALLBACK_COMPANY_ID = "00000000-0000-0000-0000-000000000001";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+function logDbWarning(context: string, err: any) {
+  const isTimeout =
+    err?.message?.includes("fetch failed") ||
+    err?.message?.includes("timeout") ||
+    err?.code === "UND_ERR_CONNECT_TIMEOUT" ||
+    err?.sourceError?.code === "UND_ERR_CONNECT_TIMEOUT";
+
+  if (isTimeout) {
+    console.warn(`[Neon DB Info] ${context}: connection timeout or high latency. Using local fallback.`);
+  } else {
+    console.warn(`[Neon DB Warning] ${context}:`, err?.message || err);
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getDefaultCompanyId(supabase: any): Promise<string> {
   try {
     const { data } = await supabase.from("companies").select("id").limit(1).single();
@@ -131,7 +146,7 @@ async function fetchServiceBySlugFromDb(slug: string, locale = "ar") {
       }
     }
   } catch (err) {
-    console.warn("Could not fetch service_images:", err);
+    logDbWarning("Could not fetch service_images", err);
   }
 
   return {
@@ -324,7 +339,7 @@ async function fetchProjectBySlugFromDb(slug: string, _locale = "ar") {
         }
       }
     } catch (err) {
-      console.warn("Could not fetch project images:", err);
+      logDbWarning("Could not fetch project images", err);
     }
 
     // ─── Fetch project_videos from DB ────────────────────────────────
@@ -348,7 +363,7 @@ async function fetchProjectBySlugFromDb(slug: string, _locale = "ar") {
         }));
       }
     } catch (err) {
-      console.warn("Could not fetch project_videos:", err);
+      logDbWarning("Could not fetch project_videos", err);
     }
   } else {
     const fallbacks = getFallbackProjects() as Record<string, unknown>[];
@@ -526,7 +541,7 @@ export async function getArticleBySlug(slug: string, locale = "ar") {
         }));
       }
     } catch (err) {
-      console.warn("Could not fetch article_images:", err);
+      logDbWarning("Could not fetch article_images", err);
     }
   } else {
     const fallbacks = getFallbackArticles() as Record<string, unknown>[];
@@ -583,7 +598,7 @@ export async function getCategories(locale = "ar") {
       }));
     }
   } catch (err) {
-    console.warn("Could not fetch categories from DB:", err);
+    logDbWarning("Could not fetch categories from DB", err);
   }
   return [];
 }
@@ -629,7 +644,7 @@ async function fetchGalleryAlbumsFromDb(locale = "ar") {
       }));
     }
   } catch (err) {
-    console.warn("Error fetching gallery albums from DB:", err);
+    logDbWarning("Error fetching gallery albums from DB", err);
   }
 
   return [
@@ -716,7 +731,7 @@ export async function getGalleryItems(options?: { serviceId?: string; albumId?: 
       return { data: items, count: items.length };
     }
   } catch (err) {
-    console.warn("Error fetching gallery items from DB:", err);
+    logDbWarning("Error fetching gallery items from DB", err);
   }
 
   const fallbacks = getFallbackGallery() as unknown as Record<string, unknown>[];
@@ -759,7 +774,7 @@ export async function getApprovedReviews(limit = 12) {
       list.push(...testimonials);
     }
   } catch (err) {
-    console.warn("Error fetching approved reviews:", err);
+    logDbWarning("Error fetching approved reviews", err);
   }
 
   if (list.length === 0) {
@@ -1099,7 +1114,9 @@ async function fetchCompanyFromDb() {
       .single();
 
     if (compErr) {
-      console.warn("Could not fetch company from DB:", compErr);
+      if (!compErr.message?.includes("timeout") && !compErr.message?.includes("fetch failed")) {
+        console.warn("Could not fetch company from DB:", compErr.message || compErr);
+      }
     }
 
     if (company) {
@@ -1130,18 +1147,24 @@ async function fetchCompanyFromDb() {
         business_hours: hoursRes?.data || [],
       };
     }
-  } catch (err) {
-    console.warn("Could not fetch company from DB, using fallback:", err);
+  } catch (err: any) {
+    if (!err?.message?.includes("timeout") && !err?.message?.includes("fetch failed")) {
+      console.warn("Could not fetch company from DB, using fallback:", err?.message || err);
+    }
   }
 
   return getFallbackCompany();
 }
 
 async function fetchCompanySafe() {
-  const timeoutPromise = new Promise<never>((_, reject) =>
-    setTimeout(() => reject(new Error("Neon DB timeout (4000ms)")), 4000)
+  const timeoutPromise = new Promise<any>((resolve) =>
+    setTimeout(() => resolve(getFallbackCompany()), 5000)
   );
-  return Promise.race([fetchCompanyFromDb(), timeoutPromise]);
+  try {
+    return await Promise.race([fetchCompanyFromDb(), timeoutPromise]);
+  } catch {
+    return getFallbackCompany();
+  }
 }
 
 const getCachedCompanyData = unstable_cache(
@@ -1152,9 +1175,8 @@ const getCachedCompanyData = unstable_cache(
 
 export async function getCompany() {
   try {
-    return await getCachedCompanyData();
-  } catch (err) {
-    console.warn("Error getting cached company, using fallback:", err);
+    return (await getCachedCompanyData()) || getFallbackCompany();
+  } catch {
     return getFallbackCompany();
   }
 }
@@ -1172,7 +1194,7 @@ export async function getCompanyContacts() {
       return data;
     }
   } catch (err) {
-    console.warn("Error fetching company contacts:", err);
+    logDbWarning("Error fetching company contacts", err);
   }
   return [];
 }
@@ -1208,7 +1230,7 @@ async function fetchBeforeAfterFromDb(locale = "ar") {
       }));
     }
   } catch (err) {
-    console.warn("Error fetching before/after items:", err);
+    logDbWarning("Error fetching before/after items", err);
   }
 
   return [
@@ -1253,7 +1275,7 @@ async function fetchAdvertisementsFromDb() {
       return data;
     }
   } catch (err) {
-    console.warn("Error fetching advertisements:", err);
+    logDbWarning("Error fetching advertisements", err);
   }
   return [];
 }
@@ -1351,7 +1373,7 @@ export async function searchDatabase(query: string, locale = "ar", limit = 12) {
 
     return results;
   } catch (err) {
-    console.warn("Database search error:", err);
+    logDbWarning("Database search error", err);
     return [];
   }
 }

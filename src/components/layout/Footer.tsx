@@ -382,7 +382,7 @@ export function Footer({ locale, dict, company, services }: FooterProps) {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-14 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-white/50 text-center sm:text-start">
             © {year} {dict.meta.siteName}. {dict.footer.rights}.
           </p>
