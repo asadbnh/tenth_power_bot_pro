@@ -19,7 +19,7 @@ import {
   handleServicesList, handleServiceDetails, handleServiceToggleActive, handleServiceToggleFeatured, handleServiceDelete, handleServiceAddPrompt,
   handleServiceItems, handleServiceImageDelete, handleServiceImageSetCover,
   handleProjectsList, handleProjectDetails, handleProjectToggleFeatured, handleProjectToggleActive, handleProjectItems, handleProjectImageDelete, handleProjectImageSetCover, handleProjectDelete, handleProjectAddPrompt,
-  handleProjectVideosList, handleProjectVideoDelete,
+  handleProjectVideosList, handleProjectVideoDelete, handleProjectLinkServiceList, handleProjectSetService,
   handleCategoriesList, handleCategoryDelete, handleCategoryAddPrompt, handleCategoryToggleActive, handleCategoryEditPrompt,
   handleArticlesList, handleArticleDetails, handleArticleTogglePublish, handleArticleDelete, handleArticleAiPrompt, handleArticleManualAddPrompt,
   handleFaqsList, handleFaqDelete, handleFaqAddPrompt, handleFaqToggleActive, handleFaqEditPrompt,
@@ -379,11 +379,44 @@ export async function handleCallback(query: TelegramCallbackQuery) {
       reply_markup: Keyboards.cancelWizard(`srv_view:${srvId}`)
     });
   }
+  if (data.startsWith("srv_edit_fulldesc:")) {
+    const srvId = data.split(":")[1];
+    setAdminState(userId, "awaiting_service_edit_fulldesc", { serviceId: srvId });
+    return sendMessage(userId, `📝 <b>تعديل الوصف الكامل للخدمة:</b>\n\nأرسل نص الوصف التفصيلي الكامل:`, {
+      reply_markup: Keyboards.cancelWizard(`srv_view:${srvId}`)
+    });
+  }
+  if (data.startsWith("srv_edit_feat:")) {
+    const srvId = data.split(":")[1];
+    setAdminState(userId, "awaiting_service_edit_feat", { serviceId: srvId });
+    return sendMessage(userId, `⭐ <b>تعديل مميزات الخدمة:</b>\n\nأرسل مميزات الخدمة (كل ميزة في سطر مستقل):`, {
+      reply_markup: Keyboards.cancelWizard(`srv_view:${srvId}`)
+    });
+  }
+  if (data.startsWith("srv_edit_seo:")) {
+    const srvId = data.split(":")[1];
+    setAdminState(userId, "awaiting_service_edit_seo", { serviceId: srvId });
+    return sendMessage(userId, `🏷️ <b>تعديل كلمات البحث (SEO):</b>\n\nأرسل الكلمات المفتاحية مفصولة بفواصل:`, {
+      reply_markup: Keyboards.cancelWizard(`srv_view:${srvId}`)
+    });
+  }
 
   if (data === "cnt_projects") return handleProjectsList(userId, messageId);
   if (data.startsWith("prj_view:")) return handleProjectDetails(userId, data.split(":")[1], messageId);
   if (data.startsWith("prj_toggle_feat:")) return handleProjectToggleFeatured(userId, data.split(":")[1], messageId);
   if (data.startsWith("prj_toggle_act:")) return handleProjectToggleActive(userId, data.split(":")[1], messageId);
+  if (data.startsWith("prj_link_srv:")) return handleProjectLinkServiceList(userId, data.split(":")[1], messageId);
+  if (data.startsWith("prj_set_srv:")) {
+    const parts = data.split(":");
+    return handleProjectSetService(userId, parts[1], parts[2], messageId);
+  }
+  if (data.startsWith("prj_edit_desc:")) {
+    const prjId = data.split(":")[1];
+    setAdminState(userId, "awaiting_project_edit_desc", { projectId: prjId });
+    return sendMessage(userId, `📝 <b>تعديل وصف المشروع:</b>\n\nأرسل الوصف الجديد والمواصفات:`, {
+      reply_markup: Keyboards.cancelWizard(`prj_view:${prjId}`)
+    });
+  }
   if (data.startsWith("prj_items:")) {
     const parts = data.split(":");
     return handleProjectItems(userId, parts[1], messageId, parts[2] ? parseInt(parts[2], 10) : 0);

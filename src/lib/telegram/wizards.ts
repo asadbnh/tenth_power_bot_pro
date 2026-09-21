@@ -888,7 +888,9 @@ export async function processFieldEditWizard(userId: number, text: string, state
     } else if (editField === "val") {
       await db.from("projects").update({ project_value: parseArabicNumber(text) || 0 }).eq("id", projectId);
     } else if (editField === "desc") {
-      await db.from("projects").update({ description_ar: text }).eq("id", projectId);
+      await db.from("projects").update({ description_ar: text, description_en: text }).eq("id", projectId);
+    } else if (editField === "loc") {
+      await db.from("projects").update({ location_ar: text.trim() }).eq("id", projectId);
     }
 
     clearAdminState(userId);
@@ -923,9 +925,17 @@ export async function processFieldEditWizard(userId: number, text: string, state
       await db.from("services").update({ name_ar: text, name_en: text }).eq("id", serviceId);
     } else if (editField === "price") {
       const p = parseArabicNumber(text) || 300;
-      await db.from("services").update({ price_from: p, price_to: p * 1.5 }).eq("id", serviceId);
+      await db.from("services").update({ price_from: p, price_to: p * 1.5, show_price: true }).eq("id", serviceId);
     } else if (editField === "desc") {
       await db.from("services").update({ short_description_ar: text, short_description_en: text }).eq("id", serviceId);
+    } else if (editField === "fulldesc") {
+      await db.from("services").update({ full_description_ar: text, full_description_en: text }).eq("id", serviceId);
+    } else if (editField === "feat") {
+      const feats = text.split("\n").map(s => s.trim()).filter(Boolean);
+      await db.from("services").update({ features_ar: feats }).eq("id", serviceId);
+    } else if (editField === "seo") {
+      const kws = text.split(",").map(s => s.trim()).filter(Boolean);
+      await db.from("services").update({ seo_keywords_ar: kws }).eq("id", serviceId);
     } else if (editField === "cover") {
       await db.from("services").update({ cover_image_url: text.trim() }).eq("id", serviceId);
     }

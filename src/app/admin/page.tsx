@@ -46,32 +46,51 @@ export default function AdminMiniAppPage() {
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   // Modals state
-  const [modalType, setModalType] = useState<"add_service" | "add_project" | "add_review" | "edit_company" | null>(null);
+  const [modalType, setModalType] = useState<
+    "add_service" | "edit_service" | "add_project" | "edit_project" | "add_review" | "edit_company" | null
+  >(null);
   const [confirmDelete, setConfirmDelete] = useState<{ action: string; id: string; title: string; type?: string } | null>(null);
 
   // Form states
   const [serviceForm, setServiceForm] = useState({
     name_ar: "",
+    name_en: "",
     slug: "",
+    category_id: "",
     price_from: "",
     price_to: "",
-    price_unit: "متر",
+    price_unit: "متر مربع",
+    show_price: true,
     short_description_ar: "",
+    full_description_ar: "",
+    features_ar: "",
+    seo_keywords_ar: "",
+    cover_image_url: "",
     is_active: true,
     is_featured: false,
   });
 
+  const [editServiceForm, setEditServiceForm] = useState<any>(null);
+
   const [projectForm, setProjectForm] = useState({
+    service_id: "",
     title_ar: "",
+    title_en: "",
     slug: "",
     client_name: "",
     city: "الرياض",
+    location_ar: "",
     project_value: "",
+    status: "completed",
+    start_date: "",
+    end_date: "",
     cover_image_url: "",
     description_ar: "",
     is_active: true,
     is_featured: false,
   });
+
+  const [editProjectForm, setEditProjectForm] = useState<any>(null);
 
   const [reviewForm, setReviewForm] = useState({
     client_name: "",
@@ -97,6 +116,7 @@ export default function AdminMiniAppPage() {
     projects: any[];
     reviews: any[];
     settings: any;
+    categories: any[];
   }>({
     metrics: null,
     quotes: [],
@@ -104,6 +124,7 @@ export default function AdminMiniAppPage() {
     projects: [],
     reviews: [],
     settings: {},
+    categories: [],
   });
 
   const showToast = (message: string, type: "success" | "error" = "success") => {
@@ -244,11 +265,18 @@ export default function AdminMiniAppPage() {
       setModalType(null);
       setServiceForm({
         name_ar: "",
+        name_en: "",
         slug: "",
+        category_id: "",
         price_from: "",
         price_to: "",
-        price_unit: "متر",
+        price_unit: "متر مربع",
+        show_price: true,
         short_description_ar: "",
+        full_description_ar: "",
+        features_ar: "",
+        seo_keywords_ar: "",
+        cover_image_url: "",
         is_active: true,
         is_featured: false,
       });
@@ -262,16 +290,42 @@ export default function AdminMiniAppPage() {
     if (ok) {
       setModalType(null);
       setProjectForm({
+        service_id: "",
         title_ar: "",
+        title_en: "",
         slug: "",
         client_name: "",
         city: "الرياض",
+        location_ar: "",
         project_value: "",
+        status: "completed",
+        start_date: "",
+        end_date: "",
         cover_image_url: "",
         description_ar: "",
         is_active: true,
         is_featured: false,
       });
+    }
+  };
+
+  const handleEditServiceSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editServiceForm?.id) return;
+    const ok = await executeMutation("update_service", editServiceForm);
+    if (ok) {
+      setModalType(null);
+      setEditServiceForm(null);
+    }
+  };
+
+  const handleEditProjectSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editProjectForm?.id) return;
+    const ok = await executeMutation("update_project", editProjectForm);
+    if (ok) {
+      setModalType(null);
+      setEditProjectForm(null);
     }
   };
 
@@ -795,6 +849,35 @@ export default function AdminMiniAppPage() {
                           </button>
 
                           <button
+                            onClick={() => {
+                              triggerHaptic("light");
+                              setEditServiceForm({
+                                id: s.id,
+                                name_ar: s.name_ar || "",
+                                name_en: s.name_en || "",
+                                slug: s.slug || "",
+                                category_id: s.category_id || "",
+                                price_from: s.price_from || "",
+                                price_to: s.price_to || "",
+                                price_unit: s.price_unit || "متر مربع",
+                                show_price: s.show_price !== false,
+                                short_description_ar: s.short_description_ar || "",
+                                full_description_ar: s.full_description_ar || "",
+                                features_ar: Array.isArray(s.features_ar) ? s.features_ar.join("\n") : (s.features_ar || ""),
+                                seo_keywords_ar: Array.isArray(s.seo_keywords_ar) ? s.seo_keywords_ar.join(", ") : (s.seo_keywords_ar || ""),
+                                cover_image_url: s.cover_image_url || "",
+                                is_active: s.is_active !== false,
+                                is_featured: Boolean(s.is_featured),
+                              });
+                              setModalType("edit_service");
+                            }}
+                            className="p-1.5 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 text-blue-300 transition-colors"
+                            title="تعديل الخدمة"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+
+                          <button
                             onClick={() =>
                               setConfirmDelete({
                                 action: "delete_service",
@@ -836,7 +919,10 @@ export default function AdminMiniAppPage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {data.projects.map((p: any) => (
+                  {data.projects.map((p: any) => {
+                    const linkedService = data.services.find((s: any) => s.id === p.service_id);
+
+                    return (
                     <div
                       key={p.id}
                       className="bg-slate-900/90 rounded-2xl border border-slate-800/80 overflow-hidden shadow-md flex flex-col"
@@ -863,10 +949,18 @@ export default function AdminMiniAppPage() {
                       <div className="p-3.5 flex-1 flex flex-col justify-between space-y-2">
                         <div>
                           <h3 className="font-bold text-sm text-white mb-1">{p.title_ar}</h3>
+                          <div className="text-[11px] text-cyan-400 bg-cyan-950/40 px-2 py-0.5 rounded-md border border-cyan-500/20 w-fit mb-1.5">
+                            🛠️ {linkedService?.name_ar || "مشروع عام (غير مربوط بخدمة)"}
+                          </div>
                           <div className="flex items-center justify-between text-xs text-slate-400">
-                            <span>📍 {p.city || "الرياض"}</span>
+                            <span>📍 {p.city || "الرياض"}{p.location_ar ? ` — ${p.location_ar}` : ""}</span>
                             <span>{p.client_name || "عميل خاص"}</span>
                           </div>
+                          {p.project_value && (
+                            <div className="text-xs text-emerald-400 font-semibold mt-1">
+                              💰 {Number(p.project_value).toLocaleString("ar-SA")} ر.س
+                            </div>
+                          )}
                         </div>
 
                         {/* Controls */}
@@ -896,23 +990,55 @@ export default function AdminMiniAppPage() {
                             </button>
                           </div>
 
-                          <button
-                            onClick={() =>
-                              setConfirmDelete({
-                                action: "delete_project",
-                                id: p.id,
-                                title: p.title_ar,
-                              })
-                            }
-                            className="p-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 transition-colors"
-                            title="حذف المشروع"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => {
+                                triggerHaptic("light");
+                                setEditProjectForm({
+                                  id: p.id,
+                                  service_id: p.service_id || "",
+                                  title_ar: p.title_ar || "",
+                                  title_en: p.title_en || "",
+                                  slug: p.slug || "",
+                                  client_name: p.client_name || "",
+                                  city: p.city || "الرياض",
+                                  location_ar: p.location_ar || "",
+                                  project_value: p.project_value || "",
+                                  status: p.status || "completed",
+                                  start_date: p.start_date ? p.start_date.split("T")[0] : "",
+                                  end_date: p.end_date ? p.end_date.split("T")[0] : "",
+                                  description_ar: p.description_ar || "",
+                                  cover_image_url: p.cover_image_url || "",
+                                  is_active: p.is_active !== false,
+                                  is_featured: Boolean(p.is_featured),
+                                });
+                                setModalType("edit_project");
+                              }}
+                              className="p-1.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 transition-colors"
+                              title="تعديل المشروع"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+
+                            <button
+                              onClick={() =>
+                                setConfirmDelete({
+                                  action: "delete_project",
+                                  id: p.id,
+                                  title: p.title_ar,
+                                })
+                              }
+                              className="p-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 transition-colors"
+                              title="حذف المشروع"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  ))}
+                  );
+                  })}
                 </div>
               </div>
             )}
@@ -1081,7 +1207,7 @@ export default function AdminMiniAppPage() {
       {/* ─── MODAL: Add Service ─── */}
       {modalType === "add_service" && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-5 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="font-bold text-sm sm:text-base text-white flex items-center gap-2">
                 <Wrench className="w-4 h-4 text-blue-400" />
@@ -1105,7 +1231,25 @@ export default function AdminMiniAppPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              {data.categories && data.categories.length > 0 && (
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">تصنيف الخدمة</label>
+                  <select
+                    value={serviceForm.category_id}
+                    onChange={(e) => setServiceForm({ ...serviceForm, category_id: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  >
+                    <option value="">بدون تصنيف (عام)</option>
+                    {data.categories.map((cat: any) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name_ar}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div className="grid grid-cols-3 gap-2">
                 <div>
                   <label className="block text-slate-300 font-semibold mb-1">السعر يبدأ من (ريال)</label>
                   <input
@@ -1126,6 +1270,27 @@ export default function AdminMiniAppPage() {
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
                   />
                 </div>
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">وحدة القياس</label>
+                  <input
+                    type="text"
+                    placeholder="متر مربع"
+                    value={serviceForm.price_unit}
+                    onChange={(e) => setServiceForm({ ...serviceForm, price_unit: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">رابط صورة الغلاف (Cloudflare R2)</label>
+                <input
+                  type="url"
+                  placeholder="https://pub-...r2.dev/services/service.webp"
+                  value={serviceForm.cover_image_url}
+                  onChange={(e) => setServiceForm({ ...serviceForm, cover_image_url: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500 dir-ltr text-right"
+                />
               </div>
 
               <div>
@@ -1136,6 +1301,39 @@ export default function AdminMiniAppPage() {
                   value={serviceForm.short_description_ar}
                   onChange={(e) => setServiceForm({ ...serviceForm, short_description_ar: e.target.value })}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500 resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">الوصف الكامل والتفصيلي</label>
+                <textarea
+                  rows={3}
+                  placeholder="شرح كامل لمواصفات الخدمة، نوع الزجاج، الملحقات، الضمان وطريقة التركيب..."
+                  value={serviceForm.full_description_ar}
+                  onChange={(e) => setServiceForm({ ...serviceForm, full_description_ar: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500 resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">المميزات الفنية (سطر لكل ميزة)</label>
+                <textarea
+                  rows={2}
+                  placeholder="مقاومة عالية للكسر والحرارة&#10;عزل صوتي متقدم بنسبة 90%&#10;إكسسوارات ستانلس ستيل 316"
+                  value={serviceForm.features_ar}
+                  onChange={(e) => setServiceForm({ ...serviceForm, features_ar: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500 resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">كلمات مفتاحية للأرشفة والـ SEO (مفصولة بفواصل)</label>
+                <input
+                  type="text"
+                  placeholder="زجاج سيكوريت, واجهات زجاجية, تركيب واجهات الرياض"
+                  value={serviceForm.seo_keywords_ar}
+                  onChange={(e) => setServiceForm({ ...serviceForm, seo_keywords_ar: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
                 />
               </div>
 
@@ -1173,10 +1371,188 @@ export default function AdminMiniAppPage() {
         </div>
       )}
 
+      {/* ─── MODAL: Edit Service ─── */}
+      {modalType === "edit_service" && editServiceForm && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-5 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="font-bold text-sm sm:text-base text-white flex items-center gap-2">
+                <Edit2 className="w-4 h-4 text-blue-400" />
+                تعديل بيانات الخدمة: {editServiceForm.name_ar}
+              </h3>
+              <button onClick={() => setModalType(null)} className="p-1 rounded-lg text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditServiceSubmit} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">اسم الخدمة بالعربية *</label>
+                <input
+                  type="text"
+                  required
+                  value={editServiceForm.name_ar}
+                  onChange={(e) => setEditServiceForm({ ...editServiceForm, name_ar: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              {data.categories && data.categories.length > 0 && (
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">تصنيف الخدمة</label>
+                  <select
+                    value={editServiceForm.category_id || ""}
+                    onChange={(e) => setEditServiceForm({ ...editServiceForm, category_id: e.target.value || null })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  >
+                    <option value="">بدون تصنيف (عام)</option>
+                    {data.categories.map((cat: any) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name_ar}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">السعر يبدأ من (ريال)</label>
+                  <input
+                    type="number"
+                    value={editServiceForm.price_from || ""}
+                    onChange={(e) => setEditServiceForm({ ...editServiceForm, price_from: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">السعر الأعلى (ريال)</label>
+                  <input
+                    type="number"
+                    value={editServiceForm.price_to || ""}
+                    onChange={(e) => setEditServiceForm({ ...editServiceForm, price_to: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">وحدة القياس</label>
+                  <input
+                    type="text"
+                    value={editServiceForm.price_unit || "متر مربع"}
+                    onChange={(e) => setEditServiceForm({ ...editServiceForm, price_unit: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">رابط صورة الغلاف (Cloudflare R2)</label>
+                <input
+                  type="url"
+                  value={editServiceForm.cover_image_url || ""}
+                  onChange={(e) => setEditServiceForm({ ...editServiceForm, cover_image_url: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500 dir-ltr text-right"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">نبذة مختصرة عن الخدمة</label>
+                <textarea
+                  rows={2}
+                  value={editServiceForm.short_description_ar || ""}
+                  onChange={(e) => setEditServiceForm({ ...editServiceForm, short_description_ar: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500 resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">الوصف الكامل والتفصيلي</label>
+                <textarea
+                  rows={3}
+                  value={editServiceForm.full_description_ar || ""}
+                  onChange={(e) => setEditServiceForm({ ...editServiceForm, full_description_ar: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500 resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">المميزات الفنية (سطر لكل ميزة)</label>
+                <textarea
+                  rows={2}
+                  value={editServiceForm.features_ar || ""}
+                  onChange={(e) => setEditServiceForm({ ...editServiceForm, features_ar: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500 resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">كلمات مفتاحية للأرشفة والـ SEO (مفصولة بفواصل)</label>
+                <input
+                  type="text"
+                  value={editServiceForm.seo_keywords_ar || ""}
+                  onChange={(e) => setEditServiceForm({ ...editServiceForm, seo_keywords_ar: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              <div className="flex items-center justify-between pt-2 gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editServiceForm.show_price !== false}
+                    onChange={(e) => setEditServiceForm({ ...editServiceForm, show_price: e.target.checked })}
+                    className="rounded bg-slate-950 border-slate-700 text-cyan-500"
+                  />
+                  <span className="text-slate-300">إظهار السعر</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editServiceForm.is_featured}
+                    onChange={(e) => setEditServiceForm({ ...editServiceForm, is_featured: e.target.checked })}
+                    className="rounded bg-slate-950 border-slate-700 text-cyan-500"
+                  />
+                  <span className="text-slate-300">خدمة مميزة ⭐</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editServiceForm.is_active !== false}
+                    onChange={(e) => setEditServiceForm({ ...editServiceForm, is_active: e.target.checked })}
+                    className="rounded bg-slate-950 border-slate-700 text-cyan-500"
+                  />
+                  <span className="text-slate-300">مفعلة 🟢</span>
+                </label>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setModalType(null)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  disabled={actionLoading}
+                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold flex items-center gap-1.5 shadow-lg shadow-blue-600/30"
+                >
+                  {actionLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                  حفظ التعديلات
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* ─── MODAL: Add Project ─── */}
       {modalType === "add_project" && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-5 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="font-bold text-sm sm:text-base text-white flex items-center gap-2">
                 <Briefcase className="w-4 h-4 text-purple-400" />
@@ -1200,6 +1576,22 @@ export default function AdminMiniAppPage() {
                 />
               </div>
 
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">الخدمة التابع لها المشروع (ربط الخدمة) 🛠️</label>
+                <select
+                  value={projectForm.service_id}
+                  onChange={(e) => setProjectForm({ ...projectForm, service_id: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                >
+                  <option value="">مشروع عام (غير مربوط بخدمة محددة)</option>
+                  {data.services.map((s: any) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name_ar}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-slate-300 font-semibold mb-1">المدينة</label>
@@ -1212,12 +1604,68 @@ export default function AdminMiniAppPage() {
                   />
                 </div>
                 <div>
+                  <label className="block text-slate-300 font-semibold mb-1">الحي أو الموقع الجغرافي</label>
+                  <input
+                    type="text"
+                    placeholder="حي الصحافة / طريق الملك فهد"
+                    value={projectForm.location_ar}
+                    onChange={(e) => setProjectForm({ ...projectForm, location_ar: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
                   <label className="block text-slate-300 font-semibold mb-1">اسم العميل</label>
                   <input
                     type="text"
                     placeholder="شركة الأفق للتطوير"
                     value={projectForm.client_name}
                     onChange={(e) => setProjectForm({ ...projectForm, client_name: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">قيمة المشروع (ريال)</label>
+                  <input
+                    type="number"
+                    placeholder="75000"
+                    value={projectForm.project_value}
+                    onChange={(e) => setProjectForm({ ...projectForm, project_value: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">حالة المشروع</label>
+                  <select
+                    value={projectForm.status}
+                    onChange={(e) => setProjectForm({ ...projectForm, status: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  >
+                    <option value="completed">مكتمل ومسلّم ✅</option>
+                    <option value="in_progress">قيد التنفيذ والتركيب 🏗️</option>
+                    <option value="planned">مخطط وقيد التوريد 📋</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">تاريخ البدء</label>
+                  <input
+                    type="date"
+                    value={projectForm.start_date}
+                    onChange={(e) => setProjectForm({ ...projectForm, start_date: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">تاريخ التسليم</label>
+                  <input
+                    type="date"
+                    value={projectForm.end_date}
+                    onChange={(e) => setProjectForm({ ...projectForm, end_date: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
                   />
                 </div>
@@ -1272,6 +1720,187 @@ export default function AdminMiniAppPage() {
                 >
                   {actionLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                   حفظ المشروع
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ─── MODAL: Edit Project ─── */}
+      {modalType === "edit_project" && editProjectForm && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-5 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="font-bold text-sm sm:text-base text-white flex items-center gap-2">
+                <Edit2 className="w-4 h-4 text-purple-400" />
+                تعديل بيانات المشروع: {editProjectForm.title_ar}
+              </h3>
+              <button onClick={() => setModalType(null)} className="p-1 rounded-lg text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditProjectSubmit} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">عنوان المشروع بالعربية *</label>
+                <input
+                  type="text"
+                  required
+                  value={editProjectForm.title_ar}
+                  onChange={(e) => setEditProjectForm({ ...editProjectForm, title_ar: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">الخدمة التابع لها المشروع (ربط الخدمة) 🛠️</label>
+                <select
+                  value={editProjectForm.service_id || ""}
+                  onChange={(e) => setEditProjectForm({ ...editProjectForm, service_id: e.target.value || null })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                >
+                  <option value="">مشروع عام (غير مربوط بخدمة محددة)</option>
+                  {data.services.map((s: any) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name_ar}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">المدينة</label>
+                  <input
+                    type="text"
+                    value={editProjectForm.city || "الرياض"}
+                    onChange={(e) => setEditProjectForm({ ...editProjectForm, city: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">الحي أو الموقع الجغرافي</label>
+                  <input
+                    type="text"
+                    value={editProjectForm.location_ar || ""}
+                    onChange={(e) => setEditProjectForm({ ...editProjectForm, location_ar: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">اسم العميل</label>
+                  <input
+                    type="text"
+                    value={editProjectForm.client_name || ""}
+                    onChange={(e) => setEditProjectForm({ ...editProjectForm, client_name: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">قيمة المشروع (ريال)</label>
+                  <input
+                    type="number"
+                    value={editProjectForm.project_value || ""}
+                    onChange={(e) => setEditProjectForm({ ...editProjectForm, project_value: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">حالة المشروع</label>
+                  <select
+                    value={editProjectForm.status || "completed"}
+                    onChange={(e) => setEditProjectForm({ ...editProjectForm, status: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  >
+                    <option value="completed">مكتمل ومسلّم ✅</option>
+                    <option value="in_progress">قيد التنفيذ والتركيب 🏗️</option>
+                    <option value="planned">مخطط وقيد التوريد 📋</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">تاريخ البدء</label>
+                  <input
+                    type="date"
+                    value={editProjectForm.start_date || ""}
+                    onChange={(e) => setEditProjectForm({ ...editProjectForm, start_date: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">تاريخ التسليم</label>
+                  <input
+                    type="date"
+                    value={editProjectForm.end_date || ""}
+                    onChange={(e) => setEditProjectForm({ ...editProjectForm, end_date: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">رابط صورة الغلاف (Cloudflare R2 URL)</label>
+                <input
+                  type="url"
+                  value={editProjectForm.cover_image_url || ""}
+                  onChange={(e) => setEditProjectForm({ ...editProjectForm, cover_image_url: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500 dir-ltr text-right"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">وصف المشروع ومواصفات التنفيذ</label>
+                <textarea
+                  rows={2}
+                  value={editProjectForm.description_ar || ""}
+                  onChange={(e) => setEditProjectForm({ ...editProjectForm, description_ar: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500 resize-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-between pt-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editProjectForm.is_featured}
+                    onChange={(e) => setEditProjectForm({ ...editProjectForm, is_featured: e.target.checked })}
+                    className="rounded bg-slate-950 border-slate-700 text-cyan-500"
+                  />
+                  <span className="text-slate-300">تعيين كمشروع مميز ⭐</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editProjectForm.is_active !== false}
+                    onChange={(e) => setEditProjectForm({ ...editProjectForm, is_active: e.target.checked })}
+                    className="rounded bg-slate-950 border-slate-700 text-cyan-500"
+                  />
+                  <span className="text-slate-300">معروض في المعرض 🟢</span>
+                </label>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setModalType(null)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  disabled={actionLoading}
+                  className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold flex items-center gap-1.5 shadow-lg shadow-purple-600/30"
+                >
+                  {actionLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                  حفظ تعديلات المشروع
                 </button>
               </div>
             </form>

@@ -305,16 +305,23 @@ export async function handleProjectDetails(chatId: number, id: string, messageId
   const baCount = baCountRaw ?? 0;
   const vidCount = vidCountRaw ?? 0;
 
-  const featured = p.is_featured ? "⭐ نعم (يظهر في الرئيسية)" : "لا";
-  const active = p.is_active !== false ? "🟢 نشط (معروض)" : "🔴 معطل (مخفي)";
+  let linkedServiceName = "مشروع عام (غير مربوط بخدمة)";
+  if (p.service_id) {
+    const { data: srv } = await db.from("services").select("name_ar").eq("id", p.service_id).single();
+    if (srv?.name_ar) linkedServiceName = srv.name_ar;
+  }
+
+  const featured = p.is_featured ? "نعم ⭐" : "لا";
+  const active = p.is_active !== false ? "معروض في المعرض 🟢" : "معطل/مخفي 🔴";
 
   const text = `🏢 <b>تفاصيل وبيانات المشروع:</b>
 
 🏷️ <b>الاسم العربي:</b> ${p.title_ar}
 🌐 <b>الاسم الإنجليزي:</b> ${p.title_en || "—"}
 🔗 <b>المعرف (Slug):</b> <code>${p.slug}</code>
+🛠️ <b>الخدمة المرتبطة:</b> <b>${linkedServiceName}</b>
 👤 <b>العميل:</b> ${p.client_name || "عميل خاص"}
-📍 <b>المدينة:</b> ${p.city || "الرياض"}
+📍 <b>المدينة:</b> ${p.city || "الرياض"}${p.location_ar ? ` (${p.location_ar})` : ""}
 💰 <b>قيمة المشروع:</b> <code>${p.project_value ? Number(p.project_value).toLocaleString("ar-SA") + " ر.س" : "—"}</code>
 🏗️ <b>حالة التنفيذ:</b> ${p.status || "completed"}
 ⭐ <b>مشروع مميز:</b> ${featured}
@@ -341,8 +348,12 @@ ${p.description_ar || "لا يوجد وصف مسجل."}`;
       { text: p.is_active !== false ? "⏸️ إيقاف" : "▶️ تفعيل", callback_data: `prj_toggle_act:${p.id}` },
     ],
     [
+      { text: "🔗 ربط بخدمة (service_id)", callback_data: `prj_link_srv:${p.id}` },
+      { text: "📝 تعديل الوصف", callback_data: `prj_edit_desc:${p.id}` },
+    ],
+    [
       { text: "✏️ تعديل الاسم", callback_data: `prj_edit_title:${p.id}` },
-      { text: "📍 تعديل المدينة", callback_data: `prj_edit_city:${p.id}` },
+      { text: "📍 تعديل المدينة والموقع", callback_data: `prj_edit_city:${p.id}` },
     ],
     [
       { text: "💰 تعديل القيمة", callback_data: `prj_edit_val:${p.id}` },
@@ -420,6 +431,47 @@ export async function handleProjectToggleActive(chatId: number, id: string, mess
     await db.from("projects").update({ is_active: !current }).eq("id", id);
     await handleProjectDetails(chatId, id, messageId);
   }
+}
+
+export async function handleProjectLinkServiceList(chatId: number, projectId: string, messageId?: number) {
+  const db = createDbClient();
+  const [{ data: prj }, { data: services }] = await Promise.all([
+    db.from("projects").select("title_ar, service_id").eq("id", projectId).single(),
+    db.from("services").select("id, name_ar").order("name_ar", { ascending: true })
+  ]);
+
+  const pTitle = prj?.title_ar || "المشروع";
+  let text = `🔗 <b>ربط المشروع بخدمة (service_id)</b>\n\nالمشروع: <b>${pTitle}</b>\n\nاختر الخدمة التي يتبع لها هذا المشروع من القائمة أدناه لتحديث صفوف قاعدة البيانات:`;
+
+  const inline_keyboard: any[][] = [];
+
+  (services || []).forEach((s: any) => {
+    const isCurrent = s.id === prj?.service_id;
+    inline_keyboard.push([
+      {
+        text: `${isCurrent ? "✅ " : ""}${s.name_ar}`,
+        callback_data: `prj_set_srv:${projectId}:${s.id}`,
+      }
+    ]);
+  });
+
+  inline_keyboard.push([
+    { text: "❌ إزالة الربط بالخدمة (مشروع عام)", callback_data: `prj_set_srv:${projectId}:none` }
+  ]);
+  inline_keyboard.push([
+    { text: "◀️ رجوع لتفاصيل المشروع", callback_data: `prj_view:${projectId}` }
+  ]);
+
+  if (messageId) await editMessage(chatId, messageId, text, { inline_keyboard });
+  else await sendMessage(chatId, text, { reply_markup: { inline_keyboard } });
+}
+
+export async function handleProjectSetService(chatId: number, projectId: string, serviceId: string, messageId?: number) {
+  const db = createDbClient();
+  const srvId = serviceId === "none" ? null : serviceId;
+  await db.from("projects").update({ service_id: srvId }).eq("id", projectId);
+  await sendMessage(chatId, `✅ <b>تم تحديث ربط المشروع بالخدمة في قاعدة البيانات بنجاح!</b>`);
+  await handleProjectDetails(chatId, projectId, messageId);
 }
 
 export async function handleProjectItems(chatId: number, projectId: string, messageId?: number, page: number = 0) {

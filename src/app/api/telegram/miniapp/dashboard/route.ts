@@ -7,7 +7,7 @@ import { getAdminTestimonials } from "@/lib/telegram/miniapp/services/reviews.se
 import { getCompanyProfile } from "@/lib/telegram/miniapp/services/settings.service";
 import { verifyTelegramInitData } from "@/lib/telegram/miniapp/auth/verify-init-data";
 import { isAuthorizedAdmin } from "@/lib/telegram/core/auth";
-
+import { createDbClient } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
@@ -24,14 +24,17 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    const db = createDbClient();
+
     // Load initial data in parallel
-    const [metrics, quotes, services, projects, reviews, settings] = await Promise.all([
+    const [metrics, quotes, services, projects, reviews, settings, categoriesRes] = await Promise.all([
       getDashboardMetrics().catch(() => null),
       getQuoteRequests().catch(() => []),
       getAdminServices().catch(() => []),
       getAdminProjects().catch(() => []),
       getAdminTestimonials().catch(() => []),
       getCompanyProfile().catch(() => null),
+      db.from("categories").select("id, name_ar, slug").catch(() => ({ data: [] })),
     ]);
 
     return NextResponse.json({
@@ -45,6 +48,7 @@ export async function GET(request: NextRequest) {
         projects: projects || [],
         reviews: reviews || [],
         settings: settings || {},
+        categories: categoriesRes?.data || [],
       },
     });
   } catch (error: any) {

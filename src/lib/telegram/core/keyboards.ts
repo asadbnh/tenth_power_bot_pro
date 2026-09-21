@@ -195,10 +195,14 @@ export const Keyboards = {
       ],
       [
         { text: "✏️ تعديل الاسم", callback_data: `srv_edit_name:${id}` },
-        { text: "💰 تعديل السعر", callback_data: `srv_edit_price:${id}` },
+        { text: "💰 السعر والوحدة", callback_data: `srv_edit_price:${id}` },
       ],
       [
-        { text: "📝 تعديل الوصف", callback_data: `srv_edit_desc:${id}` },
+        { text: "📝 الوصف الكامل", callback_data: `srv_edit_fulldesc:${id}` },
+        { text: "⭐ المميزات (Features)", callback_data: `srv_edit_feat:${id}` },
+      ],
+      [
+        { text: "🏷️ كلمات الـ SEO", callback_data: `srv_edit_seo:${id}` },
         { text: "🖼️ تغيير الغلاف", callback_data: `srv_edit_cover:${id}` },
       ],
       [
