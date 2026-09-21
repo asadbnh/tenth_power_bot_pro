@@ -9,7 +9,8 @@
 
 const botToken = process.env.TELEGRAM_BOT_TOKEN;
 const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
-const baseUrl = process.argv[3] || process.env.NEXT_PUBLIC_APP_URL || process.env.SITE_URL || "https://powerof10.netlify.app";
+const customUrlArg = process.argv.slice(3).find((a) => a.startsWith("http"));
+const baseUrl = customUrlArg || process.env.NEXT_PUBLIC_APP_URL || process.env.SITE_URL || "https://powerof10.netlify.app";
 
 if (!botToken) {
   console.error("❌ خطأ: TELEGRAM_BOT_TOKEN غير موجود في متغيرات البيئة!");
@@ -51,9 +52,12 @@ async function main() {
       drop_pending_updates: false,
     };
 
-    if (webhookSecret) {
+    const useSecret = !process.argv.includes("--no-secret");
+    if (webhookSecret && useSecret) {
       payload.secret_token = webhookSecret;
       console.log("🛡️ تم تضمين secret_token لحماية المسار.");
+    } else {
+      console.log("⚡ الربط المباشر بدون secret_token لتجنب أي تعارض في المتغيرات.");
     }
 
     const res = await fetch(`${telegramApi}/setWebhook`, {
