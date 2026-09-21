@@ -236,29 +236,49 @@ export const Keyboards = {
     ],
   }),
 
-  visitorMenu: (): InlineKeyboard => ({
-    inline_keyboard: [
-      [{ text: "🛠️ خدماتنا وأعمالنا", callback_data: "vis_services" }, { text: "📁 أحدث المشاريع", callback_data: "vis_projects" }],
-      [{ text: "🖼️ معرض الصور", callback_data: "vis_gallery" }, { text: "📝 طلب مقايسة وعرض سعر", callback_data: "vis_quote_prompt" }],
-      [{ text: "🌐 قنوات التواصل والفروع", callback_data: "vis_contacts" }, { text: "📱 تحميل التطبيق والموقع", callback_data: "vis_downloads" }],
-    ],
-  }),
+  visitorMenu: (): InlineKeyboard => {
+    const siteUrl = `${getBaseSiteUrl()}/ar`;
+    return {
+      inline_keyboard: [
+        // 🚀 Primary Mini App Button opening main site
+        [
+          {
+            text: "🚀 فتح الموقع والخدمات (Mini App)",
+            web_app: { url: siteUrl },
+          },
+        ],
+        // Quick Action Buttons
+        [
+          { text: "📱 تحميل التطبيق والموقع", callback_data: "vis_downloads" },
+          { text: "🌐 قنوات التواصل والفروع", callback_data: "vis_contacts" },
+        ],
+        [
+          { text: "📝 طلب مقايسة وعرض سعر مجاناً", callback_data: "vis_quote_prompt" },
+        ],
+      ],
+    };
+  },
 
   visitorDownloadLinks: (): InlineKeyboard => {
     const playUrl = process.env.GOOGLE_PLAY_URL?.trim();
     const appStoreUrl = process.env.APPLE_APP_STORE_URL?.trim();
-    const siteUrl = getBaseSiteUrl();
+    const siteUrl = `${getBaseSiteUrl()}/ar`;
 
-    const rows: InlineKeyboardButton[][] = [];
+    const rows: InlineKeyboardButton[][] = [
+      [
+        {
+          text: "🚀 تصفح الموقع مباشرة (Mini App)",
+          web_app: { url: siteUrl },
+        },
+      ],
+    ];
     if (playUrl && playUrl !== "" && playUrl !== "null") {
       rows.push([{ text: "🤖 تحميل من متجر Google Play", url: playUrl }]);
     }
     if (appStoreUrl && appStoreUrl !== "" && appStoreUrl !== "null") {
       rows.push([{ text: "🍏 تحميل من متجر App Store", url: appStoreUrl }]);
     }
-    if (siteUrl && siteUrl !== "" && siteUrl !== "null") {
-      rows.push([{ text: "🌐 زيارة الموقع الإلكتروني الرسمي", url: siteUrl }]);
-    }
+    rows.push([{ text: "🌐 فتح الموقع في المتصفح الخارجي", url: siteUrl }]);
     rows.push([{ text: "◀️ رجوع للواجهة الرئيسية", callback_data: "vis_menu" }]);
     return { inline_keyboard: rows };
   },
