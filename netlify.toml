@@ -16,8 +16,7 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "ALLOW-FROM https://web.telegram.org"
-    Content-Security-Policy = "frame-ancestors 'self' https://web.telegram.org https://*.telegram.org http://localhost:*;"
+    Content-Security-Policy = "frame-ancestors 'self' https://web.telegram.org https://*.telegram.org https://telegram.org http://localhost:*;"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
 

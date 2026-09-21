@@ -46,8 +46,8 @@ const nextConfig: NextConfig = {
             value: "nosniff",
           },
           {
-            key: "X-Frame-Options",
-            value: "SAMEORIGIN",
+            key: "Content-Security-Policy",
+            value: "frame-ancestors 'self' https://web.telegram.org https://*.telegram.org https://telegram.org;",
           },
           {
             key: "X-XSS-Protection",
