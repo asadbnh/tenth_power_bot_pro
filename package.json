@@ -14,8 +14,10 @@
         "backup:restore": "npx tsx --env-file=.env.local scripts/restore.ts",
         "test:push": "npx tsx --env-file=.env.local scripts/test-push.ts",
         "env:sync": "npx tsx scripts/sync-env.ts",
-        "seed:gallery": "npx tsx --env-file=.env.local scripts/seed-gallery.ts",
-        "link:gallery": "npx tsx --env-file=.env.local scripts/link-media-to-gallery.ts"
+        "link:gallery": "npx tsx --env-file=.env.local scripts/link-media-to-gallery.ts",
+        "webhook:info": "npx tsx --env-file=.env.local scripts/manage-webhook.ts info",
+        "webhook:set": "npx tsx --env-file=.env.local scripts/manage-webhook.ts set",
+        "webhook:delete": "npx tsx --env-file=.env.local scripts/manage-webhook.ts delete"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.1105.0",

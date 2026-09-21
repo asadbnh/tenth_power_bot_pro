@@ -1,0 +1,28 @@
+# Netlify Configuration for tenth-power-glass (Next.js 16 + React 19)
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# Next.js Serverless Functions timeout and memory optimization
+[functions]
+  node_bundler = "esbuild"
+
+# Security & CORS Headers for Next.js App and Telegram Mini App
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "ALLOW-FROM https://web.telegram.org"
+    Content-Security-Policy = "frame-ancestors 'self' https://web.telegram.org https://*.telegram.org http://localhost:*;"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache control for static assets
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
