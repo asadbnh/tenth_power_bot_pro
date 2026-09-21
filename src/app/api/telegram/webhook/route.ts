@@ -8,10 +8,22 @@ import type { TelegramUpdate } from "@/lib/telegram/bot";
  * Secured via secret token header set during webhook registration.
  */
 export async function POST(request: NextRequest) {
-  // Verify secret token if present
-  const secret = request.headers.get("X-Telegram-Bot-Api-Secret-Token");
-  if (process.env.TELEGRAM_WEBHOOK_SECRET && secret !== process.env.TELEGRAM_WEBHOOK_SECRET) {
-    return new NextResponse("Unauthorized", { status: 401 });
+  // Extract and normalize secret tokens
+  const rawExpected = (process.env.TELEGRAM_WEBHOOK_SECRET || "").trim();
+  const cleanExpected = rawExpected.replace(/^["']|["']$/g, "").trim();
+
+  const receivedSecret = (
+    request.headers.get("x-telegram-bot-api-secret-token") ||
+    request.headers.get("X-Telegram-Bot-Api-Secret-Token") ||
+    ""
+  ).replace(/^["']|["']$/g, "").trim();
+
+  // If secret token is present in header, enforce verification
+  if (cleanExpected && receivedSecret) {
+    if (receivedSecret !== cleanExpected && receivedSecret !== rawExpected) {
+      console.warn(`[Telegram Webhook] Secret mismatch: received=${receivedSecret.slice(0, 4)}... expected=${cleanExpected.slice(0, 4)}...`);
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
   }
 
   let update: TelegramUpdate;
@@ -19,6 +31,11 @@ export async function POST(request: NextRequest) {
     update = await request.json();
   } catch {
     return new NextResponse("Bad Request", { status: 400 });
+  }
+
+  // Ensure it is a valid Telegram update structure
+  if (!update || typeof update.update_id !== "number") {
+    return new NextResponse("Invalid update payload", { status: 400 });
   }
 
   try {
@@ -43,12 +60,19 @@ export async function POST(request: NextRequest) {
 
 /**
  * GET /api/telegram/webhook
- * Returns webhook status (for health checks).
+ * Returns webhook status and diagnostic info (for health checks).
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const rawExpected = (process.env.TELEGRAM_WEBHOOK_SECRET || "").trim();
+  const cleanExpected = rawExpected.replace(/^["']|["']$/g, "").trim();
+  const testHeader = request.headers.get("x-telegram-bot-api-secret-token") || request.headers.get("X-Telegram-Bot-Api-Secret-Token");
+
   return NextResponse.json({
     status: "active",
     system: "tenth-power-glass Telegram Bot Engine",
+    secretConfigured: !!cleanExpected,
+    secretLength: cleanExpected.length,
+    testHeaderReceived: !!testHeader,
     timestamp: new Date().toISOString(),
   });
 }
