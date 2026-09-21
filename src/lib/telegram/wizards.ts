@@ -62,16 +62,35 @@ export async function processServiceWizard(userId: number, text: string, state: 
     const desc_ar = (state.payload?.desc_ar as string) || "";
     const price = parseArabicNumber(text) || 300;
     const slug = "service-" + Date.now().toString().slice(-6);
+    // Find or link default category if available
+    let categoryId = null;
+    const { data: categories } = await db.from("categories").select("id").limit(1);
+    if (categories && categories.length > 0) {
+      categoryId = categories[0].id;
+    }
+
+    const keywords = [name_ar, `تركيب ${name_ar}`, `سعر ${name_ar}`, "القوة العاشرة", "الرياض"];
+    const features = ["أعلى معايير الجودة والسلامة", "تنفيذ متقن ومطابق للمواصفات", "ضمان شامل وتوريد سريع"];
+    const featuresEn = ["Premium Quality & Safety", "Precision Engineering Standards", "Comprehensive Warranty"];
 
     const { data: newSrv, error } = await db.from("services").insert({
       company_id: companyId,
+      category_id: categoryId,
       name_ar,
       name_en: name_ar,
       slug,
       short_description_ar: desc_ar,
       short_description_en: desc_ar,
+      full_description_ar: desc_ar,
+      full_description_en: desc_ar,
       price_from: price,
       price_to: price * 1.5,
+      price_unit: "متر مربع",
+      show_price: true,
+      features_ar: features,
+      features_en: featuresEn,
+      seo_keywords_ar: keywords,
+      seo_keywords_en: [name_ar, "glass installation", "riyadh"],
       icon: "Layers",
       cover_image_url: "https://pub-e9788e46474044d585e2622e2c6ce74d.r2.dev/services/luxury-facade.webp",
       is_active: true,

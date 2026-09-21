@@ -83,17 +83,39 @@ export async function POST(request: NextRequest) {
         const companyId = company?.id;
         if (!companyId) throw new Error("تعذر تحديد معرّف المنشأة");
 
+        let categoryId = payload.category_id || null;
+        if (!categoryId) {
+          const { data: categories } = await db.from("categories").select("id").limit(1);
+          if (categories && categories.length > 0) categoryId = categories[0].id;
+        }
+
         const slug = payload.slug || `service-${Date.now()}`;
+        const nameAr = payload.name_ar;
+        const descAr = payload.short_description_ar || payload.full_description_ar || nameAr;
+        const price = payload.price_from ? Number(payload.price_from) : null;
+        const keywords = [nameAr, `تركيب ${nameAr}`, `سعر ${nameAr}`, "القوة العاشرة", "الرياض"];
+        const features = ["أعلى معايير الجودة والسلامة", "تنفيذ متقن ومطابق للمواصفات", "ضمان شامل وتوريد سريع"];
+
         const newService = {
           company_id: companyId,
-          name_ar: payload.name_ar,
-          name_en: payload.name_en || payload.name_ar,
+          category_id: categoryId,
+          name_ar: nameAr,
+          name_en: payload.name_en || nameAr,
           slug,
-          short_description_ar: payload.short_description_ar || null,
-          full_description_ar: payload.full_description_ar || null,
-          price_from: payload.price_from ? Number(payload.price_from) : null,
-          price_to: payload.price_to ? Number(payload.price_to) : null,
-          price_unit: payload.price_unit || "متر",
+          short_description_ar: descAr,
+          short_description_en: payload.short_description_en || descAr,
+          full_description_ar: payload.full_description_ar || descAr,
+          full_description_en: payload.full_description_en || descAr,
+          price_from: price,
+          price_to: payload.price_to ? Number(payload.price_to) : (price ? price * 1.5 : null),
+          price_unit: payload.price_unit || "متر مربع",
+          show_price: Boolean(price),
+          features_ar: features,
+          features_en: ["Premium Quality & Safety", "Precision Engineering", "Comprehensive Warranty"],
+          seo_keywords_ar: keywords,
+          seo_keywords_en: [nameAr, "glass installation", "riyadh"],
+          cover_image_url: payload.cover_image_url || "https://pub-e9788e46474044d585e2622e2c6ce74d.r2.dev/services/luxury-facade.webp",
+          icon: "Layers",
           is_active: payload.is_active !== false,
           is_featured: payload.is_featured === true,
         };
@@ -127,16 +149,20 @@ export async function POST(request: NextRequest) {
         if (!companyId) throw new Error("تعذر تحديد معرّف المنشأة");
 
         const slug = payload.slug || `project-${Date.now()}`;
+        const titleAr = payload.title_ar;
+        const descAr = payload.description_ar || titleAr;
+
         const newProject = {
           company_id: companyId,
-          title_ar: payload.title_ar,
-          title_en: payload.title_en || payload.title_ar,
+          title_ar: titleAr,
+          title_en: payload.title_en || titleAr,
           slug,
-          client_name: payload.client_name || null,
+          client_name: payload.client_name || "عميل موثق بالرياض",
           city: payload.city || "الرياض",
           project_value: payload.project_value ? Number(payload.project_value) : null,
-          description_ar: payload.description_ar || null,
-          cover_image_url: payload.cover_image_url || null,
+          description_ar: descAr,
+          description_en: payload.description_en || descAr,
+          cover_image_url: payload.cover_image_url || "https://pub-e9788e46474044d585e2622e2c6ce74d.r2.dev/projects/tower-facade.webp",
           is_active: payload.is_active !== false,
           is_featured: payload.is_featured === true,
         };
