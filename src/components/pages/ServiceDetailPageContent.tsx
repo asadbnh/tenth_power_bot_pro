@@ -69,7 +69,7 @@ export function ServiceDetailPageContent({ slug, locale, dict, initialService }:
   return (
     <div className="pt-[var(--header-height)] min-h-dvh bg-gradient-to-b from-background to-surface">
       {/* Architectural Hero Section */}
-      <section className="relative py-16 sm:py-24 bg-[#070d1e] overflow-hidden text-white border-b border-amber-500/15">
+      <section className="relative py-16 sm:py-24 bg-slate-50 dark:bg-[#070d1e] overflow-hidden text-slate-900 dark:text-white border-b border-slate-200/80 dark:border-amber-500/15 transition-colors duration-300">
         <div 
           className="absolute inset-0 opacity-[0.04] pointer-events-none"
           style={{ 
@@ -78,64 +78,64 @@ export function ServiceDetailPageContent({ slug, locale, dict, initialService }:
           }} 
         />
         <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[22rem] bg-gradient-to-r from-amber-500/15 via-blue-600/10 to-transparent rounded-full blur-[110px] pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/85 via-transparent to-[#070d1e] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/85 via-transparent to-slate-50 dark:from-[#070d1e]/85 dark:via-transparent dark:to-[#070d1e] pointer-events-none transition-colors duration-300" />
         
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs text-white/60 mb-6">
-            <Link href={`/${locale}`} className="hover:text-white transition-colors">{isRtl ? "الرئيسية" : "Home"}</Link>
-            <ChevronLeft className={cn("w-3 h-3", !isRtl && "rotate-180")} />
-            <Link href={`/${locale}/services`} className="hover:text-white transition-colors">{dict.services.title}</Link>
-            <ChevronLeft className={cn("w-3 h-3", !isRtl && "rotate-180")} />
-            <span className="text-amber-300 font-medium">{name}</span>
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-white/60 mb-6">
+            <Link href={`/${locale}`} className="hover:text-slate-900 dark:hover:text-white transition-colors">{isRtl ? "الرئيسية" : "Home"}</Link>
+            <ChevronLeft className={cn("w-3 h-3 text-slate-400 dark:text-slate-500", !isRtl && "rotate-180")} />
+            <Link href={`/${locale}/services`} className="hover:text-slate-900 dark:hover:text-white transition-colors">{dict.services.title}</Link>
+            <ChevronLeft className={cn("w-3 h-3 text-slate-400 dark:text-slate-500", !isRtl && "rotate-180")} />
+            <span className="text-amber-600 dark:text-amber-300 font-medium">{name}</span>
           </div>
 
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-4 max-w-2xl">
               <div className="flex flex-wrap items-center gap-2">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-xs font-bold text-amber-300 backdrop-blur-md">
-                  <IconComponent className="w-4 h-4 text-amber-400" />
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 text-xs font-bold text-amber-800 dark:text-amber-300 backdrop-blur-md">
+                  <IconComponent className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   <span>{isRtl ? "خدمة معمارية معتمدة" : "Certified Architectural Service"}</span>
                 </div>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-white/80 border border-white/15">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 dark:bg-white/10 text-xs font-semibold text-slate-700 dark:text-white/80 border border-slate-200/90 dark:border-white/15 shadow-sm dark:shadow-none">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   {isRtl ? "كود البناء السعودي SBC" : "SBC Compliant"}
                 </span>
               </div>
 
-              <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight text-white">
+              <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight text-slate-900 dark:text-white">
                 {name}
               </h1>
 
               {service.price_from && (
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-extrabold backdrop-blur-sm">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-500/15 text-amber-900 dark:text-amber-300 border border-amber-500/30 text-xs font-extrabold backdrop-blur-sm">
                   <span>{isRtl ? "التقدير السعري المبدئي:" : "Starting Price:"}</span>
                   <span>{Number(service.price_from).toLocaleString(isRtl ? "ar-SA" : "en-US")} {isRtl ? "ريال" : "SAR"}</span>
                   {service.price_unit && <span>/ {service.price_unit}</span>}
                 </div>
               )}
 
-              <p className="text-base sm:text-lg text-slate-300 leading-relaxed">
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
                 {shortDesc}
               </p>
             </div>
 
             <div className="shrink-0 space-y-3 w-full md:w-auto">
               <Link href={`/${locale}/quote?service=${slug}`}
-                className="w-full md:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 text-primary-950 font-extrabold text-base shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
-                <Sparkles className="w-5 h-5" />
+                className="w-full md:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-extrabold text-base shadow-lg shadow-amber-500/25 hover:scale-[1.02] active:scale-95 transition-all">
+                <Sparkles className="w-5 h-5 text-slate-950" />
                 {dict.services.requestQuote}
               </Link>
 
               <Link href={`/${locale}/appointments?service=${slug}`}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-xs transition-all">
-                <Clock className="w-4 h-4 text-amber-400" />
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 shadow-sm dark:bg-white/10 dark:hover:bg-white/20 dark:text-white dark:border-white/20 font-bold text-xs transition-all">
+                <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 <span>{isRtl ? "حجز معاينة ورفع مساحي مجاني" : "Book Free Site Survey"}</span>
               </Link>
 
-              <div className="flex items-center justify-center gap-4 text-xs text-slate-400">
-                <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-amber-400" /> {isRtl ? "ضمان 10 سنوات" : "10-Year Warranty"}</span>
-                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-amber-400" /> {isRtl ? "معاينة مجانية" : "Free Measurement"}</span>
+              <div className="flex items-center justify-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+                <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" /> {isRtl ? "ضمان 10 سنوات" : "10-Year Warranty"}</span>
+                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" /> {isRtl ? "معاينة مجانية" : "Free Measurement"}</span>
               </div>
             </div>
           </div>

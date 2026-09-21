@@ -101,28 +101,28 @@ function SearchInner({ locale, dict }: Props) {
   return (
     <div className="pt-[var(--header-height)]">
       {/* Architectural Search Hero */}
-      <section className="relative pt-8 pb-12 sm:pt-12 sm:pb-16 bg-[#070d1e] overflow-hidden">
+      <section className="relative pt-8 pb-12 sm:pt-12 sm:pb-16 bg-slate-50 dark:bg-[#070d1e] overflow-hidden text-slate-900 dark:text-white border-b border-slate-200/80 dark:border-amber-500/10 transition-colors duration-300">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[16rem] bg-gradient-to-r from-amber-500/10 via-blue-600/10 to-amber-400/5 rounded-full blur-[80px]" />
           <div className="absolute inset-0 opacity-[0.03]"
-            style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/85 via-transparent to-[#070d1e]" />
+            style={{ backgroundImage: "linear-gradient(rgba(212,175,55,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.2) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-50/85 via-transparent to-slate-50 dark:from-[#070d1e]/85 dark:via-transparent dark:to-[#070d1e] transition-colors duration-300" />
         </div>
 
         <div className="relative max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
           <motion.h1 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
-            className="text-2xl sm:text-4xl font-black text-white text-center leading-tight">
+            className="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white text-center leading-tight">
             {isRtl ? (
               <>
                 البحث في{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-[#F3E7C4] dark:via-[#E5C378] dark:to-[#C99E32]">
                   المشاريع والخدمات
                 </span>
               </>
             ) : (
               <>
                 Search{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-[#F3E7C4] dark:via-[#E5C378] dark:to-[#C99E32]">
                   Services & Projects
                 </span>
               </>
@@ -132,9 +132,9 @@ function SearchInner({ locale, dict }: Props) {
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             className="relative">
             {isLoading ? (
-              <Loader2 className="absolute top-1/2 -translate-y-1/2 start-5 w-5 h-5 text-amber-400 animate-spin pointer-events-none" />
+              <Loader2 className="absolute top-1/2 -translate-y-1/2 start-5 w-5 h-5 text-amber-500 dark:text-amber-400 animate-spin pointer-events-none" />
             ) : (
-              <Search className="absolute top-1/2 -translate-y-1/2 start-5 w-5 h-5 text-white/50 pointer-events-none" />
+              <Search className="absolute top-1/2 -translate-y-1/2 start-5 w-5 h-5 text-slate-400 dark:text-white/50 pointer-events-none" />
             )}
             <input
               ref={inputRef}
@@ -143,10 +143,10 @@ function SearchInner({ locale, dict }: Props) {
               onChange={e => setQuery(e.target.value)}
               placeholder={dict.search.placeholder}
               autoFocus
-              className="w-full ps-14 pe-12 py-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder:text-white/50 text-base focus:outline-none focus:ring-2 focus:ring-amber-400 transition-all shadow-lg"
+              className="w-full ps-14 pe-12 py-4 rounded-xl bg-white dark:bg-white/10 backdrop-blur-md border border-slate-200 dark:border-white/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/50 text-base focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 transition-all shadow-md dark:shadow-lg"
             />
             {query && (
-              <button onClick={() => setQuery("")} className="absolute top-1/2 -translate-y-1/2 end-4 text-white/50 hover:text-white transition-colors">
+              <button onClick={() => setQuery("")} className="absolute top-1/2 -translate-y-1/2 end-4 text-slate-400 hover:text-slate-700 dark:text-white/50 dark:hover:text-white transition-colors">
                 <X className="w-5 h-5" />
               </button>
             )}

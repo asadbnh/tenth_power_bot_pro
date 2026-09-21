@@ -15,8 +15,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
 
   const title = isAr
-    ? "حجز موعد ومعاينة هندسية مجانية | WebTaky"
-    : "Book Free Site Measurement & Consultation | WebTaky";
+    ? "حجز موعد ومعاينة هندسية مجانية | tenth-power-glass"
+    : "Book Free Site Measurement & Consultation | tenth-power-glass";
 
   const description = isAr
     ? "احجز موعد زيارة ميدانية لمعاينة ورفع مقاسات مشروعك المعماري للزجاج والألمنيوم مجاناً 100% مع نخبة المهندسين."

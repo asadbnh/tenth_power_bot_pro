@@ -98,7 +98,7 @@ const ENV_METADATA: Record<string, Omit<EnvDefinition, "key">> = {
   TELEGRAM_WEBHOOK_SECRET: {
     category: "4. بوت التلجرام وإدارة النظام (Telegram Bot Engine)",
     commentAr: "المفتاح السري لتأمين مسار الـ Webhook (/api/telegram/webhook)",
-    defaultValue: "webtaky_secret_key_2026",
+    defaultValue: "tenth-power-glass_secret_key_2026",
   },
   TELEGRAM_ADMIN_IDS: {
     category: "4. بوت التلجرام وإدارة النظام (Telegram Bot Engine)",
@@ -225,7 +225,7 @@ const ENV_METADATA: Record<string, Omit<EnvDefinition, "key">> = {
   VAPID_SUBJECT: {
     category: "8. إشعارات متصفح الويب (Web Push VAPID Notifications)",
     commentAr: "معرّف أو بريد مرسل إشعارات الويب",
-    defaultValue: "mailto:admin@webtaky.com",
+    defaultValue: "mailto:admin@tenth-power-glass.com",
   },
 
   // Marketing & Analytics Pixels
@@ -276,7 +276,7 @@ const ENV_METADATA: Record<string, Omit<EnvDefinition, "key">> = {
   CSRF_SECRET: {
     category: "11. الأمان والحماية وتحديد معدل الطلبات (Security & Rate Limits)",
     commentAr: "المفتاح السري لتشفير CSRF Tokens",
-    defaultValue: "webtaky_csrf_secret_2026",
+    defaultValue: "tenth-power-glass_csrf_secret_2026",
   },
 };
 
@@ -382,13 +382,13 @@ async function main() {
 
   // Construct new .env.local content
   let envContent = `# ═══════════════════════════════════════════════════════════════════
-# WebTaky — Enterprise SEO Business Platform
+# tenth-power-glass — Enterprise SEO Business Platform
 # Comprehensive Environment Variables Configuration
 # Generated & Synchronized automatically on ${new Date().toISOString()}
 # ═══════════════════════════════════════════════════════════════════\n\n`;
 
   let exampleContent = `# ═══════════════════════════════════════════════════════════════════
-# WebTaky — Environment Variables Template (.env.example)
+# tenth-power-glass — Environment Variables Template (.env.example)
 # Copy this file to .env.local and populate secrets
 # ═══════════════════════════════════════════════════════════════════\n\n`;
 

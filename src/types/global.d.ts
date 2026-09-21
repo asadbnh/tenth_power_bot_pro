@@ -1,5 +1,5 @@
 /**
- * Global type declarations for the WebTaky platform.
+ * Global type declarations for the tenth-power-glass platform.
  */
 
 /** Supported locale type */
@@ -43,4 +43,4 @@ declare global {
   }
 }
 
-export {};
+export { };

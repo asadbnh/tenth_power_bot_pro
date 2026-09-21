@@ -1,5 +1,5 @@
 /**
- * WebTaky Telegram Bot Unified Handlers
+ * tenth-power-glass Telegram Bot Unified Handlers
  * Re-exports from modular handlers directory.
  */
 

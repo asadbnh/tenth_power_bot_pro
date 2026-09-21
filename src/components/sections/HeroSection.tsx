@@ -120,7 +120,7 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
     <section
       ref={sectionRef}
       id="hero"
-      className="relative flex items-center justify-center pt-[calc(var(--header-height)+0.5rem)] sm:pt-[var(--header-height)] pb-10 sm:pb-16 sm:min-h-dvh overflow-hidden bg-[#070d1e] select-none"
+      className="relative flex items-center justify-center pt-[calc(var(--header-height)+0.5rem)] sm:pt-[var(--header-height)] pb-10 sm:pb-16 sm:min-h-dvh overflow-hidden bg-slate-50 dark:bg-[#070d1e] select-none transition-colors duration-300"
       aria-label={isRtl ? "القسم الرئيسي للشركة" : "Main Hero Section"}
     >
       {/* ── 1. Architectural Canvas Backdrop ──────────────────────────── */}
@@ -128,19 +128,20 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
         className="absolute inset-0 z-0 pointer-events-none"
         style={{ y: backgroundY }}
       >
-        <PageHeroBackground pageKey="home" overlayOpacity={0.65} />
+        <PageHeroBackground pageKey="home" overlayOpacity={0.4} />
 
         <AnimatedCanvasBanner
           aspectRatio="auto"
           showDetailedGrid={true}
-          className="w-full h-full opacity-30"
+          transparentBackground={true}
+          className="w-full h-full opacity-40 dark:opacity-30"
         />
 
         {/* Ambient Radial Lighting Orbs */}
         <motion.div
-          className="absolute top-1/4 start-1/6 w-72 sm:w-[34rem] h-72 sm:h-[34rem] rounded-full opacity-20 filter blur-[50px] sm:blur-[90px]"
+          className="absolute top-1/4 start-1/6 w-72 sm:w-[34rem] h-72 sm:h-[34rem] rounded-full opacity-30 dark:opacity-20 filter blur-[50px] sm:blur-[90px]"
           style={{
-            background: "radial-gradient(circle, rgba(10,29,55,0.9) 0%, rgba(59,130,246,0.3) 60%, transparent 100%)",
+            background: "radial-gradient(circle, rgba(59,130,246,0.18) 0%, rgba(212,175,55,0.12) 60%, transparent 100%)",
             x: mousePos.x * 0.4,
             y: mousePos.y * 0.4,
           }}
@@ -148,9 +149,9 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
           transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute bottom-1/4 end-1/6 w-64 sm:w-[30rem] h-64 sm:h-[30rem] rounded-full opacity-15 filter blur-[40px] sm:blur-[80px]"
+          className="absolute bottom-1/4 end-1/6 w-64 sm:w-[30rem] h-64 sm:h-[30rem] rounded-full opacity-25 dark:opacity-15 filter blur-[40px] sm:blur-[80px]"
           style={{
-            background: "radial-gradient(circle, rgba(212,175,55,0.4) 0%, rgba(245,158,11,0.2) 60%, transparent 100%)",
+            background: "radial-gradient(circle, rgba(212,175,55,0.25) 0%, rgba(245,158,11,0.15) 60%, transparent 100%)",
             x: mousePos.x * -0.4,
             y: mousePos.y * -0.4,
           }}
@@ -158,7 +159,7 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
           transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-[#070d1e] via-[#070d1e]/30 to-[#070d1e]/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-50 via-slate-50/80 to-slate-100/40 dark:from-[#070d1e] dark:via-[#070d1e]/40 dark:to-[#070d1e]/70 transition-colors duration-300" />
       </motion.div>
 
       {/* ── 2. Hero Content Container ─────────────────────────────────── */}
@@ -174,14 +175,14 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-[#0b172e] text-amber-400 shadow-md backdrop-blur-xl border border-amber-500/40"
+              className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-amber-500/10 dark:bg-[#0b172e] text-amber-700 dark:text-amber-400 shadow-sm backdrop-blur-xl border border-amber-500/30 dark:border-amber-500/40"
             >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
               </span>
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-[11px] sm:text-sm font-bold tracking-wide text-amber-400">
+              <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <span className="text-[11px] sm:text-sm font-bold tracking-wide text-amber-700 dark:text-amber-400">
                 {isRtl
                   ? "مؤسسة القوة العاشرة للمقاولات العامة والواجهات المعمارية"
                   : "Tenth Power General Contracting & Facades"}
@@ -193,21 +194,20 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="text-xl sm:text-4xl lg:text-6xl font-extrabold !text-white leading-snug sm:leading-[1.15] tracking-tight"
-              style={{ color: "#ffffff" }}
+              className="text-xl sm:text-4xl lg:text-6xl font-extrabold text-slate-900 dark:text-white leading-snug sm:leading-[1.15] tracking-tight"
             >
               {isRtl ? (
                 <>
-                  <span className="!text-white" style={{ color: "#ffffff" }}>حلول هندسية متكاملة</span>{" "}
-                  <span className="bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 bg-clip-text text-transparent">
+                  <span>حلول هندسية متكاملة</span>{" "}
+                  <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-amber-400 dark:via-amber-300 dark:to-yellow-200 bg-clip-text text-transparent">
                     للواجهات المعمارية
                   </span>{" "}
-                  <span className="!text-white" style={{ color: "#ffffff" }}>والمقاولات العامة</span>
+                  <span>والمقاولات العامة</span>
                 </>
               ) : (
                 <>
-                  <span className="!text-white" style={{ color: "#ffffff" }}>Integrated Engineering Solutions for</span>{" "}
-                  <span className="bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 bg-clip-text text-transparent">
+                  <span>Integrated Engineering Solutions for</span>{" "}
+                  <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-amber-400 dark:via-amber-300 dark:to-yellow-200 bg-clip-text text-transparent">
                     Architectural Facades
                   </span>
                 </>
@@ -219,8 +219,7 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="text-xs sm:text-base lg:text-lg !text-slate-200 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal"
-              style={{ color: "#e2e8f0" }}
+              className="text-xs sm:text-base lg:text-lg text-slate-600 dark:text-slate-200 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal"
             >
               {isRtl
                 ? "تنفيذ وتوريد الزجاج السيكوريت، واجهات الاستركشر والكرتن وول، قطاعات الألمنيوم المعزولة حرارياً، وكبائن الشاور الفاخرة بأعلى معايير كود البناء السعودي SBC."
@@ -236,19 +235,18 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
             >
               <Link
                 href={`/${locale}/quote`}
-                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-primary-950 font-bold text-sm sm:text-base shadow-xl shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all duration-300"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-slate-950 font-bold text-sm sm:text-base shadow-lg shadow-amber-500/25 hover:scale-[1.02] active:scale-95 transition-all duration-300"
               >
-                <Ruler className="w-4 h-4 text-primary-950 shrink-0" />
+                <Ruler className="w-4 h-4 text-slate-950 shrink-0" />
                 <span>{isRtl ? "طلب معاينة ورفع مساحي مجاني" : "Request Free Site Survey"}</span>
                 <ArrowRight className={cn("w-4 h-4", isRtl && "rotate-180")} />
               </Link>
 
               <Link
                 href={`/${locale}/projects`}
-                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm sm:text-base border border-white/20 backdrop-blur-md hover:scale-[1.02] active:scale-95 transition-all duration-300"
-                style={{ color: "#ffffff" }}
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300/80 shadow-sm dark:bg-white/10 dark:hover:bg-white/20 dark:text-white dark:border-white/20 backdrop-blur-md hover:scale-[1.02] active:scale-95 transition-all duration-300"
               >
-                <Building2 className="w-4 h-4 text-amber-400 shrink-0" />
+                <Building2 className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
                 <span>{isRtl ? "استعراض المشاريع المنفذة" : "View Completed Projects"}</span>
               </Link>
             </motion.div>
@@ -260,42 +258,42 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
               transition={{ duration: 0.8, delay: 0.9 }}
               className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 pt-1 sm:pt-2 text-start"
             >
-              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md">
-                <div className="flex items-center gap-1.5 text-amber-400 mb-0.5 sm:mb-1">
+              <div className="rounded-xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md shadow-sm dark:shadow-none transition-colors">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 mb-0.5 sm:mb-1">
                   <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                   <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "10 سنوات" : "10 Years"}</span>
                 </div>
-                <p className="text-[10px] sm:text-[11px] text-slate-300 leading-tight">
+                <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
                   {isRtl ? "ضمان شامل معتمد على التركيب والعوازل" : "Warranty on Installation & Seals"}
                 </p>
               </div>
 
-              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md">
-                <div className="flex items-center gap-1.5 text-amber-400 mb-0.5 sm:mb-1">
+              <div className="rounded-xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md shadow-sm dark:shadow-none transition-colors">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 mb-0.5 sm:mb-1">
                   <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                   <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "كود SBC" : "SBC Code"}</span>
                 </div>
-                <p className="text-[10px] sm:text-[11px] text-slate-300 leading-tight">
+                <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
                   {isRtl ? "مطابقة تامة لكود البناء السعودي" : "Saudi Building Code Compliant"}
                 </p>
               </div>
 
-              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md">
-                <div className="flex items-center gap-1.5 text-amber-400 mb-0.5 sm:mb-1">
+              <div className="rounded-xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md shadow-sm dark:shadow-none transition-colors">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 mb-0.5 sm:mb-1">
                   <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                   <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "+450 مشروع" : "+450 Projects"}</span>
                 </div>
-                <p className="text-[10px] sm:text-[11px] text-slate-300 leading-tight">
+                <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
                   {isRtl ? "منفذة بنجاح بالرياض والمنطقة الوسطى" : "Executed Across Riyadh"}
                 </p>
               </div>
 
-              <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md">
-                <div className="flex items-center gap-1.5 text-amber-400 mb-0.5 sm:mb-1">
+              <div className="rounded-xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md shadow-sm dark:shadow-none transition-colors">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 mb-0.5 sm:mb-1">
                   <Ruler className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                   <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "رفع مساحي" : "Surveying"}</span>
                 </div>
-                <p className="text-[10px] sm:text-[11px] text-slate-300 leading-tight">
+                <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
                   {isRtl ? "معاينة هندسية ميدانية فورية مجانية" : "Free On-Site Measurements"}
                 </p>
               </div>
@@ -313,10 +311,10 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
                 x: mousePos.x * -0.5,
                 y: mousePos.y * -0.5,
               }}
-              className="relative w-full max-w-md rounded-2xl overflow-hidden border border-white/20 bg-[#0b172e]/95 backdrop-blur-2xl shadow-2xl flex flex-col group"
+              className="relative w-full max-w-md rounded-2xl overflow-hidden border border-slate-200/90 dark:border-white/20 bg-white dark:bg-[#0b172e]/95 backdrop-blur-2xl shadow-xl shadow-slate-300/40 dark:shadow-2xl flex flex-col group transition-colors"
             >
               {/* Image Frame Container */}
-              <div className="relative h-48 sm:h-64 w-full overflow-hidden bg-[#070d1e]">
+              <div className="relative h-48 sm:h-64 w-full overflow-hidden bg-slate-100 dark:bg-[#070d1e]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentSlide.id}
@@ -372,14 +370,14 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
               </div>
 
               {/* Bottom Quick Spec Bar */}
-              <div className="p-3 bg-[#081329] border-t border-white/10 flex items-center justify-between text-xs">
-                <span className="text-slate-300 font-medium flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-amber-400" />
+              <div className="p-3 bg-slate-50 dark:bg-[#081329] border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-xs transition-colors">
+                <span className="text-slate-700 dark:text-slate-300 font-medium flex items-center gap-1.5">
+                  <Building2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                   {isRtl ? "موقع التنفيذ: الرياض والمملكة" : "Location: Riyadh & KSA"}
                 </span>
                 <Link
                   href={`/${locale}/projects`}
-                  className="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1 transition-colors"
+                  className="text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 font-bold flex items-center gap-1 transition-colors"
                 >
                   <span>{isRtl ? "تفاصيل المشروع" : "Details"}</span>
                   <ArrowRight className={cn("w-3 h-3", isRtl && "rotate-180")} />

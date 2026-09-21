@@ -1,6 +1,6 @@
 {
-  "name": "WebTaky — Enterprise Business Platform",
-  "short_name": "WebTaky",
+  "name": "tenth-power-glass — Enterprise Business Platform",
+  "short_name": "tenth-power-glass",
   "description": "منصة إنشاء مواقع الشركات والمقاولات الاحترافية",
   "start_url": "/ar",
   "scope": "/",
@@ -10,7 +10,10 @@
   "theme_color": "#2563eb",
   "lang": "ar",
   "dir": "rtl",
-  "categories": ["business", "productivity"],
+  "categories": [
+    "business",
+    "productivity"
+  ],
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -43,13 +46,23 @@
       "name": "خدماتنا",
       "short_name": "الخدمات",
       "url": "/ar/services",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "تواصل معنا",
       "short_name": "تواصل",
       "url": "/ar/contact",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

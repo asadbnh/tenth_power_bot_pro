@@ -12,7 +12,7 @@ const serverEnvSchema = z.object({
   R2_ACCOUNT_ID: z.string().min(1).optional(),
   R2_ACCESS_KEY_ID: z.string().min(1).optional(),
   R2_SECRET_ACCESS_KEY: z.string().min(1).optional(),
-  R2_BUCKET_NAME: z.string().default("webtaky-media"),
+  R2_BUCKET_NAME: z.string().default("tenth-power-glass-media"),
   R2_BUCKET_ENDPOINT: z.string().url().optional(),
 
   // Telegram
@@ -50,7 +50,7 @@ const serverEnvSchema = z.object({
  */
 const clientEnvSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.string().url().optional().default("https://powerof10.netlify.app"),
-  NEXT_PUBLIC_APP_NAME: z.string().default("WebTaky"),
+  NEXT_PUBLIC_APP_NAME: z.string().default("tenth-power-glass"),
   NEXT_PUBLIC_DEFAULT_LOCALE: z.enum(["ar", "en"]).default("ar"),
   NEXT_PUBLIC_SUPPORTED_LOCALES: z.string().default("ar,en"),
 

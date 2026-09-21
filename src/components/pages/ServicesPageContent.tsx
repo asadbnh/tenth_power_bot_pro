@@ -101,18 +101,18 @@ export function ServicesPageContent({ locale, dict, initialServices }: Props) {
   return (
     <div className="pt-[var(--header-height)]">
       {/* Cinematic Services Hero */}
-      <section className="relative pt-8 pb-12 sm:pt-14 sm:pb-20 bg-[#070d1e] overflow-hidden border-b border-amber-500/10">
+      <section className="relative pt-8 pb-12 sm:pt-14 sm:pb-20 bg-slate-50 dark:bg-[#070d1e] overflow-hidden border-b border-slate-200/80 dark:border-amber-500/10 transition-colors duration-300">
         <div className="absolute inset-0 z-0 pointer-events-none">
-          <PageHeroBackground pageKey="services" />
+          <PageHeroBackground pageKey="services" overlayOpacity={0.4} />
           <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[44rem] h-[26rem] bg-gradient-to-r from-amber-500/15 via-blue-600/10 to-transparent rounded-full blur-[110px]" />
           <div 
-            className="absolute inset-0 opacity-[0.04]"
+            className="absolute inset-0 opacity-[0.03]"
             style={{ 
               backgroundImage: "linear-gradient(rgba(212,175,55,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.25) 1px, transparent 1px)", 
               backgroundSize: "48px 48px" 
             }} 
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/85 via-transparent to-[#070d1e]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-50/85 via-transparent to-slate-50 dark:from-[#070d1e]/85 dark:via-transparent dark:to-[#070d1e] transition-colors duration-300" />
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
@@ -120,10 +120,10 @@ export function ServicesPageContent({ locale, dict, initialServices }: Props) {
             initial={{ opacity: 0, scale: 0.9 }} 
             animate={{ opacity: 1, scale: 1 }} 
             transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full royal-badge shadow-2xl backdrop-blur-xl border border-amber-500/30"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 dark:bg-white/5 shadow-sm dark:shadow-2xl backdrop-blur-xl border border-amber-500/30 text-amber-800 dark:text-amber-200"
           >
-            <Layers3 className="w-4 h-4 text-amber-400" />
-            <span className="text-xs sm:text-sm font-bold text-amber-200">
+            <Layers3 className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            <span className="text-xs sm:text-sm font-bold">
               {isRtl ? "خدمات هندسية معمارية متكاملة • مطابقة لكود البناء السعودي" : "Full Architectural Engineering Services • SBC Certified"}
             </span>
           </motion.div>
@@ -132,19 +132,19 @@ export function ServicesPageContent({ locale, dict, initialServices }: Props) {
             initial={{ opacity: 0, y: 16 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ delay: 0.1, duration: 0.6 }}
-            className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight"
+            className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight"
           >
             {isRtl ? (
               <>
                 خدمات توريد وتركيب{" "}
-                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-amber-400 dark:via-yellow-300 dark:to-amber-200 bg-clip-text text-transparent">
                   الواجهات والزجاج والألمنيوم
                 </span>
               </>
             ) : (
               <>
                 Architectural Supply & Installation of{" "}
-                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-amber-400 dark:via-yellow-300 dark:to-amber-200 bg-clip-text text-transparent">
                   Glazing & Aluminum Facades
                 </span>
               </>
@@ -155,7 +155,7 @@ export function ServicesPageContent({ locale, dict, initialServices }: Props) {
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-sm sm:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed"
+            className="text-sm sm:text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed"
           >
             {dict.services.subtitle || (isRtl
               ? "حلول معمارية وهندسية شاملة للأبراج، المباني التجارية، والفلل السكنية بالرياض. نجمع بين دقة الرفع المساحي بالليزر، جودة الزجاج المقسّى، والضمان المعتمد لمدة 10 سنوات."
@@ -177,14 +177,14 @@ export function ServicesPageContent({ locale, dict, initialServices }: Props) {
             ].map((item, idx) => (
               <div 
                 key={idx} 
-                className="p-3 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-md text-start flex items-center gap-3"
+                className="p-3 rounded-2xl bg-white/85 dark:bg-white/[0.04] border border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-none backdrop-blur-md text-start flex items-center gap-3 transition-colors"
               >
-                <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-400">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-600 dark:text-amber-400">
                   <item.icon className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-white leading-tight">{item.title}</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">{item.sub}</p>
+                  <p className="text-xs font-bold text-slate-900 dark:text-white leading-tight">{item.title}</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{item.sub}</p>
                 </div>
               </div>
             ))}

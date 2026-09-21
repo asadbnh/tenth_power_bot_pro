@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Clock, MessageSquare, Send, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { resolveSocialChannels } from "@/components/ui/SocialIcons";
+import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -61,8 +62,8 @@ export function ContactPageContent({ locale, dict, company }: Props) {
     {
       icon: Mail,
       label: dict.contact.info.email,
-      value: company?.email || "info@webtaky.com",
-      href: `mailto:${company?.email || "info@webtaky.com"}`,
+      value: company?.email || "info@tenth-power-glass.com",
+      href: `mailto:${company?.email || "info@tenth-power-glass.com"}`,
     },
     {
       icon: Clock,
@@ -74,43 +75,44 @@ export function ContactPageContent({ locale, dict, company }: Props) {
   return (
     <div className="pt-[var(--header-height)]">
       {/* Architectural Contact Hero */}
-      <section className="relative pt-8 pb-12 sm:pt-12 sm:pb-16 bg-[#070d1e] overflow-hidden">
+      <section className="relative pt-8 pb-12 sm:pt-12 sm:pb-16 bg-slate-50 dark:bg-[#070d1e] overflow-hidden border-b border-slate-200/80 dark:border-amber-500/10 transition-colors duration-300">
         <div className="absolute inset-0 pointer-events-none">
+          <PageHeroBackground pageKey="contact" overlayOpacity={0.4} />
           <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[16rem] bg-gradient-to-r from-amber-500/10 via-blue-600/10 to-amber-400/5 rounded-full blur-[80px]" />
           <div className="absolute inset-0 opacity-[0.03]"
             style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/85 via-transparent to-[#070d1e]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-50/85 via-transparent to-slate-50 dark:from-[#070d1e]/85 dark:via-transparent dark:to-[#070d1e] transition-colors duration-300" />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3 sm:space-y-4">
-          <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
-            <a href={`/${locale}`} className="hover:text-white transition-colors">
+          <div className="flex items-center justify-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <a href={`/${locale}`} className="hover:text-slate-900 dark:hover:text-white transition-colors">
               {isRtl ? "الرئيسية" : "Home"}
             </a>
-            <span className="text-slate-600">/</span>
-            <span className="text-amber-400/90 font-medium">{dict.contact.title}</span>
+            <span className="text-slate-400 dark:text-slate-600">/</span>
+            <span className="text-amber-600 dark:text-amber-400/90 font-medium">{dict.contact.title}</span>
           </div>
 
           <motion.h1 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-5xl font-black text-white leading-tight">
+            className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white leading-tight">
             {isRtl ? (
               <>
                 تواصل مع{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-[#F3E7C4] dark:via-[#E5C378] dark:to-[#C99E32]">
                   فريقنا الهندسي
                 </span>
               </>
             ) : (
               <>
                 Contact Our{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-[#F3E7C4] dark:via-[#E5C378] dark:to-[#C99E32]">
                   Engineering Team
                 </span>
               </>
             )}
           </motion.h1>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed">
+            className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed">
             {dict.contact.subtitle}
           </motion.p>
         </div>

@@ -66,7 +66,7 @@ export function ProjectDetailPageContent({ slug, locale, dict, initialProject }:
   return (
     <div className="pt-[var(--header-height)] min-h-dvh bg-gradient-to-b from-background to-surface">
       {/* Architectural Hero */}
-      <section className="relative py-16 sm:py-24 bg-[#070d1e] overflow-hidden text-white border-b border-amber-500/15">
+      <section className="relative py-16 sm:py-24 bg-slate-50 dark:bg-[#070d1e] overflow-hidden text-slate-900 dark:text-white border-b border-slate-200/80 dark:border-amber-500/15 transition-colors duration-300">
         <div 
           className="absolute inset-0 opacity-[0.04] pointer-events-none"
           style={{ 
@@ -75,48 +75,48 @@ export function ProjectDetailPageContent({ slug, locale, dict, initialProject }:
           }} 
         />
         <div className="absolute top-1/3 end-1/4 w-[32rem] h-[32rem] bg-amber-500/10 rounded-full blur-[110px] pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/80 via-transparent to-[#070d1e] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/80 via-transparent to-slate-50 dark:from-[#070d1e]/80 dark:via-transparent dark:to-[#070d1e] pointer-events-none transition-colors duration-300" />
         
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 text-xs text-white/60 mb-6">
-            <Link href={`/${locale}`} className="hover:text-white transition-colors">{isRtl ? "الرئيسية" : "Home"}</Link>
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-white/60 mb-6 font-medium">
+            <Link href={`/${locale}`} className="hover:text-slate-900 dark:hover:text-white transition-colors">{isRtl ? "الرئيسية" : "Home"}</Link>
             <ChevronLeft className={cn("w-3 h-3", !isRtl && "rotate-180")} />
-            <Link href={`/${locale}/projects`} className="hover:text-white transition-colors">{dict.projects.title}</Link>
+            <Link href={`/${locale}/projects`} className="hover:text-slate-900 dark:hover:text-white transition-colors">{dict.projects.title}</Link>
             <ChevronLeft className={cn("w-3 h-3", !isRtl && "rotate-180")} />
-            <span className="text-amber-300 font-medium">{name}</span>
+            <span className="text-amber-700 dark:text-amber-300 font-semibold">{name}</span>
           </div>
 
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2.5">
               {category && (
-                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-xs font-bold text-amber-300 backdrop-blur-md">
-                  <Building2 className="w-3.5 h-3.5 text-amber-400" />
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 text-xs font-bold text-amber-800 dark:text-amber-300 backdrop-blur-md shadow-xs">
+                  <Building2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                   {category}
                 </span>
               )}
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-white/80 border border-white/15">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/5 dark:bg-white/10 text-xs font-semibold text-slate-700 dark:text-white/80 border border-slate-200/80 dark:border-white/15 shadow-xs">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 {isRtl ? "كود البناء السعودي SBC" : "SBC Compliant"}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-white/80 border border-white/15">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/5 dark:bg-white/10 text-xs font-semibold text-slate-700 dark:text-white/80 border border-slate-200/80 dark:border-white/15 shadow-xs">
                 {isRtl ? "ضمان 10 سنوات" : "10-Year Warranty"}
               </span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight text-white">
+            <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight text-slate-900 dark:text-white">
               {name}
             </h1>
             
-            <div className="flex flex-wrap gap-6 text-xs sm:text-sm text-slate-300 pt-2">
+            <div className="flex flex-wrap gap-6 text-xs sm:text-sm text-slate-600 dark:text-slate-300 pt-2 font-medium">
               {location && (
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-amber-400" />
+                  <MapPin className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   <span>{location}</span>
                 </div>
               )}
               {project.year && (
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-amber-400" />
+                  <Calendar className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   <span>{project.year}</span>
                 </div>
               )}

@@ -28,8 +28,8 @@ export async function generateMetadata({
 
   const isAr = locale === "ar";
   const title = String(isAr
-    ? `خدمات الزجاج والألمنيوم في ${cityName} | WebTaky`
-    : `Glass & Aluminum Services in ${cityName} | WebTaky`);
+    ? `خدمات الزجاج والألمنيوم في ${cityName} | tenth-power-glass`
+    : `Glass & Aluminum Services in ${cityName} | tenth-power-glass`);
   const description = String(dbCity?.description || (isAr
     ? `أفضل شركة لخدمات الزجاج السكريت والألمنيوم والمطابخ والديكورات في ${cityName} - ${regionName}. تركيب احترافي وضمان شامل.`
     : `Best glass, aluminum, kitchens & decoration services in ${cityName} - ${regionName}. Professional installation with comprehensive warranty.`));

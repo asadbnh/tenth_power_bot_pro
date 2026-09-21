@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 /**
- * WebTaky Offline/Fallback JSON Data Provider
+ * tenth-power-glass Offline/Fallback JSON Data Provider
  * Loads and parses JSON configuration files stored in public/fallback-data/
  * ensuring that any edit to JSON files reflects on the website without modifying code.
  */
@@ -28,10 +28,10 @@ export function getFallbackCompany() {
     name_en: "Tenth Power Glass & Aluminum Contracting",
     description_ar: "تنفيذ أعمال الزجاج السكريت المقوى، الواجهات الزجاجية، قطاعات الألمنيوم والمطابخ العصرية.",
     description_en: "Tempered glass, facades, aluminum profiles and modern kitchen installations.",
-    whatsapp_number: "+966500000000",
-    phone_primary: "+966500000000",
-    phone_secondary: "+966110000000",
-    email: "info@webtaky.com",
+    whatsapp_number: "+966532438253",
+    phone_primary: "+966532438253",
+    phone_secondary: "+966532438253",
+    email: "info@tenth-power-glass.com",
     website_url: "https://powerof10.netlify.app",
     tax_number: "310000000000003",
     commercial_register: "1010000000",

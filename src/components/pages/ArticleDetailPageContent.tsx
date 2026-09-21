@@ -46,44 +46,44 @@ export function ArticleDetailPageContent({ slug, locale, dict, initialArticle }:
   return (
     <div className="pt-[var(--header-height)] min-h-dvh bg-gradient-to-b from-background to-surface">
       {/* Architectural Article Header */}
-      <section className="relative pt-8 pb-12 sm:pt-12 sm:pb-16 bg-[#070d1e] overflow-hidden text-white">
+      <section className="relative pt-8 pb-12 sm:pt-12 sm:pb-16 bg-slate-50 dark:bg-[#070d1e] overflow-hidden text-slate-900 dark:text-white border-b border-slate-200/80 dark:border-amber-500/10 transition-colors duration-300">
         {/* Ambient Subtle Gold & Sapphire Backlight */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] h-[16rem] bg-gradient-to-r from-amber-500/10 via-blue-600/10 to-amber-400/5 rounded-full blur-[80px]" />
           <div className="absolute inset-0 opacity-[0.03]"
-            style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/85 via-transparent to-[#070d1e]" />
+            style={{ backgroundImage: "linear-gradient(rgba(212,175,55,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.2) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-50/85 via-transparent to-slate-50 dark:from-[#070d1e]/85 dark:via-transparent dark:to-[#070d1e] transition-colors duration-300" />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-5">
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <Link href={`/${locale}`} className="hover:text-white transition-colors">{isRtl ? "الرئيسية" : "Home"}</Link>
-            <ChevronLeft className={cn("w-3 h-3 text-slate-500", !isRtl && "rotate-180")} />
-            <Link href={`/${locale}/blog`} className="hover:text-white transition-colors">{dict.blog.title}</Link>
-            <ChevronLeft className={cn("w-3 h-3 text-slate-500", !isRtl && "rotate-180")} />
-            <span className="text-amber-400/90 font-medium">{category}</span>
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <Link href={`/${locale}`} className="hover:text-slate-900 dark:hover:text-white transition-colors">{isRtl ? "الرئيسية" : "Home"}</Link>
+            <ChevronLeft className={cn("w-3 h-3 text-slate-400 dark:text-slate-500", !isRtl && "rotate-180")} />
+            <Link href={`/${locale}/blog`} className="hover:text-slate-900 dark:hover:text-white transition-colors">{dict.blog.title}</Link>
+            <ChevronLeft className={cn("w-3 h-3 text-slate-400 dark:text-slate-500", !isRtl && "rotate-180")} />
+            <span className="text-amber-700 dark:text-amber-400/90 font-semibold">{category}</span>
           </div>
 
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-amber-500/30 text-xs font-semibold text-amber-200">
-            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 dark:bg-white/5 border border-amber-500/30 text-xs font-semibold text-amber-800 dark:text-amber-200 shadow-xs">
+            <BookOpen className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             {category}
           </span>
 
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-white leading-tight">
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight">
             {title}
           </h1>
 
-          <div className="flex flex-wrap gap-4 sm:gap-6 text-xs sm:text-sm text-slate-300 pt-2 border-t border-white/10">
+          <div className="flex flex-wrap gap-4 sm:gap-6 text-xs sm:text-sm text-slate-600 dark:text-slate-300 pt-2 border-t border-slate-200/80 dark:border-white/10 font-medium">
             <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-amber-400" />
+              <User className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               <span>{author}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-amber-400" />
+              <Calendar className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               <span>{date}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-amber-400" />
+              <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               <span>{readTime} {isRtl ? "دقائق قراءة" : "min read"}</span>
             </div>
           </div>

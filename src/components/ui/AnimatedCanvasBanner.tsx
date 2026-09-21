@@ -7,6 +7,7 @@ export interface AnimatedCanvasBannerProps {
   className?: string;
   aspectRatio?: "square" | "video" | "wide" | "tall" | "auto" | string;
   showDetailedGrid?: boolean;
+  transparentBackground?: boolean;
   title?: string;
   subtitle?: string;
   badge?: string;
@@ -29,6 +30,7 @@ export function AnimatedCanvasBanner({
   className,
   aspectRatio = "video",
   showDetailedGrid = true,
+  transparentBackground = false,
   title,
   subtitle,
   badge,
@@ -41,7 +43,7 @@ export function AnimatedCanvasBanner({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d", { alpha: false });
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
     let startTime: number | null = null;
@@ -72,12 +74,14 @@ export function AnimatedCanvasBanner({
       ctx.clearRect(0, 0, width, height);
 
       // ── 1. Background Gradient (Royal Navy #0B192C to Deep Black #020617) ──
-      const bgGrad = ctx.createLinearGradient(0, 0, width, height);
-      bgGrad.addColorStop(0, "#0F172A");
-      bgGrad.addColorStop(0.4, "#0B192C");
-      bgGrad.addColorStop(1, "#020617");
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, width, height);
+      if (!transparentBackground) {
+        const bgGrad = ctx.createLinearGradient(0, 0, width, height);
+        bgGrad.addColorStop(0, "#0F172A");
+        bgGrad.addColorStop(0.4, "#0B192C");
+        bgGrad.addColorStop(1, "#020617");
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, width, height);
+      }
 
       // ── 2. Top-Right Solar Radial Glow (#FFA500 / #D4AF37) ───────────────
       const glowX = width * 0.85;
@@ -94,14 +98,16 @@ export function AnimatedCanvasBanner({
       solarGlow.addColorStop(0, "rgba(255, 165, 0, 0.28)");
       solarGlow.addColorStop(0.3, "rgba(212, 175, 55, 0.18)");
       solarGlow.addColorStop(0.7, "rgba(245, 158, 11, 0.06)");
-      solarGlow.addColorStop(1, "rgba(2, 6, 23, 0)");
+      solarGlow.addColorStop(1, "rgba(245, 158, 11, 0)");
 
       ctx.fillStyle = solarGlow;
       ctx.fillRect(0, 0, width, height);
 
       // ── 3. Architectural Blueprint Grid (8 cols x 4 rows) ────────────────
       if (showDetailedGrid) {
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.13)";
+        ctx.strokeStyle = transparentBackground
+          ? "rgba(212, 175, 55, 0.22)"
+          : "rgba(255, 255, 255, 0.13)";
         ctx.lineWidth = 1;
 
         const cols = 8;
@@ -285,7 +291,7 @@ export function AnimatedCanvasBanner({
         cancelAnimationFrame(animFrameIdRef.current);
       }
     };
-  }, [showDetailedGrid]);
+  }, [showDetailedGrid, transparentBackground]);
 
   const aspectClass =
     aspectRatio === "square"
@@ -303,7 +309,8 @@ export function AnimatedCanvasBanner({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl bg-[#020617] group select-none",
+        "relative overflow-hidden group select-none",
+        !transparentBackground && "rounded-2xl border border-white/10 shadow-2xl bg-[#020617]",
         aspectClass,
         className
       )}

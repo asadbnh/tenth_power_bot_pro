@@ -1,7 +1,7 @@
 import { restoreFromBackup } from "../src/lib/backup";
 
 async function main() {
-  console.log("🔄 Starting WebTaky Local Recovery & Restore Process...\n");
+  console.log("🔄 Starting tenth-power-glass Local Recovery & Restore Process...\n");
   const result = await restoreFromBackup({
     onProgress: (msg) => {
       console.log(`  ${msg}`);

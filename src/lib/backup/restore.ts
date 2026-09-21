@@ -20,7 +20,7 @@ export type RestoreResult = {
 };
 
 /**
- * Restores entire database and extracts media files from a WebTaky backup .zip archive.
+ * Restores entire database and extracts media files from a tenth-power-glass backup .zip archive.
  */
 export async function restoreFromBackup(options: RestoreOptions): Promise<RestoreResult> {
   let zip: AdmZip;

@@ -24,7 +24,7 @@ export function CityServicePageContent({ locale, city, service, cityName, servic
     name: `${serviceName} في ${cityName}`,
     provider: {
       "@type": "LocalBusiness",
-      name: "WebTaky",
+      name: "tenth-power-glass",
       address: {
         "@type": "PostalAddress",
         addressLocality: cityName,
@@ -40,56 +40,56 @@ export function CityServicePageContent({ locale, city, service, cityName, servic
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       {/* Architectural Localized Service Hero */}
-      <section className="relative pt-8 pb-12 sm:pt-12 sm:pb-16 bg-[#070d1e] text-white text-center overflow-hidden">
+      <section className="relative pt-8 pb-12 sm:pt-12 sm:pb-16 bg-slate-50 dark:bg-[#070d1e] text-slate-900 dark:text-white text-center overflow-hidden border-b border-slate-200/80 dark:border-amber-500/10 transition-colors duration-300">
         {/* Layered Architectural Atmosphere */}
         <div className="absolute inset-0 z-0 pointer-events-none">
-          <PageHeroBackground pageKey="city-service" overlayOpacity={0.78} />
+          <PageHeroBackground pageKey="city-service" overlayOpacity={0.4} />
           <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[36rem] h-[18rem] bg-gradient-to-r from-amber-500/15 via-blue-600/10 to-amber-400/10 rounded-full blur-[90px]" />
           <div className="absolute inset-0 opacity-[0.03]"
             style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "36px 36px" }} />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/85 via-[#070d1e]/75 to-[#070d1e]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-50/85 via-slate-50/75 to-slate-50 dark:from-[#070d1e]/85 dark:via-[#070d1e]/75 dark:to-[#070d1e] transition-colors duration-300" />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-5">
           {/* Breadcrumbs Navigation */}
-          <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
-            <Link href={`/${locale}`} className="hover:text-white transition-colors">
+          <div className="flex items-center justify-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <Link href={`/${locale}`} className="hover:text-slate-900 dark:hover:text-white transition-colors">
               {isRtl ? "الرئيسية" : "Home"}
             </Link>
-            <span className="text-slate-600">/</span>
-            <Link href={`/${locale}/cities/${city}`} className="hover:text-white transition-colors">
+            <span className="text-slate-400 dark:text-slate-600">/</span>
+            <Link href={`/${locale}/cities/${city}`} className="hover:text-slate-900 dark:hover:text-white transition-colors">
               {cityName}
             </Link>
-            <span className="text-slate-600">/</span>
-            <span className="text-amber-400/90 font-medium">{serviceName}</span>
+            <span className="text-slate-400 dark:text-slate-600">/</span>
+            <span className="text-amber-600 dark:text-amber-400/90 font-medium">{serviceName}</span>
           </div>
 
-          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-[#D4AF37]/30 shadow-sm">
-            <MapPin className="w-3.5 h-3.5 text-amber-400" />
-            <span className="text-xs font-semibold text-amber-200/90 tracking-wide">
+          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 dark:bg-white/5 backdrop-blur-md border border-amber-500/30 shadow-sm">
+            <MapPin className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <span className="text-xs font-semibold text-amber-800 dark:text-amber-200/90 tracking-wide">
               {cityName} — {regionName}
             </span>
           </span>
 
-          <h1 className="text-3xl sm:text-5xl font-black leading-tight tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white leading-tight tracking-tight">
             {isRtl ? (
               <>
                 خدمة {serviceName} في{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-[#F3E7C4] dark:via-[#E5C378] dark:to-[#C99E32]">
                   {cityName}
                 </span>
               </>
             ) : (
               <>
                 {serviceName} Services in{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-[#F3E7C4] dark:via-[#E5C378] dark:to-[#C99E32]">
                   {cityName}
                 </span>
               </>
             )}
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {isRtl
               ? `أفضل حلول ومواصفات ${serviceName} في مدينة ${cityName} وجميع أحياء ${regionName} بإشراف مهندسين متخصصين وضمان شامل 10 سنوات.`
               : `Certified ${serviceName} engineering solutions in ${cityName} covering all neighborhoods with 10-year warranty.`}
@@ -102,8 +102,8 @@ export function CityServicePageContent({ locale, city, service, cityName, servic
               <ArrowRight className={cn("w-4 h-4", isRtl && "rotate-180")} />
             </Link>
             <a href="tel:+966532438253"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/20 transition-all">
-              <Phone className="w-4 h-4 text-amber-400" />
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 shadow-sm dark:bg-white/10 dark:hover:bg-white/20 dark:text-white dark:border-white/20 transition-all">
+              <Phone className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               <span dir="ltr">+966 53 243 8253</span>
             </a>
           </div>

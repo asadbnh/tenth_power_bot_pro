@@ -1,10 +1,10 @@
 /**
- * WebTaky PWA Service Worker
+ * tenth-power-glass PWA Service Worker
  * Provides offline support, cache-first strategy for static assets,
  * and network-first for dynamic API routes.
  */
 
-const CACHE_NAME = "webtaky-v1";
+const CACHE_NAME = "tenth-power-glass-v1";
 const STATIC_ASSETS = [
   "/",
   "/ar",

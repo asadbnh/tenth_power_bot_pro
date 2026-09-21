@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ═══════════════════════════════════════════════════════════════════
-   WebTaky — Enterprise Design System
+   tenth-power-glass — Enterprise Design System
    Premium color palette, typography, animations, and RTL support
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -91,8 +91,10 @@
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
-  --radius-xl: 0.75rem; /* 12px */
-  --radius-2xl: 1rem;   /* 16px */
+  --radius-xl: 0.75rem;
+  /* 12px */
+  --radius-2xl: 1rem;
+  /* 16px */
   --radius-full: 9999px;
 
   /* Transitions */
@@ -204,6 +206,7 @@ body {
 
 /* Prevent auto-zoom in iOS Safari on inputs with font-size < 16px */
 @media screen and (max-width: 767px) {
+
   input[type="text"],
   input[type="email"],
   input[type="tel"],
@@ -219,21 +222,25 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
 /* ─── Royal Card & Badge Specification ────────────────────────── */
-.card, .royal-card {
+.card,
+.royal-card {
   background-color: var(--surface-elevated);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-2xl); /* 16px */
+  border-radius: var(--radius-2xl);
+  /* 16px */
   box-shadow: var(--shadow-md);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.dark .card, .dark .royal-card {
+.dark .card,
+.dark .royal-card {
   background-color: var(--surface-elevated);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: none;
@@ -528,6 +535,7 @@ p {
   overflow: hidden;
   background-color: rgba(255, 255, 255, 0.04);
 }
+
 .skeleton::before {
   content: '';
   position: absolute;

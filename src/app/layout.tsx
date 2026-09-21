@@ -19,16 +19,16 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   title: {
-    template: "%s | WebTaky",
-    default: "WebTaky — Enterprise Business Platform",
+    template: "%s | tenth-power-glass",
+    default: "tenth-power-glass — Enterprise Business Platform",
   },
   description: "منصة إنشاء مواقع الشركات والمقاولات الاحترافية — Professional Business Website Platform",
-  applicationName: "WebTaky",
+  applicationName: "tenth-power-glass",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "WebTaky",
+    title: "tenth-power-glass",
   },
   formatDetection: {
     telephone: true,

@@ -1,5 +1,5 @@
 /**
- * WebTaky Structured Logger & Diagnostic Service
+ * tenth-power-glass Structured Logger & Diagnostic Service
  * Handles unified logging, error reporting, and security alerts across Next.js and Telegram Bot.
  */
 

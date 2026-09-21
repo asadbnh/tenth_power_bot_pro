@@ -22,7 +22,7 @@ export async function handleCompanyProfile(chatId: number, messageId?: number) {
 🌐 <b>المعرف:</b> <code>${company?.slug ?? "tenth-power-glass"}</code>
 📱 <b>الهاتف الرئيسي:</b> <code>${company?.phone_primary ?? "غير محدد"}</code>
 💬 <b>الواتساب:</b> <code>${company?.whatsapp_number ?? "غير محدد"}</code>
-📧 <b>البريد الإلكتروني:</b> ${company?.email ?? "info@webtaky.com"}
+📧 <b>البريد الإلكتروني:</b> ${company?.email ?? "info@tenth-power-glass.com"}
 🧾 <b>الرقم الضريبي:</b> <code>${company?.tax_number ?? "غير محدد"}</code>
 📑 <b>السجل التجاري:</b> <code>${company?.commercial_register ?? "غير محدد"}</code>
 🚧 <b>وضع الصيانة:</b> ${maint}`;

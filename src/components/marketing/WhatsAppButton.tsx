@@ -16,7 +16,7 @@ interface WhatsAppButtonProps {
  * Positioned bottom-end (bottom-right LTR, bottom-left RTL).
  */
 export function WhatsAppButton({
-  phoneNumber = "+966500000000",
+  phoneNumber = "+966532438253",
   message,
   locale = "ar",
 }: WhatsAppButtonProps) {

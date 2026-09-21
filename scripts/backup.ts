@@ -1,7 +1,7 @@
 import { createFullBackupArchive } from "../src/lib/backup";
 
 async function main() {
-  console.log("📦 Starting WebTaky Full Backup & Archive Generator...\n");
+  console.log("📦 Starting tenth-power-glass Full Backup & Archive Generator...\n");
   const result = await createFullBackupArchive({
     onProgress: async (msg) => {
       console.log(`  ${msg}`);

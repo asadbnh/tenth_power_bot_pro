@@ -25,11 +25,11 @@ export async function generateMetadata({
 
   const serviceName = service ? (isAr ? service.name_ar || service.name : service.name_en || service.name) : slug.replace(/-/g, " ");
   const defaultTitle = isAr
-    ? `خدمة ${serviceName} | WebTaky`
-    : `${serviceName} Service | WebTaky`;
+    ? `خدمة ${serviceName} | tenth-power-glass`
+    : `${serviceName} Service | tenth-power-glass`;
   const defaultDescription = String(service?.short_description || service?.description || (isAr
-    ? `تعرف على تفاصيل ومواصفات وتكلفة تنفيذ ${serviceName} من مؤسسة القوة العاشرة WebTaky`
-    : `Explore specifications, features and installation details for ${serviceName} by WebTaky`));
+    ? `تعرف على تفاصيل ومواصفات وتكلفة تنفيذ ${serviceName} من مؤسسة القوة العاشرة tenth-power-glass`
+    : `Explore specifications, features and installation details for ${serviceName} by tenth-power-glass`));
   const defaultImage = String(service?.cover_image_url || "/images/defaults/services/tempered-glass.webp");
 
   // ─── Try to override with seo_metadata from DB ─────────────────────────────
@@ -88,7 +88,7 @@ export default async function ServiceDetailPage({
     url: `${appUrl}/${validLocale}/services/${slug}`,
     provider: {
       "@type": "LocalBusiness",
-      name: "WebTaky - Tenth Power Glass",
+      name: "tenth-power-glass - Tenth Power Glass",
       url: appUrl,
     },
   };

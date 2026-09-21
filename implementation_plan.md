@@ -691,7 +691,7 @@ erDiagram
 ### Row Level Security (RLS) Strategy
 
 | Table | Policy | Rule |
-|-------|--------|------|
+| ------- | -------- | ------ |
 | All company tables | `company_isolation` | `company_id = auth.jwt() -> company_id` |
 | Public content tables | `public_read` | `is_active = true` for anonymous |
 | Admin tables | `admin_only` | `role IN ('admin', 'super_admin')` |
@@ -703,7 +703,7 @@ erDiagram
 ## 📁 Project Structure
 
 ```
-e:\projects\webtaky\
+e:\projects\tenth-power-glass\
 ├── .env.local
 ├── .env.production
 ├── next.config.ts
@@ -1073,7 +1073,7 @@ e:\projects\webtaky\
 #### Sprint 1: Project Bootstrap & Core Infrastructure (Days 1-2)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | 1.1 | Initialize Next.js project | `npx create-next-app@latest` with TypeScript, Tailwind, App Router, ESLint | 1h |
 | 1.2 | Configure TypeScript | Strict mode, path aliases, module resolution | 0.5h |
 | 1.3 | Configure Tailwind CSS | Custom theme tokens, dark mode, Arabic typography, RTL support, custom colors, animations | 2h |
@@ -1087,6 +1087,7 @@ e:\projects\webtaky\
 | **Total** | | | **11.5h** |
 
 **Deliverables:**
+
 - ✅ Running Next.js app with complete folder structure
 - ✅ Tailwind configured with RTL support and dark mode
 - ✅ Strict TypeScript configuration
@@ -1098,7 +1099,7 @@ e:\projects\webtaky\
 #### Sprint 2: Database Schema & Supabase Setup (Days 3-4)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | 2.1 | Design complete PostgreSQL schema | All 35+ tables with proper relations, constraints, indexes | 4h |
 | 2.2 | Write migration: `001_initial_schema.sql` | CREATE TABLE statements with proper types, constraints, defaults | 3h |
 | 2.3 | Write migration: `002_rls_policies.sql` | Row Level Security for all tables | 2h |
@@ -1112,6 +1113,7 @@ e:\projects\webtaky\
 | **Total** | | | **18.5h** |
 
 **Deliverables:**
+
 - ✅ Complete normalized PostgreSQL schema with 35+ tables
 - ✅ All migrations ready to run
 - ✅ Row Level Security policies
@@ -1124,7 +1126,7 @@ e:\projects\webtaky\
 #### Sprint 3: Cloudflare R2 & Media Pipeline (Day 5)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | 3.1 | Configure Cloudflare R2 | Bucket setup, CORS, public access, custom domain | 1.5h |
 | 3.2 | Build R2 upload service | Signed URL generation, multipart upload, file validation | 2h |
 | 3.3 | Build image processing pipeline | WebP/AVIF generation, resize, blur hash, thumbnail | 3h |
@@ -1136,6 +1138,7 @@ e:\projects\webtaky\
 | **Total** | | | **14h** |
 
 **Deliverables:**
+
 - ✅ R2 bucket configured with signed URLs
 - ✅ Automatic WebP + AVIF generation
 - ✅ Blur hash placeholder system
@@ -1151,7 +1154,7 @@ e:\projects\webtaky\
 #### Sprint 4: Design System & UI Components (Days 6-7)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | 4.1 | Design color system | Premium palette, dark/light themes, semantic colors, glassmorphism tokens | 2h |
 | 4.2 | Typography system | Arabic + English font scales, responsive sizes, line heights | 1.5h |
 | 4.3 | Build `Button` component | Variants (primary, secondary, ghost, outline), sizes, loading states, icons | 1.5h |
@@ -1167,6 +1170,7 @@ e:\projects\webtaky\
 | **Total** | | | **17.5h** |
 
 **Deliverables:**
+
 - ✅ Complete design system with dark/light themes
 - ✅ 15+ reusable UI components
 - ✅ RTL-first responsive design
@@ -1178,7 +1182,7 @@ e:\projects\webtaky\
 #### Sprint 5: Layout Components & Navigation (Days 8-9)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | 5.1 | Build `Header` component | Sticky, transparent-to-solid, mega menu, language switcher, search trigger, mobile menu | 3h |
 | 5.2 | Build `Footer` component | Premium layout, multi-column, newsletter, social links, SEO links | 2h |
 | 5.3 | Build `MobileNav` component | Bottom navigation bar, safe areas, haptic feedback | 2h |
@@ -1193,6 +1197,7 @@ e:\projects\webtaky\
 | **Total** | | | **16h** |
 
 **Deliverables:**
+
 - ✅ Responsive header with mega menu
 - ✅ Premium footer with SEO links
 - ✅ Mobile bottom navigation
@@ -1209,7 +1214,7 @@ e:\projects\webtaky\
 #### Sprint 6: Cinematic Hero & Premium Landing Sections (Days 10-11)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | 6.1 | Build `HeroSection` | Full-screen cinematic hero: animated gradient background, glassmorphism overlay, depth effects, floating particles, premium typography, CTA buttons, WhatsApp entry, AI chat entry | 4h |
 | 6.2 | Build `ServicesShowcase` | Interactive grid/carousel with 3D card hover effects, category filtering, icons, reveal-on-scroll | 3h |
 | 6.3 | Build `AnimatedStats` | Counting numbers with intersection observer trigger, icons, descriptions | 1.5h |
@@ -1221,6 +1226,7 @@ e:\projects\webtaky\
 | **Total** | | | **17h** |
 
 **Deliverables:**
+
 - ✅ Cinematic hero section with animations
 - ✅ Interactive services showcase
 - ✅ Animated statistics counter
@@ -1233,7 +1239,7 @@ e:\projects\webtaky\
 #### Sprint 7: Gallery, Testimonials & Interactive Sections (Days 12-13)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | 7.1 | Build `ProjectGallery` | Masonry grid, category filter, lightbox, lazy loading, skeleton loading | 3h |
 | 7.2 | Build `BeforeAfterSlider` | Touch-friendly comparison slider with drag handle | 2h |
 | 7.3 | Build `TestimonialsCarousel` | Premium carousel with rating stars, avatars, review schema | 2h |
@@ -1246,6 +1252,7 @@ e:\projects\webtaky\
 | **Total** | | | **17h** |
 
 **Deliverables:**
+
 - ✅ Interactive project gallery with lightbox
 - ✅ Before/after comparison slider
 - ✅ Testimonials carousel
@@ -1261,7 +1268,7 @@ e:\projects\webtaky\
 #### Sprint 8: Content Pages (Days 14-15)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | 8.1 | Build Services listing page | Grid with filtering, sorting, pagination, SEO | 2h |
 | 8.2 | Build Single Service page | Full details, gallery, related projects, FAQ, CTA, schema | 3h |
 | 8.3 | Build Projects listing page | Filterable gallery, categories, search | 2h |
@@ -1275,6 +1282,7 @@ e:\projects\webtaky\
 | **Total** | | | **22h** |
 
 **Deliverables:**
+
 - ✅ All content pages fully built with SSR/SSG/ISR
 - ✅ Each page optimized for SEO with proper schema
 - ✅ Responsive design across all breakpoints
@@ -1285,7 +1293,7 @@ e:\projects\webtaky\
 #### Sprint 9: SEO Engine & Structured Data (Days 16-17)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | 9.1 | Build JSON-LD generators | Organization, LocalBusiness, Service, Article, FAQ, Review, Breadcrumb, Product schemas | 3h |
 | 9.2 | Build metadata generator | Dynamic meta titles, descriptions, keywords from DB content | 2h |
 | 9.3 | Build sitemap system | Dynamic XML sitemap with services, projects, articles, cities, images, videos | 2h |
@@ -1301,6 +1309,7 @@ e:\projects\webtaky\
 | **Total** | | | **19h** |
 
 **Deliverables:**
+
 - ✅ 8+ JSON-LD schema types implemented
 - ✅ Automatic sitemap generation (pages, images, videos)
 - ✅ hreflang for multi-language SEO
@@ -1317,7 +1326,7 @@ e:\projects\webtaky\
 #### Sprint 10: AI Chat System & Quote Wizard (Days 18-19)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | 10.1 | Build AI chat engine | Streaming responses, system prompt from DB, context management, conversation history | 3h |
 | 10.2 | Build `ChatWidget` | Floating button with notification badge, open/close animation | 1.5h |
 | 10.3 | Build `ChatWindow` | Full chat interface with message list, typing indicator, streaming text | 3h |
@@ -1332,6 +1341,7 @@ e:\projects\webtaky\
 | **Total** | | | **22h** |
 
 **Deliverables:**
+
 - ✅ Fully functional AI chatbot with streaming
 - ✅ Configurable system prompt from Supabase
 - ✅ AI-powered quote wizard
@@ -1343,7 +1353,7 @@ e:\projects\webtaky\
 #### Sprint 11: Search, Analytics & Marketing (Days 20-21)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | 11.1 | Build internal search system | Full-text search using PostgreSQL tsvector, Arabic morphology | 2h |
 | 11.2 | Build `SearchDialog` | Command palette style search (Cmd+K), results with highlights | 2h |
 | 11.3 | Build search API route | Debounced API with ranking, suggestions | 1.5h |
@@ -1359,6 +1369,7 @@ e:\projects\webtaky\
 | **Total** | | | **16.5h** |
 
 **Deliverables:**
+
 - ✅ Full-text search with Arabic support
 - ✅ Command palette search UI
 - ✅ Custom analytics with Supabase storage
@@ -1376,7 +1387,7 @@ e:\projects\webtaky\
 #### Sprint 12: Telegram Bot — Core System (Days 22-24)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | 12.1 | Setup Telegram Bot framework | Bot initialization, webhook registration, command routing | 2h |
 | 12.2 | Build interactive menu system | Nested inline keyboards, pagination, back navigation, state management | 3h |
 | 12.3 | Build auth middleware | Telegram admin verification against `telegram_admins` table | 1h |
@@ -1392,6 +1403,7 @@ e:\projects\webtaky\
 | **Total** | | | **26h** |
 
 **Deliverables:**
+
 - ✅ Telegram Bot webhook receiving messages
 - ✅ Interactive menu system with inline keyboards
 - ✅ Complete CRUD for: Services, Categories, Projects, Gallery, Articles, FAQs, Testimonials
@@ -1402,7 +1414,7 @@ e:\projects\webtaky\
 #### Sprint 13: Telegram Bot — Advanced Features (Days 25-26)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | 13.1 | Build SEO handler | View/edit meta titles, descriptions, OG data per page | 2h |
 | 13.2 | Build city pages handler | City CRUD, unique content per city+service | 2h |
 | 13.3 | Build AI config handler | Edit system prompts, model selection, temperature, test responses | 2h |
@@ -1421,6 +1433,7 @@ e:\projects\webtaky\
 | **Total** | | | **24h** |
 
 **Deliverables:**
+
 - ✅ Complete Telegram admin for ALL features
 - ✅ SEO management from Telegram
 - ✅ AI article generation with review workflow
@@ -1438,7 +1451,7 @@ e:\projects\webtaky\
 #### Sprint 14: PWA, Security, Performance & Final Polish (Days 27-30)
 
 | # | Task | Details | Est. Hours |
-|---|------|---------|-----------|
+| --- | ------ | --------- | ----------- |
 | **PWA** | | | |
 | 14.1 | Build Service Worker | Caching strategies (cache-first, network-first, stale-while-revalidate), offline pages, background sync | 3h |
 | 14.2 | Build PWA manifest | Icons, splash screens, theme color, shortcuts, screenshots | 1h |
@@ -1477,6 +1490,7 @@ e:\projects\webtaky\
 | **Total** | | | **35h** |
 
 **Deliverables:**
+
 - ✅ Full PWA with offline support, push notifications, install prompt
 - ✅ All security measures implemented
 - ✅ Lighthouse 100/100/100/100
@@ -1529,7 +1543,7 @@ gantt
 ## 📈 Effort Distribution
 
 | Phase | Sprints | Estimated Hours | Percentage |
-|-------|---------|----------------|------------|
+| ------- | --------- | ---------------- | ------------ |
 | Phase 1: Foundation & Infrastructure | 1-3 | 44h | 19% |
 | Phase 2: Design System & Components | 4-5 | 33.5h | 14% |
 | Phase 3: Landing Page & Sections | 6-7 | 34h | 14% |
@@ -1544,7 +1558,7 @@ gantt
 ## 🔑 Key Technical Decisions
 
 | Decision | Choice | Rationale |
-|----------|--------|-----------|
+| ---------- | -------- | ----------- |
 | **State Management** | React Server Components + Server Actions | Zero client bundle for data fetching, SSR-first |
 | **Database** | Supabase PostgreSQL | Realtime, RLS, Edge Functions, Auth built-in |
 | **Media Storage** | Cloudflare R2 | Zero egress fees, global edge, S3-compatible |
@@ -1563,7 +1577,7 @@ gantt
 ## 🛡️ Security Architecture
 
 | Layer | Implementation |
-|-------|---------------|
+| ------- | --------------- |
 | **Transport** | HTTPS everywhere, HSTS with preload |
 | **Headers** | CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy |
 | **Authentication** | Supabase Auth + Telegram admin verification |
@@ -1581,6 +1595,7 @@ gantt
 ## 🎨 Design Philosophy
 
 ### Color Palette Strategy
+
 ```
 Primary:     HSL(220, 70%, 50%)  →  Deep Professional Blue
 Secondary:   HSL(200, 60%, 45%)  →  Sophisticated Teal  
@@ -1591,11 +1606,13 @@ Text:        HSL(220, 10%, 95%)  →  Crisp White Text
 ```
 
 ### Typography
+
 - **Arabic**: Tajawal (Google Fonts) — clean, modern, excellent readability
 - **English**: Inter (Google Fonts) — professional, versatile, wide language support
 - **Scale**: Fluid typography with `clamp()` for responsive sizes
 
 ### Animation Philosophy
+
 - **Entrance**: Fade + slight translate (200-400ms, ease-out)
 - **Hover**: Scale + shadow (150ms, ease)
 - **Scroll**: Intersection Observer triggered, staggered children

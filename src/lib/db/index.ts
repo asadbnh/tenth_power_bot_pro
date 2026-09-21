@@ -1,7 +1,7 @@
 import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 
 /**
- * WebTaky Neon SQL Database Engine
+ * tenth-power-glass Neon SQL Database Engine
  * High-performance serverless PostgreSQL connection & fluent query adapter.
  */
 

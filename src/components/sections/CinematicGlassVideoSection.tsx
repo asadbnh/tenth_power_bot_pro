@@ -149,17 +149,31 @@ export function CinematicGlassVideoSection({ locale, videoUrl = "/videos/default
   }, [hasVideoError, videoUrl]);
 
   return (
-    <section className="relative py-6 sm:py-16 bg-[#040814] overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-8">
+    <section className="relative py-8 sm:py-20 bg-slate-50 dark:bg-[#040814] text-slate-900 dark:text-white overflow-hidden border-y border-slate-200/80 dark:border-white/5 transition-colors duration-300">
+      {/* Subtle Ambient Backlight */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[38rem] h-[20rem] bg-gradient-to-r from-amber-500/10 via-blue-600/5 to-amber-400/5 rounded-full blur-[100px]" />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(212,175,55,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.2) 1px, transparent 1px)",
+            backgroundSize: "36px 36px",
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/80 via-transparent to-slate-50 dark:from-[#040814]/80 dark:via-transparent dark:to-[#040814] transition-colors duration-300" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full royal-badge backdrop-blur-xl border border-amber-500/30 shadow-md"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 dark:bg-white/5 border border-amber-500/30 text-amber-800 dark:text-amber-200 text-xs sm:text-sm font-semibold shadow-xs backdrop-blur-xl"
           >
-            <HardHat className="w-3.5 h-3.5 text-amber-400" />
+            <HardHat className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             <span className="text-xs sm:text-sm font-semibold">
               {isRtl ? "التنفيذ الهندسي الميداني" : "On-Site Engineering Execution"}
             </span>
@@ -169,19 +183,19 @@ export function CinematicGlassVideoSection({ locale, videoUrl = "/videos/default
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-2xl sm:text-4xl font-extrabold text-white leading-snug sm:leading-tight"
+            className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-snug sm:leading-tight"
           >
             {isRtl ? (
               <>
                 دقة التنفيذ والتركيب الميداني{" "}
-                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-amber-400 dark:via-yellow-300 dark:to-amber-200 bg-clip-text text-transparent">
                   للواجهات المعمارية
                 </span>
               </>
             ) : (
               <>
                 Precision Field Installation &{" "}
-                <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-amber-400 dark:via-yellow-300 dark:to-amber-200 bg-clip-text text-transparent">
                   Structural Assembly
                 </span>
               </>
@@ -196,7 +210,7 @@ export function CinematicGlassVideoSection({ locale, videoUrl = "/videos/default
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="relative rounded-3xl overflow-hidden border border-white/20 shadow-2xl bg-surface-elevated aspect-video max-w-5xl mx-auto group"
+          className="relative rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/20 shadow-2xl bg-black aspect-video max-w-5xl mx-auto group ring-1 ring-slate-900/5 dark:ring-white/10"
         >
           {/* Real Video or Canvas Fallback */}
           {!hasVideoError && videoUrl ? (

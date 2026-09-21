@@ -25,8 +25,8 @@ export async function generateMetadata({
 
   const titleText = article ? (isAr ? article.title_ar || article.title : article.title_en || article.title) : slug.replace(/-/g, " ");
   const defaultTitle = isAr
-    ? `${titleText} | مدونة WebTaky`
-    : `${titleText} | WebTaky Blog`;
+    ? `${titleText} | مدونة tenth-power-glass`
+    : `${titleText} | tenth-power-glass Blog`;
   const defaultDescription = String(article?.excerpt_ar || article?.excerpt_en || article?.excerpt || (isAr
     ? `اقرأ مقال ${titleText} واكتشف أفضل النصائح والمعلومات الهندسية والمعمارية`
     : `Read article ${titleText} and discover architectural tips and insights`));
@@ -94,7 +94,7 @@ export default async function ArticleDetailPage({
     },
     publisher: {
       "@type": "Organization",
-      name: "WebTaky",
+      name: "tenth-power-glass",
       url: appUrl,
     },
   };

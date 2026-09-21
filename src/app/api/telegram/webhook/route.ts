@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json({
     status: "active",
-    system: "WebTaky Telegram Bot Engine",
+    system: "tenth-power-glass Telegram Bot Engine",
     timestamp: new Date().toISOString(),
   });
 }

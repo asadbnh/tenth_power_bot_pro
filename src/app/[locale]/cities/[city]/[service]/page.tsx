@@ -40,8 +40,8 @@ export async function generateMetadata({
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
 
   const title = isAr
-    ? `خدمة ${serviceName} في ${cityName} | WebTaky`
-    : `${serviceName} Services in ${cityName} | WebTaky`;
+    ? `خدمة ${serviceName} في ${cityName} | tenth-power-glass`
+    : `${serviceName} Services in ${cityName} | tenth-power-glass`;
 
   const description = isAr
     ? `افضل شركة توريد وتركيب ${serviceName} في ${cityName} وجميع أحياء ${regionName}. ضمان شامل واسعار منافسة.`

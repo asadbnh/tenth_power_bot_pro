@@ -88,13 +88,13 @@ export async function createFullBackupArchive(options?: {
   const sql = neon(databaseUrl);
   const zip = new AdmZip();
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-  const zipFileName = `webtaky-backup-${timestamp}.zip`;
+  const zipFileName = `tenth-power-glass-backup-${timestamp}.zip`;
 
   if (options?.onProgress) await options.onProgress("⏳ جاري استخراج وتصدير بيانات الـ 40 جدولاً من قاعدة البيانات...");
 
   // 1. Export Database Tables
   let totalRows = 0;
-  let sqlDumpText = `-- WebTaky Database Full SQL Dump\n-- Generated at: ${new Date().toISOString()}\n\n`;
+  let sqlDumpText = `-- tenth-power-glass Database Full SQL Dump\n-- Generated at: ${new Date().toISOString()}\n\n`;
 
   for (const tableName of ALL_TABLES) {
     try {

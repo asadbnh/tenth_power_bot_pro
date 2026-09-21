@@ -27,7 +27,7 @@ export function CTASection({ locale, dict }: CTASectionProps) {
   return (
     <section
       id="cta"
-      className="relative py-12 sm:py-20 overflow-hidden bg-[#070d1e]"
+      className="relative py-12 sm:py-20 overflow-hidden bg-slate-50 dark:bg-[#070d1e] text-slate-900 dark:text-white border-t border-b border-slate-200/80 dark:border-amber-500/10 transition-colors duration-300"
       aria-label={isRtl ? "تواصل معنا" : "Get in Touch"}
     >
       {/* Layered Architectural Atmosphere */}
@@ -37,11 +37,11 @@ export function CTASection({ locale, dict }: CTASectionProps) {
           className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)",
+              "linear-gradient(rgba(212,175,55,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.2) 1px, transparent 1px)",
             backgroundSize: "36px 36px",
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#070d1e]/85 via-transparent to-[#070d1e]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/85 via-transparent to-slate-50 dark:from-[#070d1e]/85 dark:via-transparent dark:to-[#070d1e] transition-colors duration-300" />
       </div>
 
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-5">
@@ -52,30 +52,30 @@ export function CTASection({ locale, dict }: CTASectionProps) {
           transition={{ duration: 0.5 }}
           className="space-y-3"
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-amber-500/30 text-xs font-semibold text-amber-200">
-            <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 dark:bg-white/5 border border-amber-500/30 text-xs font-semibold text-amber-800 dark:text-amber-200 shadow-xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             <span>{isRtl ? "معاينة هندسية ميدانية مجانية بالرياض" : "Free On-Site Survey in Riyadh"}</span>
           </div>
 
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-tight">
             {isRtl ? (
               <>
                 هل لديك مشروع معماري ترغب في{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-[#F3E7C4] dark:via-[#E5C378] dark:to-[#C99E32]">
                   دراسته وتنفيذه؟
                 </span>
               </>
             ) : (
               <>
                 Planning an Architectural or Contracting{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3E7C4] via-[#E5C378] to-[#C99E32]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-[#F3E7C4] dark:via-[#E5C378] dark:to-[#C99E32]">
                   Project?
                 </span>
               </>
             )}
           </h2>
 
-          <p className="text-xs sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
             {isRtl
               ? "تواصل مع القسم الهندسي لدراسة المواصفات الفنية المعتمدة وتلقي التقدير المالي وجدول التنفيذ الدقيق."
               : "Connect with our engineering division for technical specifications, accurate cost estimates, and execution timelines."}
@@ -115,9 +115,9 @@ export function CTASection({ locale, dict }: CTASectionProps) {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-xs text-slate-400 flex items-center justify-center gap-1.5 pt-2"
+          className="text-xs text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1.5 pt-2 font-medium"
         >
-          <ArrowRight className={cn("w-3.5 h-3.5 text-amber-400", isRtl && "rotate-180")} />
+          <ArrowRight className={cn("w-3.5 h-3.5 text-amber-600 dark:text-amber-400", isRtl && "rotate-180")} />
           <span>
             {isRtl
               ? "ضمان شامل 10 سنوات واعتماد كود البناء السعودي (SBC)"
