@@ -6,7 +6,7 @@
  */
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { notifyNewQuoteRequest, notifyNewMessage, notifyNewAppointment } from "@/lib/telegram/notifications";
+import { notifyNewQuoteRequest, notifyNewMessage, notifyNewAppointment } from "@/lib/notifications";
 
 const FALLBACK_COMPANY_ID = "00000000-0000-0000-0000-000000000001";
 

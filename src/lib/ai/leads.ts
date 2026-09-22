@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { notifyNewAiChatLead } from "@/lib/telegram/notifications";
+import { notifyNewAiChatLead } from "@/lib/notifications";
 
 /**
  * Normalizes Eastern Arabic / Persian numerals to Western digits (٠-٩ -> 0-9).
