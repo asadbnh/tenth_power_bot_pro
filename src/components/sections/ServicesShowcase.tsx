@@ -245,7 +245,7 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
           </Link>
         </motion.div>
 
-        {/* Real Saudi Contracting Credentials & Trust Strip
+        {/* Real Saudi Contracting Credentials & Trust Strip */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -302,7 +302,7 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
               );
             })}
           </div>
-        </motion.div> */}
+        </motion.div>
       </div>
     </section>
   );
