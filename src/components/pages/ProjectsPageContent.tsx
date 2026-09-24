@@ -4,8 +4,8 @@ import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { 
-  MapPin, Calendar, Filter, Building2, ShieldCheck, 
-  Layers, ArrowUpRight, Ruler, CheckCircle2, Sparkles
+  MapPin, Calendar, Filter, Building2, 
+   ArrowUpRight,  CheckCircle2, Sparkles
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
@@ -38,7 +38,7 @@ const CATEGORIES_EN = [
   { label: "General Contracting", key: "contracting" },
 ];
 
-export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
+export function ProjectsPageContent({ locale, initialProjects }: Props) {
   const isRtl = locale === "ar";
   const [activeCategory, setActiveCategory] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
@@ -132,44 +132,7 @@ export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
             )}
           </motion.h1>
 
-          <motion.p 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-sm sm:text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed"
-          >
-            {dict.projects.subtitle || (isRtl
-              ? "نماذج واقعية حية تم تنفيذها بأعلى معايير كود البناء السعودي (SBC)، تشمل واجهات الأبراج الاستركشر، قواطع السيكوريت الذكية، وقطاعات الألمنيوم المعزولة كسر حراري."
-              : "Discover real-world architectural achievements built to Saudi Building Code (SBC) standards, spanning structural curtain walls, securit partitions, and thermal-break aluminum.")}
-          </motion.p>
-
-          {/* Architectural Trust Strip */}
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto"
-          >
-            {[
-              { icon: ShieldCheck, title: isRtl ? "ضمان 10 سنوات" : "10-Year Warranty", sub: isRtl ? "شامل التركيب والعزل" : "Installation & Seals" },
-              { icon: Building2, title: isRtl ? "كود البناء السعودي" : "SBC Compliant", sub: isRtl ? "مطابقة تامة للمواصفات" : "Full Standards Match" },
-              { icon: Ruler, title: isRtl ? "معاينة ورفع مساحي" : "Free Riyadh Survey", sub: isRtl ? "مجاناً بالموقع خلال 24h" : "On-site within 24h" },
-              { icon: Layers, title: isRtl ? "+450 مشروع منجز" : "+450 Projects Built", sub: isRtl ? "سكني وتجاري وحكومي" : "Commercial & Residential" },
-            ].map((item, idx) => (
-              <div 
-                key={idx} 
-                className="p-3 rounded-2xl bg-white/85 dark:bg-white/[0.04] border border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-none backdrop-blur-md text-start flex items-center gap-3 transition-colors"
-              >
-                <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-600 dark:text-amber-400">
-                  <item.icon className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 dark:text-white leading-tight">{item.title}</p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{item.sub}</p>
-                </div>
-              </div>
-            ))}
-          </motion.div>
+       
         </div>
       </section>
 

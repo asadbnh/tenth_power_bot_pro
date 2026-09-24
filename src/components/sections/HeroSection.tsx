@@ -7,7 +7,10 @@ import {
   Sparkles,
   ArrowRight,
   Building2,
+  ShieldCheck,
+  Award,
   Ruler,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -248,7 +251,53 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
               </Link>
             </motion.div>
 
-           
+            {/* Architectural Trust & Authority Badges Matrix */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.9 }}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 pt-1 sm:pt-2 text-start"
+            >
+              <div className="rounded-xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md shadow-sm dark:shadow-none transition-colors">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 mb-0.5 sm:mb-1">
+                  <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "10 سنوات" : "10 Years"}</span>
+                </div>
+                <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
+                  {isRtl ? "ضمان شامل معتمد على التركيب والعوازل" : "Warranty on Installation & Seals"}
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md shadow-sm dark:shadow-none transition-colors">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 mb-0.5 sm:mb-1">
+                  <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "كود SBC" : "SBC Code"}</span>
+                </div>
+                <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
+                  {isRtl ? "مطابقة تامة لكود البناء السعودي" : "Saudi Building Code Compliant"}
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md shadow-sm dark:shadow-none transition-colors">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 mb-0.5 sm:mb-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "+450 مشروع" : "+450 Projects"}</span>
+                </div>
+                <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
+                  {isRtl ? "منفذة بنجاح بالرياض والمنطقة الوسطى" : "Executed Across Riyadh"}
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md shadow-sm dark:shadow-none transition-colors">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 mb-0.5 sm:mb-1">
+                  <Ruler className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "رفع مساحي" : "Surveying"}</span>
+                </div>
+                <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
+                  {isRtl ? "معاينة هندسية ميدانية فورية مجانية" : "Free On-Site Measurements"}
+                </p>
+              </div>
+            </motion.div>
           </div>
 
           {/* Right Column: 3D Image Showcase Slideshow Carousel & Controls */}
