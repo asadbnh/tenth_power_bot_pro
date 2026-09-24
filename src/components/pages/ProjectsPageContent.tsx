@@ -143,7 +143,7 @@ export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
               : "Discover real-world architectural achievements built to Saudi Building Code (SBC) standards, spanning structural curtain walls, securit partitions, and thermal-break aluminum.")}
           </motion.p>
 
-          {/* Architectural Trust Strip */}
+          {/* Architectural Trust Strip
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -169,7 +169,7 @@ export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
                 </div>
               </div>
             ))}
-          </motion.div>
+          </motion.div> */}
         </div>
       </section>
 
