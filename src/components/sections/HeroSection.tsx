@@ -251,7 +251,7 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
               </Link>
             </motion.div>
 
-            {/* Architectural Trust & Authority Badges Matrix */}
+            {/* Architectural Trust & Authority Badges Matrix 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -297,7 +297,7 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
                   {isRtl ? "معاينة هندسية ميدانية فورية مجانية" : "Free On-Site Measurements"}
                 </p>
               </div>
-            </motion.div>
+            </motion.div>*/}
           </div>
 
           {/* Right Column: 3D Image Showcase Slideshow Carousel & Controls */}
