@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import type { Locale } from "@/lib/i18n/config";
+import { notFound } from "next/navigation";
 import { CityServicePageContent } from "@/components/pages/CityServicePageContent";
 import { getCityServicePageBySlug, getCityPagesList, getServices } from "@/lib/actions/content";
-import { getFallbackCities, getFallbackServices } from "@/lib/fallback-provider";
+import { getFallbackServices } from "@/lib/fallback-provider";
 
 export async function generateStaticParams() {
   const params: { city: string; service: string }[] = [];
   const dbCities = await getCityPagesList("ar").catch(() => []);
   const dbServices = await getServices("ar").catch(() => []);
 
-  const cities = dbCities.length ? dbCities.map((c) => (c as unknown as { slug: string }).slug) : getFallbackCities().map((c) => c.slug);
+  const cities = (dbCities || []).map((c) => (c as unknown as { slug: string }).slug);
   const services = dbServices.length ? dbServices.map((s) => (s as unknown as { slug: string }).slug) : getFallbackServices().map((s) => s.slug);
 
   for (const city of cities) {
@@ -28,15 +29,10 @@ export async function generateMetadata({
   const { locale, city, service } = await params;
   const dbData = await getCityServicePageBySlug(city, service, locale).catch(() => null);
 
-  const fallbackCities = getFallbackCities();
-  const fallbackServices = getFallbackServices();
-  const fallbackCity = fallbackCities.find((c) => c.slug === city) || fallbackCities[0];
-  const fallbackService = fallbackServices.find((s) => s.slug === service) || fallbackServices[0];
-
   const isAr = locale === "ar";
-  const cityName = dbData?.cityName || (isAr ? fallbackCity?.city_name_ar : fallbackCity?.city_name_en) || city;
-  const serviceName = dbData?.serviceName || (isAr ? fallbackService?.name_ar : fallbackService?.name_en) || service;
-  const regionName = dbData?.regionName || (isAr ? fallbackCity?.region_ar : fallbackCity?.region_en) || "";
+  const cityName = dbData?.cityName || city;
+  const serviceName = dbData?.serviceName || service;
+  const regionName = dbData?.regionName || "";
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
 
   const title = isAr
@@ -44,8 +40,8 @@ export async function generateMetadata({
     : `${serviceName} Services in ${cityName} | tenth-power-glass`;
 
   const description = isAr
-    ? `افضل شركة توريد وتركيب ${serviceName} في ${cityName} وجميع أحياء ${regionName}. ضمان شامل واسعار منافسة.`
-    : `Best ${serviceName} supply & installation services in ${cityName} - ${regionName}. Comprehensive warranty and competitive rates.`;
+    ? `افضل شركة توريد وتركيب ${serviceName} في ${cityName}${regionName ? ` وجميع أحياء ${regionName}` : ""}. ضمان شامل واسعار منافسة.`
+    : `Best ${serviceName} supply & installation services in ${cityName}${regionName ? ` - ${regionName}` : ""}. Comprehensive warranty and competitive rates.`;
 
   return {
     title,
@@ -65,20 +61,13 @@ export default async function CityServicePage({
   const { locale, city, service } = await params;
   const dbData = await getCityServicePageBySlug(city, service, locale).catch(() => null);
 
-  const fallbackCities = getFallbackCities();
-  const fallbackServices = getFallbackServices();
-  const fallbackCity = fallbackCities.find((c) => c.slug === city) || fallbackCities[0];
-  const fallbackService = fallbackServices.find((s) => s.slug === service) || fallbackServices[0];
-
-  if (!dbData && (!fallbackCity || !fallbackService)) {
-    const { notFound } = await import("next/navigation");
+  if (!dbData) {
     notFound();
   }
 
-  const isAr = locale === "ar";
-  const cityName = String(dbData?.cityName || (isAr ? fallbackCity?.city_name_ar : fallbackCity?.city_name_en) || city);
-  const serviceName = String(dbData?.serviceName || (isAr ? fallbackService?.name_ar : fallbackService?.name_en) || service);
-  const regionName = String(dbData?.regionName || (isAr ? fallbackCity?.region_ar : fallbackCity?.region_en) || "");
+  const cityName = String(dbData.cityName || city);
+  const serviceName = String(dbData.serviceName || service);
+  const regionName = String(dbData.regionName || "");
 
   return (
     <CityServicePageContent
@@ -91,4 +80,5 @@ export default async function CityServicePage({
     />
   );
 }
+
 

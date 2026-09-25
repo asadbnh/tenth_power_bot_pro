@@ -40,18 +40,6 @@ export function getFallbackCompany() {
   });
 }
 
-export function getFallbackCities() {
-  return readJsonFile<Array<{
-    slug: string;
-    city_name_ar: string;
-    city_name_en: string;
-    region_ar: string;
-    region_en: string;
-    description_ar?: string;
-    description_en?: string;
-    hero_image_url?: string;
-  }>>("cities.json", []);
-}
 
 export function getFallbackServices() {
   return readJsonFile<Array<{

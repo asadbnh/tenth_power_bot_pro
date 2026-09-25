@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import type { Locale } from "@/lib/i18n/config";
+import { notFound } from "next/navigation";
 import { CityPageContent } from "@/components/pages/CityPageContent";
 import { getCityPageBySlug, getCityPagesList } from "@/lib/actions/content";
-import { getFallbackCities, getFallbackServices } from "@/lib/fallback-provider";
+import { getFallbackServices } from "@/lib/fallback-provider";
 
 export async function generateStaticParams() {
   const dbCities = await getCityPagesList("ar").catch(() => []);
   if (dbCities && dbCities.length > 0) {
     return dbCities.map((c) => ({ city: (c as unknown as { slug: string }).slug }));
   }
-  return getFallbackCities().map((c) => ({ city: c.slug }));
+  return [];
 }
 
 export async function generateMetadata({
@@ -19,11 +20,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, city } = await params;
   const dbCity = await getCityPageBySlug(city, locale).catch(() => null);
-  const fallbacks = getFallbackCities();
-  const fallback = fallbacks.find((c) => c.slug === city) || fallbacks[0];
 
-  const cityName = dbCity?.cityName || (locale === "ar" ? fallback?.city_name_ar : fallback?.city_name_en) || city;
-  const regionName = dbCity?.regionName || (locale === "ar" ? fallback?.region_ar : fallback?.region_en) || "";
+  const cityName = String(dbCity?.cityName || city);
+  const regionName = String(dbCity?.regionName || "");
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
 
   const isAr = locale === "ar";
@@ -31,8 +30,8 @@ export async function generateMetadata({
     ? `خدمات الزجاج والألمنيوم في ${cityName} | tenth-power-glass`
     : `Glass & Aluminum Services in ${cityName} | tenth-power-glass`);
   const description = String(dbCity?.description || (isAr
-    ? `أفضل شركة لخدمات الزجاج السكريت والألمنيوم والمطابخ والديكورات في ${cityName} - ${regionName}. تركيب احترافي وضمان شامل.`
-    : `Best glass, aluminum, kitchens & decoration services in ${cityName} - ${regionName}. Professional installation with comprehensive warranty.`));
+    ? `أفضل شركة لخدمات الزجاج السكريت والألمنيوم والمطابخ والديكورات في ${cityName}${regionName ? ` - ${regionName}` : ""}. تركيب احترافي وضمان شامل.`
+    : `Best glass, aluminum, kitchens & decoration services in ${cityName}${regionName ? ` - ${regionName}` : ""}. Professional installation with comprehensive warranty.`));
 
   return {
     title,
@@ -52,22 +51,19 @@ export default async function CityPage({
 }) {
   const { locale, city } = await params;
   const dbCity = await getCityPageBySlug(city, locale).catch(() => null);
-  const fallbacks = getFallbackCities();
-  const fallback = fallbacks.find((c) => c.slug === city) || fallbacks[0];
 
-  if (!dbCity && !fallback) {
-    const { notFound } = await import("next/navigation");
+  if (!dbCity) {
     notFound();
   }
 
   const cityData = {
-    ar: String(dbCity?.cityName || fallback?.city_name_ar || city),
-    en: String(dbCity?.cityName || fallback?.city_name_en || city),
-    region_ar: String(dbCity?.regionName || fallback?.region_ar || ""),
-    region_en: String(dbCity?.regionName || fallback?.region_en || ""),
+    ar: String(dbCity.cityName || city),
+    en: String(dbCity.cityName || city),
+    region_ar: String(dbCity.regionName || ""),
+    region_en: String(dbCity.regionName || ""),
   };
 
-  const services = (dbCity?.services && (dbCity.services as any[]).length > 0)
+  const services = (dbCity.services && (dbCity.services as any[]).length > 0)
     ? dbCity.services
     : getFallbackServices();
 
@@ -80,3 +76,4 @@ export default async function CityPage({
     />
   );
 }
+

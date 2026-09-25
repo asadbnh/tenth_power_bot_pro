@@ -4,7 +4,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getSql } from "@/lib/db";
 import {
   getFallbackCompany,
-  getFallbackCities,
   getFallbackServices,
   getFallbackProjects,
   getFallbackArticles,
@@ -907,11 +906,7 @@ export async function getCityPagesList(locale = "ar") {
       list = data;
     }
   } catch {
-    // fallback
-  }
-
-  if (list.length === 0) {
-    list = getFallbackCities() as Record<string, unknown>[];
+    // database error or offline
   }
 
   return list.map((c) => ({
@@ -947,14 +942,6 @@ async function fetchCityPageBySlugFromDb(slug: string, locale = "ar") {
     }
   } catch {
     // fallback
-  }
-
-  if (!cityPage) {
-    const fallbackCities = getFallbackCities();
-    const found = fallbackCities.find((c) => c.slug === slug) || fallbackCities[0];
-    if (found) {
-      cityPage = found as Record<string, unknown>;
-    }
   }
 
   if (!cityPage) return null;
@@ -1017,10 +1004,7 @@ async function fetchCityServicePageBySlugFromDb(citySlug: string, serviceSlug: s
     // fallback
   }
 
-  if (!cityPage) {
-    const fallbackCities = getFallbackCities();
-    cityPage = (fallbackCities.find((c) => c.slug === citySlug) || fallbackCities[0]) as Record<string, unknown>;
-  }
+  if (!cityPage) return null;
 
   if (!service) {
     const fallbackServices = getFallbackServices();
