@@ -12,7 +12,7 @@ import {
   Wrench,
   ShieldCheck,
   Award,
-  Ruler,
+
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -190,64 +190,8 @@ export function ServicesShowcase({ locale, dict, initialServices }: ServicesShow
           </Link>
         </motion.div>
 
-        {/* Real Saudi Contracting Credentials & Trust Strip */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mt-16 p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#091020] border border-slate-200/90 dark:border-white/10 shadow-xl dark:shadow-2xl transition-colors duration-300"
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: Award,
-                title_ar: "كود البناء السعودي (SBC)",
-                title_en: "Saudi Building Code (SBC)",
-                desc_ar: "مطابقة تامة لكافة اشتراطات السلامة ومقاومة الرياح والعزل",
-                desc_en: "Full compliance with SBC safety & insulation standards",
-              },
-              {
-                icon: ShieldCheck,
-                title_ar: "ضمان ذهبي 10 سنوات",
-                title_en: "10-Year Golden Warranty",
-                desc_ar: "ضمان شامل معتمد ضد تسريب المياه والهواء وتلف التركيبات",
-                desc_en: "Comprehensive warranty on air/water leakage and fittings",
-              },
-              {
-                icon: Ruler,
-                title_ar: "معاينة ورفع مساحي مجاني",
-                title_en: "Free On-Site Survey",
-                desc_ar: "زيارة هندسية ميدانية فورية لرفع المقاسات بكافة أحياء الرياض",
-                desc_en: "Instant site visit and measurements across Riyadh",
-              },
-              {
-                icon: Wrench,
-                title_ar: "إكسسوارات ستانلس 316 أصلية",
-                title_en: "Original Stainless 316 Hardware",
-                desc_ar: "مفصلات وسبايدر وسحابات معتمدة مقاومة للرطوبة والصدأ",
-                desc_en: "Corrosion-resistant certified fittings and spider systems",
-              },
-            ].map((feat, i) => {
-              const FeatIcon = feat.icon;
-              return (
-                <div key={i} className="flex items-center gap-3.5 px-2">
-                  <div className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0">
-                    <FeatIcon className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                  </div>
-                  <div className="space-y-0.5 text-start">
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
-                      {isRtl ? feat.title_ar : feat.title_en}
-                    </h4>
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-snug">
-                      {isRtl ? feat.desc_ar : feat.desc_en}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </motion.div>
+       
+
       </div>
     </section>
   );
