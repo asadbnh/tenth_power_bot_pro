@@ -16,74 +16,13 @@ import { SmartFallbackImage } from "@/components/ui/SmartFallbackImage";
 import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 import { SkeletonServiceCard } from "@/components/ui/Skeleton";
 
+import fallbackServices from "../../../public/fallback-data/services.json";
+
 interface Props {
   locale: Locale;
   dict: Dictionary;
   initialServices?: any[];
 }
-
-const DEFAULT_ARCHITECTURAL_SERVICES = [
-  {
-    slug: "curtain-walls",
-    name_ar: "الواجهات الزجاجية الإنشائية والاستركشر",
-    name_en: "Structural Glazing & Curtain Wall Facades",
-    desc_ar: "تنفيذ واجهات الأبراج والمباني التجارية بنظام الاستركشر والسبايدر (Curtain Walls) بزجاج مزدوج 24مم عازل للصوت والحرارة بأعلى معايير كود البناء السعودي.",
-    desc_en: "Execution of tower and commercial building facades using structural and spider curtain wall systems with 24mm double-glazed insulated acoustic panels.",
-    cover_image_url: "/images/defaults/services/glass-facades.webp",
-    spec_badge: "دبل جلاس 24مم • عزل U-Value",
-    features_ar: ["مطابقة تامة لكود البناء السعودي SBC", "عزل حراري وصوتي فائق معتمد", "قطاعات ألمنيوم استركشر ثقيلة", "ضمان 10 سنوات شامل التركيب والسيلكون"],
-  },
-  {
-    slug: "securit-glass",
-    name_ar: "زجاج السيكوريت والأبواب الأوتوماتيكية",
-    name_en: "Tempered Securit Glass & Automatic Doors",
-    desc_ar: "توريد وتركيب زجاج السيكوريت المقسّى سماكات 10-12 مم لواجهات المحلات والمعارض والمولات التجارية مع ماكينات أرضية إيطالية وأبواب أوتوماتيكية ذكية.",
-    desc_en: "Supply and installation of tempered securit glass 10-12mm for retail storefronts, showrooms, and malls with Italian floor springs and automatic sliding systems.",
-    cover_image_url: "/images/defaults/services/tempered-glass.webp",
-    spec_badge: "سيكوريت مقسّى 10-12مم • اكسسوارات إيطالية",
-    features_ar: ["مقاومة عالية للصدمات والحرارة", "أنظمة أبواب سحاب وأوتوماتيكية", "اكسسوارات استانلس ستيل 316 فاخرة", "قص وتفصيل بالليزر بدقة متناهية"],
-  },
-  {
-    slug: "aluminum-works",
-    name_ar: "قطاعات الألمنيوم المعزولة كسر حراري",
-    name_en: "Thermal-Break Insulated Aluminum Profiles",
-    desc_ar: "تصنيع وتركيب النوافذ والأبواب المعمارية بقطاعات ألمنيوم كسر حراري عازلة للغبار والحرارة والصوت (أنظمة سرايا، الجامبو، والأنظمة الأوروبية المعتمدة).",
-    desc_en: "Fabrication of architectural windows and doors with thermal-break aluminum profiles, sealing out Riyadh heat, dust, and acoustic noise.",
-    cover_image_url: "/images/defaults/services/aluminum-works.webp",
-    spec_badge: "أنظمة سرايا والجامبو • كسر حراري",
-    features_ar: ["تخفيض استهلاك التكييف بنسبة تصل إلى 40%", "دهانات إلكتروستاتيك مقاومة للطقس", "إحكام تام ضد مياه الأمطار والغبار", "زجاج مزدوج غاز أرجون عازل"],
-  },
-  {
-    slug: "glass-partitions",
-    name_ar: "فواصل وقواطع المكاتب الزجاجية العازلة",
-    name_en: "Acoustic Glass Office Partitions",
-    desc_ar: "تصميم وتنفيذ قواطع إدارية ومكتبية زجاجية تمنح بيئة العمل فخامة وعزلاً صوتياً متطوراً، مع إمكانية إضافة الزجاج الذكي (Smart Glass) والزجاج المعالج.",
-    desc_en: "Design and installation of corporate acoustic glass partitions, single and double-glazed, with smart switchable glass options.",
-    cover_image_url: "/images/defaults/services/doors-windows.webp",
-    spec_badge: "عزل صوتي 42dB • أنظمة Slimline",
-    features_ar: ["عزل صوتي متقدم للاجتماعات الخاصة", "قطاعات ألمنيوم نحيفة عصرية Slimline", "خيارات زجاج سيكوريت مصنفر ومخطط", "سرعة في التوريد والتركيب المكتبي"],
-  },
-  {
-    slug: "shower-cabins",
-    name_ar: "كبائن الشاور الزجاجية الفاخرة",
-    name_en: "Luxury Frameless Glass Shower Cabins",
-    desc_ar: "تفصيل وتركيب كبائن زجاجية للشاور والمسابح بدون إطار (Frameless) بزجاج 10مم معالج ضد الترسبات الكلسية واكسسوارات استانلس ستيل 304/316 المقاومة للصدأ.",
-    desc_en: "Custom frameless tempered shower cabins using 10mm anti-limescale treated glass and rust-proof stainless steel 304/316 hardware.",
-    cover_image_url: "/images/defaults/projects/project-2.webp",
-    spec_badge: "زجاج 10مم نانو سيراميك • استيل 316",
-    features_ar: ["طبقة نانو عازلة للترسبات وسهلة التنظيف", "مفصلات ومقابض استانلس أصلية", "إحكام تام للعزل المائي بدون تسريب", "تفصيل حسب مقاسات الحمامات الدقيقة"],
-  },
-  {
-    slug: "mirrors-decor",
-    name_ar: "مرايا الليد الديكورية والزجاج المشطوف",
-    name_en: "Bespoke Backlit LED Mirrors & Decorative Glass",
-    desc_ar: "تفصيل وتركيب مرايا ليد فاخرة، مرايا شطف ومرايا برونزية ورمادية بمقاسات جدارية ضخمة للقصور والفلل والفنادق والمشاغل الراقية بأحدث تقنيات الإنارة المخفية.",
-    desc_en: "Custom LED-backlit mirrors, beveled wall mirrors, bronze and grey tinting for luxury palaces, villas, and hospitality projects.",
-    cover_image_url: "/images/defaults/services/decorations.webp",
-    spec_badge: "مرايا بلجيكية أصلية • إنارة IP65",
-    features_ar: ["مرايا بلجيكية نقية خالية من التموجات", "إضاءة ليد مخفية ضد الرطوبة IP65", "قص وتشكيل CNC حسب الطلب الهندسي", "مقاومة للرطوبة وتغير لون الحواف"],
-  },
-];
 
 export function ServicesPageContent({ locale, dict, initialServices }: Props) {
   const isRtl = locale === "ar";
@@ -94,9 +33,9 @@ export function ServicesPageContent({ locale, dict, initialServices }: Props) {
     return () => clearTimeout(t);
   }, []);
 
-  // Merge DB services with rich architectural defaults if DB has fewer or empty
+  // Merge DB services with rich architectural defaults from fallback-data if DB has fewer or empty
   const dbServices = (initialServices && initialServices.length > 0) ? initialServices : [];
-  const services = dbServices.length >= 4 ? dbServices : DEFAULT_ARCHITECTURAL_SERVICES;
+  const services = dbServices.length >= 4 ? dbServices : fallbackServices;
 
   return (
     <div className="pt-[var(--header-height)]">

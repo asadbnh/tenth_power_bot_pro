@@ -11,6 +11,7 @@ import {
   getFallbackFaqs,
   getFallbackTestimonials,
   getFallbackGallery,
+  getFallbackGalleryAlbums,
 } from "@/lib/fallback-provider";
 
 const FALLBACK_COMPANY_ID = "00000000-0000-0000-0000-000000000001";
@@ -647,14 +648,17 @@ async function fetchGalleryAlbumsFromDb(locale = "ar") {
     logDbWarning("Error fetching gallery albums from DB", err);
   }
 
-  return [
-    { id: 1, slug: "glass", title_ar: "مشاريع الزجاج", title_en: "Glass Projects", count: 24, image_url: "/images/defaults/services/tempered-glass.webp" },
-    { id: 2, slug: "aluminum", title_ar: "أعمال الألمنيوم", title_en: "Aluminum Works", count: 18, image_url: "/images/defaults/services/aluminum-works.webp" },
-    { id: 3, slug: "kitchens", title_ar: "تصاميم المطابخ", title_en: "Kitchen Designs", count: 32, image_url: "/images/defaults/services/kitchens.webp" },
-    { id: 4, slug: "decor", title_ar: "مشاريع الديكور", title_en: "Decoration Projects", count: 41, image_url: "/images/defaults/services/decorations.webp" },
-    { id: 5, slug: "facades", title_ar: "الواجهات الزجاجية", title_en: "Glass Facades", count: 15, image_url: "/images/defaults/services/glass-facades.webp" },
-    { id: 6, slug: "doors", title_ar: "أبواب ونوافذ", title_en: "Doors & Windows", count: 28, image_url: "/images/defaults/services/doors-windows.webp" },
-  ];
+  const fallbackAlbums = getFallbackGalleryAlbums();
+  return fallbackAlbums.map((a: any) => ({
+    id: a.id,
+    slug: a.slug,
+    title_ar: a.title_ar,
+    title_en: a.title_en || a.title_ar,
+    title: isAr ? a.title_ar : a.title_en || a.title_ar,
+    description: "",
+    count: Math.max(a.count || 0, 1),
+    image_url: a.image_url || "/images/defaults/services/tempered-glass.webp",
+  }));
 }
 
 const getCachedGalleryAlbumsData = unstable_cache(

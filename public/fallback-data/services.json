@@ -1,193 +1,262 @@
 [
   {
-    "slug": "tempered-glass",
-    "name_ar": "زجاج سكريت مقوى",
-    "name_en": "Tempered Glass",
-    "short_description_ar": "تركيب زجاج سكريت مقوى عالي المقاومة للصدمات بسماكات 6مم إلى 12مم للأبواب والكبائن والفواصل مع ضمان 10 سنوات.",
-    "short_description_en": "High-impact tempered glass installation (6mm-12mm) for doors, showers, and office partitions with 10-year warranty.",
-    "full_description_ar": "نقدم أفضل حلول الزجاج السكريت المقوى الذي يخضع لمعالجة حرارية فائقة لزيادة قوته ومقاومته للضغط الحراري والصدمات الميكانيكية بـ 5 أضعاف الزجاج العادي. مناسب لأبواب المكاتب، كبائن الشاور، المظلات الزجاجية، والأرضيات.",
-    "full_description_en": "We offer premium tempered glass solutions treated under extreme heat to enhance thermal and impact strength up to 5x over normal glass. Ideal for office doors, shower cabins, canopies, and glass floors.",
-    "price_from": 180.0,
-    "price_to": 350.0,
-    "price_unit": "متر مربع",
-    "cover_image_url": "/images/defaults/services/luxury-partitions.webp",
-    "icon": "Layers3",
+    "slug": "curtain-walls",
+    "name_ar": "الواجهات الزجاجية الإنشائية والاستركشر",
+    "name_en": "Structural Glazing & Curtain Wall Facades",
+    "short_description_ar": "تصميم وتنفيذ واجهات زجاج استركشر إنشائية مستمرة بدون فريمات خارجية وأنظمة كارتن وول عازلة للحرارة والصوت للمباني والمراكز التجارية.",
+    "short_description_en": "Design and installation of frameless structural glass facades and curtain wall systems with thermal and acoustic insulation for buildings and commercial centers.",
+    "full_description_ar": "نقدم حلولاً هندسية متقدمة في تصميم وتوريد وتركيب واجهات زجاج الاستركشر الإنشائي (Structural Glazing) وأنظمة الكارتن وول (Curtain Walls) للمباني الإدارية، المجمعات التجارية، والأبراج. نعتمد زجاج دبل جلاس سكريت مفرغ بغاز الآرجون عالي العزل للحرارة بنسبة تصل إلى 80% ومقاوم للأشعة فوق البنفسجية، مع قطاعات ألمنيوم ثقيلة وتثبيت هيكلي مخفي بحقن السيليكون الإنشائي المعتمد وفق كود البناء السعودي.",
+    "full_description_en": "We provide advanced engineering solutions for the design, supply, and installation of Structural Glazing and Curtain Wall systems for administrative buildings, commercial complexes, and towers. Solutions include argon-filled double-glazed tempered glass, heavy-duty aluminum profiles, and concealed structural fixing using approved structural silicone in accordance with the Saudi Building Code.",
+    "cover_image_url": "/images/defaults/services/glass-facades.webp",
+    "icon": "Building2",
+    "spec_badge": "دبل جلاس 24مم • عزل U-Value",
     "features_ar": [
-      "مقاوم للصدمات والحرارة العالية",
-      "إكسسوارات استانلس ستيل 316 ضد الصدأ",
-      "قص وتفصيل بالليزر بدقة متناهية",
-      "ضمان 10 سنوات على التركيب والمواد"
+      "مطابقة تامة لكود البناء السعودي SBC",
+      "عزل حراري وصوتي فائق معتمد",
+      "قطاعات ألمنيوم استركشر ثقيلة",
+      "ضمان 10 سنوات شامل التركيب والسيلكون"
     ],
     "features_en": [
-      "High impact & thermal resistance",
-      "316 Stainless steel anti-rust hardware",
-      "Precision laser cutting & sizing",
-      "10-year installation & material warranty"
-    ],
-    "specs": [
-      {
-        "label_ar": "السماكات المتاحة",
-        "label_en": "Available Thickness",
-        "value_ar": "6مم، 8مم، 10مم، 12مم",
-        "value_en": "6mm, 8mm, 10mm, 12mm"
-      },
-      {
-        "label_ar": "أنواع الزجاج",
-        "label_en": "Glass Types",
-        "value_ar": "شفاف، مثلج، ملون، فائق النقاء",
-        "value_en": "Clear, Frosted, Tinted, Ultra-Clear"
-      },
-      {
-        "label_ar": "معيار الأمان",
-        "label_en": "Safety Standard",
-        "value_ar": "ANSI Z97.1 / BS 6206",
-        "value_en": "ANSI Z97.1 / BS 6206"
-      },
-      {
-        "label_ar": "مدة الضمان",
-        "label_en": "Warranty Period",
-        "value_ar": "10 سنوات شاملة",
-        "value_en": "10 Years Full Warranty"
-      }
-    ],
-    "faqs": [
-      {
-        "q_ar": "هل يمكن قص الزجاج السكريت بعد المعالجة؟",
-        "q_en": "Can tempered glass be cut after processing?",
-        "a_ar": "لا، يتم التقطيع والعمليات جميعها قبل إدخال الزجاج فرن السكريت.",
-        "a_en": "No, all cutting and drilling must happen before the tempering heat treatment."
-      },
-      {
-        "q_ar": "ما هي مدة التوريد والتركيب؟",
-        "q_en": "What is the delivery & installation time?",
-        "a_ar": "عادة تتراوح بين 3 إلى 7 أيام عمل حسب حجم المشروع.",
-        "a_en": "Usually takes between 3 to 7 working days depending on project size."
-      }
+      "Full compliance with Saudi Building Code SBC",
+      "Certified superior thermal and acoustic insulation",
+      "Heavy-duty structural aluminum profiles",
+      "10-year warranty covering installation and sealing"
     ],
     "is_featured": true,
     "sort_order": 1
   },
   {
-    "slug": "glass-facades",
-    "name_ar": "واجهات زجاجية (كرتن وول & سبايدر)",
-    "name_en": "Glass Facades & Curtain Walls",
-    "short_description_ar": "تصميم وتثبيت واجهات المباني الزجاجية الهيكلية وأنظمة الكرتن وول والسبايدر بأعلى معدلات عزل الصوت والحرارة.",
-    "short_description_en": "Structural glass facades, curtain walls, and spider fittings for commercial buildings with premium thermal & sound insulation.",
-    "full_description_ar": "نمتلك خبرة متقدمة في هندسة وتثبيت واجهات المباني والمراكز التجارية والمستشفيات والشركات بأنظمة الكرتن وول المزدوج والسبايدر المزود بقطع تثبيت استانلس ستيل عالية التحمل، مع زجاج دبل جلاس معالج بنظام العزل الحراري Low-E.",
-    "full_description_en": "Advanced engineering and installation of commercial glass facades using double curtain walls and heavy-duty stainless spider systems featuring Low-E double insulated glass.",
-    "price_from": 450.0,
-    "price_to": 900.0,
-    "price_unit": "متر مربع",
-    "cover_image_url": "/images/defaults/services/luxury-facade.webp",
-    "icon": "Building2",
+    "slug": "securit-glass",
+    "name_ar": "زجاج السيكوريت والأبواب الأوتوماتيكية",
+    "name_en": "Tempered Securit Glass & Automatic Doors",
+    "short_description_ar": "توريد وتركيب زجاج سيكوريت عالي المقاومة للصدمات بسماكات 10-12 مم للأبواب والواجهات والمداخل مع أنظمة هيدروليك إيطالية.",
+    "short_description_en": "High-impact tempered securit glass (10-12mm) for doors, entrances, and storefronts with Italian hydraulic fittings.",
+    "full_description_ar": "توريد وتركيب زجاج السيكوريت المقسّى سماكات 10-12 مم لواجهات المحلات والمعارض والمولات التجارية مع ماكينات أرضية إيطالية وأبواب أوتوماتيكية ذكية تضمن أعلى معايير الأمان ومقاومة الصدمات والضغط الحراري.",
+    "full_description_en": "Supply and installation of tempered securit glass 10-12mm for retail storefronts, showrooms, and malls with Italian floor springs and automatic sliding systems.",
+    "cover_image_url": "/images/defaults/services/tempered-glass.webp",
+    "icon": "Layers3",
+    "spec_badge": "سيكوريت مقسّى 10-12مم • اكسسوارات إيطالية",
     "features_ar": [
-      "زجاج مزدوج معزول حرارياً Low-E",
-      "مقاومة سرعات الرياح العالية حتى 200 كم/س",
-      "تصاميم معمارية فخمة وانيقة",
-      "عزل صوتي يصل لـ 45 ديسيبل"
+      "مقاومة عالية للصدمات والحرارة",
+      "أنظمة أبواب سحاب وأوتوماتيكية",
+      "اكسسوارات استانلس ستيل 316 فاخرة",
+      "قص وتفصيل بالليزر بدقة متناهية"
     ],
     "features_en": [
-      "Low-E Double Insulated Glass",
-      "High wind load resistance up to 200 km/h",
-      "Luxurious architectural aesthetics",
-      "Acoustic rating up to 45 dB"
-    ],
-    "specs": [
-      {
-        "label_ar": "أنظمة التثبيت",
-        "label_en": "Fitting Systems",
-        "value_ar": "كرتن وول، سبايدر، زجاج هيكلي",
-        "value_en": "Curtain Wall, Spider, Structural Glazing"
-      },
-      {
-        "label_ar": "نوع الزجاج",
-        "label_en": "Glass Spec",
-        "value_ar": "دبل معزول بطلاء Low-E",
-        "value_en": "Double Glazed Low-E Coated"
-      },
-      {
-        "label_ar": "ضمان التسريب",
-        "label_en": "Leakage Warranty",
-        "value_ar": "10 سنوات ضمان عدم التسريب",
-        "value_en": "10-Year Water & Air Leakage Warranty"
-      }
-    ],
-    "faqs": [
-      {
-        "q_ar": "هل الواجهات الزجاجية آمنة في الرياح العاصفة؟",
-        "q_en": "Are glass facades safe in high winds?",
-        "a_ar": "نعم، يتم حساب سماكات الزجاج والهياكل المعدنية لتقاوم أشد العواصف وفق كود البناء السعودي.",
-        "a_en": "Yes, glass thickness and frame profiles are engineered to withstand extreme storm loads under SBC."
-      }
+      "High impact and thermal resistance",
+      "Sliding and automatic sensor doors",
+      "Premium stainless steel 316 fittings",
+      "Ultra-precise laser cutting and edging"
     ],
     "is_featured": true,
     "sort_order": 2
   },
   {
     "slug": "aluminum-works",
-    "name_ar": "أعمال الألمنيوم والنوافذ المعزولة",
-    "name_en": "Aluminum Works & Insulated Windows",
-    "short_description_ar": "تصنيع وتراكيب قطاعات الألمنيوم المعزولة حرارياً للنوافذ والأبواب والواجهات بأحدث التقنيات والإكسسوارات الأوروبية.",
-    "short_description_en": "Fabrication and installation of thermal-break aluminum windows, doors, and storefronts with European hardware.",
-    "full_description_ar": "نقدم قطاعات ألمنيوم متطورة مزودة بكسر حراري (Thermal Break) تضمن أقصى درجات توفير الطاقة والتكييف داخل المبنى، مع إكسسوارات إيطالية وألمانية ذات عمر افتراضي طويل وسحب سلس.",
-    "full_description_en": "Advanced thermal-break aluminum profiles engineered to minimize energy loss and HVAC load, featuring premium Italian & German hardware.",
-    "price_from": 320.0,
-    "price_to": 650.0,
-    "price_unit": "متر مربع",
-    "cover_image_url": "/images/defaults/services/luxury-sliding-doors.webp",
+    "name_ar": "قطاعات الألمنيوم المعزولة كسر حراري",
+    "name_en": "Thermal-Break Insulated Aluminum Profiles",
+    "short_description_ar": "تصنيع وتركيب قطاعات الألمنيوم المعزولة حرارياً للنوافذ والأبواب والواجهات بأحدث التقنيات المطابقة لكود البناء السعودي SBC.",
+    "short_description_en": "Fabrication of thermal-break aluminum profiles for windows and doors meeting Saudi Building Code standards.",
+    "full_description_ar": "تصنيع وتركيب النوافذ والأبواب المعمارية بقطاعات ألمنيوم كسر حراري عازلة للغبار والحرارة والصوت (أنظمة سرايا، الجامبو، والأنظمة الأوروبية المعتمدة) لتوفير الطاقة وتحمل أقصى درجات حرارة الصيف في المملكة.",
+    "full_description_en": "Fabrication of architectural windows and doors with thermal-break aluminum profiles, sealing out Riyadh heat, dust, and acoustic noise.",
+    "cover_image_url": "/images/defaults/services/aluminum-works.webp",
     "icon": "RectangleHorizontal",
+    "spec_badge": "أنظمة سرايا والجامبو • كسر حراري",
     "features_ar": [
-      "كسر حراري عالي الكفاءة توفير التكييف",
-      "دهان بودر كوتينج مقاوم للخدش والعوامل الجوية",
-      "إكسسوارات أوروبية تجميع عالي الدقة",
-      "مانع لتسرب المياه والغبار والضوضاء"
+      "تخفيض استهلاك التكييف بنسبة تصل إلى 40%",
+      "دهانات إلكتروستاتيك مقاومة للطقس",
+      "إحكام تام ضد مياه الأمطار والغبار",
+      "زجاج مزدوج غاز أرجون عازل"
     ],
     "features_en": [
-      "High thermal break insulation",
-      "Weather & scratch resistant powder coating",
-      "Premium European hardware & locks",
-      "Water, dust, and noise sealing"
+      "Reduces HVAC electricity consumption by up to 40%",
+      "Weather-resistant electrostatic powder coatings",
+      "Complete sealing against rain and fine sand dust",
+      "Double-glazed insulated argon gas panels"
     ],
-    "specs": [
-      {
-        "label_ar": "القطاعات المتاحة",
-        "label_en": "Available Profiles",
-        "value_ar": "سرايا، جامبو، سوبر سرايا، معزول حرارياً",
-        "value_en": "Saraya, Jumbo, Super Saraya, Thermal Break"
-      }
-    ],
-    "faqs": [],
     "is_featured": true,
     "sort_order": 3
   },
   {
-    "slug": "kitchens-and-decor",
-    "name_ar": "المطابخ والديكورات الحديثة",
-    "name_en": "Modern Kitchens & Interior Decor",
-    "short_description_ar": "تصميم وتنفيذ المطابخ الأكريليك والألمنيوم الفاخرة مع أدراج هيدروليكية وإضاءات مخفية تناسب تطلعاتك.",
-    "short_description_en": "Design and installation of modern acrylic & aluminum kitchens with soft-close drawers and ambient LED lighting.",
-    "full_description_ar": "نصمم مطابخ الأحلام بهياكل ألمنيوم غير قابلة للصدأ أو التآكل، ومغلفة بأسطح أكريليك وخشب معالج ضد المياه والحشرات، مع مفصلات وأدراج نمساوية ذات إغلاق صامت.",
-    "full_description_en": "Custom kitchens featuring durable rust-proof aluminum frames clad with acrylic or water-resistant surfaces and Austrian soft-close hardware.",
-    "price_from": 1200.0,
-    "price_to": 2800.0,
-    "price_unit": "متر طولي",
-    "cover_image_url": "/images/defaults/services/luxury-kitchen.webp",
-    "icon": "PaintBucket",
+    "slug": "glass-partitions",
+    "name_ar": "فواصل وقواطع المكاتب الزجاجية العازلة",
+    "name_en": "Acoustic Glass Office Partitions",
+    "short_description_ar": "فواصل زجاجية عازلة للصوت تمنح المكاتب والشركات بيئة عمل راقية مع أبواب سحاب أو مفصلي بنظام إغلاق ناعم (Soft-Close).",
+    "short_description_en": "Soundproof acoustic glass partitions providing luxury corporate aesthetics with soft-close sliding and swing doors.",
+    "full_description_ar": "تصميم وتنفيذ قواطع إدارية ومكتبية زجاجية تمنح بيئة العمل فخامة وعزلاً صوتياً متطوراً، مع إمكانية إضافة الزجاج الذكي (Smart Glass) والزجاج المعالج بمختلف أنماط الصنفرة والتعتيم.",
+    "full_description_en": "Design and installation of corporate acoustic glass partitions, single and double-glazed, with smart switchable glass options.",
+    "cover_image_url": "/images/defaults/services/doors-windows.webp",
+    "icon": "DoorOpen",
+    "spec_badge": "عزل صوتي 42dB • أنظمة Slimline",
     "features_ar": [
-      "هيكل ألمنيوم متين مقاوم للماء والحشرات",
-      "أسطح رخام صناعي وجرانيت عالي الجودة",
-      "أدراج ومفصلات هيدروليكية إغلاق صامت",
-      "إضاءات LED مخفية بتصميم مودرن"
+      "عزل صوتي متقدم للاجتماعات الخاصة",
+      "قطاعات ألمنيوم نحيفة عصرية Slimline",
+      "خيارات زجاج سيكوريت مصنفر ومخطط",
+      "سرعة في التوريد والتركيب المكتبي"
     ],
     "features_en": [
-      "Durable water & pest proof aluminum frame",
-      "High quality quartz & granite countertops",
-      "Hydraulic soft-close drawers & hinges",
-      "Modern ambient hidden LED lighting"
+      "Advanced acoustic isolation for private meeting rooms",
+      "Modern slimline aluminum framework",
+      "Frosted, fluted, and smart switchable glass options",
+      "Rapid delivery and precise commercial installation"
     ],
-    "specs": [],
-    "faqs": [],
     "is_featured": true,
     "sort_order": 4
+  },
+  {
+    "slug": "shower-cabins",
+    "name_ar": "كبائن الشاور الزجاجية الفاخرة",
+    "name_en": "Luxury Frameless Glass Shower Cabins",
+    "short_description_ar": "كبائن شاور زجاج سيكوريت معالج بتقنية النانو المقاومة للترسبات الكلسية، مع إكسسوارات ستانلس ستيل 316 مقاوم للصدأ.",
+    "short_description_en": "Securit glass shower enclosures treated with anti-limescale nano-coating and corrosion-proof 316 stainless steel.",
+    "full_description_ar": "تفصيل وتركيب كبائن زجاجية للشاور والمسابح بدون إطار (Frameless) بزجاج 10مم معالج ضد الترسبات الكلسية واكسسوارات استانلس ستيل 304/316 المقاومة للصدأ بأحدث التصاميم المودرن الفندقية.",
+    "full_description_en": "Custom frameless tempered shower cabins using 10mm anti-limescale treated glass and rust-proof stainless steel 304/316 hardware.",
+    "cover_image_url": "/images/defaults/projects/project-2.webp",
+    "icon": "ShieldCheck",
+    "spec_badge": "زجاج 10مم نانو سيراميك • استيل 316",
+    "features_ar": [
+      "طبقة نانو عازلة للترسبات وسهلة التنظيف",
+      "مفصلات ومقابض استانلس أصلية",
+      "إحكام تام للعزل المائي بدون تسريب",
+      "تفصيل حسب مقاسات الحمامات الدقيقة"
+    ],
+    "features_en": [
+      "Nano-ceramic protective layer, easy to clean",
+      "Genuine corrosion-proof SS316 hinges and handles",
+      "Watertight sealing preventing any floor leakage",
+      "Bespoke manufacturing tailored to bathroom dimensions"
+    ],
+    "is_featured": true,
+    "sort_order": 5
+  },
+  {
+    "slug": "mirrors-decor",
+    "name_ar": "مرايا الليد الديكورية والزجاج المشطوف",
+    "name_en": "Bespoke Backlit LED Mirrors & Decorative Glass",
+    "short_description_ar": "تفصيل مرايا جدارية فاخرة بزجاج بلجيكي عالي النقاء وشطف ليزر دقيق مع إضاءات LED ذكية مخفية للفنادق والقصور.",
+    "short_description_en": "Custom high-clarity Belgian mirrors with 45° bevel edges and smart ambient LED illumination for villas and hotels.",
+    "full_description_ar": "تفصيل وتركيب مرايا ليد فاخرة، مرايا شطف ومرايا برونزية ورمادية بمقاسات جدارية ضخمة للقصور والفلل والفنادق والمشاغل الراقية بأحدث تقنيات الإنارة المخفية المضادة للرطوبة.",
+    "full_description_en": "Custom LED-backlit mirrors, beveled wall mirrors, bronze and grey tinting for luxury palaces, villas, and hospitality projects.",
+    "cover_image_url": "/images/defaults/services/decorations.webp",
+    "icon": "GalleryHorizontalEnd",
+    "spec_badge": "مرايا بلجيكية أصلية • إنارة IP65",
+    "features_ar": [
+      "مرايا بلجيكية نقية خالية من التموجات",
+      "إضاءة ليد مخفية ضد الرطوبة IP65",
+      "قص وتشكيل CNC حسب الطلب الهندسي",
+      "مقاومة للرطوبة وتغير لون الحواف"
+    ],
+    "features_en": [
+      "Flawless distortion-free pure Belgian glass mirrors",
+      "Waterproof concealed LED backlighting IP65",
+      "Precision CNC cutting to any custom shape",
+      "Anti-oxidation edges preventing blackening"
+    ],
+    "is_featured": true,
+    "sort_order": 6
+  },
+  {
+    "slug": "spider-glass-and-cladding-facades",
+    "name_ar": "واجهات السبايدر وتكسيات الكلادينج المعمارية",
+    "name_en": "Spider Glass Facades & Architectural Cladding",
+    "short_description_ar": "تنفيذ واجهات زجاجية بانورامية معلقة بنظام السبايدر وأذرع التثبيت SUS 316 المدمجة بتكسيات الكلادينج والإنارة المعمارية.",
+    "short_description_en": "Installation of panoramic spider glass facades with SUS 316 fixing arms integrated with architectural cladding and lighting.",
+    "full_description_ar": "نختص في إنجاز الواجهات الزجاجية الإنشائية البانورامية بنظام أذرع التثبيت الزجاجية (Spider Point-Fixed System) الممتدة لعدة طوابق للمعارض والمراكز التجارية الكبرى. ندمج الواجهات بأحدث تكسيات الألمنيوم المركب (الكلادينج) المقاوم للحريق بتشكيل المنحنيات المعمارية المتقنة.",
+    "full_description_en": "We specialize in panoramic structural glass facades using Spider Point-Fixed Systems extending across multiple floors for showrooms and major commercial centers.",
+    "cover_image_url": "/images/defaults/services/twenty-five-commercial-center-facade-1.webp",
+    "icon": "Building2",
+    "spec_badge": "سبايدر SUS 316 • كلادينج مقاوم للحريق",
+    "features_ar": [
+      "واجهات زجاجية بانورامية بنظام السبايدر (Spider Glass Facade) بإكسسوارات SUS 316",
+      "ألواح زجاج سكريت دبل جلاس ومصفح فائقة الشفافية والنقاوة (Ultra-Clear)",
+      "تكسيات واجهات الكلادينج المقاوم للحريق مع تشكيل المنحنيات المعمارية للزوايا",
+      "دمج خطوط الإنارة المعمارية (LED Linear Lighting) المحيطية بإطارات الواجهات"
+    ],
+    "features_en": [
+      "Panoramic Spider Glass Facades with SUS 316 fittings",
+      "Ultra-Clear tempered, double-glazed, and laminated glass panels",
+      "Fire-resistant cladding with architectural curved corner formations",
+      "Integrated linear LED architectural lighting"
+    ],
+    "is_featured": true,
+    "sort_order": 7
+  },
+  {
+    "slug": "curved-glass-panoramic-elevators",
+    "name_ar": "تكسية المصاعد البانورامية بالزجاج المنحني",
+    "name_en": "Curved Glass Panoramic Elevator Cladding",
+    "short_description_ar": "تصنيع وتثبيت ألواح زجاج سكريت مقوس مصفح كيرف لأبراج المصاعد البانورامية الشاهقة بارتفاعات تتجاوز 8 أمتار.",
+    "short_description_en": "Fabrication and installation of curved laminated tempered glass panels for panoramic elevator towers exceeding 8 meters in height.",
+    "full_description_ar": "ريادة هندسية في تفصيل وتشكيل وتركيب زجاج سكريت مقوس مصفح (Curved Laminated & Tempered Glass) لأبراج مصاعد البانوراما الدائرية والأسطوانية في القصور والفلل والمجمعات الراقية.",
+    "full_description_en": "Custom fabrication and installation of curved laminated and tempered glass for circular and cylindrical panoramic elevator towers.",
+    "cover_image_url": "/images/defaults/services/curved-glass-panoramic-elevator-villa-1.webp",
+    "icon": "Building2",
+    "spec_badge": "زجاج كيرف مقوس • مصاعد بانورامية",
+    "features_ar": [
+      "تشكيل زجاج سكريت مصفح مقوس بسماكات أمان عالية",
+      "تغطية أبراج مصاعد بانورامية بارتفاعات تتجاوز 8 أمتار",
+      "أقواس وهياكل تثبيت دائرية من الستانلس ستيل",
+      "مطابقة كاملة لاشتراطات السلامة لكود البناء السعودي"
+    ],
+    "features_en": [
+      "Curved laminated tempered glass with high safety specs",
+      "Continuous cylindrical panoramic elevator towers",
+      "Architectural stainless steel circular support structures",
+      "Full compliance with Saudi Building Code safety standards"
+    ],
+    "is_featured": true,
+    "sort_order": 8
+  },
+  {
+    "slug": "curved-glass-display-showcases",
+    "name_ar": "فاترينات وثلاجات العرض بالزجاج المنحني",
+    "name_en": "Curved Glass Display Showcases & Refrigerators",
+    "short_description_ar": "تصميم وتصنيع فاترينات وثلاجات عرض أسطوانية كيرف فائقة الصفاء لمتاجر الحلويات ومخابز الكيك الفاخرة والشوكولاتة.",
+    "short_description_en": "Design and fabrication of ultra-clear curved cylindrical display cases and refrigerators for premium pastry, cake, and chocolate stores.",
+    "full_description_ar": "تنفيذ وتفصيل هندسي حصري لفاترينات وثلاجات العرض الأسطوانية والدائرية المخصصة لمعارض الحلويات الراقية، علامات الكيك الفاخرة، ومتاجر الشوكولاتة.",
+    "full_description_en": "Design and fabrication of cylindrical and circular display showcases for premium pastry shops, cake brands, and chocolate stores.",
+    "cover_image_url": "/images/defaults/services/cake-by-mamola-curved-showcase.webp",
+    "icon": "Store",
+    "spec_badge": "زجاج كيرف نقي • ثلاجات عرض فاخرة",
+    "features_ar": [
+      "تشكيل زجاج سكريت كيرف بدون تشويه بصري بمقاسات مخصصة",
+      "ثلاجات مبردة مدمجة بأنظمة تبريد ذكية",
+      "زجاج ألترا كلير مانع للضباب والتكثف",
+      "أسطح ستانلس ستيل صحي سهل التعقيم"
+    ],
+    "features_en": [
+      "Custom curved tempered glass without visual distortion",
+      "Refrigerated showcases with smart cooling systems",
+      "Ultra-Clear glass preventing fogging and condensation",
+      "Hygienic stainless steel internal surfaces"
+    ],
+    "is_featured": true,
+    "sort_order": 9
+  },
+  {
+    "slug": "bakery-pastry-glass-counters",
+    "name_ar": "تجهيزات الفاترينات وكاونترات الستانلس ستيل التجارية",
+    "name_en": "Commercial Bakery & Pastry Glass Counters",
+    "short_description_ar": "تصميم وتصنيع فاترينات عرض زجاجية متعددة الأدوار وكاونترات خدمة ستانلس ستيل للمخابز والحلويات والمراكز التجارية.",
+    "short_description_en": "Design and fabrication of multi-level glass display cases and stainless steel service counters for bakeries, pastry shops, and commercial centers.",
+    "full_description_ar": "تجهيز وتفصيل متكامل لأقسام المخبوزات والحلويات والهايبرماركت ومتاجر التجزئة الغذائية بأعلى المعايير الصحية.",
+    "full_description_en": "Complete fitting solutions for bakery, pastry, and food retail sections with hygienic stainless steel service counters.",
+    "cover_image_url": "/images/defaults/services/bakery-pastry-glass-display-counter.webp",
+    "icon": "Store",
+    "spec_badge": "ستانلس ستيل غذائي • فاترينات مبردة",
+    "features_ar": [
+      "فاترينات عرض زجاجية مبردة متعددة الأدوار",
+      "كاونترات خدمة من الستانلس ستيل الغذائي المقاوم للصدأ",
+      "حواجز زجاجية وأعمدة تثبيت ستانلس لحماية الأغذية",
+      "قواطع زجاج سكريت عازلة لمنطقة الأفران"
+    ],
+    "features_en": [
+      "Multi-level refrigerated glass display cases",
+      "Food-grade rustproof stainless steel service counters",
+      "Glass sneeze guards for food protection",
+      "Tempered heat-resistant partitions for oven areas"
+    ],
+    "is_featured": true,
+    "sort_order": 10
   }
 ]

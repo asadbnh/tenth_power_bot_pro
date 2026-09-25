@@ -17,19 +17,14 @@ const iconMap: Record<string, React.ElementType> = {
   PaintBucket,
 };
 
-const DEFAULT_CITY_SERVICES = [
-  { icon: "Layers3", slug: "tempered-glass", name_ar: "زجاج سكريت مقوى", name_en: "Tempered Glass", color: "from-blue-500 to-cyan-400" },
-  { icon: "Building2", slug: "glass-facades", name_ar: "واجهات زجاجية", name_en: "Glass Facades", color: "from-indigo-500 to-purple-400" },
-  { icon: "RectangleHorizontal", slug: "aluminum", name_ar: "أعمال الألمنيوم", name_en: "Aluminum Works", color: "from-slate-500 to-gray-400" },
-  { icon: "PaintBucket", slug: "kitchens", name_ar: "مطابخ", name_en: "Kitchens", color: "from-amber-500 to-orange-400" },
-];
+import fallbackServices from "../../../public/fallback-data/services.json";
 
 export function CityPageContent({ locale, city, cityData, initialServices }: Props) {
   const isRtl = locale === "ar";
   const cityName = isRtl ? cityData.ar : cityData.en;
   const regionName = isRtl ? cityData.region_ar : cityData.region_en;
 
-  const servicesList = (initialServices && initialServices.length > 0) ? initialServices : DEFAULT_CITY_SERVICES;
+  const servicesList = (initialServices && initialServices.length > 0) ? initialServices : fallbackServices.slice(0, 4);
 
   // LocalBusiness structured data for this city
   const schema = {

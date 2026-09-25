@@ -1,83 +1,83 @@
 [
   {
     "id": "1",
-    "title_ar": "برج الملك عبد الله - واجهة هيكلية دبل معزولة",
-    "title_en": "King Abdullah Commercial Tower Facade",
-    "category": "glass-facades",
-    "album_id": 5,
+    "title_ar": "برج تجاري - واجهة استركشر دبل جلاس 24مم معزولة حرارياً",
+    "title_en": "Commercial Tower - 24mm Double Glazed Structural Facade",
     "image_url": "/images/defaults/projects/project-1.webp",
-    "thumbnail_url": "/images/defaults/projects/project-1.webp"
+    "thumbnail_url": "/images/defaults/projects/project-1.webp",
+    "album_id": 1,
+    "category": "facades"
   },
   {
     "id": "2",
-    "title_ar": "زجاج سكريت 12مم - فواصل مكاتب إدارية",
-    "title_en": "12mm Tempered Glass Partitions",
-    "category": "tempered-glass",
-    "album_id": 1,
+    "title_ar": "فواصل مكاتب إدارية زجاج سيكوريت 12مم عازل للصوت",
+    "title_en": "12mm Tempered Glass Acoustic Office Partitions",
     "image_url": "/images/defaults/services/tempered-glass.webp",
-    "thumbnail_url": "/images/defaults/services/tempered-glass.webp"
+    "thumbnail_url": "/images/defaults/services/tempered-glass.webp",
+    "album_id": 2,
+    "category": "glass"
   },
   {
     "id": "3",
-    "title_ar": "مطبخ ألمنيوم مودرن - أسطح رخام صناعي",
-    "title_en": "Modern Aluminum Kitchen Suite",
-    "category": "kitchens",
+    "title_ar": "واجهة فيلا سكنية فاخرة قطاع ألمنيوم كسر حراري وزجاج سيكوريت",
+    "title_en": "Luxury Villa Facade - Thermal Break Aluminum & Securit Glass",
+    "image_url": "/images/defaults/projects/project-2.webp",
+    "thumbnail_url": "/images/defaults/projects/project-2.webp",
     "album_id": 3,
-    "image_url": "/images/defaults/services/kitchens.webp",
-    "thumbnail_url": "/images/defaults/services/kitchens.webp"
+    "category": "aluminum"
   },
   {
     "id": "4",
-    "title_ar": "نوافذ ألمنيوم معزولة حرارياً كسر حراري",
-    "title_en": "Thermal Break Aluminum Windows",
-    "category": "aluminum-works",
-    "album_id": 2,
+    "title_ar": "نوافذ ألمنيوم معزولة حرارياً نظام سرايا الجامبو",
+    "title_en": "Thermal Break Aluminum Windows - Saraya Jumbo System",
     "image_url": "/images/defaults/services/aluminum-works.webp",
-    "thumbnail_url": "/images/defaults/services/aluminum-works.webp"
+    "thumbnail_url": "/images/defaults/services/aluminum-works.webp",
+    "album_id": 3,
+    "category": "aluminum"
   },
   {
     "id": "5",
-    "title_ar": "واجهة وتجهيزات فيلا سكنية فاخرة بجدة",
-    "title_en": "Luxury Residential Villa Facade",
-    "category": "glass-facades",
-    "album_id": 5,
+    "title_ar": "كابينة شاور زجاجية فخمة بدون إطار Frameless مع اكسسوارات استيل 316",
+    "title_en": "Frameless Luxury Glass Shower Cabin with SS316 Hardware",
     "image_url": "/images/defaults/projects/project-2.webp",
-    "thumbnail_url": "/images/defaults/projects/project-2.webp"
+    "thumbnail_url": "/images/defaults/projects/project-2.webp",
+    "album_id": 4,
+    "category": "showers"
   },
   {
     "id": "6",
-    "title_ar": "ديكورات زجاج واستانلس ستيل 304",
-    "title_en": "Glass & Stainless 304 Decor",
-    "category": "decorations",
-    "album_id": 4,
+    "title_ar": "مرايا جدارية ليد فاخرة مع إنارة دافئة مخفية",
+    "title_en": "Bespoke Backlit Wall LED Mirror with Warm Concealed Light",
     "image_url": "/images/defaults/services/decorations.webp",
-    "thumbnail_url": "/images/defaults/services/decorations.webp"
+    "thumbnail_url": "/images/defaults/services/decorations.webp",
+    "album_id": 5,
+    "category": "mirrors"
   },
   {
     "id": "7",
-    "title_ar": "أبواب زجاجية أوتوماتيكية سحب وسلايد",
-    "title_en": "Automatic Sliding Glass Doors",
-    "category": "doors-windows",
-    "album_id": 6,
+    "title_ar": "أبواب زجاجية أوتوماتيكية سحب ذكية للمحلات والمعارض",
+    "title_en": "Automatic Sliding Glass Doors for Retail Storefronts",
     "image_url": "/images/defaults/services/doors-windows.webp",
-    "thumbnail_url": "/images/defaults/services/doors-windows.webp"
+    "thumbnail_url": "/images/defaults/services/doors-windows.webp",
+    "album_id": 6,
+    "category": "doors"
   },
   {
     "id": "8",
-    "title_ar": "صيانة وتجديد واجهة برج تجاري بالرياض",
-    "title_en": "Commercial Tower Facade Restoration",
-    "category": "maintenance",
-    "album_id": 5,
-    "image_url": "/images/defaults/services/maintenance.webp",
-    "thumbnail_url": "/images/defaults/services/maintenance.webp"
+    "title_ar": "واجهة معرض تجاري زجاج سيكوريت 12مم بماكينات إيطالية معتمدة",
+    "title_en": "Commercial Showroom Glass Facade with Italian Floor Springs",
+    "image_url": "/images/defaults/services/glass-facades.webp",
+    "thumbnail_url": "/images/defaults/services/glass-facades.webp",
+    "album_id": 1,
+    "category": "facades"
   },
   {
     "id": "9",
-    "title_ar": "مشروع مقاولات عامة وتجهيزات هندسية",
-    "title_en": "General Contracting & Building Engineering",
-    "category": "contracting",
-    "album_id": 4,
-    "image_url": "/images/defaults/services/contracting.webp",
-    "thumbnail_url": "/images/defaults/services/contracting.webp"
+    "title_ar": "قواطع زجاجية ذكية Smart Glass قابلة للتحكم في الشفافية",
+    "title_en": "Smart Privacy Switchable Glass Partitions",
+    "image_url": "/images/defaults/services/tempered-glass.webp",
+    "thumbnail_url": "/images/defaults/services/tempered-glass.webp",
+    "album_id": 2,
+    "category": "glass"
   }
 ]

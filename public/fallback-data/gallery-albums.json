@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "slug": "facades",
+    "title_ar": "الواجهات والاستركشر",
+    "title_en": "Curtain Walls & Facades",
+    "count": 24,
+    "image_url": "/images/defaults/services/glass-facades.webp"
+  },
+  {
+    "id": 2,
+    "slug": "glass",
+    "title_ar": "زجاج السيكوريت والقواطع",
+    "title_en": "Tempered Glass & Partitions",
+    "count": 32,
+    "image_url": "/images/defaults/services/tempered-glass.webp"
+  },
+  {
+    "id": 3,
+    "slug": "aluminum",
+    "title_ar": "قطاعات الألمنيوم المعزولة",
+    "title_en": "Thermal-Break Aluminum",
+    "count": 18,
+    "image_url": "/images/defaults/services/aluminum-works.webp"
+  },
+  {
+    "id": 4,
+    "slug": "showers",
+    "title_ar": "كبائن الشاور الزجاجية",
+    "title_en": "Frameless Shower Cabins",
+    "count": 28,
+    "image_url": "/images/defaults/projects/project-2.webp"
+  },
+  {
+    "id": 5,
+    "slug": "mirrors",
+    "title_ar": "المرايا والزجاج الديكوري",
+    "title_en": "LED Mirrors & Decor Glass",
+    "count": 41,
+    "image_url": "/images/defaults/services/decorations.webp"
+  },
+  {
+    "id": 6,
+    "slug": "doors",
+    "title_ar": "الأبواب السحاب والأوتوماتيك",
+    "title_en": "Automatic & Sliding Doors",
+    "count": 15,
+    "image_url": "/images/defaults/services/doors-windows.webp"
+  }
+]

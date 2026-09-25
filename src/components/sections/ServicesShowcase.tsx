@@ -20,6 +20,8 @@ import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
+import fallbackServices from "../../../public/fallback-data/services.json";
+
 export interface ServiceItem {
   id?: string;
   slug?: string;
@@ -40,70 +42,13 @@ interface ServicesShowcaseProps {
   initialServices?: ServiceItem[];
 }
 
-const DEMO_SERVICES: ServiceItem[] = [
-  {
-    slug: "securit-glass",
-    icon: "Layers3",
-    name_ar: "زجاج سيكوريت مقوى وأبواب",
-    name_en: "Tempered Securit Glass & Doors",
-    desc_ar: "توريد وتركيب زجاج سيكوريت عالي المقاومة للصدمات بسماكات 10-12 مم للأبواب والواجهات والمداخل مع أنظمة هيدروليك إيطالية.",
-    desc_en: "High-impact tempered securit glass (10-12mm) for doors, entrances, and storefronts with Italian hydraulic fittings.",
-    cover_image_url: "/images/defaults/services/luxury-partitions.webp",
-  },
-  {
-    slug: "glass-facades",
-    icon: "Building2",
-    name_ar: "واجهات زجاجية (كرتن وول & استركشر & سبايدر)",
-    name_en: "Structural Glazing & Curtain Walls",
-    desc_ar: "تصميم وتنفيذ واجهات المباني الزجاجية الهيكلية وأنظمة الكرتن وول والسبايدر بأعلى معدلات عزل حراري ومقاومة للرياح.",
-    desc_en: "Structural glass facades, curtain walls, and spider fittings engineered for thermal insulation and wind loads.",
-    cover_image_url: "/images/defaults/services/luxury-facade.webp",
-  },
-  {
-    slug: "aluminum",
-    icon: "RectangleHorizontal",
-    name_ar: "أعمال الألمنيوم المعزول والشبابيك",
-    name_en: "Thermal-Break Aluminum & Windows",
-    desc_ar: "تصنيع وتركيب قطاعات الألمنيوم المعزولة حرارياً للنوافذ والأبواب والواجهات بأحدث التقنيات المطابقة لكود البناء السعودي SBC.",
-    desc_en: "Fabrication of thermal-break aluminum profiles for windows and doors meeting Saudi Building Code standards.",
-    cover_image_url: "/images/defaults/services/luxury-sliding-doors.webp",
-  },
-  {
-    slug: "office-partitions",
-    icon: "DoorOpen",
-    name_ar: "قواطع وفواصل مكاتب زجاجية",
-    name_en: "Soundproof Glass Office Partitions",
-    desc_ar: "فواصل زجاجية عازلة للصوت تمنح المكاتب والشركات بيئة عمل راقية مع أبواب سحاب أو مفصلي بنظام إغلاق ناعم (Soft-Close).",
-    desc_en: "Soundproof acoustic glass partitions providing luxury corporate aesthetics with soft-close sliding and swing doors.",
-    cover_image_url: "/images/defaults/services/luxury-kitchen.webp",
-  },
-  {
-    slug: "shower-cabins",
-    icon: "ShieldCheck",
-    name_ar: "كبائن شاور زجاجية مودرن",
-    name_en: "Modern Luxury Glass Shower Cabins",
-    desc_ar: "كبائن شاور زجاج سيكوريت معالج بتقنية النانو المقاومة للترسبات الكلسية، مع إكسسوارات ستانلس ستيل 316 مقاوم للصدأ.",
-    desc_en: "Securit glass shower enclosures treated with anti-limescale nano-coating and corrosion-proof 316 stainless steel.",
-    cover_image_url: "/images/defaults/services/tempered-glass.webp",
-  },
-  {
-    slug: "decorative-mirrors",
-    icon: "GalleryHorizontalEnd",
-    name_ar: "مرايا ديكور مشطوفة ليزر بإضاءة LED",
-    name_en: "Bespoke LED Mirrors & Wall Decor",
-    desc_ar: "تفصيل مرايا جدارية فاخرة بزجاج بلجيكي عالي النقاء وشطف ليزر دقيق مع إضاءات LED ذكية مخفية للفنادق والقصور.",
-    desc_en: "Custom high-clarity Belgian mirrors with 45° bevel edges and smart ambient LED illumination for villas and hotels.",
-    cover_image_url: "/images/defaults/services/decorations.webp",
-  },
-];
-
 const iconMap: Record<string, LucideIcon> = {
   Layers3, Building2, RectangleHorizontal, PaintBucket, GalleryHorizontalEnd, DoorOpen, Hammer, Wrench, ShieldCheck
 };
 
 export function ServicesShowcase({ locale, dict, initialServices }: ServicesShowcaseProps) {
   const isRtl = locale === "ar";
-  const services = (initialServices && initialServices.length > 0) ? initialServices : DEMO_SERVICES;
+  const services = (initialServices && initialServices.length > 0) ? initialServices : (fallbackServices as ServiceItem[]);
 
   return (
     <section

@@ -12,33 +12,15 @@ import { SmartFallbackImage } from "@/components/ui/SmartFallbackImage";
 import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 import { SkeletonGalleryAlbums, SkeletonGalleryCard } from "@/components/ui/Skeleton";
 
+import fallbackAlbums from "../../../public/fallback-data/gallery-albums.json";
+import fallbackItems from "../../../public/fallback-data/gallery.json";
+
 interface Props {
   locale: Locale;
   dict: Dictionary;
   initialAlbums?: any[];
   initialItems?: any[];
 }
-
-const DEFAULT_ALBUMS = [
-  { id: 1, slug: "facades", title_ar: "الواجهات والاستركشر", title_en: "Curtain Walls & Facades", count: 24, image_url: "/images/defaults/services/glass-facades.webp" },
-  { id: 2, slug: "glass", title_ar: "زجاج السيكوريت والقواطع", title_en: "Tempered Glass & Partitions", count: 32, image_url: "/images/defaults/services/tempered-glass.webp" },
-  { id: 3, slug: "aluminum", title_ar: "قطاعات الألمنيوم المعزولة", title_en: "Thermal-Break Aluminum", count: 18, image_url: "/images/defaults/services/aluminum-works.webp" },
-  { id: 4, slug: "showers", title_ar: "كبائن الشاور الزجاجية", title_en: "Frameless Shower Cabins", count: 28, image_url: "/images/defaults/projects/project-2.webp" },
-  { id: 5, slug: "mirrors", title_ar: "المرايا والزجاج الديكوري", title_en: "LED Mirrors & Decor Glass", count: 41, image_url: "/images/defaults/services/decorations.webp" },
-  { id: 6, slug: "doors", title_ar: "الأبواب السحاب والأوتوماتيك", title_en: "Automatic & Sliding Doors", count: 15, image_url: "/images/defaults/services/doors-windows.webp" },
-];
-
-const DEFAULT_ITEMS = [
-  { id: "1", title_ar: "برج تجاري - واجهة استركشر دبل جلاس 24مم معزولة حرارياً", title_en: "Commercial Tower - 24mm Double Glazed Structural Facade", image_url: "/images/defaults/projects/project-1.webp", album_id: "1" },
-  { id: "2", title_ar: "فواصل مكاتب إدارية زجاج سيكوريت 12مم عازل للصوت", title_en: "12mm Tempered Glass Acoustic Office Partitions", image_url: "/images/defaults/services/tempered-glass.webp", album_id: "2" },
-  { id: "3", title_ar: "واجهة فيلا سكنية فاخرة قطاع ألمنيوم كسر حراري وزجاج سيكوريت", title_en: "Luxury Villa Facade - Thermal Break Aluminum & Securit Glass", image_url: "/images/defaults/projects/project-2.webp", album_id: "3" },
-  { id: "4", title_ar: "نوافذ ألمنيوم معزولة حرارياً نظام سرايا الجامبو", title_en: "Thermal Break Aluminum Windows - Saraya Jumbo System", image_url: "/images/defaults/services/aluminum-works.webp", album_id: "3" },
-  { id: "5", title_ar: "كابينة شاور زجاجية فخمة بدون إطار Frameless مع اكسسوارات استيل 316", title_en: "Frameless Luxury Glass Shower Cabin with SS316 Hardware", image_url: "/images/defaults/projects/project-2.webp", album_id: "4" },
-  { id: "6", title_ar: "مرايا جدارية ليد فاخرة مع إنارة دافئة مخفية", title_en: "Bespoke Backlit Wall LED Mirror with Warm Concealed Light", image_url: "/images/defaults/services/decorations.webp", album_id: "5" },
-  { id: "7", title_ar: "أبواب زجاجية أوتوماتيكية سحب ذكية للمحلات والمعارض", title_en: "Automatic Sliding Glass Doors for Retail Storefronts", image_url: "/images/defaults/services/doors-windows.webp", album_id: "6" },
-  { id: "8", title_ar: "واجهة معرض تجاري زجاج سيكوريت 12مم بماكينات إيطالية معتمدة", title_en: "Commercial Showroom Glass Facade with Italian Floor Springs", image_url: "/images/defaults/services/glass-facades.webp", album_id: "1" },
-  { id: "9", title_ar: "قواطع زجاجية ذكية Smart Glass قابلة للتحكم في الشفافية", title_en: "Smart Privacy Switchable Glass Partitions", image_url: "/images/defaults/services/tempered-glass.webp", album_id: "2" },
-];
 
 export function GalleryPageContent({ locale, dict: _dict, initialAlbums, initialItems }: Props) {
   const isRtl = locale === "ar";
@@ -52,10 +34,10 @@ export function GalleryPageContent({ locale, dict: _dict, initialAlbums, initial
     return () => clearTimeout(t);
   }, []);
 
-  const rawAlbums = (initialAlbums && initialAlbums.length > 0) ? initialAlbums : DEFAULT_ALBUMS;
-  const rawItems = (initialItems && initialItems.length > 0) ? initialItems : DEFAULT_ITEMS;
-  const albums = Array.from(new Map(rawAlbums.map((a) => [String(a.id), a])).values());
-  const items = Array.from(new Map(rawItems.map((it) => [String(it.id), it])).values());
+  const rawAlbums = (initialAlbums && initialAlbums.length > 0) ? initialAlbums : fallbackAlbums;
+  const rawItems = (initialItems && initialItems.length > 0) ? initialItems : fallbackItems;
+  const albums = Array.from(new Map(rawAlbums.map((a: any) => [String(a.id), a])).values());
+  const items = Array.from(new Map(rawItems.map((it: any) => [String(it.id), it])).values());
 
   const visibleItems = selectedAlbumId
     ? items.filter((it) => String(it.album_id) === String(selectedAlbumId))

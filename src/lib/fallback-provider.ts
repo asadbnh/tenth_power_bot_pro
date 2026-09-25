@@ -135,8 +135,31 @@ export function getFallbackGallery() {
     title_ar: string;
     title_en: string;
     category?: string;
-    album_id?: number;
+    album_id?: number | string;
     image_url: string;
     thumbnail_url?: string;
   }>>("gallery.json", []);
 }
+
+export function getFallbackGalleryAlbums() {
+  return readJsonFile<Array<{
+    id: number;
+    slug: string;
+    title_ar: string;
+    title_en: string;
+    count: number;
+    image_url: string;
+  }>>("gallery-albums.json", []);
+}
+
+export function getFallbackHeroSlides() {
+  return readJsonFile<Array<{
+    id: number;
+    title_ar: string;
+    title_en: string;
+    badge_ar: string;
+    badge_en: string;
+    src: string;
+  }>>("hero-slides.json", []);
+}
+

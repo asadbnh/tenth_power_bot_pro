@@ -21,6 +21,8 @@ import { AnimatedCanvasBanner } from "@/components/ui/AnimatedCanvasBanner";
 import { SmartFallbackImage } from "@/components/ui/SmartFallbackImage";
 import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 
+import fallbackSlides from "../../../public/fallback-data/hero-slides.json";
+
 export interface HeroSlideItem {
   id: number | string;
   title_ar: string;
@@ -36,41 +38,6 @@ interface HeroSectionProps {
   initialSlides?: HeroSlideItem[];
 }
 
-const HERO_SLIDES: HeroSlideItem[] = [
-  {
-    id: 1,
-    title_ar: "واجهات زجاجية هيكلية (Structural Glazing) — برج الأعمال، العليا",
-    title_en: "Structural Glazing Facade — Business Tower, Olaya",
-    badge_ar: "سيكوريت دبل 24مم عازل حراري",
-    badge_en: "24mm Double Tempered",
-    src: "/images/defaults/projects/project-1.webp",
-  },
-  {
-    id: 2,
-    title_ar: "واجهات كرتن وول وسبايدر — مجمع تجاري، طريق الملك فهد",
-    title_en: "Curtain Wall & Spider Systems — King Fahd Road",
-    badge_ar: "إكسسوارات ستانلس 316 معتمدة",
-    badge_en: "Stainless 316 Hardware",
-    src: "/images/defaults/services/glass-facades.webp",
-  },
-  {
-    id: 3,
-    title_ar: "قواطع مكاتب زجاجية وأبواب سيكوريت — حي الملقا بالرياض",
-    title_en: "Glass Partitions & Securit Doors — Al Malqa District",
-    badge_ar: "عزل صوتي تام 100% سوفت كلوز",
-    badge_en: "100% Soundproof Soft-Close",
-    src: "/images/defaults/services/luxury-facade.webp",
-  },
-  {
-    id: 4,
-    title_ar: "أعمال الألمنيوم المعزول والكلادينج — مجمع سكني فاخر",
-    title_en: "Thermal-Break Aluminum & Cladding — Luxury Complex",
-    badge_ar: "كود البناء السعودي SBC معتمد",
-    badge_en: "SBC Saudi Building Code",
-    src: "/images/defaults/services/aluminum-works.webp",
-  },
-];
-
 /**
  * Premium Cinematic Hero Section — Architectural & Facade Engineering Authority
  * GPU-accelerated, SEO-friendly, fully responsive, and conversion-optimized.
@@ -81,7 +48,7 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
   const [activeSlide, setActiveSlide] = useState(0);
   const isRtl = locale === "ar";
 
-  const slides = initialSlides && initialSlides.length > 0 ? initialSlides : HERO_SLIDES;
+  const slides = (initialSlides && initialSlides.length > 0) ? initialSlides : (fallbackSlides as HeroSlideItem[]);
 
   // Automatic periodic slide change every 5 seconds
   useEffect(() => {
