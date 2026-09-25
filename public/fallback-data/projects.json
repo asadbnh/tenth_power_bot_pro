@@ -1,154 +1,328 @@
 [
   {
-    "slug": "king-abdullah-tower",
-    "title_ar": "برج الملك عبد الله التجاري",
-    "title_en": "King Abdullah Commercial Tower",
-    "category_ar": "واجهات زجاجية",
-    "category_en": "Glass Facades",
-    "location_ar": "الرياض - طريق الملك فهد",
-    "location_en": "Riyadh - King Fahd Road",
+    "slug": "twenty-five-commercial-center-facade",
+    "title_ar": "واجهات زجاجية وكلادينج لمركز تجاري — الشريك تونتي فايف (Twenty Five)",
+    "title_en": "Glass & Cladding Facades for Twenty Five Commercial Center",
+    "category_ar": "واجهات زجاجية وكلادينج",
+    "category_en": "Glass Facades & Cladding",
+    "location_ar": "الرياض - المملكة العربية السعودية",
+    "location_en": "Riyadh - Saudi Arabia",
     "city": "riyadh",
     "year": "2024",
-    "client_name": "شركة تطوير العقار القابضة",
-    "client_ar": "شركة تطوير العقار القابضة",
-    "client_en": "Real Estate Development Co.",
-    "description_ar": "تم تنفيذ واجهة زجاجية هيكلية بمساحة 4,500 متر مربع باستخدام زجاج سكريت دبل معزول بطلاء منخفض الانبعاثات (Low-E)، مما قلل استهلاك الطاقة للتبريد بنسبة 35% وخلق مظهراً معمارياً أيقونياً.",
-    "description_en": "Execution of a 4,500 sqm structural glazing facade using double tempered Low-E glass, reducing cooling energy consumption by 35% and creating an iconic architectural statement.",
+    "client_name": "مركز تونتي فايف التجاري",
+    "client_ar": "مركز تونتي فايف التجاري (Twenty Five)",
+    "client_en": "Twenty Five Commercial Center",
+    "description_ar": "إنجاز معماري وتجاري متكامل لمشروع واجهات مركز (تونتي فايف Twenty Five) التجاري المتخصص في الأزياء والتجزئة. تضمن المشروع توريد وتركيب واجهات زجاجية إنشائية ضخمة تمتد لطابقين بنظام أذرع التثبيت الزجاجي والسبايدر (Spider System) مع دمج تكسيات كلادينج ألمنيوم مقاومة للحريق وإضاءات LED معمارية مدمجة لإبراز فخامة المركز ليلاً ونهاراً.",
+    "description_en": "Comprehensive architectural and commercial glass facade for Twenty Five Center. Included supply and installation of massive two-story spider glass facade system with fire-rated aluminum cladding and integrated architectural LED lighting.",
     "challenges_ar": [
-      "مقاومة أحمال الرياح العالية بارتفاع 30 طابقاً",
-      "تركيب الزجاج بدون تعطيل الحركة المرورية في طريق الملك فهد",
-      "عزل حراري صارم يتوافق مع كود البناء السعودي"
+      "واجهات زجاجية بنظام السبايدر بمقاسات ضخمة مع أذرع ستانلس ستيل SUS 316",
+      "عزل حراري دبل جلاس عالي الكفاءة لمقاومة أشعة الشمس المباشرة",
+      "تثبيت تكسيات كلادينج ألمنيوم معمارية عصرية مقاومة للحريق",
+      "دمج خطوط إنارة معمارية (LED Linear Lighting) في مفاصل الواجهة",
+      "تنفيذ المشروع دون إعاقة حركة الزوار في المركز التجاري",
+      "فحص واختبار كامل لاختبارات الرياح والتسرب المائي"
     ],
     "challenges_en": [
-      "High wind load resistance at 30-story height",
-      "Installation without interrupting traffic on King Fahd Road",
-      "Strict thermal insulation compliance with Saudi Building Code"
+      "Heavy-duty spider glass facade system using SUS 316 stainless steel fittings",
+      "High-efficiency double glazed insulated glass resisting direct solar heat",
+      "Fire-rated architectural aluminum composite cladding integration",
+      "Seamless LED linear architectural lighting embedded in structural joints",
+      "Safe execution without disrupting adjacent commercial visitor movement",
+      "Rigorous water-tightness and wind-load field testing certification"
     ],
     "results_ar": [
-      "تسليم المشروع قبل الموعد المحدد بـ 15 يوماً",
-      "تحقيق خفض بـ 35% في استهلاك تكييف الهواء",
-      "شهادة جودة واعتماد من الاستشاري الهندسي للمشروع"
+      "تسليم كامل الواجهة قبل الافتتاح التجاري للمركز",
+      "مظهر معماري أيقوني استثنائي جذب آلاف المتسوقين",
+      "عزل صوتي وحراري فائق حقق كفاءة استهلاك طاقة عالية",
+      "ضمان شامل لمدة 10 سنوات على الهيكل والزجاج والمفاصل"
     ],
     "results_en": [
-      "Delivered 15 days ahead of schedule",
-      "Achieved 35% HVAC energy reduction",
-      "Quality certification from lead engineering consultant"
+      "Delivered full facade ahead of scheduled grand opening",
+      "Iconic architectural design attracting thousands of shoppers",
+      "Superb acoustic and thermal insulation optimizing energy savings",
+      "Comprehensive 10-year warranty covering glass, structure and joints"
     ],
-    "project_value": 1450000.0,
+    "project_value": 850000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/defaults/projects/project-1.webp",
-    "before_image_url": "/images/defaults/projects/project-1-before.webp",
-    "after_image_url": "/images/defaults/projects/project-1-after.webp"
+    "cover_image_url": "/images/twenty-five-commercial-center-facade-1.webp",
+    "before_image_url": "/images/twenty-five-commercial-center-facade-2.webp",
+    "after_image_url": "/images/twenty-five-commercial-center-facade-1.webp"
   },
   {
-    "slug": "luxury-villa-facade",
-    "title_ar": "واجهات وتجهيزات فيلا سكنية فاخرة",
-    "title_en": "Luxury Residential Villa Facade & Glass",
-    "category_ar": "زجاج وألمنيوم",
-    "category_en": "Glass & Aluminum",
-    "location_ar": "جدة - حي الشاطئ",
-    "location_en": "Jeddah - Al Shati District",
-    "city": "jeddah",
+    "slug": "curved-glass-refrigerated-showcases",
+    "title_ar": "فاترينات وثلاجات العرض بالزجاج المنحني — متاجر الحلويات والكيك",
+    "title_en": "Curved Glass Refrigerated Showcases for Pastry & Bakeries",
+    "category_ar": "زجاج منحني وفاترينات",
+    "category_en": "Curved Glass & Showcases",
+    "location_ar": "الرياض - المملكة العربية السعودية",
+    "location_en": "Riyadh - Saudi Arabia",
+    "city": "riyadh",
     "year": "2024",
-    "client_name": "م. عبد الرحمن الشريف",
-    "client_ar": "م. عبد الرحمن الشريف",
-    "client_en": "Eng. Abdulrahman Al-Sharif",
-    "description_ar": "تنفيذ كبائن شاور زجاجية سكريت 10مم، واجهات بانورامية مطلة على المسبح، ونوافذ ألمنيوم حرارية ذات عزل مائي وحراري متطور في جدة.",
-    "description_en": "Tempered glass 10mm shower enclosures, pool panoramic facades, and thermal-break aluminum window systems in Jeddah.",
+    "client_name": "متجر كيك باي مامولا (Cake By Mamola)",
+    "client_ar": "متجر كيك باي مامولا (Cake By Mamola)",
+    "client_en": "Cake By Mamola Bakery",
+    "description_ar": "تصنيع وتوريد فاترينات وثلاجات عرض بالزجاج المنحني فائق الشفافية (Ultra-Clear) مخصصة لمتاجر الحلويات الراقية ومنها متجر كيك باي مامولا. يعتمد التصميم على ثني الزجاج حرارياً بزوايا انسيابية بدون فواصل مع أنظمة تبريد ذكية وإضاءة LED مدمجة تبرز تفاصيل المنتجات بأعلى معايير الجمال والجاذبية.",
+    "description_en": "Custom manufacturing and installation of ultra-clear curved tempered glass display showcases for high-end bakeries including Cake By Mamola. Features seamless thermally curved glass, intelligent cooling, and embedded LED display illumination.",
     "challenges_ar": [
-      "مقاومة الرطوبة العالية والأملاح في منطقة الكورنيش",
-      "تثبيت زجاج بانورامي بحجم ضخم بدون أعمدة مروحية"
+      "ثني الزجاج حرارياً (Curved Toughened Glass) بنقاء بصري تام وبدون أي تشوهات",
+      "تحقيق توزيع متوازن لدرجات الحرارة داخل الفاترينة للحفاظ على قوام الحلويات",
+      "هيكل ستانلس ستيل غذائي مقاوم للصدأ بمواصفات صحية عالمية",
+      "إضاءة خطية لا تصدر حرارة للحفاظ على جودة الأغذية",
+      "أبواب سحب خلفية سلسة ومحكمة الغلق لمنع تسرب البرودة"
     ],
     "challenges_en": [
-      "Resistance to coastal humidity and salts",
-      "Huge panoramic glass panel installation without vertical breaks"
+      "Precision thermal glass bending with zero optical distortion",
+      "Balanced micro-climate temperature distribution preserving pastry texture",
+      "Food-grade hygienic stainless steel framing meeting global health codes",
+      "Heatless high-CRI linear LED illumination protecting delicate foods",
+      "Airtight sliding rear access doors preventing cold air leakage"
     ],
     "results_ar": [
-      "مظهر عصري وفاخر مع عزل مائي بنسبة 100%",
-      "رضا تام من العميل والمهندس المشرف"
+      "زيادة مبيعات وعرض المنتجات بفضل الرؤية البانورامية الشاملة",
+      "شهادة مطابقة للاشتراطات الصحية والغذائية من هيئة الغذاء والدواء",
+      "اعتماد المؤسسة كمورد حصري لسلسلة الفروع الجديدة للمتجر"
     ],
     "results_en": [
-      "Modern luxury appearance with 100% waterproofing",
-      "Complete client and consultant satisfaction"
+      "Substantial sales boost due to unobstructed 360-degree panoramic product display",
+      "Complete compliance approval from Saudi Food & Drug Authority",
+      "Designated as exclusive showcase vendor for upcoming bakery branch expansions"
     ],
-    "project_value": 420000.0,
+    "project_value": 220000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/defaults/projects/project-2.webp",
-    "before_image_url": "/images/defaults/projects/project-2-before.webp",
-    "after_image_url": "/images/defaults/projects/project-2-after.webp"
+    "cover_image_url": "/images/curved-glass-refrigerated-showcase.webp",
+    "before_image_url": "/images/curved-glass-showcases-pair.webp",
+    "after_image_url": "/images/cake-by-mamola-curved-showcase.webp"
   },
   {
-    "slug": "tempered-glass-office",
-    "title_ar": "قواطع زجاج سكريت لمكاتب إدارية",
-    "title_en": "Corporate Office Glass Partitions",
-    "category_ar": "فواصل زجاجية",
-    "category_en": "Glass Partitions",
-    "location_ar": "الدمام - طريق الكورنيش",
-    "location_en": "Dammam - Corniche Road",
-    "city": "dammam",
+    "slug": "panoramic-curved-glass-elevator",
+    "title_ar": "تكسية مصعد بانوراما بزجاج كيرف مقوس بارتفاع يتجاوز 8 أمتار — قصر سكني",
+    "title_en": "Panoramic Curved Glass Elevator Enclosure for Luxury Villa",
+    "category_ar": "زجاج منحني ومصاعد",
+    "category_en": "Curved Glass & Elevators",
+    "location_ar": "الرياض - حي حطين",
+    "location_en": "Riyadh - Hittin District",
+    "city": "riyadh",
+    "year": "2024",
+    "client_name": "قصر سكني خاص",
+    "client_ar": "قصر سكني خاص - حي حطين",
+    "client_en": "Private Royal Residence - Hittin",
+    "description_ar": "تصنيع وتثبيت قطاعات زجاجية مقوسة نصف دائرية (Curved Laminated Tempered Glass) لتكسية بئر مصعد بانورامي يربط 3 أدوار بارتفاع يفوق 8 أمتار. يجمع المشروع بين أحدث تقنيات المعالجة الحرارية للزجاج المقسى الطبقي مع إكسسوارات ستانلس ستيل مطفية تعكس الفخامة المعمارية للمكان.",
+    "description_en": "Fabrication and installation of semi-circular curved laminated tempered glass panels enclosing a 3-story panoramic elevator shaft over 8 meters tall in a private luxury residence. Features custom stainless steel fittings and pristine optical clarity.",
+    "challenges_ar": [
+      "دقة نصف القطر المتطابق مع هيكل المصعد بدون أي انحراف ميليمتري",
+      "رفع وتركيب ألواح زجاج كيرف تزن أكثر من 180 كجم للوح الواحد داخل القصر",
+      "زجاج سكريت مدبل لاصق (Laminated Tempered) لأقصى درجات الأمان الإنشائي",
+      "فواصل سيليكون شفافة غير مرئية تحافظ على الرؤية البانورامية المفتوحة"
+    ],
+    "challenges_en": [
+      "Exact radius matching with elevator mechanical structure down to 1mm tolerance",
+      "Complex indoor hoisting and rigging of heavy curved glass panels over 180kg each",
+      "Laminated tempered dual-sheet construction for maximum structural passenger safety",
+      "Invisible crystal-clear silicone seams maintaining expansive open panoramic views"
+    ],
+    "results_ar": [
+      "تنفيذ متقن تم تسليمه للمهندس المشرف بدون أي نسبة خطأ",
+      "إضفاء قيمة جمالية وعقارية استثنائية للفيلا السكنية",
+      "أمان تام وتشغيل صامت وانسيابي للمصعد البانورامي"
+    ],
+    "results_en": [
+      "Flawless handover to supervising architect with zero millimeter discrepancies",
+      "Substantial aesthetic and real estate valuation enhancement to the residence",
+      "Absolute structural safety and whisper-quiet panoramic elevator ride"
+    ],
+    "project_value": 380000.0,
+    "status": "completed",
+    "is_featured": true,
+    "cover_image_url": "/images/curved-glass-panoramic-elevator-villa-1.webp",
+    "before_image_url": "/images/curved-glass-panoramic-elevator-villa-2.webp",
+    "after_image_url": "/images/curved-glass-panoramic-elevator-villa-1.webp"
+  },
+  {
+    "slug": "commercial-bakery-display-counters",
+    "title_ar": "فاترينات وتجهيزات زجاجية وستانلس ستيل لقسم المخبوزات والحلويات — مركز تجاري",
+    "title_en": "Commercial Bakery Glass Display Counters & Stainless Steel Equipment",
+    "category_ar": "فاترينات وستانلس ستيل",
+    "category_en": "Counters & Stainless Steel",
+    "location_ar": "الرياض - المملكة العربية السعودية",
+    "location_en": "Riyadh - Saudi Arabia",
+    "city": "riyadh",
+    "year": "2024",
+    "client_name": "سلسلة هايبرماركت ومخابز مركزية",
+    "client_ar": "سلسلة هايبرماركت ومخابز مركزية",
+    "client_en": "Central Hypermarket & Bakery Chain",
+    "description_ar": "تنفيذ وتجهيز متكامل لقسم المخبوزات والحلويات في مركز تجاري وهايبرماركت حديث. شمل المشروع تصنيع فاترينات عرض زجاجية مستقيمة ومنحنية الزوايا بنقاء زجاجي فائق وتوزيع مدروس للأرفف مع كاونترات خدمة من الستانلس ستيل الغذائي عالي المقاومة مزودة بحواجز حماية زجاجية (Sneeze Guards) وقواطع معزولة للأفران.",
+    "description_en": "Full fit-out and manufacturing of bakery and pastry glass display counters for a premier hypermarket. Features curved and flat glass display cases, heavy-duty food-grade stainless steel service counters with sneeze guards, and heat-resistant glass partitions.",
+    "challenges_ar": [
+      "فاترينات عرض زجاجية مبردة ومتعددة الأدوار بزوايا منحنية فائقة الشفافية",
+      "أرفف زجاجية مصقولة ومقاومة للأحمال والحرارة مع إضاءات LED خطية مدمجة",
+      "كاونترات وطاولات خدمة من الستانلس ستيل الغذائي المقاوم للصدأ وسهل التعقيم",
+      "حواجز زجاجية وأعمدة تثبيت ستانلس ستيل لحماية وعرض المنتجات الغذائية (Sneeze Guards)",
+      "قواطع زجاج سكريت مقاوم للحرارة عازلة لمنطقة الأفران ومطابقة للاشتراطات الصحية"
+    ],
+    "challenges_en": [
+      "Multi-tier chilled glass showcases with curved transparent corner profiling",
+      "Heavy-load tempered glass shelving with integrated linear LED illumination",
+      "Hygienic food-grade stainless steel preparation tables easy to sterilize",
+      "Protective tempered glass sneeze guards and polished stainless uprights",
+      "High-temperature tempered glass fire/heat partitions around baking ovens"
+    ],
+    "results_ar": [
+      "تسليم كامل لـ 45 متراً طولياً من الكاونترات والفاترينات في موعد قياسي",
+      "تحقيق أعلى معايير النظافة والراحة التشغيلية لطاقم المخبز والعملاء",
+      "ضمان 5 سنوات على هياكل الستانلس ستيل والأنظمة الزجاجية"
+    ],
+    "results_en": [
+      "Delivered 45 linear meters of custom counters and showcases in record time",
+      "Achieved top health and hygiene benchmarks for bakery staff and customers",
+      "5-year structural warranty on stainless steel fixtures and glass units"
+    ],
+    "project_value": 410000.0,
+    "status": "completed",
+    "is_featured": true,
+    "cover_image_url": "/images/bakery-pastry-glass-display-counter.webp",
+    "before_image_url": "/images/commercial-bakery-stainless-steel-counters.webp",
+    "after_image_url": "/images/bakery-pastry-glass-display-counter.webp"
+  },
+  {
+    "slug": "luxury-decor-mirrors-tables",
+    "title_ar": "ديكورات داخلية راقية ومرايا مضيئة — قاعات اجتماعات وصالات VIP",
+    "title_en": "Luxury Interior Decor, Backlit Mirrors & Custom Tables",
+    "category_ar": "مطابخ وديكورات",
+    "category_en": "Interior Decor & Mirrors",
+    "location_ar": "الرياض - حي النخيل",
+    "location_en": "Riyadh - Al Nakheel District",
+    "city": "riyadh",
     "year": "2023",
-    "client_name": "مجموعة الخدمات الصناعية",
-    "client_ar": "مجموعة الخدمات الصناعية",
-    "client_en": "Industrial Services Group",
-    "description_ar": "تركيب قواطع زجاجية سكريت 12مم مع أبواب هيدروليكية وإكسسوارات استانلس 304 لمكاتب الإدارة العليا بالدمام مع عزل صوتي عالي.",
-    "description_en": "Installation of 12mm tempered glass office partitions with hydraulic soft-close doors and 304 stainless hardware in Dammam.",
+    "client_name": "مقر شركة استثمارية كبرى",
+    "client_ar": "مقر شركة استثمارية كبرى",
+    "client_en": "Major Investment Corporate HQ",
+    "description_ar": "أعمال ديكورية داخلية فاخرة شملت تجهيز صالة اجتماعات راقية بطاولة ضخمة مصقولة بعناية تعكس الفخامة في كل تفاصيلها، بالإضافة إلى تنفيذ وتركيب مرايا ديكورية عصرية في الممرات ومداخل القاعات مزودة بإضاءة LED خلفية مخفية تبرز جمال التصميم وتضيف لمسة دافئة للمكان.",
+    "description_en": "Luxury interior architectural fittings including a massive custom polished meeting table for executive boardrooms, paired with contemporary illuminated backlit mirrors and custom glass wall panels adding warmth and luxury to executive corridors.",
     "challenges_ar": [
-      "تركيب القواطع خلال مواعيد العمل الرسمية دون إزعاج",
-      "تحقيق عزل صوتي بين مكاتب الإعداد والاجتماعات"
+      "طاولات ضخمة مخصصة مصقولة بعناية للاجتماعات والصالات الفاخرة",
+      "مرايا ديكورية عصرية مزودة بإضاءة LED خلفية مخفية بدون أي تشويش ضوئي",
+      "تكسيات جدارية وتفاصيل ديكورية داخلية تعزز الطابع الفاخر",
+      "دمج جمالي وعملي للزجاج والمرايا في الممرات ومداخل الغرف"
     ],
     "challenges_en": [
-      "Installation during active working hours without noise disruption",
-      "Achieving high soundproofing between meeting rooms"
+      "Oversized custom-polished executive meeting table engineered with hidden cabling",
+      "Backlit decorative ambient LED mirrors with flush shadow-gap detailing",
+      "Precision architectural wall paneling enhancing luxury corporate identity",
+      "Seamless architectural integration of glass and mirrors in executive foyers"
     ],
     "results_ar": [
-      "إنهاء الأعمال في الوقت المحدد بضمان 5 سنوات",
-      "بيئة عمل أنيقة وعازلة للصوت"
+      "تحويل صالة الاجتماعات والممرات إلى مساحات عصرية تليق بكبار الشخصيات",
+      "تشطيب فائق الجودة خالي من العيوب وحائز على إشادة الإدارة العليا",
+      "إبراز الهوية البصرية للشركة بأسلوب معماري رائد"
     ],
     "results_en": [
-      "Completed on schedule with 5-year warranty",
-      "Elegant noise-isolated workspace"
+      "Transformed boardroom and corridors into a bespoke VIP corporate environment",
+      "Flawless executive finish acclaimed by client senior leadership",
+      "Reinforced corporate visual identity through cutting-edge interior styling"
     ],
-    "project_value": 280000.0,
+    "project_value": 190000.0,
     "status": "completed",
-    "is_featured": true,
-    "cover_image_url": "/images/defaults/projects/project-3.webp",
-    "before_image_url": "/images/defaults/projects/project-3-before.webp",
-    "after_image_url": "/images/defaults/projects/project-3-after.webp"
+    "is_featured": false,
+    "cover_image_url": "/images/luxury-polished-meeting-table.webp",
+    "before_image_url": "/images/luxury-polished-meeting-table-2.webp",
+    "after_image_url": "/images/decorative-backlit-mirror.webp"
   },
   {
-    "slug": "modern-kitchen-suite",
-    "title_ar": "مطابخ ألمنيوم ومودرن لمجمع سكني",
-    "title_en": "Modern Aluminum Kitchens Complex",
-    "category_ar": "مطابخ",
-    "category_en": "Kitchens",
-    "location_ar": "الرياض - حي الياسمين",
-    "location_en": "Riyadh - Al Yasmin District",
+    "slug": "turnkey-fitout-contracting",
+    "title_ar": "تشطيبات متكاملة ومقاولات معرض تجاري — تسليم مفتاح",
+    "title_en": "Turnkey Fitout & Commercial Showroom Contracting",
+    "category_ar": "مقاولات عامة وتشطيبات",
+    "category_en": "General Contracting & Fitout",
+    "location_ar": "الرياض - طريق خريص",
+    "location_en": "Riyadh - Khurais Road",
     "city": "riyadh",
-    "year": "2024",
-    "client_name": "شركة الإعمار السكني",
-    "client_ar": "شركة الإعمار السكني",
-    "client_en": "Residential Building Co.",
-    "description_ar": "تصنيع وتجهيز 24 مطبخ ألمنيوم مودرن مقاوم للماء والحشرات بأسطح رخام صناعي ومفصلات بلوم نمساوية.",
-    "description_en": "Manufacture and setup of 24 modern aluminum kitchens with Austrian Blum soft-close fittings and synthetic marble countertops.",
+    "year": "2023",
+    "client_name": "مجموعة تجارية رائدة",
+    "client_ar": "مجموعة تجارية رائدة",
+    "client_en": "Leading Retail Enterprise Group",
+    "description_ar": "تولت مؤسسة القوة العاشرة تنفيذ المقاولات العامة والتشطيبات المعمارية الشاملة لمعرض تجاري، بدءاً من تعديل الهيكل الإنشائي والواجهة الزجاجية الخارجية بنظام السبايدر، والأسقف المعلقة، وقواطع الألمنيوم، والأرضيات الرخامية، وحتى التسليم النهائي للتشغيل التجاري بنظام تسليم المفتاح.",
+    "description_en": "Full turnkey commercial fit-out and architectural contracting for a retail showroom. Encompassed structural renovations, exterior spider glass facades, acoustic ceilings, aluminum and glass partitions, marble flooring, and civil defense certification.",
     "challenges_ar": [
-      "تسليم 24 مطبخاً بجدول زمني ضيق جداً"
+      "إعادة تأهيل الواجهة الزجاجية الخارجية واستبدالها بنظام سبايدر حديث",
+      "تنفيذ أرضيات الرخام والبورسلان عالي المقاومة للأحمال التجارية",
+      "قواطع وأبواب ألمنيوم وزجاج سكريت للمكاتب الإدارية الداخلية",
+      "تنفيذ أعمال التكييف والإنارة المعمارية المخفية والجبس",
+      "تسليم نهائي موثق بالمطابقة لمواصفات واشتراطات الدفاع المدني"
     ],
     "challenges_en": [
-      "Delivering 24 custom kitchens under a tight timeframe"
+      "External facade retrofit with cutting-edge spider glass engineering",
+      "High-abrasion commercial marble and porcelain tile installation",
+      "Administrative office interior tempered glass and aluminum partitions",
+      "Integrated HVAC, architectural recessed illumination, and gypsum works",
+      "Full inspection compliance and civil defense safety sign-off"
     ],
     "results_ar": [
-      "تسليم كافة الوحدات بدقة وجودة عالية"
+      "تسليم كامل للمشروع في غضون 60 يوماً فقط وفق الجدول الزمني",
+      "حصول المعرض على رخصة التشغيل الفوري من الجهات البلدية والدفاع المدني",
+      "توفير 15% من التكاليف المتوقعة بفضل الإدارة الهندسية الذكية"
     ],
     "results_en": [
-      "Delivered all units with high quality and accuracy"
+      "Turnkey project handover within 60 days on accelerated schedule",
+      "Immediate municipal and civil defense operational licenses granted",
+      "15% cost savings achieved through intelligent engineering value management"
     ],
-    "project_value": 650000.0,
+    "project_value": 920000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/defaults/projects/project-4.webp",
-    "before_image_url": "/images/defaults/projects/project-4-before.webp",
-    "after_image_url": "/images/defaults/projects/project-4-after.webp"
+    "cover_image_url": "/images/Image4.webp",
+    "before_image_url": "/images/services/finishing.webp",
+    "after_image_url": "/images/Image4.webp"
+  },
+  {
+    "slug": "commercial-glass-facade",
+    "title_ar": "واجهات زجاج استركشر وتكسيات كلادينج — مجمع ومركز أعمال",
+    "title_en": "Structural Glass Facades & Cladding for Business Center",
+    "category_ar": "واجهات زجاجية وكلادينج",
+    "category_en": "Structural Glass & Cladding",
+    "location_ar": "الرياض - حي العليا",
+    "location_en": "Riyadh - Al Olaya District",
+    "city": "riyadh",
+    "year": "2024",
+    "client_name": "مجمع العليا للأعمال",
+    "client_ar": "مجمع العليا للأعمال والتجارة",
+    "client_en": "Al Olaya Commercial Business Center",
+    "description_ar": "تنفيذ هندسي متكامل لواجهات زجاج استركشر إنشائي (Structural Glazing) وتكسيات الكلادينج لمبنى تجاري ومركز أعمال. تميز المشروع بتركيب ألواح زجاج دبل جلاس سكريت عازلة للصوت والحرارة بنظام السيليكون الهيكلي المخفي الذي يمنح الواجهة سطحاً زجاجياً مستمراً وانسيابياً بدون قطاعات ألمنيوم خارجية بارزة، محاطاً ببوابات وإطارات تكسيات كلادينج ألمنيوم معمارية عصرية وأبواب مداخل زجاجية أوتوماتيكية متطورة.",
+    "description_en": "Turnkey structural glazing facade and aluminum cladding architecture for a corporate business park. Features double-glazed acoustic and thermal tempered glass with invisible structural silicone joints creating an uninterrupted sleek glass skin.",
+    "challenges_ar": [
+      "واجهات زجاج استركشر إنشائي (Structural Glazing) بسطح زجاجي انسيابي بدون فريمات خارجية",
+      "ألواح زجاج دبل جلاس سكريت مفرغة بالغاز عازلة للصوت والحرارة وموفرة للطاقة",
+      "تكسيات كلادينج ألمنيوم معمارية بتشكيل هندسي دقيق مقاوم للحريق والعوامل الجوية",
+      "أبواب مداخل زجاجية أوتوماتيكية بنظام استشعار ورادار للحركة",
+      "حقن سيليكون إنشائي هيكلي معتمد لاختبارات مقاومة الرياح والعزل المائي الصارم",
+      "تنفيذ متوافق مع كود البناء السعودي ومعايير السلامة الإنشائية"
+    ],
+    "challenges_en": [
+      "Structural glazing curtain wall with continuous seamless planar glass surface",
+      "Argon-filled double glazed units minimizing solar heat gain and urban noise",
+      "Geometric fire-rated architectural aluminum cladding parapets and jambs",
+      "Automated motion-sensor radar glass sliding entrance portals",
+      "Certified structural silicone sealant application passing rigorous field stress tests",
+      "Total alignment with Saudi Building Code safety and energy efficiency protocols"
+    ],
+    "results_ar": [
+      "تنفيذ الواجهة بمساحة إجمالية تفوق 2,800 متر مربع بأعلى كفاءة",
+      "خفض فواتير التبريد السنوية للمبنى بنسبة 30% بفضل الزجاج العازل",
+      "مبنى أيقوني في قلب حي العليا التجاري بالرياض",
+      "ضمان 10 سنوات شامل الصيانة السنوية الدورية المجانية"
+    ],
+    "results_en": [
+      "Executed over 2,800 sqm of structural glazing with top-tier precision",
+      "Delivered 30% recurring reduction in annual HVAC energy overhead",
+      "Created an iconic landmark structure in Riyadh's Olaya business hub",
+      "Backed by a 10-year warranty with complimentary annual maintenance inspections"
+    ],
+    "project_value": 1250000.0,
+    "status": "completed",
+    "is_featured": true,
+    "cover_image_url": "/images/hero.webp",
+    "before_image_url": "/images/hero.webp",
+    "after_image_url": "/images/hero.webp"
   }
 ]
