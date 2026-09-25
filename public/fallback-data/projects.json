@@ -45,9 +45,9 @@
     "project_value": 850000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/twenty-five-commercial-center-facade-1.webp",
-    "before_image_url": "/images/twenty-five-commercial-center-facade-2.webp",
-    "after_image_url": "/images/twenty-five-commercial-center-facade-1.webp"
+    "cover_image_url": "/images/projects/twenty-five-commercial-center-facade-1.webp",
+    "before_image_url": "/images/projects/twenty-five-commercial-center-facade-2.webp",
+    "after_image_url": "/images/projects/twenty-five-commercial-center-facade-1.webp"
   },
   {
     "slug": "curved-glass-refrigerated-showcases",
@@ -91,9 +91,9 @@
     "project_value": 220000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/curved-glass-refrigerated-showcase.webp",
-    "before_image_url": "/images/curved-glass-showcases-pair.webp",
-    "after_image_url": "/images/cake-by-mamola-curved-showcase.webp"
+    "cover_image_url": "/images/projects/curved-glass-refrigerated-showcase.webp",
+    "before_image_url": "/images/projects/curved-glass-showcases-pair.webp",
+    "after_image_url": "/images/projects/cake-by-mamola-curved-showcase.webp"
   },
   {
     "slug": "panoramic-curved-glass-elevator",
@@ -135,9 +135,9 @@
     "project_value": 380000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/curved-glass-panoramic-elevator-villa-1.webp",
-    "before_image_url": "/images/curved-glass-panoramic-elevator-villa-2.webp",
-    "after_image_url": "/images/curved-glass-panoramic-elevator-villa-1.webp"
+    "cover_image_url": "/images/projects/curved-glass-panoramic-elevator-villa-1.webp",
+    "before_image_url": "/images/projects/curved-glass-panoramic-elevator-villa-2.webp",
+    "after_image_url": "/images/projects/curved-glass-panoramic-elevator-villa-1.webp"
   },
   {
     "slug": "commercial-bakery-display-counters",
@@ -181,9 +181,9 @@
     "project_value": 410000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/bakery-pastry-glass-display-counter.webp",
-    "before_image_url": "/images/commercial-bakery-stainless-steel-counters.webp",
-    "after_image_url": "/images/bakery-pastry-glass-display-counter.webp"
+    "cover_image_url": "/images/projects/bakery-pastry-glass-display-counter.webp",
+    "before_image_url": "/images/projects/commercial-bakery-stainless-steel-counters.webp",
+    "after_image_url": "/images/projects/bakery-pastry-glass-display-counter.webp"
   },
   {
     "slug": "luxury-decor-mirrors-tables",
@@ -225,9 +225,9 @@
     "project_value": 190000.0,
     "status": "completed",
     "is_featured": false,
-    "cover_image_url": "/images/luxury-polished-meeting-table.webp",
-    "before_image_url": "/images/luxury-polished-meeting-table-2.webp",
-    "after_image_url": "/images/decorative-backlit-mirror.webp"
+    "cover_image_url": "/images/projects/luxury-polished-meeting-table.webp",
+    "before_image_url": "/images/projects/luxury-polished-meeting-table-2.webp",
+    "after_image_url": "/images/projects/decorative-backlit-mirror.webp"
   },
   {
     "slug": "turnkey-fitout-contracting",
@@ -271,9 +271,9 @@
     "project_value": 920000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/Image4.webp",
-    "before_image_url": "/images/services/finishing.webp",
-    "after_image_url": "/images/Image4.webp"
+    "cover_image_url": "/images/projects/Image4.webp",
+    "before_image_url": "/images/projects/services/finishing.webp",
+    "after_image_url": "/images/projects/Image4.webp"
   },
   {
     "slug": "commercial-glass-facade",
@@ -321,8 +321,8 @@
     "project_value": 1250000.0,
     "status": "completed",
     "is_featured": true,
-    "cover_image_url": "/images/hero.webp",
-    "before_image_url": "/images/hero.webp",
-    "after_image_url": "/images/hero.webp"
+    "cover_image_url": "/images/projects/hero.webp",
+    "before_image_url": "/images/projects/hero.webp",
+    "after_image_url": "/images/projects/hero.webp"
   }
 ]
