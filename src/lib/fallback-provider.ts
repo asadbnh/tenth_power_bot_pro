@@ -81,20 +81,6 @@ export function getFallbackProjects() {
   }>>("projects.json", []);
 }
 
-export function getFallbackArticles() {
-  return readJsonFile<Array<{
-    slug: string;
-    title_ar: string;
-    title_en: string;
-    excerpt_ar?: string;
-    excerpt_en?: string;
-    content_ar?: string;
-    content_en?: string;
-    cover_image_url?: string;
-    read_time_minutes?: number;
-    published_at?: string;
-  }>>("articles.json", []);
-}
 
 export function getFallbackFaqs() {
   return readJsonFile<Array<{
@@ -105,17 +91,6 @@ export function getFallbackFaqs() {
   }>>("faqs.json", []);
 }
 
-export function getFallbackTestimonials() {
-  return readJsonFile<Array<{
-    reviewer_name: string;
-    client_company?: string;
-    rating: number;
-    content_ar: string;
-    content_en?: string;
-    reviewer_avatar_url?: string;
-    is_verified?: boolean;
-  }>>("testimonials.json", []);
-}
 
 export function getFallbackGallery() {
   return readJsonFile<Array<{

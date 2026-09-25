@@ -3,14 +3,13 @@ import { type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { ArticleDetailPageContent } from "@/components/pages/ArticleDetailPageContent";
 import { getArticleBySlug, getArticles, getSeoMetadata } from "@/lib/actions/content";
-import { getFallbackArticles } from "@/lib/fallback-provider";
 
 export async function generateStaticParams() {
   const { data: dbArticles } = await getArticles().catch(() => ({ data: [] }));
   if (dbArticles && dbArticles.length > 0) {
     return dbArticles.map((a) => ({ slug: String(a.slug) }));
   }
-  return getFallbackArticles().map((a) => ({ slug: a.slug }));
+  return [];
 }
 
 export async function generateMetadata({

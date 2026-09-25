@@ -6,9 +6,7 @@ import {
   getFallbackCompany,
   getFallbackServices,
   getFallbackProjects,
-  getFallbackArticles,
   getFallbackFaqs,
-  getFallbackTestimonials,
   getFallbackGallery,
   getFallbackGalleryAlbums,
 } from "@/lib/fallback-provider";
@@ -442,13 +440,7 @@ async function fetchArticlesFromDb(options?: { locale?: string; limit?: number; 
       totalCount = count ?? data.length;
     }
   } catch {
-    // fallback
-  }
-
-  if (list.length === 0) {
-    const fallbacks = getFallbackArticles() as Record<string, unknown>[];
-    list = fallbacks.slice(offset, offset + limit);
-    totalCount = fallbacks.length;
+    // database error or offline
   }
 
   const normalized = list.map((a) => ({
@@ -543,9 +535,6 @@ export async function getArticleBySlug(slug: string, locale = "ar") {
     } catch (err) {
       logDbWarning("Could not fetch article_images", err);
     }
-  } else {
-    const fallbacks = getFallbackArticles() as Record<string, unknown>[];
-    article = fallbacks.find((a) => a.slug === slug) || fallbacks[0] || null;
   }
 
   if (!article) return null;
@@ -778,10 +767,6 @@ export async function getApprovedReviews(limit = 12) {
     }
   } catch (err) {
     logDbWarning("Error fetching approved reviews", err);
-  }
-
-  if (list.length === 0) {
-    list = getFallbackTestimonials() as Record<string, unknown>[];
   }
 
   return list.slice(0, limit);
