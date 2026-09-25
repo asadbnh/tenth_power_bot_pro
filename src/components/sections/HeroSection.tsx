@@ -7,7 +7,10 @@ import {
   Sparkles,
   ArrowRight,
   Building2,
- 
+  ShieldCheck,
+  Award,
+  Ruler,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -211,7 +214,90 @@ export function HeroSection({ locale, dict: _dict, initialSlides }: HeroSectionP
               )}
             </motion.h1>
 
-          
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="text-xs sm:text-base lg:text-lg text-slate-600 dark:text-slate-200 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal"
+            >
+              {isRtl
+                ? "تنفيذ وتوريد الزجاج السيكوريت، واجهات الاستركشر والكرتن وول، قطاعات الألمنيوم المعزولة حرارياً، وكبائن الشاور الفاخرة بأعلى معايير كود البناء السعودي SBC."
+                : "Fabrication and installation of securit glass, curtain walls, thermal-break aluminum, and luxury architectural partitions according to Saudi Building Code SBC."}
+            </motion.p>
+
+            {/* CTAs Action Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 max-w-lg mx-auto lg:mx-0 pt-1"
+            >
+              <Link
+                href={`/${locale}/quote`}
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-slate-950 font-bold text-sm sm:text-base shadow-lg shadow-amber-500/25 hover:scale-[1.02] active:scale-95 transition-all duration-300"
+              >
+                <Ruler className="w-4 h-4 text-slate-950 shrink-0" />
+                <span>{isRtl ? "طلب معاينة ورفع مساحي مجاني" : "Request Free Site Survey"}</span>
+                <ArrowRight className={cn("w-4 h-4", isRtl && "rotate-180")} />
+              </Link>
+
+              <Link
+                href={`/${locale}/projects`}
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300/80 shadow-sm dark:bg-white/10 dark:hover:bg-white/20 dark:text-white dark:border-white/20 backdrop-blur-md hover:scale-[1.02] active:scale-95 transition-all duration-300"
+              >
+                <Building2 className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                <span>{isRtl ? "استعراض المشاريع المنفذة" : "View Completed Projects"}</span>
+              </Link>
+            </motion.div>
+
+            {/* Architectural Trust & Authority Badges Matrix */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.9 }}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 pt-1 sm:pt-2 text-start"
+            >
+              <div className="rounded-xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md shadow-sm dark:shadow-none transition-colors">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 mb-0.5 sm:mb-1">
+                  <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "10 سنوات" : "10 Years"}</span>
+                </div>
+                <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
+                  {isRtl ? "ضمان شامل معتمد على التركيب والعوازل" : "Warranty on Installation & Seals"}
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md shadow-sm dark:shadow-none transition-colors">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 mb-0.5 sm:mb-1">
+                  <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "كود SBC" : "SBC Code"}</span>
+                </div>
+                <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
+                  {isRtl ? "مطابقة تامة لكود البناء السعودي" : "Saudi Building Code Compliant"}
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md shadow-sm dark:shadow-none transition-colors">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 mb-0.5 sm:mb-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "+450 مشروع" : "+450 Projects"}</span>
+                </div>
+                <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
+                  {isRtl ? "منفذة بنجاح بالرياض والمنطقة الوسطى" : "Executed Across Riyadh"}
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-slate-200/90 dark:border-white/10 bg-white/85 dark:bg-white/[0.04] p-2 sm:p-3 backdrop-blur-md shadow-sm dark:shadow-none transition-colors">
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 mb-0.5 sm:mb-1">
+                  <Ruler className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-bold">{isRtl ? "رفع مساحي" : "Surveying"}</span>
+                </div>
+                <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
+                  {isRtl ? "معاينة هندسية ميدانية فورية مجانية" : "Free On-Site Measurements"}
+                </p>
+              </div>
+            </motion.div>
           </div>
 
           {/* Right Column: 3D Image Showcase Slideshow Carousel & Controls */}
