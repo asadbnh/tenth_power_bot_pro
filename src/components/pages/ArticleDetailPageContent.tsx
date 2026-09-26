@@ -1,12 +1,14 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  Calendar, Clock, User, Share2, ArrowRight, ChevronLeft, BookOpen, Tag, Images
+  Calendar, Clock, User, Share2, ArrowRight, ChevronLeft, BookOpen, Tag, Images, Eye
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { recordArticleView } from "@/lib/actions/content";
 
 import { AnimatedCanvasBanner } from "@/components/ui/AnimatedCanvasBanner";
 import { MarkdownContent } from "@/components/ui/MarkdownContent";
@@ -20,6 +22,8 @@ interface Props {
 
 export function ArticleDetailPageContent({ slug, locale, dict, initialArticle }: Props) {
   const isRtl = locale === "ar";
+  const defaultAuthor = isRtl ? "مؤسسة القوة العاشرة" : "Tenth Power Est.";
+
   const article = initialArticle || {
     slug,
     title_ar: isRtl ? "دليل معماريك في اختيار أفضل الخامات" : "Architectural Guide to Material Selection",
@@ -27,22 +31,55 @@ export function ArticleDetailPageContent({ slug, locale, dict, initialArticle }:
     category_ar: isRtl ? "نصائح وإرشادات" : "Tips & Guides",
     category_en: "Tips & Guides",
     read_time_minutes: 5,
-    published_at: "2026-08-01",
-    author_ar: isRtl ? "فريق القوة العاشرة" : "Tenth Power Team",
-    author_en: "Tenth Power Team",
+    published_at: "2026-08-01T10:00:00Z",
+    author_ar: defaultAuthor,
+    author_en: "Tenth Power Est.",
+    view_count: 0,
     content_ar: "نقدم لكم في هذا المقال الشامل أحدث النصائح والتوصيات الهندسية لضمان اختيار الخامات والمواد المناسبة لمشروعك المعماري السكني أو التجاري.",
     content_en: "In this comprehensive article we share essential engineering guidance to ensure selecting the ideal materials for your project."
   };
 
   const title = isRtl ? (article.title_ar || article.title) : (article.title_en || article.title_ar || article.title);
-  const category = isRtl ? (article.category_ar || article.tag_ar || article.category) : (article.category_en || article.tag_en || article.category_ar || article.category || "مقالات");
-  const author = isRtl ? (article.author_ar || article.author || "م. فريق الهندسة") : (article.author_en || article.author_ar || article.author || "Engineering Team");
+  const category = isRtl ? (article.category_ar || article.tag_ar || article.category) : (article.category_en || article.tag_en || article.category_ar || article.category || (isRtl ? "مقالات" : "Articles"));
+  const author = isRtl ? (article.author_ar || article.author || defaultAuthor) : (article.author_en || article.author_ar || article.author || defaultAuthor);
   const content = isRtl ? (article.content_ar || article.content) : (article.content_en || article.content_ar || article.content);
   const readTime = article.read_time_minutes || article.readTime || 5;
-  const date = article.published_at ? new Date(article.published_at).toLocaleDateString(isRtl ? "ar-SA" : "en-US") : "2026";
   const coverImage = article.cover_image_url || article.featured_image_url;
   const articleImages: { id: string; url: string; context: string | null }[] =
     (article.article_images as any[]) || [];
+
+  // Parse real date and time from DB
+  const rawDate = article.published_at || article.created_at;
+  const dateObj = rawDate ? new Date(rawDate) : null;
+  const isValidDate = dateObj && !isNaN(dateObj.getTime());
+
+  // Date format matching user reference (e.g. ٢٠٢٦/٨/١ in Arabic or 2026/8/1)
+  const dateStr = isValidDate
+    ? (isRtl
+        ? (() => {
+            const nf = new Intl.NumberFormat("ar-SA-u-ca-gregory", { useGrouping: false });
+            return `${nf.format(dateObj.getFullYear())}/${nf.format(dateObj.getMonth() + 1)}/${nf.format(dateObj.getDate())}`;
+          })()
+        : dateObj.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }))
+    : (isRtl ? "٢٠٢٦/٨/١" : "2026-08-01");
+
+  // Real time format e.g. 10:00 ص / 10:00 AM
+  const timeStr = isValidDate
+    ? dateObj.toLocaleTimeString(isRtl ? "ar-SA-u-ca-gregory" : "en-US", { hour: "2-digit", minute: "2-digit" })
+    : "";
+
+  // Dynamic live views count
+  const [views, setViews] = useState<number>(Number(article.view_count || 0));
+
+  useEffect(() => {
+    if (article.id) {
+      recordArticleView(article.id).then((updatedViews) => {
+        if (typeof updatedViews === "number" && updatedViews > 0) {
+          setViews(updatedViews);
+        }
+      }).catch(() => {});
+    }
+  }, [article.id]);
 
   return (
     <div className="pt-[var(--header-height)] min-h-dvh bg-gradient-to-b from-background to-surface">
@@ -74,18 +111,29 @@ export function ArticleDetailPageContent({ slug, locale, dict, initialArticle }:
             {title}
           </h1>
 
-          <div className="flex flex-wrap gap-4 sm:gap-6 text-xs sm:text-sm text-slate-600 dark:text-slate-300 pt-2 border-t border-slate-200/80 dark:border-white/10 font-medium">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+          {/* Real Post Metadata: Author, Date, Time, Reading Time, Views Count */}
+          <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm text-slate-600 dark:text-slate-300 pt-3 border-t border-slate-200/80 dark:border-white/10 font-medium">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <User className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
               <span>{author}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-              <span>{date}</span>
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Calendar className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+              <span>{dateStr}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            {timeStr && (
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                <span>{timeStr}</span>
+              </div>
+            )}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <BookOpen className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
               <span>{readTime} {isRtl ? "دقائق قراءة" : "min read"}</span>
+            </div>
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Eye className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+              <span>{views.toLocaleString(isRtl ? "ar-SA" : "en-US")} {isRtl ? "مشاهدة" : "views"}</span>
             </div>
           </div>
         </div>

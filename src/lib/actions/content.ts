@@ -419,7 +419,7 @@ async function fetchArticlesFromDb(options?: { locale?: string; limit?: number; 
     const { data, count } = await supabase
       .from("articles")
       .select(`
-        id, slug, cover_image_url, read_time_minutes, published_at, status, is_featured, view_count,
+        id, slug, cover_image_url, read_time_minutes, published_at, created_at, author_id, status, is_featured, view_count,
         title_ar, title_en, excerpt_ar, excerpt_en, content_ar, content_en
       `, { count: "exact" })
       .eq("status", "published")
@@ -434,32 +434,54 @@ async function fetchArticlesFromDb(options?: { locale?: string; limit?: number; 
     // database error or offline
   }
 
-  const normalized = list.map((a) => ({
-    ...a,
-    slug: a.slug,
-    title: isAr ? a.title_ar : a.title_en || a.title_ar,
-    excerpt: isAr ? a.excerpt_ar : a.excerpt_en || a.excerpt_ar,
-    featured_image_url: a.cover_image_url || a.featured_image_url,
-    cover_image_url: a.cover_image_url || a.featured_image_url,
-  }));
+  // Fetch author names from users table for any articles that have author_id
+  const authorIds = Array.from(new Set(list.map((a) => a.author_id).filter(Boolean)));
+  const authorMap = new Map<string, string>();
+  if (authorIds.length > 0) {
+    try {
+      const sql = getSql();
+      const users = await sql`SELECT id, full_name FROM users WHERE id = ANY(${authorIds as any});`;
+      for (const u of users) {
+        if (u.id && u.full_name) {
+          authorMap.set(u.id, u.full_name);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  const normalized = list.map((a) => {
+    const authorName = a.author_id ? authorMap.get(a.author_id as string) : null;
+    return {
+      ...a,
+      slug: a.slug,
+      title: isAr ? a.title_ar : a.title_en || a.title_ar,
+      excerpt: isAr ? a.excerpt_ar : a.excerpt_en || a.excerpt_ar,
+      author_ar: (a.author_ar as string) || authorName || (a.author as string) || "مؤسسة القوة العاشرة",
+      author_en: (a.author_en as string) || authorName || (a.author as string) || "Tenth Power Est.",
+      view_count: Number(a.view_count || 0),
+      read_time_minutes: Number(a.read_time_minutes || 5),
+      published_at: a.published_at || a.created_at || new Date().toISOString(),
+      featured_image_url: a.cover_image_url || a.featured_image_url,
+      cover_image_url: a.cover_image_url || a.featured_image_url,
+    };
+  });
 
   return { data: normalized, count: totalCount };
 }
 
-const getCachedArticlesData = unstable_cache(
-  async (locale: string, limit: number, page: number) =>
-    fetchArticlesFromDb({ locale, limit, page }),
-  ["global-articles-data"],
-  { revalidate: 30, tags: ["articles"] }
-);
-
 export async function getArticles(options?: { locale?: string; limit?: number; page?: number }) {
+  const locale = options?.locale ?? "ar";
+  const limit = options?.limit ?? 9;
+  const page = options?.page ?? 1;
+
   try {
-    return await getCachedArticlesData(
-      options?.locale ?? "ar",
-      options?.limit ?? 9,
-      options?.page ?? 1
-    );
+    return await unstable_cache(
+      () => fetchArticlesFromDb(options),
+      ["articles-data", locale, String(limit), String(page)],
+      { revalidate: 60, tags: ["articles"] }
+    )();
   } catch {
     return fetchArticlesFromDb(options);
   }
@@ -485,8 +507,21 @@ export async function getArticleBySlug(slug: string, locale = "ar") {
 
   let tags: { tag_ar: string; tag_en?: string }[] = [];
   let articleImages: { id: string; url: string; context: string | null }[] = [];
+  let authorName: string | null = null;
 
   if (article) {
+    if (article.author_id) {
+      try {
+        const sql = getSql();
+        const userRow = await sql`SELECT full_name FROM users WHERE id = ${article.author_id as string} LIMIT 1`;
+        if (userRow && userRow.length > 0 && userRow[0].full_name) {
+          authorName = userRow[0].full_name;
+        }
+      } catch {
+        // ignore
+      }
+    }
+
     try {
       const sql = getSql();
       const dbTags = await sql`
@@ -539,9 +574,11 @@ export async function getArticleBySlug(slug: string, locale = "ar") {
     excerpt_en: article.excerpt_en || article.excerpt,
     content_ar: article.content_ar || article.content,
     content_en: article.content_en || article.content,
-    author_ar: article.author_ar || "فريق التحرير",
-    author_en: article.author_en || "Editorial Team",
-    published_at: article.published_at || new Date().toISOString(),
+    author_ar: (article.author_ar as string) || authorName || (article.author as string) || "مؤسسة القوة العاشرة",
+    author_en: (article.author_en as string) || authorName || (article.author as string) || "Tenth Power Est.",
+    view_count: Number(article.view_count || 0),
+    read_time_minutes: Number(article.read_time_minutes || 5),
+    published_at: article.published_at || article.created_at || new Date().toISOString(),
     title: isAr ? (article.title_ar || article.title) : (article.title_en || article.title_ar || article.title),
     excerpt: isAr ? (article.excerpt_ar || article.excerpt) : (article.excerpt_en || article.excerpt_ar || article.excerpt),
     content: isAr ? (article.content_ar || article.content) : (article.content_en || article.content_ar || article.content),
@@ -554,6 +591,28 @@ export async function getArticleBySlug(slug: string, locale = "ar") {
       { tag_ar: "ألمنيوم ومقاولات", tag_en: "Aluminum & Contracting" },
     ],
   };
+}
+
+/**
+ * Increment view count in database and return latest view count
+ */
+export async function recordArticleView(id: string): Promise<number | null> {
+  if (!id) return null;
+  try {
+    const sql = getSql();
+    const rows = await sql`
+      UPDATE articles 
+      SET view_count = COALESCE(view_count, 0) + 1 
+      WHERE id = ${id}
+      RETURNING view_count;
+    `;
+    if (rows && rows.length > 0) {
+      return Number(rows[0].view_count);
+    }
+  } catch (err) {
+    logDbWarning("recordArticleView failed", err);
+  }
+  return null;
 }
 
 // ─── Categories Actions ───────────────────────────────────────────────

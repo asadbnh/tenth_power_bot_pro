@@ -91,7 +91,7 @@ export default async function ArticleDetailPage({
     datePublished: article?.published_at || new Date().toISOString(),
     author: {
       "@type": "Person",
-      name: isAr ? (article?.author_ar || "فريق القوة العاشرة") : (article?.author_en || "Tenth Power Team"),
+      name: isAr ? (article?.author_ar || "مؤسسة القوة العاشرة") : (article?.author_en || "Tenth Power Est."),
     },
     publisher: {
       "@type": "Organization",

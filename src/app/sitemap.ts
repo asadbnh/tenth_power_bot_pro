@@ -48,7 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const [services, projects, articles] = await Promise.all([
       sql`SELECT slug, updated_at FROM services WHERE is_active = true;`,
       sql`SELECT slug, created_at AS updated_at FROM projects WHERE is_active = true;`,
-      sql`SELECT slug, updated_at FROM articles WHERE is_published = true;`,
+      sql`SELECT slug, updated_at FROM articles WHERE status = 'published';`,
     ]);
 
     serviceSlugs = services.map((s: any) => s.slug);

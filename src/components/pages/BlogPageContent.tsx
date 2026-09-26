@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Clock, ArrowRight, BookOpen, ChevronLeft, ShieldCheck, CheckCircle2, Layers } from "lucide-react";
+import { Clock, ArrowRight, BookOpen, ChevronLeft, ShieldCheck, CheckCircle2, Layers, Calendar, User, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -124,13 +124,45 @@ export function BlogPageContent({ locale, dict, initialArticles }: Props) {
 
               <div className="p-4 sm:p-8 flex flex-col justify-between space-y-4 sm:space-y-6">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 text-xs">
+                  <div className="flex flex-wrap items-center gap-3 text-xs">
                     <span className="px-3 py-1 rounded-full bg-primary-100 dark:bg-primary-950 text-primary-700 dark:text-primary-300 font-bold">
                       {isRtl ? (featured.category_ar || featured.tag_ar || "مقال مميز") : (featured.category_en || featured.tag_en || "Featured")}
                     </span>
-                    <span className="flex items-center gap-1 text-text-tertiary">
-                      <Clock className="w-3.5 h-3.5" />
-                      {featured.read_time_minutes || featured.readTime || 5} {isRtl ? "دقائق قراءة" : "min read"}
+
+                    {/* Author */}
+                    <span className="flex items-center gap-1.5 text-text-tertiary">
+                      <User className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                      <span>{isRtl ? (featured.author_ar || "مؤسسة القوة العاشرة") : (featured.author_en || "Tenth Power Est.")}</span>
+                    </span>
+
+                    {/* Date */}
+                    {featured.published_at && (
+                      <span className="flex items-center gap-1.5 text-text-tertiary">
+                        <Calendar className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                        <span>
+                          {(() => {
+                            const d = new Date(featured.published_at);
+                            if (isNaN(d.getTime())) return "";
+                            if (isRtl) {
+                              const nf = new Intl.NumberFormat("ar-SA-u-ca-gregory", { useGrouping: false });
+                              return `${nf.format(d.getFullYear())}/${nf.format(d.getMonth() + 1)}/${nf.format(d.getDate())}`;
+                            }
+                            return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+                          })()}
+                        </span>
+                      </span>
+                    )}
+
+                    {/* Read Time */}
+                    <span className="flex items-center gap-1.5 text-text-tertiary">
+                      <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                      <span>{featured.read_time_minutes || featured.readTime || 5} {isRtl ? "دقائق قراءة" : "min read"}</span>
+                    </span>
+
+                    {/* Views Count */}
+                    <span className="flex items-center gap-1.5 text-text-tertiary">
+                      <Eye className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                      <span>{Number(featured.view_count || 0).toLocaleString(isRtl ? "ar-SA" : "en-US")} {isRtl ? "مشاهدة" : "views"}</span>
                     </span>
                   </div>
 
@@ -187,9 +219,22 @@ export function BlogPageContent({ locale, dict, initialArticles }: Props) {
                       </div>
 
                       <div className="p-4 sm:p-6 space-y-2.5 sm:space-y-3">
-                        <div className="flex items-center gap-1.5 text-xs text-text-tertiary">
-                          <Clock className="w-3.5 h-3.5" />
-                          <span>{readTime} {isRtl ? "دقائق" : "min"}</span>
+                        {/* Real Post Metadata */}
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-text-tertiary">
+                          <span className="flex items-center gap-1">
+                            <User className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                            <span className="truncate max-w-[130px]">{isRtl ? (article.author_ar || "مؤسسة القوة العاشرة") : (article.author_en || "Tenth Power Est.")}</span>
+                          </span>
+                          <span className="opacity-40">•</span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                            <span>{readTime} {isRtl ? "دقائق" : "min"}</span>
+                          </span>
+                          <span className="opacity-40">•</span>
+                          <span className="flex items-center gap-1">
+                            <Eye className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                            <span>{Number(article.view_count || 0).toLocaleString(isRtl ? "ar-SA" : "en-US")}</span>
+                          </span>
                         </div>
 
                         <h3 className="font-extrabold text-base text-text-primary line-clamp-2 leading-snug">
