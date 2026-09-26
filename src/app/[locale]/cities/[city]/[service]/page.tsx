@@ -5,6 +5,8 @@ import { CityServicePageContent } from "@/components/pages/CityServicePageConten
 import { getCityServicePageBySlug, getCityPagesList, getServices } from "@/lib/actions/content";
 import { getFallbackServices } from "@/lib/fallback-provider";
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const params: { city: string; service: string }[] = [];
   const dbCities = await getCityPagesList("ar").catch(() => []);

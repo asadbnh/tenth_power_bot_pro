@@ -17,7 +17,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app"),
   title: {
     template: "%s | tenth-power-glass",
     default: "tenth-power-glass — Enterprise Business Platform",

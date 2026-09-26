@@ -6,7 +6,7 @@ import { SearchPageContent } from "@/components/pages/SearchPageContent";
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
   return {
     title: dict.search.title,
     description: dict.meta.siteDescription,
