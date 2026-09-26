@@ -9,6 +9,7 @@ import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 import { AnimatedCanvasBanner } from "@/components/ui/AnimatedCanvasBanner";
+import { MarkdownContent } from "@/components/ui/MarkdownContent";
 
 interface Props {
   slug: string;
@@ -105,8 +106,9 @@ export function ArticleDetailPageContent({ slug, locale, dict, initialArticle }:
             />
           )}
         </div>
-        <div className="prose prose-lg dark:prose-invert max-w-none text-text-secondary leading-relaxed whitespace-pre-line">
-          {content}
+        {/* Article Body with Global Markdown Formatting (Headings, Bold, Lists, Blockquotes, Dark/Light modes) */}
+        <div className="py-2">
+          <MarkdownContent content={content} isRtl={isRtl} />
         </div>
 
         {/* Article Tags from DB */}
