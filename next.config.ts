@@ -83,13 +83,34 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Cloudflare Edge Caching for ISR/Static pages
+      // ─── HTML pages: browser must revalidate each visit ──────────────
+      // This prevents stale data on mobile after updates
       {
-        source: "/:locale/(services|projects|blog|cities|faq|testimonials)/:path*",
+        source: "/:locale",
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
+            value: "no-cache, no-store, must-revalidate",
+          },
+        ],
+      },
+      {
+        source: "/:locale/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+        ],
+      },
+      // ─── CDN/ISR edge caching for content pages ───────────────────────
+      // s-maxage = CDN caches for 5 min, stale-while-revalidate = 1hr
+      {
+        source: "/:locale/(services|projects|blog|faq|gallery)/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, no-cache, s-maxage=300, stale-while-revalidate=3600",
           },
         ],
       },

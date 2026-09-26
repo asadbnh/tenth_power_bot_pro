@@ -12,6 +12,8 @@ import { GoogleMapsSection } from "@/components/sections/GoogleMapsSection";
 import { CTASection } from "@/components/sections/CTASection";
 import { DevNoticeModal } from "@/components/ui/DevNoticeModal";
 
+export const revalidate = 60;
+
 export async function generateMetadata({
   params,
 }: {

@@ -89,21 +89,24 @@ export default function RootLayout({
           <Analytics />
           {children}
         </ThemeProvider>
-        {/* PWA Service Worker registration — disabled in dev mode to prevent stale chunk hydration errors */}
+        {/* Proactively unregister any legacy service workers and clear browser CacheStorage on mobile devices */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-                if (${process.env.NODE_ENV === "production"}) {
-                  window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/sw.js').catch(() => {});
-                  });
-                } else {
+              if (typeof window !== 'undefined') {
+                if ('serviceWorker' in navigator) {
                   navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                    for (let registration of registrations) {
-                      registration.unregister();
+                    for (var r of registrations) {
+                      r.unregister();
                     }
-                  });
+                  }).catch(function() {});
+                }
+                if ('caches' in window) {
+                  caches.keys().then(function(names) {
+                    for (var name of names) {
+                      caches.delete(name);
+                    }
+                  }).catch(function() {});
                 }
               }
             `,

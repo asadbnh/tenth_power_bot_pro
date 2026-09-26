@@ -5,6 +5,8 @@ import { ServiceDetailPageContent } from "@/components/pages/ServiceDetailPageCo
 import { getServiceBySlug, getServices, getSeoMetadata } from "@/lib/actions/content";
 import { getFallbackServices } from "@/lib/fallback-provider";
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const dbServices = await getServices().catch(() => []);
   if (dbServices && dbServices.length > 0) {

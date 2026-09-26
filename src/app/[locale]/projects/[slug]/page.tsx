@@ -5,6 +5,8 @@ import { ProjectDetailPageContent } from "@/components/pages/ProjectDetailPageCo
 import { getProjectBySlug, getProjects, getSeoMetadata } from "@/lib/actions/content";
 import { getFallbackProjects } from "@/lib/fallback-provider";
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const { data: dbProjects } = await getProjects().catch(() => ({ data: [] }));
   if (dbProjects && dbProjects.length > 0) {

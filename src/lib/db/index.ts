@@ -23,9 +23,9 @@ export function getSql() {
   return cachedSql;
 }
 
-const QUERY_TIMEOUT_MS = 6000;
+const QUERY_TIMEOUT_MS = 15000;
 
-async function runQuery(query: string, params: unknown[] = []): Promise<any[]> {
+async function executeSingleQuery(query: string, params: unknown[] = []): Promise<any[]> {
   const sqlClient = getSql();
   let timer: NodeJS.Timeout | null = null;
   const timeoutPromise = new Promise<never>((_, reject) => {
@@ -44,6 +44,26 @@ async function runQuery(query: string, params: unknown[] = []): Promise<any[]> {
     return (res as any)?.rows ?? res;
   } finally {
     if (timer) clearTimeout(timer);
+  }
+}
+
+async function runQuery(query: string, params: unknown[] = []): Promise<any[]> {
+  try {
+    return await executeSingleQuery(query, params);
+  } catch (err: any) {
+    // Retry once on timeout or connection drop (common during serverless cold starts)
+    const isTransient =
+      err?.isTimeout ||
+      err?.code === "UND_ERR_CONNECT_TIMEOUT" ||
+      err?.sourceError?.code === "UND_ERR_CONNECT_TIMEOUT" ||
+      err?.message?.includes("fetch failed") ||
+      err?.message?.includes("timeout");
+
+    if (isTransient) {
+      console.warn(`[Neon DB Retry] Retrying query after cold start delay...`);
+      return await executeSingleQuery(query, params);
+    }
+    throw err;
   }
 }
 

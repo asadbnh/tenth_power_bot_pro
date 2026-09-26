@@ -4,6 +4,8 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { ArticleDetailPageContent } from "@/components/pages/ArticleDetailPageContent";
 import { getArticleBySlug, getArticles, getSeoMetadata } from "@/lib/actions/content";
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const { data: dbArticles } = await getArticles().catch(() => ({ data: [] }));
   if (dbArticles && dbArticles.length > 0) {

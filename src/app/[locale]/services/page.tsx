@@ -4,6 +4,8 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getServices } from "@/lib/actions/content";
 import { ServicesPageContent } from "@/components/pages/ServicesPageContent";
 
+export const revalidate = 60;
+
 export async function generateMetadata({
   params,
 }: {

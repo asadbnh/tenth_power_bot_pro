@@ -4,6 +4,8 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { GalleryPageContent } from "@/components/pages/GalleryPageContent";
 import { getGalleryItems, getGalleryAlbums } from "@/lib/actions/content";
 
+export const revalidate = 60;
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);

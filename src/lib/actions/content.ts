@@ -78,15 +78,13 @@ async function fetchServicesFromDb(locale = "ar") {
   }));
 }
 
-const getCachedServices = unstable_cache(
-  async (locale: string) => fetchServicesFromDb(locale),
-  ["global-services-data"],
-  { revalidate: 60, tags: ["services"] }
-);
-
 export async function getServices(locale = "ar") {
   try {
-    return await getCachedServices(locale);
+    return await unstable_cache(
+      () => fetchServicesFromDb(locale),
+      ["services-data", locale],
+      { revalidate: 60, tags: ["services"] }
+    )();
   } catch {
     return fetchServicesFromDb(locale);
   }
@@ -163,15 +161,13 @@ async function fetchServiceBySlugFromDb(slug: string, locale = "ar") {
   };
 }
 
-const getCachedServiceBySlug = unstable_cache(
-  async (slug: string, locale: string) => fetchServiceBySlugFromDb(slug, locale),
-  ["global-service-by-slug"],
-  { revalidate: 60, tags: ["services"] }
-);
-
 export async function getServiceBySlug(slug: string, locale = "ar") {
   try {
-    return await getCachedServiceBySlug(slug, locale);
+    return await unstable_cache(
+      () => fetchServiceBySlugFromDb(slug, locale),
+      ["service-by-slug", slug, locale],
+      { revalidate: 60, tags: ["services", `service-${slug}`] }
+    )();
   } catch {
     return fetchServiceBySlugFromDb(slug, locale);
   }
@@ -202,7 +198,7 @@ async function fetchProjectsFromDb(options?: {
       .select(`
         id, slug, city, status, is_featured, is_active, project_value,
         title_ar, title_en, description_ar, description_en, client_name,
-        services(slug)
+        cover_image_url, services(slug)
       `, { count: "exact" })
       .eq("is_active", true)
       .order("created_at", { ascending: false })
@@ -225,7 +221,7 @@ async function fetchProjectsFromDb(options?: {
     list = fallbacks.slice(offset, offset + limit);
     totalCount = fallbacks.length;
   } else {
-    // Attach real Cloudflare R2 / media_library cover images for database projects
+    // Attach real Cloudflare R2 / media_library cover images for database projects if not already present
     try {
       const sql = getSql();
       const covers = await sql`
@@ -253,20 +249,13 @@ async function fetchProjectsFromDb(options?: {
     slug: p.slug,
     title_ar: p.title_ar,
     title_en: p.title_en,
-    cover_image_url: p.cover_image_url || "/images/defaults/projects/project-1.webp",
+    cover_image_url: p.cover_image_url || "/images/projects/twenty-five-commercial-center-facade-1.webp",
     name: isAr ? p.title_ar : p.title_en || p.title_ar,
     short_description: isAr ? p.description_ar : p.description_en || p.description_ar,
   }));
 
   return { data: normalized, count: totalCount };
 }
-
-const getCachedProjectsData = unstable_cache(
-  async (locale: string, limit: number, page: number, city?: string, serviceSlug?: string) =>
-    fetchProjectsFromDb({ locale, limit, page, city, serviceSlug }),
-  ["global-projects-data"],
-  { revalidate: 60, tags: ["projects"] }
-);
 
 export async function getProjects(options?: {
   locale?: string;
@@ -275,14 +264,18 @@ export async function getProjects(options?: {
   limit?: number;
   page?: number;
 }) {
+  const locale = options?.locale ?? "ar";
+  const limit = options?.limit ?? 12;
+  const page = options?.page ?? 1;
+  const city = options?.city ?? "all";
+  const serviceSlug = options?.serviceSlug ?? "all";
+
   try {
-    return await getCachedProjectsData(
-      options?.locale ?? "ar",
-      options?.limit ?? 12,
-      options?.page ?? 1,
-      options?.city,
-      options?.serviceSlug
-    );
+    return await unstable_cache(
+      () => fetchProjectsFromDb(options),
+      ["projects-data", locale, String(limit), String(page), city, serviceSlug],
+      { revalidate: 60, tags: ["projects"] }
+    )();
   } catch {
     return fetchProjectsFromDb(options);
   }
@@ -397,15 +390,13 @@ async function fetchProjectBySlugFromDb(slug: string, _locale = "ar") {
   };
 }
 
-const getCachedProjectBySlug = unstable_cache(
-  async (slug: string, locale: string) => fetchProjectBySlugFromDb(slug, locale),
-  ["global-project-by-slug"],
-  { revalidate: 60, tags: ["projects"] }
-);
-
 export async function getProjectBySlug(slug: string, locale = "ar") {
   try {
-    return await getCachedProjectBySlug(slug, locale);
+    return await unstable_cache(
+      () => fetchProjectBySlugFromDb(slug, locale),
+      ["project-by-slug", slug, locale],
+      { revalidate: 60, tags: ["projects", `project-${slug}`] }
+    )();
   } catch {
     return fetchProjectBySlugFromDb(slug, locale);
   }
@@ -459,7 +450,7 @@ const getCachedArticlesData = unstable_cache(
   async (locale: string, limit: number, page: number) =>
     fetchArticlesFromDb({ locale, limit, page }),
   ["global-articles-data"],
-  { revalidate: 60, tags: ["articles"] }
+  { revalidate: 30, tags: ["articles"] }
 );
 
 export async function getArticles(options?: { locale?: string; limit?: number; page?: number }) {
@@ -652,7 +643,7 @@ async function fetchGalleryAlbumsFromDb(locale = "ar") {
 const getCachedGalleryAlbumsData = unstable_cache(
   async (locale: string) => fetchGalleryAlbumsFromDb(locale),
   ["global-gallery-albums-data"],
-  { revalidate: 60, tags: ["gallery"] }
+  { revalidate: 30, tags: ["gallery"] }
 );
 
 export async function getGalleryAlbums(locale = "ar") {
@@ -841,15 +832,13 @@ async function fetchFaqsFromDb(locale = "ar") {
   }));
 }
 
-const getCachedFaqsData = unstable_cache(
-  async (locale: string) => fetchFaqsFromDb(locale),
-  ["global-faqs-data"],
-  { revalidate: 60, tags: ["faqs"] }
-);
-
 export async function getFaqs(locale = "ar") {
   try {
-    return await getCachedFaqsData(locale);
+    return await unstable_cache(
+      () => fetchFaqsFromDb(locale),
+      ["faqs-data", locale],
+      { revalidate: 60, tags: ["faqs"] }
+    )();
   } catch {
     return fetchFaqsFromDb(locale);
   }
@@ -950,7 +939,7 @@ async function fetchCityPageBySlugFromDb(slug: string, locale = "ar") {
 const getCachedCityPageBySlug = unstable_cache(
   async (slug: string, locale: string) => fetchCityPageBySlugFromDb(slug, locale),
   ["global-city-page-by-slug"],
-  { revalidate: 60, tags: ["cities"] }
+  { revalidate: 30, tags: ["cities"] }
 );
 
 export async function getCityPageBySlug(slug: string, locale = "ar") {
@@ -1012,7 +1001,7 @@ const getCachedCityServicePageBySlug = unstable_cache(
   async (citySlug: string, serviceSlug: string, locale: string) =>
     fetchCityServicePageBySlugFromDb(citySlug, serviceSlug, locale),
   ["global-city-service-page-by-slug"],
-  { revalidate: 60, tags: ["cities", "services"] }
+  { revalidate: 30, tags: ["cities", "services"] }
 );
 
 export async function getCityServicePageBySlug(citySlug: string, serviceSlug: string, locale = "ar") {
@@ -1113,8 +1102,17 @@ async function fetchCompanyFromDb() {
           .order("day_of_week", { ascending: true }),
       ]);
 
+      const phone =
+        company.phone_primary ||
+        company.whatsapp_number ||
+        contactsRes?.data?.find((c: any) => c.type === "phone")?.value ||
+        "+966532438253";
+
       return {
         ...company,
+        phone,
+        phone_primary: company.phone_primary || phone,
+        whatsapp_number: company.whatsapp_number || phone,
         contacts: contactsRes?.data || [],
         address: addressRes?.data || null,
         business_hours: hoursRes?.data || [],
@@ -1129,28 +1127,15 @@ async function fetchCompanyFromDb() {
   return getFallbackCompany();
 }
 
-async function fetchCompanySafe() {
-  const timeoutPromise = new Promise<any>((resolve) =>
-    setTimeout(() => resolve(getFallbackCompany()), 5000)
-  );
-  try {
-    return await Promise.race([fetchCompanyFromDb(), timeoutPromise]);
-  } catch {
-    return getFallbackCompany();
-  }
-}
-
-const getCachedCompanyData = unstable_cache(
-  fetchCompanySafe,
-  ["global-company-data"],
-  { revalidate: 60, tags: ["company"] }
-);
-
 export async function getCompany() {
   try {
-    return (await getCachedCompanyData()) || getFallbackCompany();
+    return await unstable_cache(
+      () => fetchCompanyFromDb(),
+      ["company-profile"],
+      { revalidate: 60, tags: ["company"] }
+    )();
   } catch {
-    return getFallbackCompany();
+    return fetchCompanyFromDb();
   }
 }
 
@@ -1221,7 +1206,7 @@ async function fetchBeforeAfterFromDb(locale = "ar") {
 const getCachedBeforeAfterData = unstable_cache(
   async (locale: string) => fetchBeforeAfterFromDb(locale),
   ["global-before-after-data"],
-  { revalidate: 60, tags: ["before-after"] }
+  { revalidate: 30, tags: ["before-after"] }
 );
 
 export async function getBeforeAfterItems(locale = "ar") {
@@ -1256,7 +1241,7 @@ async function fetchAdvertisementsFromDb() {
 const getCachedAdvertisementsData = unstable_cache(
   async () => fetchAdvertisementsFromDb(),
   ["global-advertisements-data"],
-  { revalidate: 60, tags: ["advertisements"] }
+  { revalidate: 30, tags: ["advertisements"] }
 );
 
 export async function getAdvertisements() {

@@ -4,6 +4,8 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getProjects } from "@/lib/actions/content";
 import { ProjectsPageContent } from "@/components/pages/ProjectsPageContent";
 
+export const revalidate = 60;
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
