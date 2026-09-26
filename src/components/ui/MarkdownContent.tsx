@@ -2,12 +2,42 @@
 
 import React, { useMemo } from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Info, AlertCircle, Quote } from "lucide-react";
+import { CheckCircle2, Info, AlertCircle, Quote, Film, Music2 } from "lucide-react";
+import { YouTubeEmbed } from "./YouTubeEmbed";
+import { SmartLinkPreview } from "./SmartLinkPreview";
+import { RichImageEmbed } from "./RichImageEmbed";
 
 interface MarkdownContentProps {
   content: string;
   className?: string;
   isRtl?: boolean;
+}
+
+// ─── URL & Media Detection Helpers ─────────────────────────────────────
+function extractYouTubeId(url: string): string | null {
+  try {
+    const reg = /(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i;
+    const match = url.match(reg);
+    return match ? match[1] : null;
+  } catch {
+    return null;
+  }
+}
+
+function isImageUrl(url: string): boolean {
+  return /\.(jpeg|jpg|png|webp|gif|svg)(\?.*)?$/i.test(url);
+}
+
+function isVideoUrl(url: string): boolean {
+  return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+}
+
+function isAudioUrl(url: string): boolean {
+  return /\.(mp3|wav|m4a|aac)(\?.*)?$/i.test(url);
+}
+
+function isStandaloneUrl(text: string): boolean {
+  return /^https?:\/\/[^\s]+$/i.test(text.trim());
 }
 
 // ─── Inline Formatter ──────────────────────────────────────────────────
@@ -102,6 +132,11 @@ type Block =
   | { type: "ol"; items: string[] }
   | { type: "hr" }
   | { type: "code"; code: string; lang?: string }
+  | { type: "youtube"; videoId: string; url: string }
+  | { type: "image"; src: string; alt?: string; caption?: string }
+  | { type: "video"; src: string }
+  | { type: "audio"; src: string }
+  | { type: "link-preview"; url: string }
   | { type: "p"; text: string };
 
 function parseBlocks(markdown: string): Block[] {
@@ -186,6 +221,44 @@ function parseBlocks(markdown: string): Block[] {
       continue;
     }
 
+    // Markdown Image: ![alt](url)
+    const imgMatch = line.match(/^!\[(.*?)\]\((.*?)\)$/);
+    if (imgMatch) {
+      blocks.push({ type: "image", alt: imgMatch[1], src: imgMatch[2], caption: imgMatch[1] });
+      i++;
+      continue;
+    }
+
+    // Standalone URL on its own line: YouTube, Image, Video, Audio, or Smart Link Preview
+    const cleanUrl = line.replace(/^<|>$/g, "").trim();
+    if (isStandaloneUrl(cleanUrl)) {
+      const ytId = extractYouTubeId(cleanUrl);
+      if (ytId) {
+        blocks.push({ type: "youtube", videoId: ytId, url: cleanUrl });
+        i++;
+        continue;
+      }
+      if (isImageUrl(cleanUrl)) {
+        blocks.push({ type: "image", src: cleanUrl });
+        i++;
+        continue;
+      }
+      if (isVideoUrl(cleanUrl)) {
+        blocks.push({ type: "video", src: cleanUrl });
+        i++;
+        continue;
+      }
+      if (isAudioUrl(cleanUrl)) {
+        blocks.push({ type: "audio", src: cleanUrl });
+        i++;
+        continue;
+      }
+      // Any other website link -> Rich WhatsApp/Twitter style Link Preview Card
+      blocks.push({ type: "link-preview", url: cleanUrl });
+      i++;
+      continue;
+    }
+
     // Unordered List: - item or * item
     if (/^[-*]\s+/.test(line)) {
       const items: string[] = [];
@@ -217,6 +290,8 @@ function parseBlocks(markdown: string): Block[] {
       !lines[i].trim().startsWith("#") &&
       !lines[i].trim().startsWith(">") &&
       !lines[i].trim().startsWith("```") &&
+      !lines[i].trim().startsWith("![") &&
+      !isStandaloneUrl(lines[i].trim().replace(/^<|>$/g, "")) &&
       !/^[-*]\s+/.test(lines[i].trim()) &&
       !/^\d+\.\s+/.test(lines[i].trim()) &&
       !/^(\*{3,}|-{3,}|_{3,})$/.test(lines[i].trim())
@@ -356,6 +431,68 @@ export function MarkdownContent({ content, className, isRtl = true }: MarkdownCo
               </div>
             );
           }
+
+          case "youtube":
+            return (
+              <YouTubeEmbed
+                key={idx}
+                videoId={block.videoId}
+                url={block.url}
+                isRtl={isRtl}
+              />
+            );
+
+          case "image":
+            return (
+              <RichImageEmbed
+                key={idx}
+                src={block.src}
+                alt={block.alt}
+                caption={block.caption}
+                isRtl={isRtl}
+              />
+            );
+
+          case "link-preview":
+            return (
+              <SmartLinkPreview
+                key={idx}
+                url={block.url}
+                isRtl={isRtl}
+              />
+            );
+
+          case "video":
+            return (
+              <div
+                key={idx}
+                className="my-8 rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-xl bg-slate-950"
+              >
+                <div className="p-3 bg-slate-900 border-b border-slate-800 text-xs text-white/80 flex items-center gap-2">
+                  <Film className="w-4 h-4 text-amber-500" />
+                  <span>{isRtl ? "مقطع فيديو" : "Video"}</span>
+                </div>
+                <video
+                  src={block.src}
+                  controls
+                  preload="metadata"
+                  className="w-full max-h-[500px]"
+                />
+              </div>
+            );
+
+          case "audio":
+            return (
+              <div
+                key={idx}
+                className="my-6 p-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.03] shadow-md flex items-center gap-4"
+              >
+                <span className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                  <Music2 className="w-5 h-5" />
+                </span>
+                <audio src={block.src} controls className="w-full" />
+              </div>
+            );
 
           case "code":
             return (
