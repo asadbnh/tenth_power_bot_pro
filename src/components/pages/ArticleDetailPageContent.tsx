@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  Calendar, Clock, User, Share2, ArrowRight, ChevronLeft, BookOpen, Tag, Images, Eye
+  Calendar, Clock, User, Share2, ArrowRight, ChevronLeft, BookOpen, Tag, Images, Eye,
+  PhoneCall, MessageCircle
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatWhatsAppUrl, formatTelUrl } from "@/lib/utils/cn";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { recordArticleView } from "@/lib/actions/content";
@@ -81,6 +82,15 @@ export function ArticleDetailPageContent({ slug, locale, dict, initialArticle }:
     }
   }, [article.id]);
 
+  const companyPhone = "+966532438253";
+  const whatsappUrl = formatWhatsAppUrl(
+    companyPhone,
+    isRtl
+      ? `السلام عليكم، قرأت مقال "${title}" وأرغب في استشارة هندسية / طلب عرض سعر.`
+      : `Hello, I read the article "${title}" and would like an engineering consultation / quote.`
+  );
+  const telUrl = formatTelUrl(companyPhone);
+
   return (
     <div className="pt-[var(--header-height)] min-h-dvh bg-gradient-to-b from-background to-surface">
       {/* Architectural Article Header */}
@@ -140,11 +150,11 @@ export function ArticleDetailPageContent({ slug, locale, dict, initialArticle }:
       </section>
 
       {/* Article Content */}
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
-        {/* Architectural Article Canvas Banner */}
-        <div className="rounded-3xl overflow-hidden shadow-2xl border border-border-light">
+      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+        {/* Architectural Article Canvas Banner with Interactive CTA Overlay */}
+        <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-border-light group">
           {coverImage ? (
-            <img src={coverImage} alt={title} className="w-full h-80 object-cover" />
+            <img src={coverImage} alt={title} className="w-full h-80 sm:h-[420px] object-cover transition-transform duration-700 group-hover:scale-105" />
           ) : (
             <AnimatedCanvasBanner 
               aspectRatio="wide"
@@ -153,7 +163,63 @@ export function ArticleDetailPageContent({ slug, locale, dict, initialArticle }:
               icon={<BookOpen className="w-5 h-5" />}
             />
           )}
+
+          {/* Floating Instagram-Style "Call now" Interactive Sticker */}
+          <div className="absolute top-4 end-4 z-20">
+            <a
+              href={telUrl}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-xl border border-slate-200 dark:border-white/10 text-xs sm:text-sm font-bold text-slate-800 dark:text-white hover:scale-105 active:scale-95 transition-all group/btn"
+              title={isRtl ? "اتصال مباشر الآن" : "Call Now"}
+            >
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span className="text-sky-600 dark:text-sky-400 font-extrabold flex items-center gap-1">
+                🔗 Call now
+              </span>
+              <span className="text-slate-400">|</span>
+              <span>{isRtl ? "اتصل الآن" : "Call"}</span>
+            </a>
+          </div>
+
+          {/* Subtle Gradient Shadow for bottom readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent pointer-events-none" />
+
+          {/* Embedded Floating Flyer CTA Bar on the Banner */}
+          <div className="absolute bottom-3 inset-x-3 sm:bottom-5 sm:inset-x-5 z-20 flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4 rounded-2xl bg-slate-900/85 backdrop-blur-md border border-white/15 text-white shadow-xl">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+                <PhoneCall className="w-4 h-4 animate-bounce" />
+              </div>
+              <div className="text-xs sm:text-sm">
+                <p className="font-bold text-white leading-tight">{isRtl ? "ترغب في تنفيذ هذا العمل لمشروعك؟" : "Want this done for your project?"}</p>
+                <p className="text-slate-300 text-[11px] sm:text-xs">{isRtl ? "استشر مهندسينا فوراً واحصل على معاينة" : "Contact our engineers for instant consultation"}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <a
+                href={telUrl}
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-extrabold text-xs shadow-md transition-all active:scale-95"
+              >
+                <PhoneCall className="w-3.5 h-3.5 text-amber-600" />
+                <span>{isRtl ? "اتصل الآن" : "Call Now"}</span>
+              </a>
+
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-extrabold text-xs shadow-md transition-all active:scale-95"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span>{isRtl ? "واتساب مباشر" : "WhatsApp"}</span>
+              </a>
+            </div>
+          </div>
         </div>
+
         {/* Article Body with Global Markdown Formatting (Headings, Bold, Lists, Blockquotes, Dark/Light modes) */}
         <div className="py-2">
           <MarkdownContent content={content} isRtl={isRtl} />

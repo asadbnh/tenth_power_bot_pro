@@ -31,8 +31,6 @@ export async function generateMetadata({
   const defaultDescription = String(article?.excerpt_ar || article?.excerpt_en || article?.excerpt || (isAr
     ? `اقرأ مقال ${titleText} واكتشف أفضل النصائح والمعلومات الهندسية والمعمارية`
     : `Read article ${titleText} and discover architectural tips and insights`));
-  const defaultImage = String(article?.cover_image_url || "/images/defaults/projects/project-1.webp");
-
   // ─── Try to override with seo_metadata from DB ─────────────────────────────
   let seoMeta: Record<string, unknown> | null = null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,7 +41,8 @@ export async function generateMetadata({
 
   const title = String(seoMeta?.meta_title || defaultTitle);
   const description = String(seoMeta?.meta_description || defaultDescription);
-  const ogImage = String(seoMeta?.og_image_url || defaultImage);
+  const dynamicFlyerOg = `${appUrl}/api/og/article?slug=${encodeURIComponent(slug)}&locale=${locale}`;
+  const ogImage = String(seoMeta?.og_image_url || dynamicFlyerOg);
 
   return {
     title,
@@ -55,7 +54,15 @@ export async function generateMetadata({
     openGraph: {
       title: String(seoMeta?.og_title || title),
       description: String(seoMeta?.og_description || description),
-      images: [ogImage],
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: String(titleText),
+          type: "image/webp",
+        },
+      ],
       type: "article",
     },
     twitter: {
