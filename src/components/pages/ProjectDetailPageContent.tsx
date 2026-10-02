@@ -6,11 +6,12 @@ import {
   MapPin, Calendar, CheckCircle2, ArrowRight,
   Building2, ChevronLeft, Images, ShieldCheck, Maximize2, X, PlayCircle
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatTelUrl } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 import { AnimatedCanvasBanner } from "@/components/ui/AnimatedCanvasBanner";
+import { ShareButton } from "@/components/ui/ShareButton";
 
 interface Props {
   slug: string;
@@ -101,6 +102,12 @@ export function ProjectDetailPageContent({ slug, locale, dict, initialProject }:
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/5 dark:bg-white/10 text-xs font-semibold text-slate-700 dark:text-white/80 border border-slate-200/80 dark:border-white/15 shadow-xs">
                 {isRtl ? "ضمان 10 سنوات" : "10-Year Warranty"}
               </span>
+              <ShareButton 
+                variant="pill" 
+                title={name} 
+                label={isRtl ? "مشاركة المشروع" : "Share Project"} 
+                className="bg-white/80 dark:bg-white/10 border-slate-200 dark:border-white/15"
+              />
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight text-slate-900 dark:text-white">
@@ -137,6 +144,28 @@ export function ProjectDetailPageContent({ slug, locale, dict, initialProject }:
                   alt={galleryImages[activeImageIndex]?.title_ar || name}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
+
+                {/* Floating Call now sticker */}
+                <div className="absolute top-4 end-4 z-20">
+                  <a
+                    href="tel:+966532438253"
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-xl border border-slate-200 dark:border-white/10 text-xs sm:text-sm font-bold text-slate-800 dark:text-white hover:scale-105 active:scale-95 transition-all"
+                  >
+                    <span className="flex h-2 w-2 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span className="text-sky-600 dark:text-sky-400 font-extrabold">🔗 Call now</span>
+                    <span className="text-slate-400">|</span>
+                    <span>{isRtl ? "اتصل الآن" : "Call"}</span>
+                  </a>
+                </div>
+
+                {/* Floating Share Button on Banner */}
+                <div className="absolute top-4 start-4 z-20">
+                  <ShareButton variant="icon" title={name} label={isRtl ? "مشاركة المشروع" : "Share"} />
+                </div>
+
                 <button
                   onClick={() => setLightboxOpen(true)}
                   className="absolute bottom-4 end-4 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white text-xs font-bold transition-all shadow-lg"
@@ -364,6 +393,13 @@ export function ProjectDetailPageContent({ slug, locale, dict, initialProject }:
                 <Calendar className="w-4 h-4 text-amber-500" />
                 <span>{isRtl ? "حجز معاينة هندسية مجانية" : "Book Free Site Survey"}</span>
               </Link>
+
+              <ShareButton 
+                variant="pill" 
+                title={name} 
+                label={isRtl ? "مشاركة رابط المشروع" : "Share Project Link"} 
+                className="w-full justify-center"
+              />
             </div>
           </div>
         </div>
