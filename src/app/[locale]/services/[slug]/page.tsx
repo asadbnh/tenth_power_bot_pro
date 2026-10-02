@@ -44,7 +44,8 @@ export async function generateMetadata({
 
   const title = String(seoMeta?.meta_title || defaultTitle);
   const description = String(seoMeta?.meta_description || defaultDescription);
-  const ogImage = String(seoMeta?.og_image_url || defaultImage);
+  const dynamicFlyerOg = `${appUrl}/api/og/service?slug=${encodeURIComponent(slug)}&locale=${locale}`;
+  const ogImage = String(seoMeta?.og_image_url || dynamicFlyerOg);
 
   return {
     title,
@@ -56,7 +57,15 @@ export async function generateMetadata({
     openGraph: {
       title: String(seoMeta?.og_title || title),
       description: String(seoMeta?.og_description || description),
-      images: [ogImage],
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: String(serviceName),
+          type: "image/webp",
+        },
+      ],
       type: (seoMeta?.og_type as any) || "website",
     },
     twitter: {

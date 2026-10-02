@@ -19,6 +19,7 @@ function escapeXml(unsafe: string): string {
 export interface FlyerOgOptions {
   title?: string;
   category?: string;
+  badgeText?: string;
   companyName?: string;
   phone?: string;
   whatsapp?: string;
@@ -30,6 +31,7 @@ export async function generateFlyerOgImage(options: FlyerOgOptions): Promise<Buf
   const {
     companyName = "TENTH POWER GLASS",
     phone = "+966 53 243 8253",
+    badgeText = "SPECIAL ARTICLE",
     coverImageUrl,
   } = options;
 
@@ -169,9 +171,9 @@ export async function generateFlyerOgImage(options: FlyerOgOptions): Promise<Buf
         </text>
 
         <!-- Category Tag -->
-        <rect x="940" y="32" width="200" height="46" rx="23" fill="rgba(15,23,42,0.85)" stroke="#f59e0b" stroke-width="1.5" />
-        <text x="1040" y="61" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="bold" fill="#fef3c7" text-anchor="middle" letter-spacing="1.5">
-          SPECIAL ARTICLE
+        <rect x="910" y="32" width="230" height="46" rx="23" fill="rgba(15,23,42,0.85)" stroke="#f59e0b" stroke-width="1.5" />
+        <text x="1025" y="61" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="bold" fill="#fef3c7" text-anchor="middle" letter-spacing="1.5">
+          ${escapeXml(badgeText)}
         </text>
       </g>
 
