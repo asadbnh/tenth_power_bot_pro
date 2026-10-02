@@ -20,6 +20,7 @@ export interface FlyerOgOptions {
   title?: string;
   category?: string;
   badgeText?: string;
+  footerHint?: string;
   companyName?: string;
   phone?: string;
   whatsapp?: string;
@@ -34,6 +35,17 @@ export async function generateFlyerOgImage(options: FlyerOgOptions): Promise<Buf
     badgeText = "SPECIAL ARTICLE",
     coverImageUrl,
   } = options;
+
+  const defaultHint =
+    badgeText.includes("PROJECT")
+      ? "TAP ANYWHERE TO VIEW PROJECT & CONTACT US"
+      : badgeText.includes("SERVICE")
+      ? "TAP ANYWHERE TO EXPLORE SERVICE & GET QUOTE"
+      : badgeText.includes("PORTFOLIO") || badgeText.includes("GALLERY")
+      ? "TAP ANYWHERE TO VIEW WORK & CONTACT US"
+      : "TAP ANYWHERE TO VIEW DETAILS & CONTACT US";
+
+  const resolvedFooterHint = options.footerHint || defaultHint;
 
   const width = 1200;
   const height = 630;
@@ -248,8 +260,8 @@ export async function generateFlyerOgImage(options: FlyerOgOptions): Promise<Buf
       <g transform="translate(325, 597) scale(0.9)">
         <path fill="#fbbf24" d="M9 11.24V7.5a2.5 2.5 0 0 1 5 0v3.74c1.21-.81 2-2.18 2-3.74a4.5 4.5 0 0 0-9 0c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26A1.5 1.5 0 0 0 13.62 13H13v-5.5a1.5 1.5 0 0 0-3 0V14l-3.12-.65a1.5 1.5 0 0 0-1.42.42l-.76.76 4.7 4.7c.38.38.89.59 1.42.59h6.18c.95 0 1.76-.67 1.94-1.6l.78-4.35a1.5 1.5 0 0 0-.88-1.6z"/>
       </g>
-      <text x="620" y="614" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="bold" fill="#fbbf24" text-anchor="middle" letter-spacing="0.5">
-        TAP ANYWHERE TO READ ARTICLE &amp; CONTACT US
+      <text x="620" y="614" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="bold" fill="#fbbf24" text-anchor="middle" letter-spacing="0.5">
+        ${escapeXml(resolvedFooterHint)}
       </text>
     </svg>
   `;

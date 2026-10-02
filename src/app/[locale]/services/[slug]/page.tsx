@@ -32,7 +32,6 @@ export async function generateMetadata({
   const defaultDescription = String(service?.short_description || service?.description || (isAr
     ? `تعرف على تفاصيل ومواصفات وتكلفة تنفيذ ${serviceName} من مؤسسة القوة العاشرة tenth-power-glass`
     : `Explore specifications, features and installation details for ${serviceName} by tenth-power-glass`));
-  const defaultImage = String(service?.cover_image_url || "/images/defaults/services/tempered-glass.webp");
 
   // ─── Try to override with seo_metadata from DB ─────────────────────────────
   let seoMeta: Record<string, unknown> | null = null;

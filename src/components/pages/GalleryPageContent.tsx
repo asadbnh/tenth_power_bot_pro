@@ -11,6 +11,7 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { SmartFallbackImage } from "@/components/ui/SmartFallbackImage";
 import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 import { SkeletonGalleryAlbums, SkeletonGalleryCard } from "@/components/ui/Skeleton";
+import { ShareButton } from "@/components/ui/ShareButton";
 
 import fallbackAlbums from "../../../public/fallback-data/gallery-albums.json";
 import fallbackItems from "../../../public/fallback-data/gallery.json";
@@ -44,6 +45,20 @@ export function GalleryPageContent({ locale, dict: _dict, initialAlbums, initial
     : items;
 
   const displayItems = visibleItems.length > 0 ? visibleItems : items;
+
+  // Auto-open lightbox if URL has ?item=...
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const sp = new URLSearchParams(window.location.search);
+      const targetId = sp.get("item");
+      if (targetId) {
+        const idx = displayItems.findIndex((it: any) => String(it.id) === String(targetId));
+        if (idx !== -1) {
+          setActiveLightboxIndex(idx);
+        }
+      }
+    }
+  }, [displayItems]);
 
   const activeItem = activeLightboxIndex !== null ? displayItems[activeLightboxIndex] : null;
 
@@ -160,9 +175,16 @@ export function GalleryPageContent({ locale, dict: _dict, initialAlbums, initial
             ))}
           </div>
 
-          <span className="text-xs text-text-tertiary font-bold">
-            {isRtl ? `إجمالي الصور المعروضة: ${displayItems.length}` : `Total Photos: ${displayItems.length}`}
-          </span>
+          <div className="flex items-center gap-3">
+            <ShareButton
+              variant="pill"
+              title={isRtl ? "معرض أعمال القوة العاشرة للزجاج والألمنيوم" : "Tenth Power Glass Portfolio"}
+              label={isRtl ? "مشاركة المعرض" : "Share Gallery"}
+            />
+            <span className="hidden sm:inline text-xs text-text-tertiary font-bold">
+              {isRtl ? `إجمالي الصور: ${displayItems.length}` : `Total Photos: ${displayItems.length}`}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -277,7 +299,14 @@ export function GalleryPageContent({ locale, dict: _dict, initialAlbums, initial
                     
                     {/* Hover Overlay with details */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#070d1e]/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-between p-5">
-                      <div className="self-end">
+                      <div className="self-end flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        <ShareButton 
+                          variant="icon"
+                          title={title}
+                          url={typeof window !== "undefined" ? `${window.location.origin}/${locale}/gallery?item=${item.id}` : undefined}
+                          label={isRtl ? "مشاركة الصورة" : "Share Photo"}
+                          className="bg-black/50 hover:bg-amber-500 text-white"
+                        />
                         <span className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
                           <ZoomIn className="w-4 h-4" />
                         </span>
@@ -321,7 +350,15 @@ export function GalleryPageContent({ locale, dict: _dict, initialAlbums, initial
                 </p>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <ShareButton
+                  variant="banner"
+                  title={(isRtl ? activeItem.title_ar : activeItem.title_en) || (isRtl ? "صورة معمارية" : "Architectural Photo")}
+                  url={typeof window !== "undefined" ? `${window.location.origin}/${locale}/gallery?item=${activeItem.id}` : undefined}
+                  label={isRtl ? "مشاركة الصورة" : "Share"}
+                  className="bg-white/10 hover:bg-white/20 border-white/20 text-white text-xs py-1.5 px-3"
+                />
+
                 <a
                   href={`https://wa.me/966532438253?text=${encodeURIComponent(isRtl ? `السلام عليكم، أود الاستفسار عن تفاصيل تنفيذ هذا العمل المعماري: ${(activeItem.title_ar || "")}` : `Hello, I'd like to inquire about this work.`)}`}
                   target="_blank"
@@ -329,7 +366,7 @@ export function GalleryPageContent({ locale, dict: _dict, initialAlbums, initial
                   className="px-3.5 py-1.5 rounded-xl bg-[#25D366] text-white text-xs font-bold hover:bg-[#25D366]/90 transition-all flex items-center gap-1.5"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>{isRtl ? "استفسر عن هذا العمل بالواتساب" : "Inquire via WhatsApp"}</span>
+                  <span className="hidden sm:inline">{isRtl ? "استفسر بالواتساب" : "WhatsApp"}</span>
                 </a>
 
                 <button 

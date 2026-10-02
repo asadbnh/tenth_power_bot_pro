@@ -13,6 +13,7 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { SmartFallbackImage } from "@/components/ui/SmartFallbackImage";
 import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 import { SkeletonProjectCard } from "@/components/ui/Skeleton";
+import { ShareButton } from "@/components/ui/ShareButton";
 
 interface Props {
   locale: Locale;
@@ -307,15 +308,22 @@ export function ProjectsPageContent({ locale, dict, initialProjects }: Props) {
                       </div>
                     </Link>
 
-                    {/* Bottom Quick Consultation Trigger */}
-                    <div className="px-5 pb-5 pt-0">
+                    {/* Bottom Quick Consultation Trigger & Share */}
+                    <div className="px-5 pb-5 pt-0 flex items-center gap-2">
                       <Link
                         href={`/${locale}/quote?project=${projectSlug}`}
-                        className="w-full py-2.5 px-3 rounded-xl bg-surface hover:bg-amber-500 hover:text-primary-950 text-text-secondary text-xs font-bold flex items-center justify-center gap-2 border border-border-light hover:border-amber-500 transition-all"
+                        className="flex-1 py-2.5 px-3 rounded-xl bg-surface hover:bg-amber-500 hover:text-primary-950 text-text-secondary text-xs font-bold flex items-center justify-center gap-2 border border-border-light hover:border-amber-500 transition-all"
                       >
                         <Sparkles className="w-3.5 h-3.5 text-amber-500 group-hover:text-primary-950" />
-                        <span>{isRtl ? "طلب دراسة مشروع مماثل" : "Request Similar Project Quote"}</span>
+                        <span>{isRtl ? "طلب دراسة مماثلة" : "Request Quote"}</span>
                       </Link>
+                      <ShareButton 
+                        variant="icon"
+                        title={title}
+                        url={typeof window !== "undefined" ? `${window.location.origin}/${locale}/projects/${projectSlug}` : undefined}
+                        label={isRtl ? "مشاركة المشروع" : "Share Project"}
+                        className="shrink-0 bg-surface border border-border-light hover:border-amber-500 hover:bg-amber-500 hover:text-primary-950"
+                      />
                     </div>
                   </motion.div>
                 );

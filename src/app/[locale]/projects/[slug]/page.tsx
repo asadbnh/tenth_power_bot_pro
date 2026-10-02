@@ -32,7 +32,6 @@ export async function generateMetadata({
   const defaultDescription = String(project?.description_ar || project?.description_en || (isAr
     ? `استعرض تفاصيل ومراحل تنفيذ مشروع ${projectName} من تنفيذ مؤسسة القوة العاشرة tenth-power-glass`
     : `Explore execution stages and specs of project ${projectName} by tenth-power-glass`));
-  const defaultImage = String(project?.cover_image_url || "/images/defaults/projects/project-1.webp");
 
   // ─── Try to override with seo_metadata from DB ─────────────────────────────
   let seoMeta: Record<string, unknown> | null = null;

@@ -6,7 +6,7 @@ import {
   MapPin, Calendar, CheckCircle2, ArrowRight,
   Building2, ChevronLeft, Images, ShieldCheck, Maximize2, X, PlayCircle
 } from "lucide-react";
-import { cn, formatTelUrl } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 

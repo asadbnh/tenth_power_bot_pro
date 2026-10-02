@@ -14,6 +14,7 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { SmartFallbackImage } from "@/components/ui/SmartFallbackImage";
 import { PageHeroBackground } from "@/components/ui/PageHeroBackground";
 import { SkeletonServiceCard } from "@/components/ui/Skeleton";
+import { ShareButton } from "@/components/ui/ShareButton";
 
 import fallbackServices from "../../../public/fallback-data/services.json";
 
@@ -179,13 +180,23 @@ export function ServicesPageContent({ locale, dict, initialServices }: Props) {
                           <ArrowRight className={cn("w-3.5 h-3.5", isRtl && "rotate-180")} />
                         </Link>
 
-                        <Link 
-                          href={`/${locale}/quote?service=${serviceSlug}`}
-                          className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-primary-950 font-extrabold text-xs shadow-md hover:scale-105 transition-all shrink-0"
-                        >
-                          <Sparkles className="w-3.5 h-3.5" />
-                          <span>{isRtl ? "طلب سعر فوري" : "Instant Quote"}</span>
-                        </Link>
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                          <Link 
+                            href={`/${locale}/quote?service=${serviceSlug}`}
+                            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-primary-950 font-extrabold text-xs shadow-md hover:scale-105 transition-all shrink-0"
+                          >
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>{isRtl ? "طلب سعر فوري" : "Instant Quote"}</span>
+                          </Link>
+
+                          <ShareButton 
+                            variant="icon"
+                            title={name}
+                            url={typeof window !== "undefined" ? `${window.location.origin}/${locale}/services/${serviceSlug}` : undefined}
+                            label={isRtl ? "مشاركة الخدمة" : "Share Service"}
+                            className="bg-surface border border-border-light hover:border-amber-500 hover:bg-amber-500 hover:text-primary-950 shrink-0"
+                          />
+                        </div>
                       </div>
                     </div>
                   </motion.div>
