@@ -40,6 +40,28 @@ export const metadata: Metadata = {
     shortcut: "/logo.svg",
     apple: "/logo.svg",
   },
+  openGraph: {
+    title: "tenth-power-glass — Enterprise Business Platform",
+    description: "مؤسسة القوة العاشرة للزجاج والألمنيوم — واجهات استركشر وسيكوريت",
+    url: "https://powerof10.netlify.app",
+    siteName: "tenth-power-glass",
+    images: [
+      {
+        url: "/images/restored/projects/project-1.webp",
+        width: 1200,
+        height: 630,
+        alt: "tenth-power-glass",
+        type: "image/webp",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "tenth-power-glass — Enterprise Business Platform",
+    description: "مؤسسة القوة العاشرة للزجاج والألمنيوم — واجهات استركشر وسيكوريت",
+    images: ["/images/restored/projects/project-1.webp"],
+  },
   other: {
     "mobile-web-app-capable": "yes",
   },

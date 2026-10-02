@@ -14,12 +14,37 @@ export async function generateMetadata({
   const { locale } = await params;
   const dict = await getDictionary(locale as Locale);
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://powerof10.netlify.app";
+  const ogImage = `${appUrl}/images/restored/projects/project-1.webp`;
+  const title = dict.services.title;
+  const description = dict.services.subtitle;
+
   return {
-    title: dict.services.title,
-    description: dict.services.subtitle,
+    title,
+    description,
     alternates: {
       canonical: `${appUrl}/${locale}/services`,
       languages: { ar: `${appUrl}/ar/services`, en: `${appUrl}/en/services` },
+    },
+    openGraph: {
+      title: `${title} | ${dict.meta.siteName}`,
+      description,
+      url: `${appUrl}/${locale}/services`,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: title,
+          type: "image/webp",
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${dict.meta.siteName}`,
+      description,
+      images: [ogImage],
     },
   };
 }
